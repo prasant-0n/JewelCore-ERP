@@ -12,6 +12,8 @@ import {
 
 export interface ConsignmentItemData {
   id: string;
+  transferOrderId?: string;
+  transferManifestId?: string;
   itemCode: string;
   trayDescription: string;
   category: string;

@@ -164,4 +164,62 @@ test.describe("Master-Detail Workstation Inspectors", () => {
       page.locator("text=Buyback Payout").first(),
     ).toBeVisible({ timeout: 5000 });
   });
+
+  test("Transfers & Transit: schedules armored consignment, dual-signs dispatch and acknowledges de-seal", async ({
+    page,
+  }) => {
+    await page.goto("/transfers");
+
+    await expect(page.locator("h1")).toContainText(
+      /Armored Fleet Tracking & Dual-Custody Manifests/i,
+    );
+
+    // Open Schedule Transfer modal
+    const scheduleBtn = page.getByRole("button", {
+      name: /Schedule Transfer/i,
+    });
+    await expect(scheduleBtn).toBeVisible();
+    await scheduleBtn.click();
+
+    // Verify modal header
+    await expect(
+      page.locator("text=Schedule Armored Transit & Dual-Custody Manifest").first(),
+    ).toBeVisible();
+
+    // Submit modal
+    const submitBtn = page.getByRole("button", {
+      name: "Schedule Armored Dispatch",
+    });
+    await expect(submitBtn).toBeVisible();
+    await submitBtn.click();
+
+    // Check toast
+    await expect(
+      page.locator("text=Armored Transfer Scheduled").first(),
+    ).toBeVisible({ timeout: 5000 });
+
+    // Click Dual-Sign Transit Dispatch
+    const dispatchBtn = page.getByRole("button", {
+      name: /Dual-Sign Transit Dispatch/i,
+    });
+    await expect(dispatchBtn).toBeVisible();
+    await dispatchBtn.click();
+
+    // Check dispatch toast
+    await expect(
+      page.locator("text=Dispatch Dual-Signed & Authorized").first(),
+    ).toBeVisible({ timeout: 5000 });
+
+    // Acknowledge De-Seal in inspector
+    const deSealBtn = page.getByRole("button", {
+      name: /Acknowledge Inward Vault Handover & De-Seal/i,
+    });
+    await expect(deSealBtn).toBeVisible();
+    await deSealBtn.click();
+
+    // Check de-seal toast
+    await expect(
+      page.locator("text=De-Seal Verified & Handover Accepted").first(),
+    ).toBeVisible({ timeout: 5000 });
+  });
 });
