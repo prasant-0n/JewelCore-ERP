@@ -45,6 +45,7 @@ import { migration00042CreateTransferManifests } from "./00042_create_transfer_m
 import { migration00043CreateTransferDisputes } from "./00043_create_transfer_disputes.js";
 import { migration00044CreateConciergeAppointments } from "./00044_create_concierge_appointments.js";
 import { migration00045CreateAccountingGeneralLedger } from "./00045_create_accounting_general_ledger.js";
+import { migration00046CreateAtelierManufacturingJobOrders } from "./00046_create_atelier_manufacturing_job_orders.js";
 
 export const allMigrations: MigrationDefinition[] = [
   migration00001CreateIamOrganizationsAndStores,
@@ -92,6 +93,7 @@ export const allMigrations: MigrationDefinition[] = [
   migration00043CreateTransferDisputes,
   migration00044CreateConciergeAppointments,
   migration00045CreateAccountingGeneralLedger,
+  migration00046CreateAtelierManufacturingJobOrders,
 ];
 
 /**
@@ -146,3 +148,4 @@ export * from "./00042_create_transfer_manifests.js";
 export * from "./00043_create_transfer_disputes.js";
 export * from "./00044_create_concierge_appointments.js";
 export * from "./00045_create_accounting_general_ledger.js";
+export * from "./00046_create_atelier_manufacturing_job_orders.js";

@@ -18,6 +18,7 @@ import {
   ArrowRightLeft,
   Crown,
   Landmark,
+  Hammer,
 } from "lucide-react";
 
 interface NavSection {
@@ -41,6 +42,7 @@ const NAV_SECTIONS: NavSection[] = [
       { name: "Vault & Storage", href: "/storage", icon: Boxes },
       { name: "Inward Intake", href: "/procurement", icon: ArrowRightLeft },
       { name: "Analytical QC", href: "/qc", icon: FileCheck2, badge: 3 },
+      { name: "Atelier Crafting", href: "/manufacturing", icon: Hammer, badge: 4 },
       { name: "Piece Master", href: "/inventory", icon: Gem },
       { name: "RFID Kiosk", href: "/rfid", icon: Tag },
       { name: "Stock Gate", href: "/governance", icon: ShieldCheck, badge: 5 },

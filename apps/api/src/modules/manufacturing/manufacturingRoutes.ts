@@ -1,0 +1,35 @@
+import { Router } from "express";
+import {
+  listKarigarsHandler,
+  createKarigarHandler,
+  listBomsHandler,
+  createBomHandler,
+  listJobOrdersHandler,
+  createJobOrderHandler,
+  getJobOrderByIdHandler,
+  updateJobStageHandler,
+  recordJobReturnHandler,
+  completeJobOrderHandler,
+} from "./manufacturingController.js";
+
+export function createManufacturingRouter(): Router {
+  const router = Router();
+
+  // Karigar Directory
+  router.get("/karigars", listKarigarsHandler);
+  router.post("/karigars", createKarigarHandler);
+
+  // Bill of Materials (BOM)
+  router.get("/boms", listBomsHandler);
+  router.post("/boms", createBomHandler);
+
+  // Manufacturing Job Orders
+  router.get("/jobs", listJobOrdersHandler);
+  router.post("/jobs", createJobOrderHandler);
+  router.get("/jobs/:id", getJobOrderByIdHandler);
+  router.patch("/jobs/:id/stage", updateJobStageHandler);
+  router.post("/jobs/:id/return", recordJobReturnHandler);
+  router.post("/jobs/:id/complete", completeJobOrderHandler);
+
+  return router;
+}

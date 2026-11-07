@@ -42,6 +42,8 @@ async function runShowroomLoadTest(
     "/api/v1/accounting/gst-returns",
     "/api/v1/portal/portfolio/CLI-01",
     "/api/v1/portal/concierge/appointments/CLI-01",
+    "/api/v1/manufacturing/jobs",
+    "/api/v1/manufacturing/karigars",
   ];
 
   const startTime = Date.now();

@@ -53,3 +53,4 @@ export * from "./repositories/transferDispatchRepository.js";
 export * from "./repositories/transferReceivingRepository.js";
 export * from "./repositories/conciergeAppointmentRepository.js";
 export * from "./repositories/accountingRepository.js";
+export * from "./repositories/manufacturingRepository.js";
