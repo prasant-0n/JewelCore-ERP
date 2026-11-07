@@ -19,6 +19,7 @@ import { createSalesRouter } from "./modules/sales/salesRoutes.js";
 import { createTransfersRouter } from "./modules/transfers/transferRoutes.js";
 import { createTelemetryRouter } from "./modules/telemetry/telemetryRoutes.js";
 import { createCertificatesRouter } from "./modules/certificates/certificateRoutes.js";
+import { createPortalRouter } from "./modules/portal/portalRoutes.js";
 import { createDocsRouter } from "./docs/docsRoutes.js";
 
 export function createApp(configureRoutes?: (app: Express) => void): Express {
@@ -101,7 +102,10 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
   // 19. Luxury Authenticity Certificates & Compliance PDF Export Engine
   app.use("/api/v1/certificates", createCertificatesRouter());
 
-  // 20. Interactive OpenAPI / Swagger Documentation
+  // 20. VIP Client Portal & Digital Asset Vault (FEAT-VIP-PORTAL)
+  app.use("/api/v1/portal", createPortalRouter());
+
+  // 21. Interactive OpenAPI / Swagger Documentation
   app.use(createDocsRouter());
 
   // Custom route injection (useful for test harnesses and integration mocks)

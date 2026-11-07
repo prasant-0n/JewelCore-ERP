@@ -43,6 +43,7 @@ import { migration00040CreateStoreCredit } from "./00040_create_store_credit.js"
 import { migration00041CreateTransferOrders } from "./00041_create_transfer_orders.js";
 import { migration00042CreateTransferManifests } from "./00042_create_transfer_manifests.js";
 import { migration00043CreateTransferDisputes } from "./00043_create_transfer_disputes.js";
+import { migration00044CreateConciergeAppointments } from "./00044_create_concierge_appointments.js";
 
 export const allMigrations: MigrationDefinition[] = [
   migration00001CreateIamOrganizationsAndStores,
@@ -88,6 +89,7 @@ export const allMigrations: MigrationDefinition[] = [
   migration00041CreateTransferOrders,
   migration00042CreateTransferManifests,
   migration00043CreateTransferDisputes,
+  migration00044CreateConciergeAppointments,
 ];
 
 /**
@@ -140,3 +142,4 @@ export * from "./00040_create_store_credit.js";
 export * from "./00041_create_transfer_orders.js";
 export * from "./00042_create_transfer_manifests.js";
 export * from "./00043_create_transfer_disputes.js";
+export * from "./00044_create_concierge_appointments.js";

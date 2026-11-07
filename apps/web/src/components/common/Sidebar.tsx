@@ -16,6 +16,7 @@ import {
   RotateCcw,
   Truck,
   ArrowRightLeft,
+  Crown,
 } from "lucide-react";
 
 interface NavSection {
@@ -56,6 +57,12 @@ const NAV_SECTIONS: NavSection[] = [
     title: "LOGISTICS",
     items: [
       { name: "Store Transfers", href: "/transfers", icon: Truck, badge: 2 },
+    ],
+  },
+  {
+    title: "PRIVATE CLIENTELING",
+    items: [
+      { name: "VIP Client Portal", href: "/portal", icon: Crown },
     ],
   },
 ];
