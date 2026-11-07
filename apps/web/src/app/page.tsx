@@ -48,6 +48,7 @@ import { TabularCurrency } from "@/components/workstation/TabularCurrency";
 import { StatusBadge } from "@/components/workstation/StatusBadge";
 import { toast } from "sonner";
 import { api } from "../lib/api";
+import { useStoreContext } from "../hooks/useStoreContext";
 
 interface InventoryRow {
   id: string;
@@ -185,6 +186,7 @@ const DEFAULT_RATES: BullionFixRates = {
 };
 
 export default function HomePage() {
+  const { currentStore } = useStoreContext();
   const [inventory, setInventory] = useState<InventoryRow[]>(DEFAULT_INVENTORY);
   const [rates, setRates] = useState<BullionFixRates>(DEFAULT_RATES);
   const [pendingApprovalsCount, setPendingApprovalsCount] = useState<number>(3);
@@ -302,6 +304,15 @@ export default function HomePage() {
 
   useEffect(() => {
     loadDashboardData();
+
+    const handleStoreChange = () => {
+      loadDashboardData();
+    };
+
+    window.addEventListener("jewelcore:store-changed", handleStoreChange);
+    return () => {
+      window.removeEventListener("jewelcore:store-changed", handleStoreChange);
+    };
   }, []);
 
   // Compute live aggregated metrics
@@ -397,7 +408,9 @@ export default function HomePage() {
             <JewelCoreLogo size="md" variant="badge" />
             <div>
               <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-                <span>Flagship Mumbai (INV-11)</span>
+                <span>
+                  {currentStore.name} ({currentStore.code})
+                </span>
                 <span>•</span>
                 <span className="text-status-emerald flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-status-emerald animate-pulse" />

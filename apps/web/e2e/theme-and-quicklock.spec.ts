@@ -132,4 +132,51 @@ test.describe("Theme Toggle, Privacy Mode & QuickLock Terminal", () => {
     const faviconLink = page.locator('link[rel="icon"][href*="icon.svg"]');
     await expect(faviconLink).toHaveCount(1);
   });
+
+  test("switches branch store and multi-tenant vault context in top header", async ({
+    page,
+  }) => {
+    // Locate the branch store selector button in top header
+    const storeBtn = page.locator('button[title*="Switch Active Store"]');
+    await expect(storeBtn).toBeVisible({ timeout: 10000 });
+    await expect(storeBtn.locator("text=Downtown Showroom")).toBeVisible();
+    await expect(storeBtn.locator("text=INV-11")).toBeVisible();
+
+    // Open store dropdown
+    await storeBtn.click();
+    await expect(page.locator("text=Branch Store & Vault Hubs")).toBeVisible();
+    await expect(page.locator("text=3 Online")).toBeVisible();
+
+    // Switch to Central Treasury Vault Hub (VAULT-01)
+    const vaultOption = page.locator("text=Central Treasury Vault Hub").first();
+    await expect(vaultOption).toBeVisible();
+    await vaultOption.click();
+
+    // Verify header button reflects Central Treasury Vault Hub
+    await expect(storeBtn.locator("text=Central Treasury Vault Hub")).toBeVisible();
+    await expect(storeBtn.locator("text=VAULT-01")).toBeVisible();
+
+    // Verify toast confirmation
+    await expect(
+      page.locator("text=Active Branch: Central Treasury Vault Hub"),
+    ).toBeVisible();
+
+    // Verify dashboard greeting reflects switched branch
+    await expect(
+      page.locator("text=Central Treasury Vault Hub (VAULT-01)"),
+    ).toBeVisible();
+
+    // Switch to Uptown Luxury Boutique (SHOW-02)
+    await storeBtn.click();
+    const uptownOption = page.locator("text=Uptown Luxury Boutique").first();
+    await expect(uptownOption).toBeVisible();
+    await uptownOption.click();
+
+    // Verify header reflects SHOW-02
+    await expect(storeBtn.locator("text=Uptown Luxury Boutique")).toBeVisible();
+    await expect(storeBtn.locator("text=SHOW-02")).toBeVisible();
+    await expect(
+      page.locator("text=Active Branch: Uptown Luxury Boutique"),
+    ).toBeVisible();
+  });
 });

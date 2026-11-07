@@ -16,6 +16,7 @@ import {
 import { api } from "../../lib/api";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
+import { useStoreContext, BRANCH_STORES, BranchStore } from "../../hooks/useStoreContext";
 import { JewelCoreLogo } from "./JewelCoreLogo";
 import { toast } from "sonner";
 
@@ -64,23 +65,7 @@ export const PERSONAS = [
   },
 ];
 
-const STORES = [
-  {
-    id: "0192e300-0001-7000-8000-000000000001",
-    name: "Downtown Showroom",
-    type: "RETAIL_STORE",
-  },
-  {
-    id: "0192e300-0001-7000-8000-000000000002",
-    name: "Central Treasury Vault Hub",
-    type: "MAIN_VAULT",
-  },
-  {
-    id: "0192e300-0001-7000-8000-000000000003",
-    name: "Uptown Luxury Boutique",
-    type: "SHOWROOM",
-  },
-];
+export const STORES = BRANCH_STORES;
 
 export function TopHeader({
   onLockClick,
@@ -88,13 +73,12 @@ export function TopHeader({
   onTogglePrivacy,
 }: TopHeaderProps) {
   const { bullionData, isConnected } = useHardwareTelemetry();
-  const [selectedStore, setSelectedStore] = useState(STORES[0]);
+  const { currentStore, stores, switchStore } = useStoreContext();
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState(PERSONAS[0]);
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
 
   React.useEffect(() => {
-    api.setStoreId(selectedStore.id);
     const syncPersonaToken = async () => {
       try {
         const res = await api.post<{ data: { accessToken: string } }>(
@@ -109,11 +93,10 @@ export function TopHeader({
       }
     };
     void syncPersonaToken();
-  }, [selectedPersona, selectedStore]);
+  }, [selectedPersona]);
 
-  const handleSelectStore = (store: (typeof STORES)[0]) => {
-    setSelectedStore(store);
-    api.setStoreId(store.id);
+  const handleSelectStore = (store: BranchStore) => {
+    switchStore(store);
     setIsStoreOpen(false);
   };
 
@@ -157,39 +140,55 @@ export function TopHeader({
           <button
             onClick={() => setIsStoreOpen(!isStoreOpen)}
             className="flex items-center space-x-2 px-3 py-1.5 rounded-md bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs"
+            title="Switch Active Store & Multi-Tenant Inventory Context"
           >
             <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse" />
             <span className="text-foreground font-medium">
-              {selectedStore.name}
+              {currentStore.name}
             </span>
-            <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-muted-foreground">
-              {selectedStore.type}
+            <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-gold font-bold">
+              {currentStore.code}
             </span>
             <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
           </button>
 
           {isStoreOpen && (
-            <div className="absolute top-full left-0 mt-1.5 w-64 bg-surface border border-surface-border rounded-lg shadow-2xl py-1 z-50">
-              <div className="px-3 py-1.5 text-[10px] uppercase font-mono text-muted-foreground border-b border-surface-border">
-                Switch Branch Store
+            <div className="absolute top-full left-0 mt-1.5 w-72 bg-surface border border-surface-border rounded-lg shadow-2xl py-1 z-50">
+              <div className="px-3 py-1.5 text-[10px] uppercase font-mono text-muted-foreground border-b border-surface-border flex items-center justify-between">
+                <span>Branch Store &amp; Vault Hubs</span>
+                <span className="text-gold font-bold">3 Online</span>
               </div>
-              {STORES.map((s) => (
+              {stores.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => handleSelectStore(s)}
                   className={`w-full px-3 py-2 text-left text-xs flex items-center justify-between hover:bg-surface-elevated transition-colors ${
-                    s.id === selectedStore.id
-                      ? "text-gold font-medium bg-gold/5"
+                    s.id === currentStore.id
+                      ? "text-gold font-medium bg-gold/10"
                       : "text-foreground"
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
-                    <Store className="w-3.5 h-3.5 opacity-60" />
-                    <span>{s.name}</span>
+                  <div className="flex items-center space-x-2.5">
+                    <Store
+                      className={`w-4 h-4 ${
+                        s.id === currentStore.id ? "text-gold" : "opacity-60"
+                      }`}
+                    />
+                    <div>
+                      <div className="font-medium text-foreground">{s.name}</div>
+                      <div className="text-[10px] text-muted-foreground font-mono">
+                        {s.city}
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[9px] font-mono text-muted-foreground">
-                    {s.type}
-                  </span>
+                  <div className="text-right">
+                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface-elevated border border-surface-border text-muted-foreground block">
+                      {s.code}
+                    </span>
+                    <span className="text-[8px] font-mono text-muted-foreground/80 mt-0.5 block">
+                      {s.type}
+                    </span>
+                  </div>
                 </button>
               ))}
             </div>
