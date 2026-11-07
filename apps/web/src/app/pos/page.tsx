@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/common/AppShell";
 import { PosPieceCard, PosPieceData } from "../../components/pos/PosPieceCard";
 import {
@@ -13,6 +13,10 @@ import {
   ClientProfileData,
 } from "../../components/pos/ClientSelectModal";
 import {
+  SalonPresentationModal,
+  PresentationPieceData,
+} from "../../components/common/SalonPresentationModal";
+import {
   ShoppingBag,
   CreditCard,
   Scale,
@@ -22,6 +26,7 @@ import {
   Scan,
   TrendingUp,
   UserCheck,
+  Sparkles,
 } from "lucide-react";
 import {
   WorkstationKpiGrid,
@@ -165,6 +170,95 @@ export default function PosTerminalPage() {
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [isScanningScale, setIsScanningScale] = useState(false);
+  const [salonPiece, setSalonPiece] = useState<PresentationPieceData | null>(null);
+  const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
+
+  const openSalonView = (piece: PosPieceData) => {
+    setSalonPiece({
+      serialNumber: piece.serialNumber,
+      itemName: piece.itemName,
+      category: piece.category,
+      metalPurity: piece.metalPurity,
+      grossWeightGrams: piece.grossWeightGrams,
+      netGoldGrams: piece.netGoldGrams,
+      diamondCarat: piece.diamondCarat,
+      diamondSpecs: piece.diamondSpecs,
+      hallmarkId: piece.hallmarkId,
+      retailPriceInr: piece.totalPriceInr,
+      epcTag: piece.epcTag,
+    });
+    setIsSalonModalOpen(true);
+  };
+
+  // Listen to mobile camera barcode scans dispatched from TopHeader
+  useEffect(() => {
+    const handlePieceScanned = (e: Event) => {
+      const customEvent = e as CustomEvent<{ barcode: string }>;
+      const barcode = customEvent.detail?.barcode;
+      if (!barcode) return;
+
+      // Search existing groups for matching piece
+      let found: PosPieceData | undefined;
+      for (const group of groups) {
+        found = group.pieces.find(
+          (p) =>
+            p.serialNumber.toLowerCase() === barcode.toLowerCase() ||
+            p.epcTag.toLowerCase() === barcode.toLowerCase() ||
+            p.id.toLowerCase() === barcode.toLowerCase(),
+        );
+        if (found) break;
+      }
+
+      if (found) {
+        setSelectedPiece(found);
+        openSalonView(found);
+        toast.success(`Piece Scanned: ${found.serialNumber}`, {
+          description: `${found.itemName} loaded in VIP Salon Presentation Mode.`,
+        });
+      } else {
+        // If simulated or new tag scanned, create showcase piece
+        const newPiece: PosPieceData = {
+          id: `pc-${Date.now()}`,
+          serialNumber: barcode,
+          itemName: "18K Royal Solitaire Ring (2.05ct Flawless D)",
+          category: "Solitaire Rings",
+          metalPurity: "18K Yellow Gold (Au 750)",
+          grossWeightGrams: 6.85,
+          netGoldGrams: 6.44,
+          diamondCarat: 2.05,
+          diamondSpecs: "D-FL Hearts & Arrows (GIA-90412851)",
+          metalValueInr: 48500,
+          diamondValueInr: 890000,
+          makingChargeInr: 51500,
+          totalPriceInr: 990000,
+          status: "AVAILABLE",
+          epcTag: `EPC-E280-${barcode.replace(/[^0-9]/g, "").slice(-4) || "9041"}`,
+          hallmarkId: `BIS-750-MUM-${barcode.replace(/[^0-9]/g, "").slice(-4) || "9041"}`,
+        };
+        setGroups((prev) => [
+          ...prev,
+          {
+            id: `grp-scanned-${Date.now()}`,
+            sectionTitle: `Scanned Unit (${barcode})`,
+            clientTag: "Camera Scanned",
+            description: "Floor Camera Barcode Ingestion",
+            status: "VITRINE_LIVE",
+            pieces: [newPiece],
+          },
+        ]);
+        setSelectedPiece(newPiece);
+        openSalonView(newPiece);
+        toast.success(`New Barcode Tag Scanned: ${barcode}`, {
+          description: "Authenticated & presented on VIP Salon Pedestal.",
+        });
+      }
+    };
+
+    window.addEventListener("jewelcore:piece-scanned", handlePieceScanned);
+    return () => {
+      window.removeEventListener("jewelcore:piece-scanned", handlePieceScanned);
+    };
+  }, [groups]);
 
   // Cart pieces
   const activeCartGroup = groups.find((g) => g.id === "grp-active-cart");
@@ -293,6 +387,21 @@ export default function PosTerminalPage() {
 
           <div className="flex items-center space-x-3">
             <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (selectedPiece) {
+                  openSalonView(selectedPiece);
+                } else if (groups[0]?.pieces[0]) {
+                  openSalonView(groups[0].pieces[0]);
+                }
+              }}
+              title="Open Client-Facing VIP Salon Presentation View"
+            >
+              <Sparkles className="w-3.5 h-3.5 mr-1 text-gold" />
+              <span>Salon View</span>
+            </Button>
+            <Button
               variant="secondary"
               size="sm"
               onClick={() => setIsClientModalOpen(true)}
@@ -388,6 +497,7 @@ export default function PosTerminalPage() {
                   selectedPieceId={selectedPiece?.id}
                   onSelectPiece={(piece, g) => handleSelectPiece(piece, g)}
                   onToggleCart={handleToggleCart}
+                  onSalonView={openSalonView}
                 />
               ))}
             </div>
@@ -400,6 +510,31 @@ export default function PosTerminalPage() {
           onClose={() => setIsClientModalOpen(false)}
           onSelectClient={handleSelectClient}
         />
+
+        {/* Client-Facing Salon Presentation Modal */}
+        {salonPiece && (
+          <SalonPresentationModal
+            isOpen={isSalonModalOpen}
+            onClose={() => setIsSalonModalOpen(false)}
+            piece={salonPiece}
+            onAddToTray={(p) => {
+              setGroups((prev) =>
+                prev.map((g) => ({
+                  ...g,
+                  pieces: g.pieces.map((item) =>
+                    item.serialNumber === p.serialNumber
+                      ? { ...item, status: "IN_CART" as const }
+                      : item,
+                  ),
+                })),
+              );
+              setIsSalonModalOpen(false);
+              toast.success("Added to VIP Client Cart", {
+                description: `${p.itemName} is now in the active checkout session.`,
+              });
+            }}
+          />
+        )}
       </div>
     </AppShell>
   );

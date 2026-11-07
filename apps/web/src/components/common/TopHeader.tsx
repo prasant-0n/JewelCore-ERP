@@ -18,12 +18,14 @@ import {
   Activity,
   RefreshCw,
   Shield,
+  Camera,
 } from "lucide-react";
 import { api } from "../../lib/api";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
 import { useStoreContext, BRANCH_STORES, BranchStore } from "../../hooks/useStoreContext";
 import { JewelCoreLogo } from "./JewelCoreLogo";
+import { CameraScannerModal } from "./CameraScannerModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -90,8 +92,17 @@ export function TopHeader({
   const { currentStore, stores, switchStore } = useStoreContext();
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isMeshOpen, setIsMeshOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState(PERSONAS[0]);
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
+
+  const handleScanPiece = (barcode: string) => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("jewelcore:piece-scanned", { detail: { barcode } }),
+      );
+    }
+  };
 
   React.useEffect(() => {
     const syncPersonaToken = async () => {
@@ -228,6 +239,18 @@ export function TopHeader({
 
       {/* Right: Hardware Mesh, Bullion Ticker, Theme Toggle, & Profile */}
       <div className="flex items-center space-x-3 sm:space-x-4">
+        {/* Mobile / Floor Camera Barcode Scanner Button */}
+        <button
+          onClick={() => setIsScannerOpen(true)}
+          className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/40 transition-all text-xs font-mono"
+          title="Scan Jewellery Barcode / QR with Camera"
+        >
+          <Camera className="w-3.5 h-3.5 text-gold" />
+          <span className="hidden sm:inline text-foreground font-medium text-[11px]">
+            Scan Tag
+          </span>
+        </button>
+
         {/* Hardware Mesh Telemetry Button & Popover */}
         <div className="relative">
           <button
@@ -475,6 +498,13 @@ export function TopHeader({
           )}
         </div>
       </div>
+
+      {/* Showroom Camera Barcode / QR Scanner Modal */}
+      <CameraScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScanPiece}
+      />
     </header>
   );
 }

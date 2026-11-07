@@ -25,6 +25,7 @@ interface CartSectionProps {
   selectedPieceId?: string;
   onSelectPiece?: (piece: PosPieceData, group: PosSectionGroupData) => void;
   onToggleCart?: (piece: PosPieceData) => void;
+  onSalonView?: (piece: PosPieceData) => void;
   defaultExpanded?: boolean;
 }
 
@@ -33,6 +34,7 @@ export function CartSection({
   selectedPieceId,
   onSelectPiece,
   onToggleCart,
+  onSalonView,
   defaultExpanded = false,
 }: CartSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultExpanded);
@@ -122,6 +124,7 @@ export function CartSection({
                 isSelected={selectedPieceId === piece.id}
                 onSelect={(p) => onSelectPiece?.(p, group)}
                 onToggleCart={onToggleCart}
+                onSalonView={onSalonView}
               />
             ))}
           </div>

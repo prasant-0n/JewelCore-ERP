@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { PwaRegister } from "@/components/common/PwaRegister";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -10,6 +11,12 @@ export const metadata: Metadata = {
   title: "JewelCore ERP — Next-Gen Jewellery Enterprise Management",
   description:
     "Enterprise ERP for precious jewellery manufacturing, analytical quality control, inventory custody, and retail.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "JewelCore Atelier",
+  },
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },
@@ -50,6 +57,7 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange
         >
+          <PwaRegister />
           {children}
           <Toaster position="bottom-right" />
         </ThemeProvider>
