@@ -112,5 +112,45 @@ test.describe("RFID Telemetry & Governance Quorum Workstations", () => {
     await cancelBtn.click();
 
     await expect(modalTitle).not.toBeVisible();
+
+    // Open Audit Event Stream Modal
+    const auditBtn = page.getByRole("button", { name: "Audit Event Stream" });
+    await expect(auditBtn).toBeVisible();
+    await auditBtn.click();
+
+    const auditTitle = page.getByRole("heading", {
+      name: "Immutable Compliance & Audit Trail Ledger",
+    });
+    await expect(auditTitle).toBeVisible();
+
+    // Verify Merkle Ledger button inside modal
+    const verifyMerkleBtn = page.getByRole("button", {
+      name: "Verify Merkle Ledger",
+    });
+    await expect(verifyMerkleBtn).toBeVisible();
+    await verifyMerkleBtn.click();
+    await expect(
+      page.locator("text=Audit Trail Cryptographically Verified"),
+    ).toBeVisible();
+
+    // Close audit modal
+    await page.getByRole("button", { name: "Close" }).first().click();
+    await expect(auditTitle).not.toBeVisible();
+
+    // Inspector Merkle Leaf verification
+    const merkleToggleBtn = page.getByRole("button", {
+      name: /View Merkle Leaf/i,
+    });
+    await expect(merkleToggleBtn).toBeVisible();
+    await merkleToggleBtn.click();
+    await expect(page.locator("text=Merkle Audit Leaf Cryptographic Chain:")).toBeVisible();
+
+    // Dual-Sign single item Key 2 release
+    const signKey2Btn = page.getByRole("button", {
+      name: /Insert SmartCard & Dual-Sign Release/i,
+    });
+    await expect(signKey2Btn).toBeVisible();
+    await signKey2Btn.click();
+    await expect(page.locator("text=Cryptographic SmartCard Accepted")).toBeVisible();
   });
 });

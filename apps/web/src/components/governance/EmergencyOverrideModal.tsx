@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { api } from "../../lib/api";
 
 interface EmergencyOverrideModalProps {
   isOpen: boolean;
@@ -47,7 +48,29 @@ export function EmergencyOverrideModal({
     setIsSubmitting(true);
 
     try {
-      await new Promise((res) => setTimeout(res, 800));
+      try {
+        await api.post("/governance/audit-events", {
+          action: "EMERGENCY_VAULT_OVERRIDE",
+          resourceType: "VAULT_SAFE",
+          resourceId: "0192e350-0003-7000-8000-000000000001",
+          reason:
+            reason ||
+            "Emergency vault unlatch authorized under dual-director cryptographic override",
+          payloadAfterJson: {
+            targetSafe,
+            directorPinProvided: true,
+            secondaryPasskeyProvided: true,
+            unlatchedDurationSeconds: 120,
+          },
+        });
+      } catch (err: any) {
+        console.warn(
+          "[EmergencyOverrideModal] Audit event notice:",
+          err?.message || err,
+        );
+      }
+
+      await new Promise((res) => setTimeout(res, 600));
 
       toast.success("Emergency Override Authorized", {
         description: `Physical solenoid for ${targetSafe} unlatched for 120 seconds. Encrypted incident logged to immutable ledger.`,

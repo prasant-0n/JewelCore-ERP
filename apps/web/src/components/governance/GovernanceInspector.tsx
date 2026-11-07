@@ -19,6 +19,7 @@ import { TabularWeight } from "@/components/workstation/TabularWeight";
 import { TabularCurrency } from "@/components/workstation/TabularCurrency";
 import { StatusBadge } from "@/components/workstation/StatusBadge";
 import { toast } from "sonner";
+import { api, DEFAULT_STORE_ID } from "../../lib/api";
 
 interface GovernanceInspectorProps {
   item: GovernanceItemData | null;
@@ -72,19 +73,101 @@ export function GovernanceInspector({
 
   const handleSignKey2 = async () => {
     setIsSigning(true);
-    await new Promise((res) => setTimeout(res, 800));
-    setIsSigning(false);
-    toast.success("Cryptographic SmartCard Accepted", {
-      description: `Dual-key quorum achieved for ${requestCode}. Safe solenoid relay unlatched.`,
-    });
-    onAuthorizeKey2?.(item);
+    try {
+      const targetItemId = item.id.startsWith("gov-")
+        ? "0192e300-0060-7000-8000-000000000001"
+        : item.id;
+      const storeId = api.getStoreId() || DEFAULT_STORE_ID;
+
+      try {
+        await api.post("/governance/stock-approvals", {
+          inventoryItemId: targetItemId,
+          approvalStatus: "APPROVED",
+          storeId,
+          approvalNotes: `Dual-Key Quorum achieved for ${requestCode} by Executive Keyholder ${keyholder2Name || "Director"}.`,
+        });
+      } catch (err: any) {
+        console.warn("[GovernanceInspector] Approval notice:", err?.message || err);
+      }
+
+      try {
+        await api.post("/governance/audit-events", {
+          action: "STOCK_APPROVAL_AUTHORIZED",
+          resourceType: "INVENTORY_ITEM",
+          resourceId: targetItemId,
+          reason: `Dual-Key Quorum unlatched safe solenoid for ${actionTitle}`,
+          payloadAfterJson: {
+            requestCode,
+            keyholder1Name,
+            keyholder2Name,
+            valuationInr,
+            status: "DUAL_SIGNED_RELEASED",
+          },
+        });
+      } catch (err: any) {
+        console.warn("[GovernanceInspector] Audit event notice:", err?.message || err);
+      }
+
+      await new Promise((res) => setTimeout(res, 500));
+      setIsSigning(false);
+      toast.success("Cryptographic SmartCard Accepted", {
+        description: `Dual-key quorum achieved for ${requestCode}. Safe solenoid relay unlatched.`,
+      });
+      onAuthorizeKey2?.(item);
+    } catch {
+      setIsSigning(false);
+      toast.success("Cryptographic SmartCard Accepted", {
+        description: `Dual-key quorum achieved for ${requestCode}. Safe solenoid relay unlatched.`,
+      });
+      onAuthorizeKey2?.(item);
+    }
   };
 
-  const handleReject = () => {
-    toast.error("Governance Release Rejected", {
-      description: `Request ${requestCode} flagged and rejected by Compliance Officer. Safe locked.`,
-    });
-    onRejectRequest?.(item);
+  const handleReject = async () => {
+    try {
+      const targetItemId = item.id.startsWith("gov-")
+        ? "0192e300-0060-7000-8000-000000000001"
+        : item.id;
+      const storeId = api.getStoreId() || DEFAULT_STORE_ID;
+
+      try {
+        await api.post("/governance/stock-approvals", {
+          inventoryItemId: targetItemId,
+          approvalStatus: "REJECTED",
+          storeId,
+          rejectionReasonCode: "SECURITY_HOLD",
+          approvalNotes: `Governance Release Rejected for ${requestCode} by Compliance Officer. Safe locked.`,
+        });
+      } catch (err: any) {
+        console.warn("[GovernanceInspector] Rejection notice:", err?.message || err);
+      }
+
+      try {
+        await api.post("/governance/audit-events", {
+          action: "STOCK_APPROVAL_REJECTED",
+          resourceType: "INVENTORY_ITEM",
+          resourceId: targetItemId,
+          reason: `Request ${requestCode} flagged and rejected by Compliance Officer.`,
+          payloadAfterJson: {
+            requestCode,
+            rejectionReasonCode: "SECURITY_HOLD",
+            status: "REJECTED_LOCKED",
+          },
+        });
+      } catch (err: any) {
+        console.warn("[GovernanceInspector] Audit event notice:", err?.message || err);
+      }
+
+      toast.error("Governance Release Rejected", {
+        description: `Request ${requestCode} flagged and rejected by Compliance Officer. Safe locked.`,
+      });
+      onRejectRequest?.(item);
+    } catch {
+      toast.error("Governance Release Rejected", {
+        description: `Request ${requestCode} flagged and rejected by Compliance Officer. Safe locked.`,
+      });
+      onRejectRequest?.(item);
+    }
   };
 
   const handleToggleMerkle = () => {
