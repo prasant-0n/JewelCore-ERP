@@ -270,11 +270,10 @@ const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 96" wi
   <circle cx="218" cy="63" r="1.5" fill="#D4AF37"/>
 </svg>`;
 
-// Write the SVG files
+// Write the SVG files to public directory
 fs.writeFileSync(path.join(publicDir, "icon.svg"), iconSvg);
 fs.writeFileSync(path.join(publicDir, "logo-mark.svg"), markSvg);
 fs.writeFileSync(path.join(publicDir, "logo.svg"), logoSvg);
-fs.writeFileSync(path.join(appDir, "icon.svg"), iconSvg);
 
 console.log("SVG brand assets written successfully.");
 
@@ -315,19 +314,16 @@ from PIL import Image
 import os
 
 public_dir = "${publicDir.replace(/\\/g, "/")}"
-app_dir = "${appDir.replace(/\\/g, "/")}"
 
 img16 = Image.open(os.path.join(public_dir, "icon-16.png"))
 img32 = Image.open(os.path.join(public_dir, "icon-32.png"))
 img48 = Image.open(os.path.join(public_dir, "icon-48.png"))
 
 ico_path_public = os.path.join(public_dir, "favicon.ico")
-ico_path_app = os.path.join(app_dir, "favicon.ico")
 
 img48.save(ico_path_public, format='ICO', sizes=[(16, 16), (32, 32), (48, 48)])
-img48.save(ico_path_app, format='ICO', sizes=[(16, 16), (32, 32), (48, 48)])
 
-print("favicon.ico generated in public/ and src/app/ containing 16x16, 32x32, 48x48 frames.")
+print("favicon.ico generated in public/ containing 16x16, 32x32, 48x48 frames.")
 `;
 
   fs.writeFileSync("/tmp/make_ico.py", pyScript);

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import type { VaultHierarchyWithOccupancy } from "@jewelcore/shared";
 import { AppShell } from "../../components/common/AppShell";
 import { StorageDirectoryView } from "../../components/storage/StorageDirectoryView";
+import { api } from "../../lib/api";
 
 // Complete 3-Tier Storage Hierarchy replicating approved Stitch visual design
 const SAMPLE_STORAGE_HIERARCHY: VaultHierarchyWithOccupancy[] = [
@@ -318,14 +319,11 @@ export default function StoragePage() {
   useEffect(() => {
     async function loadLiveHierarchy() {
       try {
-        const res = await fetch("/api/v1/storage/hierarchy", {
-          credentials: "omit",
-        });
-        if (res.ok) {
-          const body = await res.json();
-          if (Array.isArray(body.data) && body.data.length > 0) {
-            setVaults(body.data);
-          }
+        const body = await api.get<{ data: VaultHierarchyWithOccupancy[] }>(
+          "/storage/hierarchy",
+        );
+        if (Array.isArray(body.data) && body.data.length > 0) {
+          setVaults(body.data);
         }
       } catch {
         // Fallback to rich mock data replicating Stitch visual design
