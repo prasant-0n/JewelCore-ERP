@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/common/AppShell";
 import { RfidTagCard, RfidPieceData } from "../../components/rfid/RfidTagCard";
 import {
@@ -9,6 +9,7 @@ import {
 } from "../../components/rfid/ScanTraySection";
 import { TagMetrologyInspector } from "../../components/rfid/TagMetrologyInspector";
 import { ManualTagModal } from "../../components/rfid/ManualTagModal";
+import { BatchTagModal } from "../../components/rfid/BatchTagModal";
 import {
   Radio,
   Wifi,
@@ -18,6 +19,7 @@ import {
   Search,
   Plus,
   RotateCw,
+  Layers,
 } from "lucide-react";
 import {
   WorkstationKpiGrid,
@@ -30,6 +32,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
+import { api } from "../../lib/api";
 
 const INITIAL_TRAYS: ScanTrayData[] = [
   {
@@ -145,7 +148,70 @@ export default function RfidKioskPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+  const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
   const [isFullSweeping, setIsFullSweeping] = useState(false);
+
+  const loadLiveRfidData = async () => {
+    try {
+      const [itemsRes, tagsRes] = await Promise.allSettled([
+        api.get<any[]>("/inventory/items"),
+        api.get<any[]>("/rfid/tags"),
+      ]);
+
+      const items =
+        itemsRes.status === "fulfilled" && Array.isArray(itemsRes.value)
+          ? itemsRes.value
+          : [];
+      const tags =
+        tagsRes.status === "fulfilled" && Array.isArray(tagsRes.value)
+          ? tagsRes.value
+          : [];
+
+      if (items.length > 0) {
+        setTrays((prevTrays) => {
+          return prevTrays.map((tray) => {
+            const enrichedPieces = tray.pieces.map((p) => {
+              const matchedItem = items.find(
+                (itm) => itm.serialNumber === p.serialNumber,
+              );
+              const matchedTag = tags.find((t) => t.epc === p.epcTag);
+              if (matchedItem) {
+                return {
+                  ...p,
+                  id: matchedItem.id,
+                  itemName: matchedItem.itemName || p.itemName,
+                  grossWeightGrams:
+                    Number(matchedItem.grossWeightGrams) || p.grossWeightGrams,
+                  netGoldGrams:
+                    Number(matchedItem.netWeightGrams) || p.netGoldGrams,
+                  status:
+                    matchedTag && matchedTag.status === "ACTIVE"
+                      ? ("VERIFIED" as const)
+                      : p.status,
+                };
+              }
+              return p;
+            });
+            return {
+              ...tray,
+              pieces: enrichedPieces,
+              totalWeightGrams: enrichedPieces.reduce(
+                (acc, p) =>
+                  acc + (p.status !== "MISSING" ? p.grossWeightGrams : 0),
+                0,
+              ),
+            };
+          });
+        });
+      }
+    } catch (e) {
+      console.warn("[RfidKioskPage] Live sync notice:", e);
+    }
+  };
+
+  useEffect(() => {
+    loadLiveRfidData();
+  }, []);
 
   // Compute metrics
   const totalExpected = trays.reduce((acc, t) => acc + t.expectedCount, 0);
@@ -221,6 +287,7 @@ export default function RfidKioskPage() {
   const handleTriggerFullSweep = async () => {
     setIsFullSweeping(true);
     await triggerRfidSweep("tray-01");
+    await loadLiveRfidData();
     setTimeout(() => {
       setIsFullSweeping(false);
       toast.success("360° Antenna Sweep Completed", {
@@ -228,6 +295,14 @@ export default function RfidKioskPage() {
           "53 tags interrogated across 4 ports in 280ms. Signal map updated.",
       });
     }, 600);
+  };
+
+  const handleSealTray = () => {
+    setTrays((prev) =>
+      prev.map((t) =>
+        t.trayName === selectedTrayName ? { ...t, status: "SEALED" } : t,
+      ),
+    );
   };
 
   const handleRegisterManualTag = (
@@ -276,6 +351,14 @@ export default function RfidKioskPage() {
             <Button
               variant="secondary"
               size="sm"
+              onClick={() => setIsBatchModalOpen(true)}
+            >
+              <Layers className="w-3.5 h-3.5 mr-1" />
+              <span>Batch Tag &amp; ZPL Spooler</span>
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => setIsManualModalOpen(true)}
             >
               <Plus className="w-3.5 h-3.5 mr-1" />
@@ -304,6 +387,7 @@ export default function RfidKioskPage() {
               parentTrayName={selectedTrayName}
               onClose={() => setSelectedPiece(null)}
               onReSweep={handleTriggerFullSweep}
+              onSealTrayAudit={handleSealTray}
             />
           }
         >
@@ -373,6 +457,13 @@ export default function RfidKioskPage() {
           isOpen={isManualModalOpen}
           onClose={() => setIsManualModalOpen(false)}
           onRegistered={handleRegisterManualTag}
+        />
+
+        {/* Modal for Batch RFID Tag Encoding & ZPL Spooler */}
+        <BatchTagModal
+          isOpen={isBatchModalOpen}
+          onClose={() => setIsBatchModalOpen(false)}
+          onJobDispatched={() => handleTriggerFullSweep()}
         />
       </div>
     </AppShell>

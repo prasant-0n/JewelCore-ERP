@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { RfidPieceData } from "./RfidTagCard";
+import { ZplLabelPreviewModal } from "./ZplLabelPreviewModal";
 import {
   Radio,
   Wifi,
@@ -47,6 +48,7 @@ export function TagMetrologyInspector({
   onSealTrayAudit,
 }: TagMetrologyInspectorProps) {
   const [isSweeping, setIsSweeping] = useState(false);
+  const [isZplPreviewOpen, setIsZplPreviewOpen] = useState(false);
 
   if (!item) {
     return (
@@ -82,9 +84,7 @@ export function TagMetrologyInspector({
   };
 
   const handleReprint = () => {
-    toast.info(`Reprinting RFID Tag for ${item.serialNumber}`, {
-      description: `Dispatched to Zebra ZD621R RFID Thermal Encoder. EPC: ${item.epcTag}`,
-    });
+    setIsZplPreviewOpen(true);
   };
 
   const handleSeal = () => {
@@ -217,6 +217,13 @@ export function TagMetrologyInspector({
           Seal Audit
         </Button>
       </CardFooter>
+
+      {/* Zebra ZPL II Jewellery Label Preview Modal */}
+      <ZplLabelPreviewModal
+        isOpen={isZplPreviewOpen}
+        onClose={() => setIsZplPreviewOpen(false)}
+        item={item}
+      />
     </Card>
   );
 }

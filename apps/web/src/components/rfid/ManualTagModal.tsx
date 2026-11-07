@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { api } from "../../lib/api";
 
 interface ManualTagModalProps {
   isOpen: boolean;
@@ -49,17 +50,30 @@ export function ManualTagModal({
 
     setIsSubmitting(true);
     try {
-      await new Promise((res) => setTimeout(res, 500));
+      let registeredTagId: string | null = null;
+      try {
+        const tagRes = await api.post<{ id: string; epc: string }>("/rfid/tags", {
+          epc: epcTag,
+          frequencyBand: "UHF_860_960_MHZ",
+        });
+        registeredTagId = tagRes?.id || null;
+      } catch (err: any) {
+        // 409 Conflict if EPC already registered in tenant
+        console.warn("[ManualTagModal] Tag registration notice:", err?.message || err);
+      }
+
+      const gross = parseFloat(grossWeightGrams) || 5.92;
+      const net = parseFloat(netGoldGrams) || 5.6;
 
       const newPiece: RfidPieceData = {
-        id: `rfid-${Date.now()}`,
+        id: registeredTagId || `rfid-${Date.now()}`,
         epcTag,
         serialNumber,
         itemName,
         category: "Solitaire Rings",
         metalPurity,
-        grossWeightGrams: parseFloat(grossWeightGrams) || 5.92,
-        netGoldGrams: parseFloat(netGoldGrams) || 5.6,
+        grossWeightGrams: gross,
+        netGoldGrams: net,
         diamondCarat: diamondCarat ? parseFloat(diamondCarat) : undefined,
         status: "VERIFIED",
         rssiDbm: -38,
