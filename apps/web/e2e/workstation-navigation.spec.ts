@@ -67,4 +67,50 @@ test.describe("Workstation Navigation & Header Breadcrumbs", () => {
       await expect(ticker).toBeVisible();
     });
   }
+
+  test("Executive Command Center: verifies live aggregation, drawer inspection and scale sync", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    // 1. Verify Top Subheader and Workstation Title
+    await expect(page.locator("h1")).toContainText(/Executive Control Tower/i);
+
+    // 2. Verify Live Bullion Ticker Widget
+    await expect(page.locator("text=Live Bullion Fixing (IBJA)")).toBeVisible();
+    await expect(page.locator("text=Gold 24K (999)")).toBeVisible();
+
+    // 3. Sync All Vault Scales action
+    const syncBtn = page.getByRole("button", { name: /Sync All Vault Scales/i });
+    await expect(syncBtn).toBeVisible();
+    await syncBtn.click();
+    await expect(page.locator("text=Synchronizing Vault Scales")).toBeVisible({
+      timeout: 5000,
+    });
+
+    // 4. Test Custody Filter Tabs
+    const displayTab = page.getByRole("button", { name: "Display" });
+    await expect(displayTab).toBeVisible();
+    await displayTab.click();
+
+    // 5. Click on an inventory row to open PieceInspectorDrawer
+    const pieceRow = page.locator("tr").filter({ hasText: "JC-SOL-2026-081" }).first();
+    await expect(pieceRow).toBeVisible();
+    await pieceRow.click();
+
+    // 6. Verify 4-dimension audit state matrix in drawer
+    await expect(
+      page.locator("text=Governance & State Matrix (INV-01)"),
+    ).toBeVisible();
+    await expect(page.getByText("QUALITY", { exact: true })).toBeVisible();
+    await expect(page.getByText("APPROVAL", { exact: true })).toBeVisible();
+    await expect(page.getByText("CUSTODY", { exact: true })).toBeVisible();
+    await expect(page.getByText("COMMERCIAL", { exact: true })).toBeVisible();
+
+    // Close drawer via Escape key
+    await page.keyboard.press("Escape");
+    await expect(
+      page.locator("text=Governance & State Matrix (INV-01)"),
+    ).not.toBeVisible();
+  });
 });
