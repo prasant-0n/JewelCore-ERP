@@ -42,7 +42,10 @@ export async function getTransferManifestHandler(
 ): Promise<void> {
   try {
     const { orgId } = getAuthContext(req);
-    const manifest = await getTransferManifestById(orgId, req.params.id as string);
+    const manifest = await getTransferManifestById(
+      orgId,
+      req.params.id as string,
+    );
     if (!manifest) {
       throw new NotFoundError("Transfer manifest not found");
     }

@@ -27,8 +27,12 @@ export function ScheduleTransferModal({
   onScheduled,
 }: ScheduleTransferModalProps) {
   const [targetManifestId, setTargetManifestId] = useState("man-01");
-  const [destinationVault, setDestinationVault] = useState("New Delhi Connaught Place Vault (INV-02)");
-  const [trayDescription, setTrayDescription] = useState("Artisan Diamond Solitaire Pendants & Bangles");
+  const [destinationVault, setDestinationVault] = useState(
+    "New Delhi Connaught Place Vault (INV-02)",
+  );
+  const [trayDescription, setTrayDescription] = useState(
+    "Artisan Diamond Solitaire Pendants & Bangles",
+  );
   const [pieceCount, setPieceCount] = useState("24");
   const [grossWeightGrams, setGrossWeightGrams] = useState("412.500");
   const [specieValuationInr, setSpecieValuationInr] = useState("8500000");
@@ -39,7 +43,9 @@ export function ScheduleTransferModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!trayDescription || !grossWeightGrams) {
-      toast.error("Validation Error", { description: "Please fill in tray description and gross weight." });
+      toast.error("Validation Error", {
+        description: "Please fill in tray description and gross weight.",
+      });
       return;
     }
 
@@ -75,7 +81,8 @@ export function ScheduleTransferModal({
       onScheduled?.(newItem, targetManifestId);
     } catch (err) {
       toast.error("Transfer Error", {
-        description: err instanceof Error ? err.message : "Failed to schedule transfer",
+        description:
+          err instanceof Error ? err.message : "Failed to schedule transfer",
       });
       setIsSubmitting(false);
     }
@@ -112,10 +119,18 @@ export function ScheduleTransferModal({
               onChange={(e) => setDestinationVault(e.target.value)}
               className="w-full bg-surface-elevated border border-surface-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-gold"
             >
-              <option value="New Delhi Connaught Place Vault (INV-02)">New Delhi Connaught Place Vault (INV-02)</option>
-              <option value="Bangalore Indiranagar Showroom (INV-05)">Bangalore Indiranagar Showroom (INV-05)</option>
-              <option value="Airport Bonded Exhibition Transit (Geneva Salon)">Airport Bonded Exhibition Transit (Geneva Salon)</option>
-              <option value="Surat Atelier Refinery Safe (INV-03)">Surat Atelier Refinery Safe (INV-03)</option>
+              <option value="New Delhi Connaught Place Vault (INV-02)">
+                New Delhi Connaught Place Vault (INV-02)
+              </option>
+              <option value="Bangalore Indiranagar Showroom (INV-05)">
+                Bangalore Indiranagar Showroom (INV-05)
+              </option>
+              <option value="Airport Bonded Exhibition Transit (Geneva Salon)">
+                Airport Bonded Exhibition Transit (Geneva Salon)
+              </option>
+              <option value="Surat Atelier Refinery Safe (INV-03)">
+                Surat Atelier Refinery Safe (INV-03)
+              </option>
             </select>
           </div>
 

@@ -16,7 +16,13 @@ import {
   X,
   RefreshCw,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
@@ -45,9 +51,12 @@ export function IngotInspector({
     return (
       <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
         <Scale className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-foreground">No Ingot Lot Selected</h4>
+        <h4 className="text-sm font-medium text-foreground">
+          No Ingot Lot Selected
+        </h4>
         <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-          Select any ingot bar tile from the active shipment directory to inspect its dual-scale metrology, purity assay, and landed valuation.
+          Select any ingot bar tile from the active shipment directory to
+          inspect its dual-scale metrology, purity assay, and landed valuation.
         </p>
       </Card>
     );
@@ -83,7 +92,8 @@ export function IngotInspector({
     setTimeout(() => {
       setIsAuthorizing(false);
       toast.success(`GRN Authorization Confirmed for ${barCode}`, {
-        description: "Assay clearance passed. Lot committed to primary vault ledger.",
+        description:
+          "Assay clearance passed. Lot committed to primary vault ledger.",
       });
       onAuthorizeSuccess?.(ingot);
     }, 800);
@@ -148,8 +158,13 @@ export function IngotInspector({
         {/* Financial Landed Cost Box */}
         <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground font-mono">Landed Bullion Valuation:</span>
-            <TabularCurrency amount={landedValue} className="text-gold text-sm font-bold" />
+            <span className="text-muted-foreground font-mono">
+              Landed Bullion Valuation:
+            </span>
+            <TabularCurrency
+              amount={landedValue}
+              className="text-gold text-sm font-bold"
+            />
           </div>
           <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
             <span>Locked Rate: ₹{effectiveRate.toFixed(2)}/g</span>
@@ -160,7 +175,9 @@ export function IngotInspector({
         {/* Containment Route */}
         <div className="p-3 rounded-lg bg-obsidian-deep border border-surface-border text-xs flex items-center justify-between">
           <span className="text-muted-foreground">Allocated Vault Cell:</span>
-          <span className="font-mono text-foreground font-medium">{ingot.containmentPath}</span>
+          <span className="font-mono text-foreground font-medium">
+            {ingot.containmentPath}
+          </span>
         </div>
       </CardContent>
 

@@ -27,11 +27,15 @@ export const createTransferManifestSchema = z.object({
   carrierName: z.string().min(2).max(100),
   trackingNumber: z.string().max(100).optional(),
   estimatedArrival: z.string().datetime().optional(),
-  sealNumbers: z.array(z.string().min(2).max(50)).min(1, "At least one security seal is required (INV-16)"),
+  sealNumbers: z
+    .array(z.string().min(2).max(50))
+    .min(1, "At least one security seal is required (INV-16)"),
   notes: z.string().max(1000).optional(),
 });
 
-export type CreateTransferManifestInput = z.infer<typeof createTransferManifestSchema>;
+export type CreateTransferManifestInput = z.infer<
+  typeof createTransferManifestSchema
+>;
 
 export const listTransferManifestsQuerySchema = z.object({
   transferOrderId: z.string().uuid().optional(),
@@ -40,7 +44,9 @@ export const listTransferManifestsQuerySchema = z.object({
   offset: z.coerce.number().min(0).default(0),
 });
 
-export type ListTransferManifestsQuery = z.infer<typeof listTransferManifestsQuerySchema>;
+export type ListTransferManifestsQuery = z.infer<
+  typeof listTransferManifestsQuerySchema
+>;
 
 export interface SecuritySealRecord {
   id: string;

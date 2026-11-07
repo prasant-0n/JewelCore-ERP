@@ -87,15 +87,15 @@ export function QcSessionSection({
               session.status === "UNDER_INSPECTION"
                 ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
                 : session.status === "PASSED"
-                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
-                : "bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/30"
+                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                  : "bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/30"
             }`}
           >
             {session.status === "UNDER_INSPECTION"
               ? "Under Inspection"
               : session.status === "PASSED"
-              ? "Hallmark Cleared"
-              : "Quarantined Hold"}
+                ? "Hallmark Cleared"
+                : "Quarantined Hold"}
           </span>
         </div>
       </div>
@@ -105,7 +105,8 @@ export function QcSessionSection({
         <div className="p-5 bg-surface-elevated/40">
           <div className="flex items-center justify-between mb-3 text-xs font-mono">
             <span className="text-muted-foreground uppercase text-[10px] tracking-wider font-medium">
-              Items in QC Fixture Tray ({session.items.length} Loaded on Spectrometer Stage)
+              Items in QC Fixture Tray ({session.items.length} Loaded on
+              Spectrometer Stage)
             </span>
             <span className="text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center gap-1 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />

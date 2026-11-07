@@ -52,7 +52,9 @@ interface TransferOrderItemRow {
   created_at: Date;
 }
 
-function mapTransferOrderItem(row: TransferOrderItemRow): TransferOrderItemRecord {
+function mapTransferOrderItem(
+  row: TransferOrderItemRow,
+): TransferOrderItemRecord {
   return {
     id: row.id,
     organizationId: row.organization_id,
@@ -63,11 +65,17 @@ function mapTransferOrderItem(row: TransferOrderItemRow): TransferOrderItemRecor
     serialNumber: row.serial_number,
     status: row.status,
     notes: row.notes,
-    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at),
+    createdAt:
+      row.created_at instanceof Date
+        ? row.created_at.toISOString()
+        : String(row.created_at),
   };
 }
 
-function mapTransferOrder(row: TransferOrderRow, items?: TransferOrderItemRecord[]): TransferOrderRecord {
+function mapTransferOrder(
+  row: TransferOrderRow,
+  items?: TransferOrderItemRecord[],
+): TransferOrderRecord {
   return {
     id: row.id,
     organizationId: row.organization_id,
@@ -84,9 +92,20 @@ function mapTransferOrder(row: TransferOrderRow, items?: TransferOrderItemRecord
     approvedByUserName: row.approved_by_user_name,
     rejectionReason: row.rejection_reason,
     notes: row.notes,
-    approvedAt: row.approved_at instanceof Date ? row.approved_at.toISOString() : (row.approved_at ? String(row.approved_at) : null),
-    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at),
-    updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : String(row.updated_at),
+    approvedAt:
+      row.approved_at instanceof Date
+        ? row.approved_at.toISOString()
+        : row.approved_at
+          ? String(row.approved_at)
+          : null,
+    createdAt:
+      row.created_at instanceof Date
+        ? row.created_at.toISOString()
+        : String(row.created_at),
+    updatedAt:
+      row.updated_at instanceof Date
+        ? row.updated_at.toISOString()
+        : String(row.updated_at),
     items,
   };
 }
@@ -97,7 +116,9 @@ export async function createTransferOrder(
   data: CreateTransferOrderInput,
 ): Promise<TransferOrderRecord> {
   if (data.sourceStoreId === data.destinationStoreId) {
-    throw new ValidationError("Source store and destination store must be different");
+    throw new ValidationError(
+      "Source store and destination store must be different",
+    );
   }
 
   // Validate stores exist and belong to organization
@@ -107,11 +128,19 @@ export async function createTransferOrder(
   );
 
   if (storesResult.rows.length !== 2) {
-    throw new NotFoundError("Source or destination store not found in organization");
+    throw new NotFoundError(
+      "Source or destination store not found in organization",
+    );
   }
 
   const orderId = uuidv7();
-  const orderNumber = data.orderNumber || `XFR-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000).toString().padStart(3, "0")}`;
+  const orderNumber =
+    data.orderNumber ||
+    `XFR-${Date.now().toString(36).toUpperCase()}-${Math.floor(
+      Math.random() * 1000,
+    )
+      .toString()
+      .padStart(3, "0")}`;
 
   return withTransaction(async (client) => {
     // Insert Transfer Order
@@ -156,7 +185,9 @@ export async function createTransferOrder(
         }
 
         if (piece.store_id !== data.sourceStoreId) {
-          throw new ValidationError(`Inventory item ${itemId} does not belong to source store`);
+          throw new ValidationError(
+            `Inventory item ${itemId} does not belong to source store`,
+          );
         }
 
         if (piece.custody_state !== "IN_VAULT") {
@@ -183,7 +214,9 @@ export async function createTransferOrder(
         );
 
         if (activeXfrRes.rows.length > 0) {
-          throw new ConflictError(`Inventory item ${itemId} is already part of an active transfer order`);
+          throw new ConflictError(
+            `Inventory item ${itemId} is already part of an active transfer order`,
+          );
         }
 
         const lineId = uuidv7();
@@ -191,7 +224,14 @@ export async function createTransferOrder(
           `INSERT INTO transfer_order_items (
             id, organization_id, transfer_order_id, inventory_item_id, product_sku_id, status, created_at
           ) VALUES ($1, $2, $3, $4, $5, $6, clock_timestamp())`,
-          [lineId, organizationId, orderId, itemId, piece.product_sku_id, TransferOrderItemStatus.PENDING],
+          [
+            lineId,
+            organizationId,
+            orderId,
+            itemId,
+            piece.product_sku_id,
+            TransferOrderItemStatus.PENDING,
+          ],
         );
       }
     }
@@ -208,11 +248,19 @@ export async function createTransferOrder(
         orderId,
         "TRANSFER_ORDER_CREATED",
         requestedByUserId,
-        JSON.stringify({ orderNumber, sourceStoreId: data.sourceStoreId, destinationStoreId: data.destinationStoreId }),
+        JSON.stringify({
+          orderNumber,
+          sourceStoreId: data.sourceStoreId,
+          destinationStoreId: data.destinationStoreId,
+        }),
       ],
     );
 
-    const fullOrder = await getTransferOrderById(organizationId, orderId, client);
+    const fullOrder = await getTransferOrderById(
+      organizationId,
+      orderId,
+      client,
+    );
     if (!fullOrder) {
       throw new Error("Failed to retrieve created transfer order");
     }
@@ -227,7 +275,11 @@ export async function addTransferOrderItem(
 ): Promise<TransferOrderItemRecord> {
   return withTransaction(async (client) => {
     // Check order
-    const orderRes = await client.query<{ id: string; status: string; source_store_id: string }>(
+    const orderRes = await client.query<{
+      id: string;
+      status: string;
+      source_store_id: string;
+    }>(
       `SELECT id, status, source_store_id FROM transfer_orders WHERE id = $1 AND organization_id = $2 FOR UPDATE`,
       [transferOrderId, organizationId],
     );
@@ -238,7 +290,9 @@ export async function addTransferOrderItem(
     }
 
     if (order.status !== TransferOrderStatus.DRAFT) {
-      throw new ValidationError(`Cannot add items to transfer order in ${order.status} state`);
+      throw new ValidationError(
+        `Cannot add items to transfer order in ${order.status} state`,
+      );
     }
 
     // Validate inventory item
@@ -258,11 +312,15 @@ export async function addTransferOrderItem(
 
     const piece = itemRes.rows[0];
     if (!piece) {
-      throw new NotFoundError(`Inventory item ${data.inventoryItemId} not found`);
+      throw new NotFoundError(
+        `Inventory item ${data.inventoryItemId} not found`,
+      );
     }
 
     if (piece.store_id !== order.source_store_id) {
-      throw new ValidationError(`Inventory item does not belong to source store`);
+      throw new ValidationError(
+        `Inventory item does not belong to source store`,
+      );
     }
 
     if (piece.custody_state !== "IN_VAULT") {
@@ -284,7 +342,9 @@ export async function addTransferOrderItem(
     );
 
     if (existingInOrder.rows.length > 0) {
-      throw new ConflictError(`Inventory item already added to this transfer order`);
+      throw new ConflictError(
+        `Inventory item already added to this transfer order`,
+      );
     }
 
     // Check if in another active order
@@ -299,7 +359,9 @@ export async function addTransferOrderItem(
     );
 
     if (activeXfrRes.rows.length > 0) {
-      throw new ConflictError(`Inventory item is already part of an active transfer order`);
+      throw new ConflictError(
+        `Inventory item is already part of an active transfer order`,
+      );
     }
 
     const lineId = uuidv7();
@@ -308,7 +370,15 @@ export async function addTransferOrderItem(
         id, organization_id, transfer_order_id, inventory_item_id, product_sku_id, status, notes, created_at
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, clock_timestamp())
       RETURNING *`,
-      [lineId, organizationId, transferOrderId, data.inventoryItemId, piece.product_sku_id, TransferOrderItemStatus.PENDING, data.notes || null],
+      [
+        lineId,
+        organizationId,
+        transferOrderId,
+        data.inventoryItemId,
+        piece.product_sku_id,
+        TransferOrderItemStatus.PENDING,
+        data.notes || null,
+      ],
     );
 
     const insertedRow = insertRes.rows[0];
@@ -337,7 +407,9 @@ export async function removeTransferOrderItem(
   }
 
   if (order.status !== TransferOrderStatus.DRAFT) {
-    throw new ValidationError(`Cannot remove items from transfer order in ${order.status} state`);
+    throw new ValidationError(
+      `Cannot remove items from transfer order in ${order.status} state`,
+    );
   }
 
   const deleteRes = await query(
@@ -346,7 +418,9 @@ export async function removeTransferOrderItem(
   );
 
   if (deleteRes.rowCount === 0) {
-    throw new NotFoundError(`Transfer order item ${transferOrderItemId} not found`);
+    throw new NotFoundError(
+      `Transfer order item ${transferOrderItemId} not found`,
+    );
   }
 }
 
@@ -367,7 +441,9 @@ export async function submitTransferOrder(
     }
 
     if (order.status !== TransferOrderStatus.DRAFT) {
-      throw new ValidationError(`Transfer order is in ${order.status} state, only DRAFT can be submitted`);
+      throw new ValidationError(
+        `Transfer order is in ${order.status} state, only DRAFT can be submitted`,
+      );
     }
 
     // Must have at least 1 item
@@ -378,7 +454,9 @@ export async function submitTransferOrder(
 
     const countRow = itemsCountRes.rows[0];
     if (!countRow || parseInt(countRow.count, 10) === 0) {
-      throw new ValidationError(`Transfer order must have at least one item before submission`);
+      throw new ValidationError(
+        `Transfer order must have at least one item before submission`,
+      );
     }
 
     await client.query(
@@ -401,7 +479,11 @@ export async function submitTransferOrder(
       ],
     );
 
-    const updated = await getTransferOrderById(organizationId, transferOrderId, client);
+    const updated = await getTransferOrderById(
+      organizationId,
+      transferOrderId,
+      client,
+    );
     return updated!;
   });
 }
@@ -423,7 +505,9 @@ export async function approveTransferOrder(
     }
 
     if (order.status !== TransferOrderStatus.REQUESTED) {
-      throw new ValidationError(`Transfer order is in ${order.status} state, only REQUESTED can be approved`);
+      throw new ValidationError(
+        `Transfer order is in ${order.status} state, only REQUESTED can be approved`,
+      );
     }
 
     await client.query(
@@ -448,7 +532,11 @@ export async function approveTransferOrder(
       ],
     );
 
-    const updated = await getTransferOrderById(organizationId, transferOrderId, client);
+    const updated = await getTransferOrderById(
+      organizationId,
+      transferOrderId,
+      client,
+    );
     return updated!;
   });
 }
@@ -471,14 +559,21 @@ export async function rejectTransferOrder(
     }
 
     if (order.status !== TransferOrderStatus.REQUESTED) {
-      throw new ValidationError(`Transfer order is in ${order.status} state, only REQUESTED can be rejected`);
+      throw new ValidationError(
+        `Transfer order is in ${order.status} state, only REQUESTED can be rejected`,
+      );
     }
 
     await client.query(
       `UPDATE transfer_orders
        SET status = $1, approved_by_user_id = $2, rejection_reason = $3, updated_at = clock_timestamp()
        WHERE id = $4`,
-      [TransferOrderStatus.REJECTED, rejectedByUserId, data.rejectionReason, transferOrderId],
+      [
+        TransferOrderStatus.REJECTED,
+        rejectedByUserId,
+        data.rejectionReason,
+        transferOrderId,
+      ],
     );
 
     await client.query(
@@ -492,11 +587,18 @@ export async function rejectTransferOrder(
         transferOrderId,
         "TRANSFER_ORDER_REJECTED",
         rejectedByUserId,
-        JSON.stringify({ newStatus: TransferOrderStatus.REJECTED, rejectionReason: data.rejectionReason }),
+        JSON.stringify({
+          newStatus: TransferOrderStatus.REJECTED,
+          rejectionReason: data.rejectionReason,
+        }),
       ],
     );
 
-    const updated = await getTransferOrderById(organizationId, transferOrderId, client);
+    const updated = await getTransferOrderById(
+      organizationId,
+      transferOrderId,
+      client,
+    );
     return updated!;
   });
 }
@@ -508,7 +610,11 @@ export async function cancelTransferOrder(
   reason?: string,
 ): Promise<TransferOrderRecord> {
   return withTransaction(async (client) => {
-    const orderRes = await client.query<{ id: string; status: string; notes: string | null }>(
+    const orderRes = await client.query<{
+      id: string;
+      status: string;
+      notes: string | null;
+    }>(
       `SELECT id, status, notes FROM transfer_orders WHERE id = $1 AND organization_id = $2 FOR UPDATE`,
       [transferOrderId, organizationId],
     );
@@ -519,12 +625,19 @@ export async function cancelTransferOrder(
     }
 
     const currentStatus = order.status;
-    if (currentStatus !== TransferOrderStatus.DRAFT && currentStatus !== TransferOrderStatus.REQUESTED) {
-      throw new ValidationError(`Transfer order is in ${currentStatus} state and cannot be cancelled`);
+    if (
+      currentStatus !== TransferOrderStatus.DRAFT &&
+      currentStatus !== TransferOrderStatus.REQUESTED
+    ) {
+      throw new ValidationError(
+        `Transfer order is in ${currentStatus} state and cannot be cancelled`,
+      );
     }
 
     const updatedNotes = reason
-      ? (order.notes ? `${order.notes}\nCancellation reason: ${reason}` : `Cancellation reason: ${reason}`)
+      ? order.notes
+        ? `${order.notes}\nCancellation reason: ${reason}`
+        : `Cancellation reason: ${reason}`
       : order.notes;
 
     await client.query(
@@ -556,7 +669,11 @@ export async function cancelTransferOrder(
       ],
     );
 
-    const updated = await getTransferOrderById(organizationId, transferOrderId, client);
+    const updated = await getTransferOrderById(
+      organizationId,
+      transferOrderId,
+      client,
+    );
     return updated!;
   });
 }
@@ -658,6 +775,6 @@ export async function listTransferOrders(
     listParams,
   );
 
-  const orders = listRes.rows.map(row => mapTransferOrder(row));
+  const orders = listRes.rows.map((row) => mapTransferOrder(row));
   return { orders, total };
 }

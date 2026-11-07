@@ -18,7 +18,10 @@ import {
   Plus,
   Microscope,
 } from "lucide-react";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import {
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -161,16 +164,19 @@ const QC_KPIS: KpiItem[] = [
 ];
 
 export default function QcPage() {
-  const [sessions, setSessions] = useState<QcSessionData[]>(INITIAL_QC_SESSIONS);
+  const [sessions, setSessions] =
+    useState<QcSessionData[]>(INITIAL_QC_SESSIONS);
   const [activeFilter, setActiveFilter] = useState<
     "ALL" | "UNDER_INSPECTION" | "PASSED" | "FAILED"
   >("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<QcItemData | null>(
-    INITIAL_QC_SESSIONS[0].items[0]
+    INITIAL_QC_SESSIONS[0].items[0],
   );
   const [selectedSessionName, setSelectedSessionName] = useState<string>(
-    INITIAL_QC_SESSIONS[0].sessionNumber + " > " + INITIAL_QC_SESSIONS[0].batchName
+    INITIAL_QC_SESSIONS[0].sessionNumber +
+      " > " +
+      INITIAL_QC_SESSIONS[0].batchName,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -185,7 +191,9 @@ export default function QcPage() {
         const matchesQuery =
           searchQuery.trim() === "" ||
           item.itemCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.parentPieceSerial.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.parentPieceSerial
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
           sess.batchName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           sess.inspectorName.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesQuery;
@@ -200,7 +208,8 @@ export default function QcPage() {
 
   const handleCalibrate = () => {
     toast.success("Spectrometer Calibrated", {
-      description: "Drift calibration zeroed: Reference standard Au999.9 certified.",
+      description:
+        "Drift calibration zeroed: Reference standard Au999.9 certified.",
     });
   };
 
@@ -234,11 +243,7 @@ export default function QcPage() {
               <FlaskConical className="w-3.5 h-3.5 mr-1" />
               <span>New Inspection Batch</span>
             </Button>
-            <Button
-              variant="gold"
-              size="sm"
-              onClick={handleCalibrate}
-            >
+            <Button variant="gold" size="sm" onClick={handleCalibrate}>
               <Microscope className="w-3.5 h-3.5 mr-1" />
               <span>Calibrate Spectrometer</span>
             </Button>

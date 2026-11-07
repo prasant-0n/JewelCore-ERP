@@ -91,11 +91,15 @@ describe("Sales Return Repository (FEAT-RET-01, Entities 52 & 53)", () => {
     await query(
       "DELETE FROM sales_invoices WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RET_REPO', 'ORG_RET_REPO_ALT'));",
     );
-    await query("ALTER TABLE store_credit_transactions DISABLE TRIGGER trg_store_credit_transactions_immutability;");
+    await query(
+      "ALTER TABLE store_credit_transactions DISABLE TRIGGER trg_store_credit_transactions_immutability;",
+    );
     await query(
       "DELETE FROM store_credit_transactions WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RET_REPO', 'ORG_RET_REPO_ALT'));",
     );
-    await query("ALTER TABLE store_credit_transactions ENABLE TRIGGER trg_store_credit_transactions_immutability;");
+    await query(
+      "ALTER TABLE store_credit_transactions ENABLE TRIGGER trg_store_credit_transactions_immutability;",
+    );
     await query(
       "DELETE FROM store_credit_accounts WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RET_REPO', 'ORG_RET_REPO_ALT'));",
     );
@@ -121,8 +125,12 @@ describe("Sales Return Repository (FEAT-RET-01, Entities 52 & 53)", () => {
       "DELETE FROM goods_receipt_notes WHERE grn_number LIKE 'GRN-RET-REPO-%';",
     );
     await query("DELETE FROM suppliers WHERE code LIKE 'SUP_RET_REPO_%';");
-    await query("DELETE FROM product_skus WHERE sku_code LIKE 'SKU-RET-REPO-%';");
-    await query("DELETE FROM products WHERE product_code LIKE 'PRD_RET_REPO_%';");
+    await query(
+      "DELETE FROM product_skus WHERE sku_code LIKE 'SKU-RET-REPO-%';",
+    );
+    await query(
+      "DELETE FROM products WHERE product_code LIKE 'PRD_RET_REPO_%';",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_RET_REPO_%';");
     await query("DELETE FROM materials WHERE code LIKE 'MAT_RET_REPO_%';");
     await query("DELETE FROM categories WHERE code LIKE 'CAT_RET_REPO_%';");
@@ -521,8 +529,18 @@ describe("Sales Return Repository (FEAT-RET-01, Entities 52 & 53)", () => {
       `SELECT dimension_changed, new_state FROM inventory_status_history WHERE inventory_item_id = $1 ORDER BY transitioned_at DESC LIMIT 2`,
       [pieceId1],
     );
-    expect(historyRes.rows.some((h) => h.dimension_changed === "COMMERCIAL" && h.new_state === "AVAILABLE_FOR_SALE")).toBe(true);
-    expect(historyRes.rows.some((h) => h.dimension_changed === "CUSTODY" && h.new_state === "IN_VAULT")).toBe(true);
+    expect(
+      historyRes.rows.some(
+        (h) =>
+          h.dimension_changed === "COMMERCIAL" &&
+          h.new_state === "AVAILABLE_FOR_SALE",
+      ),
+    ).toBe(true);
+    expect(
+      historyRes.rows.some(
+        (h) => h.dimension_changed === "CUSTODY" && h.new_state === "IN_VAULT",
+      ),
+    ).toBe(true);
 
     // Verify audit event
     const auditRes = await query<{ action: string; resource_id: string }>(

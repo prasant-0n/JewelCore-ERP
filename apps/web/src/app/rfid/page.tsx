@@ -2,10 +2,7 @@
 
 import React, { useState } from "react";
 import { AppShell } from "../../components/common/AppShell";
-import {
-  RfidTagCard,
-  RfidPieceData,
-} from "../../components/rfid/RfidTagCard";
+import { RfidTagCard, RfidPieceData } from "../../components/rfid/RfidTagCard";
 import {
   ScanTraySection,
   ScanTrayData,
@@ -22,7 +19,10 @@ import {
   Plus,
   RotateCw,
 } from "lucide-react";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import {
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -136,10 +136,10 @@ const INITIAL_TRAYS: ScanTrayData[] = [
 export default function RfidKioskPage() {
   const [trays, setTrays] = useState<ScanTrayData[]>(INITIAL_TRAYS);
   const [selectedPiece, setSelectedPiece] = useState<RfidPieceData | null>(
-    INITIAL_TRAYS[0].pieces[0]
+    INITIAL_TRAYS[0].pieces[0],
   );
   const [selectedTrayName, setSelectedTrayName] = useState<string>(
-    INITIAL_TRAYS[0].trayName
+    INITIAL_TRAYS[0].trayName,
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
@@ -150,7 +150,8 @@ export default function RfidKioskPage() {
   const totalExpected = trays.reduce((acc, t) => acc + t.expectedCount, 0);
   const totalDetected = trays.reduce((acc, t) => acc + t.detectedCount, 0);
   const totalDiscrepancies = totalExpected - totalDetected;
-  const matchRate = totalExpected > 0 ? Math.round((totalDetected / totalExpected) * 100) : 100;
+  const matchRate =
+    totalExpected > 0 ? Math.round((totalDetected / totalExpected) * 100) : 100;
   const totalWeight = trays.reduce((acc, t) => acc + t.totalWeightGrams, 0);
 
   const rfidKpiItems: KpiItem[] = [
@@ -166,7 +167,8 @@ export default function RfidKioskPage() {
       id: "kpi-discrepancies",
       title: "Discrepancy / Flagged",
       value: `${totalDiscrepancies} Flagged`,
-      subValue: totalDiscrepancies > 0 ? "Missing from Tray #01" : "All Reconciled",
+      subValue:
+        totalDiscrepancies > 0 ? "Missing from Tray #01" : "All Reconciled",
       badge: {
         text: totalDiscrepancies > 0 ? "Alert" : "Clean",
         variant: totalDiscrepancies > 0 ? "rose" : "emerald",
@@ -199,7 +201,7 @@ export default function RfidKioskPage() {
         (p) =>
           p.epcTag.toLowerCase().includes(q) ||
           p.serialNumber.toLowerCase().includes(q) ||
-          p.itemName.toLowerCase().includes(q)
+          p.itemName.toLowerCase().includes(q),
       );
     }
     if (filterState === "MISSING") {
@@ -218,12 +220,16 @@ export default function RfidKioskPage() {
     setTimeout(() => {
       setIsFullSweeping(false);
       toast.success("360° Antenna Sweep Completed", {
-        description: "53 tags interrogated across 4 ports in 280ms. Signal map updated.",
+        description:
+          "53 tags interrogated across 4 ports in 280ms. Signal map updated.",
       });
     }, 900);
   };
 
-  const handleRegisterManualTag = (newPiece: RfidPieceData, targetTrayId: string) => {
+  const handleRegisterManualTag = (
+    newPiece: RfidPieceData,
+    targetTrayId: string,
+  ) => {
     setTrays((prev) =>
       prev.map((tray) => {
         if (tray.id === targetTrayId) {
@@ -236,7 +242,7 @@ export default function RfidKioskPage() {
           };
         }
         return tray;
-      })
+      }),
     );
     setSelectedPiece(newPiece);
   };
@@ -250,7 +256,9 @@ export default function RfidKioskPage() {
             <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
               <span>Flagship Mumbai (INV-11)</span>
               <span>&gt;</span>
-              <span className="text-gold font-medium">RFID Telemetry &amp; Mesh</span>
+              <span className="text-gold font-medium">
+                RFID Telemetry &amp; Mesh
+              </span>
               <Badge variant="emerald" dot className="ml-2">
                 Impinj Speedway R420 UHF • 4-Antenna Matrix Active
               </Badge>
@@ -313,7 +321,10 @@ export default function RfidKioskPage() {
               <div className="flex items-center space-x-1 overflow-x-auto text-xs">
                 {[
                   { id: "ALL", label: `All Tags (${totalExpected})` },
-                  { id: "MISSING", label: `Discrepancies (${totalDiscrepancies})` },
+                  {
+                    id: "MISSING",
+                    label: `Discrepancies (${totalDiscrepancies})`,
+                  },
                   { id: "SHOWROOM", label: "Showroom Trays" },
                   { id: "VAULT", label: "Vault Drawers" },
                 ].map(({ id, label }) => (

@@ -25,38 +25,50 @@ export enum TransferOrderItemStatus {
   CANCELLED = "CANCELLED",
 }
 
-export const createTransferOrderSchema = z.object({
-  sourceStoreId: z.string().uuid(),
-  destinationStoreId: z.string().uuid(),
-  priority: z.nativeEnum(TransferOrderPriority).default(TransferOrderPriority.NORMAL),
-  orderNumber: z.string().min(3).max(50).optional(),
-  notes: z.string().max(1000).optional(),
-  itemIds: z.array(z.string().uuid()).optional(),
-}).refine(data => data.sourceStoreId !== data.destinationStoreId, {
-  message: "Source store and destination store must be different",
-  path: ["destinationStoreId"],
-});
+export const createTransferOrderSchema = z
+  .object({
+    sourceStoreId: z.string().uuid(),
+    destinationStoreId: z.string().uuid(),
+    priority: z
+      .nativeEnum(TransferOrderPriority)
+      .default(TransferOrderPriority.NORMAL),
+    orderNumber: z.string().min(3).max(50).optional(),
+    notes: z.string().max(1000).optional(),
+    itemIds: z.array(z.string().uuid()).optional(),
+  })
+  .refine((data) => data.sourceStoreId !== data.destinationStoreId, {
+    message: "Source store and destination store must be different",
+    path: ["destinationStoreId"],
+  });
 
-export type CreateTransferOrderInput = z.infer<typeof createTransferOrderSchema>;
+export type CreateTransferOrderInput = z.infer<
+  typeof createTransferOrderSchema
+>;
 
 export const addTransferOrderItemSchema = z.object({
   inventoryItemId: z.string().uuid(),
   notes: z.string().max(500).optional(),
 });
 
-export type AddTransferOrderItemInput = z.infer<typeof addTransferOrderItemSchema>;
+export type AddTransferOrderItemInput = z.infer<
+  typeof addTransferOrderItemSchema
+>;
 
 export const rejectTransferOrderSchema = z.object({
   rejectionReason: z.string().min(3).max(1000),
 });
 
-export type RejectTransferOrderInput = z.infer<typeof rejectTransferOrderSchema>;
+export type RejectTransferOrderInput = z.infer<
+  typeof rejectTransferOrderSchema
+>;
 
 export const cancelTransferOrderSchema = z.object({
   reason: z.string().max(1000).optional(),
 });
 
-export type CancelTransferOrderInput = z.infer<typeof cancelTransferOrderSchema>;
+export type CancelTransferOrderInput = z.infer<
+  typeof cancelTransferOrderSchema
+>;
 
 export const listTransferOrdersQuerySchema = z.object({
   sourceStoreId: z.string().uuid().optional(),
@@ -67,7 +79,9 @@ export const listTransferOrdersQuerySchema = z.object({
   offset: z.coerce.number().min(0).default(0),
 });
 
-export type ListTransferOrdersQuery = z.infer<typeof listTransferOrdersQuerySchema>;
+export type ListTransferOrdersQuery = z.infer<
+  typeof listTransferOrdersQuerySchema
+>;
 
 export interface TransferOrderItemRecord {
   id: string;

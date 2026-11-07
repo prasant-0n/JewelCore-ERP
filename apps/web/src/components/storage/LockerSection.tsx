@@ -14,7 +14,7 @@ interface LockerSectionProps {
   selectedCompartmentId?: string;
   onSelectCompartment?: (
     compartment: CompartmentWithOccupancy,
-    locker: LockerHierarchyWithOccupancy
+    locker: LockerHierarchyWithOccupancy,
   ) => void;
 }
 
@@ -27,11 +27,11 @@ export function LockerSection({
 
   const totalPieces = locker.compartments.reduce(
     (acc, c) => acc + c.occupiedItemCount,
-    0
+    0,
   );
   const totalCapacity = locker.compartments.reduce(
     (acc, c) => acc + (c.maxItemCapacity ?? 0),
-    0
+    0,
   );
   const occupancyPercentage =
     totalCapacity > 0 ? Math.round((totalPieces / totalCapacity) * 100) : 0;

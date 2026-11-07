@@ -9,15 +9,11 @@ import {
 } from "../../components/procurement/ShipmentSection";
 import { IngotInspector } from "../../components/procurement/IngotInspector";
 import { NewShipmentModal } from "../../components/procurement/NewShipmentModal";
+import { Truck, Scale, FlaskConical, Coins, Search, Plus } from "lucide-react";
 import {
-  Truck,
-  Scale,
-  FlaskConical,
-  Coins,
-  Search,
-  Plus,
-} from "lucide-react";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -191,10 +187,12 @@ export default function ProcurementPage() {
   >("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIngot, setSelectedIngot] = useState<IngotBarItem | null>(
-    INITIAL_SHIPMENTS[0].ingots[0]
+    INITIAL_SHIPMENTS[0].ingots[0],
   );
   const [selectedShipmentName, setSelectedShipmentName] = useState<string>(
-    INITIAL_SHIPMENTS[0].shipmentNumber + " > " + INITIAL_SHIPMENTS[0].supplierName
+    INITIAL_SHIPMENTS[0].shipmentNumber +
+      " > " +
+      INITIAL_SHIPMENTS[0].supplierName,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -219,12 +217,15 @@ export default function ProcurementPage() {
 
   const handleSelectIngot = (ingot: IngotBarItem, shipment: ShipmentData) => {
     setSelectedIngot(ingot);
-    setSelectedShipmentName(shipment.shipmentNumber + " > " + shipment.supplierName);
+    setSelectedShipmentName(
+      shipment.shipmentNumber + " > " + shipment.supplierName,
+    );
   };
 
   const handleTareScale = () => {
     toast.success("Scale Calibrated", {
-      description: "Auto-Tare baseline re-zeroed (0.0000g). RS-232 telemetry live.",
+      description:
+        "Auto-Tare baseline re-zeroed (0.0000g). RS-232 telemetry live.",
     });
   };
 
@@ -258,11 +259,7 @@ export default function ProcurementPage() {
               <Truck className="w-3.5 h-3.5 mr-1" />
               <span>Log Inbound Shipment</span>
             </Button>
-            <Button
-              variant="gold"
-              size="sm"
-              onClick={handleTareScale}
-            >
+            <Button variant="gold" size="sm" onClick={handleTareScale}>
               <Scale className="w-3.5 h-3.5 mr-1" />
               <span>Auto-Tare Scale</span>
             </Button>

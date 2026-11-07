@@ -12,7 +12,10 @@ import {
 } from "../../components/transfers/ManifestSection";
 import { TransitSecurityInspector } from "../../components/transfers/TransitSecurityInspector";
 import { ScheduleTransferModal } from "../../components/transfers/ScheduleTransferModal";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import {
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "../../components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -134,13 +137,13 @@ export default function TransfersTransitPage() {
   const [manifests, setManifests] =
     useState<ManifestGroupData[]>(INITIAL_MANIFESTS);
   const [selectedItem, setSelectedItem] = useState<ConsignmentItemData | null>(
-    INITIAL_MANIFESTS[0].items[0]
+    INITIAL_MANIFESTS[0].items[0],
   );
   const [selectedRouteTitle, setSelectedRouteTitle] = useState<string>(
-    INITIAL_MANIFESTS[0].routeTitle
+    INITIAL_MANIFESTS[0].routeTitle,
   );
   const [selectedCarrierPlate, setSelectedCarrierPlate] = useState<string>(
-    INITIAL_MANIFESTS[0].carrierPlate
+    INITIAL_MANIFESTS[0].carrierPlate,
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
@@ -156,22 +159,28 @@ export default function TransfersTransitPage() {
         (i) =>
           i.itemCode.toLowerCase().includes(q) ||
           i.trayDescription.toLowerCase().includes(q) ||
-          i.electronicSealId.toLowerCase().includes(q)
+          i.electronicSealId.toLowerCase().includes(q),
       );
     }
     if (filterState === "DELHI") {
-      items = items.filter((i) => manifest.destinationVault.toLowerCase().includes("delhi"));
+      items = items.filter((i) =>
+        manifest.destinationVault.toLowerCase().includes("delhi"),
+      );
     } else if (filterState === "ATELIER") {
-      items = items.filter((i) => manifest.routeTitle.toLowerCase().includes("surat"));
+      items = items.filter((i) =>
+        manifest.routeTitle.toLowerCase().includes("surat"),
+      );
     } else if (filterState === "BANGALORE") {
-      items = items.filter((i) => manifest.destinationVault.toLowerCase().includes("bangalore"));
+      items = items.filter((i) =>
+        manifest.destinationVault.toLowerCase().includes("bangalore"),
+      );
     }
     return { ...manifest, items };
   });
 
   const handleSelectItem = (
     item: ConsignmentItemData,
-    manifest: ManifestGroupData
+    manifest: ManifestGroupData,
   ) => {
     setSelectedItem(item);
     setSelectedRouteTitle(manifest.routeTitle);
@@ -188,13 +197,14 @@ export default function TransfersTransitPage() {
 
     setIsSigningDispatch(false);
     toast.success("Dispatch Dual-Signed & Authorized", {
-      description: "Brinks Armored Van #04 cleared for departure via National Highway 48 corridor.",
+      description:
+        "Brinks Armored Van #04 cleared for departure via National Highway 48 corridor.",
     });
   };
 
   const handleScheduledItem = (
     newItem: ConsignmentItemData,
-    targetManifestId: string
+    targetManifestId: string,
   ) => {
     setManifests((prev) =>
       prev.map((m) => {
@@ -205,7 +215,7 @@ export default function TransfersTransitPage() {
           };
         }
         return m;
-      })
+      }),
     );
     setSelectedItem(newItem);
     const found = manifests.find((m) => m.id === targetManifestId);
@@ -314,12 +324,12 @@ export default function TransfersTransitPage() {
                     items: m.items.map((i) =>
                       i.id === item.id
                         ? { ...i, status: "DE_SEALED" as const }
-                        : i
+                        : i,
                     ),
-                  }))
+                  })),
                 );
                 setSelectedItem((prev) =>
-                  prev ? { ...prev, status: "DE_SEALED" } : null
+                  prev ? { ...prev, status: "DE_SEALED" } : null,
                 );
               }}
             />
@@ -340,24 +350,26 @@ export default function TransfersTransitPage() {
               </div>
 
               <div className="flex items-center space-x-1.5 text-xs font-mono">
-                {(["ALL", "DELHI", "ATELIER", "BANGALORE"] as const).map((key) => {
-                  const labels: Record<string, string> = {
-                    ALL: "All Dispatches",
-                    DELHI: "Delhi Safe",
-                    ATELIER: "Surat Atelier",
-                    BANGALORE: "Bangalore Showroom",
-                  };
-                  return (
-                    <Button
-                      key={key}
-                      variant={filterState === key ? "gold" : "outline"}
-                      size="xs"
-                      onClick={() => setFilterState(key)}
-                    >
-                      {labels[key]}
-                    </Button>
-                  );
-                })}
+                {(["ALL", "DELHI", "ATELIER", "BANGALORE"] as const).map(
+                  (key) => {
+                    const labels: Record<string, string> = {
+                      ALL: "All Dispatches",
+                      DELHI: "Delhi Safe",
+                      ATELIER: "Surat Atelier",
+                      BANGALORE: "Bangalore Showroom",
+                    };
+                    return (
+                      <Button
+                        key={key}
+                        variant={filterState === key ? "gold" : "outline"}
+                        size="xs"
+                        onClick={() => setFilterState(key)}
+                      >
+                        {labels[key]}
+                      </Button>
+                    );
+                  },
+                )}
               </div>
             </div>
 
@@ -380,7 +392,8 @@ export default function TransfersTransitPage() {
                     No matching transit consignments found
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Try adjusting your search criteria or schedule a new armored transfer.
+                    Try adjusting your search criteria or schedule a new armored
+                    transfer.
                   </p>
                 </Card>
               )}

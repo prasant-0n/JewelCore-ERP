@@ -72,8 +72,8 @@ export function QuickLockModal({ isOpen, onUnlock }: QuickLockModalProps) {
                 idx < pin.length
                   ? "bg-gold border-gold scale-110 shadow-sm"
                   : error
-                  ? "bg-status-rose/20 border-status-rose"
-                  : "bg-surface-elevated border-surface-border"
+                    ? "bg-status-rose/20 border-status-rose"
+                    : "bg-surface-elevated border-surface-border"
               }`}
             />
           ))}

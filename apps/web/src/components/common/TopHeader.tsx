@@ -21,12 +21,28 @@ interface TopHeaderProps {
 }
 
 const STORES = [
-  { id: "0192e300-0001-7000-8000-000000000001", name: "Downtown Showroom", type: "RETAIL_STORE" },
-  { id: "0192e300-0001-7000-8000-000000000002", name: "Central Treasury Vault Hub", type: "MAIN_VAULT" },
-  { id: "0192e300-0001-7000-8000-000000000003", name: "Uptown Luxury Boutique", type: "SHOWROOM" },
+  {
+    id: "0192e300-0001-7000-8000-000000000001",
+    name: "Downtown Showroom",
+    type: "RETAIL_STORE",
+  },
+  {
+    id: "0192e300-0001-7000-8000-000000000002",
+    name: "Central Treasury Vault Hub",
+    type: "MAIN_VAULT",
+  },
+  {
+    id: "0192e300-0001-7000-8000-000000000003",
+    name: "Uptown Luxury Boutique",
+    type: "SHOWROOM",
+  },
 ];
 
-export function TopHeader({ onLockClick, privacyMode, onTogglePrivacy }: TopHeaderProps) {
+export function TopHeader({
+  onLockClick,
+  privacyMode,
+  onTogglePrivacy,
+}: TopHeaderProps) {
   const [selectedStore, setSelectedStore] = useState(STORES[0]);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
 
@@ -63,7 +79,9 @@ export function TopHeader({ onLockClick, privacyMode, onTogglePrivacy }: TopHead
             className="flex items-center space-x-2 px-3 py-1.5 rounded-md bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs"
           >
             <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse" />
-            <span className="text-foreground font-medium">{selectedStore.name}</span>
+            <span className="text-foreground font-medium">
+              {selectedStore.name}
+            </span>
             <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-muted-foreground">
               {selectedStore.type}
             </span>
@@ -80,14 +98,18 @@ export function TopHeader({ onLockClick, privacyMode, onTogglePrivacy }: TopHead
                   key={s.id}
                   onClick={() => handleSelectStore(s)}
                   className={`w-full px-3 py-2 text-left text-xs flex items-center justify-between hover:bg-surface-elevated transition-colors ${
-                    s.id === selectedStore.id ? "text-gold font-medium bg-gold/5" : "text-foreground"
+                    s.id === selectedStore.id
+                      ? "text-gold font-medium bg-gold/5"
+                      : "text-foreground"
                   }`}
                 >
                   <div className="flex items-center space-x-2">
                     <Store className="w-3.5 h-3.5 opacity-60" />
                     <span>{s.name}</span>
                   </div>
-                  <span className="text-[9px] font-mono text-muted-foreground">{s.type}</span>
+                  <span className="text-[9px] font-mono text-muted-foreground">
+                    {s.type}
+                  </span>
                 </button>
               ))}
             </div>
@@ -116,7 +138,9 @@ export function TopHeader({ onLockClick, privacyMode, onTogglePrivacy }: TopHead
         <div className="hidden xl:flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-elevated border border-surface-border text-xs font-mono">
           <span className="text-gold font-semibold">Au 24K</span>
           <span className="text-foreground tabular-nums">₹7,450/g</span>
-          <span className="text-status-emerald text-[10px] font-medium">▲ +0.8%</span>
+          <span className="text-status-emerald text-[10px] font-medium">
+            ▲ +0.8%
+          </span>
         </div>
 
         {/* Theme Toggle Button (Light / Dark) */}
@@ -125,14 +149,22 @@ export function TopHeader({ onLockClick, privacyMode, onTogglePrivacy }: TopHead
         {/* Cost Privacy Toggle */}
         <button
           onClick={onTogglePrivacy}
-          title={privacyMode ? "Disable Customer Privacy Mode" : "Enable Customer Privacy Mode (Mask Costs)"}
+          title={
+            privacyMode
+              ? "Disable Customer Privacy Mode"
+              : "Enable Customer Privacy Mode (Mask Costs)"
+          }
           className={`p-1.5 rounded-md border transition-colors ${
             privacyMode
               ? "bg-gold/10 border-gold/40 text-gold"
               : "bg-surface-elevated border-surface-border text-muted-foreground hover:text-foreground"
           }`}
         >
-          {privacyMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          {privacyMode ? (
+            <EyeOff className="w-4 h-4" />
+          ) : (
+            <Eye className="w-4 h-4" />
+          )}
         </button>
 
         {/* Quick Lock Padlock */}
@@ -158,8 +190,12 @@ export function TopHeader({ onLockClick, privacyMode, onTogglePrivacy }: TopHead
             RR
           </div>
           <div className="hidden sm:block text-left">
-            <span className="block text-xs font-medium text-foreground leading-tight">Rachel R.</span>
-            <span className="block text-[10px] text-muted-foreground font-mono">Store Manager</span>
+            <span className="block text-xs font-medium text-foreground leading-tight">
+              Rachel R.
+            </span>
+            <span className="block text-[10px] text-muted-foreground font-mono">
+              Store Manager
+            </span>
           </div>
         </div>
       </div>

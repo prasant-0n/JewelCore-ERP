@@ -29,7 +29,9 @@ export function NewPricingTierModal({
   const [targetGroupId, setTargetGroupId] = useState("grp-alloys");
   const [alloyName, setAlloyName] = useState("Au 585 Rose Gold (14K)");
   const [karatTag, setKaratTag] = useState("14K");
-  const [finenessPurity, setFinenessPurity] = useState("14K Hallmark (58.5% Au)");
+  const [finenessPurity, setFinenessPurity] = useState(
+    "14K Hallmark (58.5% Au)",
+  );
   const [spotPricePerGram, setSpotPricePerGram] = useState("4294.20");
   const [makingChargePercent, setMakingChargePercent] = useState("20.0");
   const [wastagePercent, setWastagePercent] = useState("2.50");
@@ -38,7 +40,9 @@ export function NewPricingTierModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!alloyName || !spotPricePerGram) {
-      toast.error("Validation Error", { description: "Please specify alloy name and spot base price." });
+      toast.error("Validation Error", {
+        description: "Please specify alloy name and spot base price.",
+      });
       return;
     }
 
@@ -49,7 +53,8 @@ export function NewPricingTierModal({
       const spot = parseFloat(spotPricePerGram) || 4294.2;
       const makingPct = parseFloat(makingChargePercent) || 20.0;
       const wastagePct = parseFloat(wastagePercent) || 2.5;
-      const calculated = spot * (1 + wastagePct / 100) + spot * (makingPct / 100);
+      const calculated =
+        spot * (1 + wastagePct / 100) + spot * (makingPct / 100);
 
       const newAlloy: AlloyRuleData = {
         id: `alloy-${Date.now()}`,
@@ -90,7 +95,9 @@ export function NewPricingTierModal({
             </div>
             <div>
               <DialogTitle>Configure Pricing Rule Tier</DialogTitle>
-              <DialogDescription>Dynamic Making Charges &amp; Bullion Matrix</DialogDescription>
+              <DialogDescription>
+                Dynamic Making Charges &amp; Bullion Matrix
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>

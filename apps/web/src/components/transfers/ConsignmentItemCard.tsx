@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { Truck, ShieldCheck, Lock, Radio, CheckCircle2, Box } from "lucide-react";
+import {
+  Truck,
+  ShieldCheck,
+  Lock,
+  Radio,
+  CheckCircle2,
+  Box,
+} from "lucide-react";
 
 export interface ConsignmentItemData {
   id: string;
@@ -28,7 +35,8 @@ export function ConsignmentItemCard({
   isSelected = false,
   onSelect,
 }: ConsignmentItemCardProps) {
-  const isLocked = item.status === "GEOFENCE_LOCKED" || item.status === "EN_ROUTE";
+  const isLocked =
+    item.status === "GEOFENCE_LOCKED" || item.status === "EN_ROUTE";
 
   return (
     <div
@@ -51,12 +59,16 @@ export function ConsignmentItemCard({
           <div className="flex items-center space-x-1.5">
             <Lock
               className={`w-3.5 h-3.5 ${
-                isSelected ? "text-gold" : "text-emerald-700 dark:text-emerald-400"
+                isSelected
+                  ? "text-gold"
+                  : "text-emerald-700 dark:text-emerald-400"
               }`}
             />
             <span
               className={`font-mono text-xs font-bold transition-colors ${
-                isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
+                isSelected
+                  ? "text-gold"
+                  : "text-foreground group-hover:text-gold"
               }`}
             >
               {item.itemCode}
@@ -78,14 +90,18 @@ export function ConsignmentItemCard({
           }`}
         >
           <CheckCircle2 className="w-2.5 h-2.5" />
-          <span>{item.status === "GEOFENCE_LOCKED" ? "GEOFENCE LOCKED" : "EN ROUTE"}</span>
+          <span>
+            {item.status === "GEOFENCE_LOCKED" ? "GEOFENCE LOCKED" : "EN ROUTE"}
+          </span>
         </span>
       </div>
 
       {/* Middle Specs Grid */}
       <div className="grid grid-cols-2 gap-2 my-2.5 py-2 border-y border-surface-border/60 text-[11px] font-mono">
         <div>
-          <span className="text-muted-foreground text-[9px] block uppercase">Weight / Count</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Weight / Count
+          </span>
           <span className="text-foreground font-semibold tabular-nums">
             {item.grossWeightGrams.toFixed(3)}g Gross
           </span>
@@ -95,7 +111,9 @@ export function ConsignmentItemCard({
         </div>
 
         <div className="text-right">
-          <span className="text-muted-foreground text-[9px] block uppercase">Net Au / Tier</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Net Au / Tier
+          </span>
           <span className="text-emerald-700 dark:text-emerald-400 font-semibold tabular-nums">
             {item.netGoldGrams.toFixed(3)}g Au
           </span>
@@ -107,7 +125,9 @@ export function ConsignmentItemCard({
 
       {/* Footer: Specie Valuation */}
       <div className="flex items-center justify-between text-[11px] font-mono">
-        <span className="text-muted-foreground text-[9px] uppercase">Specie Cover:</span>
+        <span className="text-muted-foreground text-[9px] uppercase">
+          Specie Cover:
+        </span>
         <span className="text-emerald-700 dark:text-emerald-400 font-bold text-xs tabular-nums">
           ₹ {item.specieValuationInr.toLocaleString("en-IN")}
         </span>

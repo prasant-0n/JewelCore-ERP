@@ -25,7 +25,9 @@ export function NewQcBatchModal({
   onClose,
   onCreated,
 }: NewQcBatchModalProps) {
-  const [batchName, setBatchName] = useState("Inward Gold Casting Grain Lot #B-991");
+  const [batchName, setBatchName] = useState(
+    "Inward Gold Casting Grain Lot #B-991",
+  );
   const [inspectorName, setInspectorName] = useState("Dr. A. Joshi");
   const [instrument, setInstrument] = useState("Thermo Niton XL5 Plus (COM4)");
   const [alloyKarat, setAlloyKarat] = useState("Au 999.9 Fine Gold (24K)");
@@ -35,7 +37,9 @@ export function NewQcBatchModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!batchName) {
-      toast.error("Validation Error", { description: "Please specify a batch description." });
+      toast.error("Validation Error", {
+        description: "Please specify a batch description.",
+      });
       return;
     }
 
@@ -64,7 +68,9 @@ export function NewQcBatchModal({
             </div>
             <div>
               <DialogTitle>Initiate Analytical QC Session</DialogTitle>
-              <DialogDescription>Flagship Mumbai (INV-11) Metallurgical Lab</DialogDescription>
+              <DialogDescription>
+                Flagship Mumbai (INV-11) Metallurgical Lab
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
@@ -102,9 +108,15 @@ export function NewQcBatchModal({
                 onChange={(e) => setInstrument(e.target.value)}
                 className="w-full bg-obsidian-deep border border-surface-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-gold"
               >
-                <option value="Thermo Niton XL5 Plus (COM4)">Thermo Niton XL5 Plus (COM4)</option>
-                <option value="Oxford X-Strata 920 (USB)">Oxford X-Strata 920 (USB)</option>
-                <option value="Fischer Fischerscope X-RAY XDLM">Fischer XDLM (NABL)</option>
+                <option value="Thermo Niton XL5 Plus (COM4)">
+                  Thermo Niton XL5 Plus (COM4)
+                </option>
+                <option value="Oxford X-Strata 920 (USB)">
+                  Oxford X-Strata 920 (USB)
+                </option>
+                <option value="Fischer Fischerscope X-RAY XDLM">
+                  Fischer XDLM (NABL)
+                </option>
               </select>
             </div>
           </div>

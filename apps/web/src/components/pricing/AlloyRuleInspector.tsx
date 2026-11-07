@@ -13,7 +13,13 @@ import {
   RotateCw,
   Calculator,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
@@ -42,9 +48,13 @@ export function AlloyRuleInspector({
     return (
       <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
         <Scale className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-foreground">No Alloy Rule Selected</h4>
+        <h4 className="text-sm font-medium text-foreground">
+          No Alloy Rule Selected
+        </h4>
         <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-          Select any bullion alloy, karat tier, or making charge formula to inspect real-time MCX spot parity, margin hedging, and POS broadcast controls.
+          Select any bullion alloy, karat tier, or making charge formula to
+          inspect real-time MCX spot parity, margin hedging, and POS broadcast
+          controls.
         </p>
       </Card>
     );
@@ -129,8 +139,13 @@ export function AlloyRuleInspector({
       <CardContent className="p-4 sm:p-5 border-b border-surface-border space-y-3.5">
         <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground font-mono">Published Retail Rate:</span>
-            <TabularCurrency amount={calculatedRetailPerGram} className="text-gold text-lg font-bold" />
+            <span className="text-muted-foreground font-mono">
+              Published Retail Rate:
+            </span>
+            <TabularCurrency
+              amount={calculatedRetailPerGram}
+              className="text-gold text-lg font-bold"
+            />
           </div>
           <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground pt-1 border-t border-surface-border">
             <span>Base Spot Rate:</span>
@@ -138,7 +153,13 @@ export function AlloyRuleInspector({
           </div>
           <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
             <span>Making Charges:</span>
-            <span className="text-foreground">{makingChargePercent}% ({makingChargeFixedPerGram ? `₹${makingChargeFixedPerGram}/g` : "Dynamic"})</span>
+            <span className="text-foreground">
+              {makingChargePercent}% (
+              {makingChargeFixedPerGram
+                ? `₹${makingChargeFixedPerGram}/g`
+                : "Dynamic"}
+              )
+            </span>
           </div>
           <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
             <span>Melting Wastage:</span>
@@ -161,7 +182,9 @@ export function AlloyRuleInspector({
         {/* Target Terminal Broadcast */}
         <div className="p-3 rounded-lg bg-obsidian-deep border border-surface-border text-xs flex items-center justify-between">
           <span className="text-muted-foreground">Active Terminals:</span>
-          <span className="font-mono text-foreground font-medium">{targetTerminalsCount ?? 14} Terminals Broadcasted</span>
+          <span className="font-mono text-foreground font-medium">
+            {targetTerminalsCount ?? 14} Terminals Broadcasted
+          </span>
         </div>
       </CardContent>
 

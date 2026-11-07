@@ -36,7 +36,9 @@ export function NewShipmentModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!trackingNumber) {
-      toast.error("Validation Error", { description: "Please provide an Air Waybill or Tracking Number." });
+      toast.error("Validation Error", {
+        description: "Please provide an Air Waybill or Tracking Number.",
+      });
       return;
     }
 
@@ -65,7 +67,9 @@ export function NewShipmentModal({
             </div>
             <div>
               <DialogTitle>Log Inbound Bullion Shipment</DialogTitle>
-              <DialogDescription>Flagship Mumbai (INV-11) Receiving Bay</DialogDescription>
+              <DialogDescription>
+                Flagship Mumbai (INV-11) Receiving Bay
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
@@ -80,9 +84,15 @@ export function NewShipmentModal({
               onChange={(e) => setSupplier(e.target.value)}
               className="w-full bg-obsidian-deep border border-surface-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-gold"
             >
-              <option value="Valcambi Suisse">Valcambi Suisse (LBMA Good Delivery)</option>
-              <option value="MMTC-PAMP India">MMTC-PAMP India (NABL Accredited)</option>
-              <option value="Argor-Heraeus SA">Argor-Heraeus SA (Switzerland)</option>
+              <option value="Valcambi Suisse">
+                Valcambi Suisse (LBMA Good Delivery)
+              </option>
+              <option value="MMTC-PAMP India">
+                MMTC-PAMP India (NABL Accredited)
+              </option>
+              <option value="Argor-Heraeus SA">
+                Argor-Heraeus SA (Switzerland)
+              </option>
               <option value="PAMP SA">PAMP SA (Suisse)</option>
             </select>
           </div>

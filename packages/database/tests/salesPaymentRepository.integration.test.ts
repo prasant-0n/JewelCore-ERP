@@ -74,8 +74,12 @@ describe("Sales Payment Repository (FEAT-SALES-03, Entity 51)", () => {
       "DELETE FROM goods_receipt_notes WHERE grn_number LIKE 'GRN-PAY-REPO-%';",
     );
     await query("DELETE FROM suppliers WHERE code LIKE 'SUP_PAY_REPO_%';");
-    await query("DELETE FROM product_skus WHERE sku_code LIKE 'SKU-PAY-REPO-%';");
-    await query("DELETE FROM products WHERE product_code LIKE 'PRD_PAY_REPO_%';");
+    await query(
+      "DELETE FROM product_skus WHERE sku_code LIKE 'SKU-PAY-REPO-%';",
+    );
+    await query(
+      "DELETE FROM products WHERE product_code LIKE 'PRD_PAY_REPO_%';",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_PAY_REPO_%';");
     await query("DELETE FROM materials WHERE code LIKE 'MAT_PAY_REPO_%';");
     await query("DELETE FROM categories WHERE code LIKE 'CAT_PAY_REPO_%';");
@@ -220,9 +224,10 @@ describe("Sales Payment Repository (FEAT-SALES-03, Entity 51)", () => {
     );
     const qcId = qcRes.rows[0]!.id;
 
-    const qcItems = await Promise.all([1, 2].map((seq) =>
-      query<{ id: string }>(
-        `
+    const qcItems = await Promise.all(
+      [1, 2].map((seq) =>
+        query<{ id: string }>(
+          `
         INSERT INTO quality_check_items (
           id, quality_check_id, shipment_item_id, item_sequence_number, status,
           gross_weight_grams, net_weight_grams, verified_material_id, verified_purity_id,
@@ -231,9 +236,10 @@ describe("Sales Payment Repository (FEAT-SALES-03, Entity 51)", () => {
         VALUES (gen_random_uuid(), $1, $2, $3, 'APPROVED', 15.0000, 14.0000, $4, $5, true, true, false)
         RETURNING id
         `,
-        [qcId, shipmentItemId, seq, mat.id, pur.id],
+          [qcId, shipmentItemId, seq, mat.id, pur.id],
+        ),
       ),
-    ));
+    );
 
     const item1 = await query<{ id: string }>(
       `
@@ -403,18 +409,14 @@ describe("Sales Payment Repository (FEAT-SALES-03, Entity 51)", () => {
   it("Scenario 6: guarantees append-only immutability (INV-09) on sales_payments", async () => {
     // Attempting direct UPDATE must be blocked
     await expect(
-      query(
-        `UPDATE sales_payments SET amount_cad = 9999.00 WHERE id = $1`,
-        [firstPaymentId],
-      ),
+      query(`UPDATE sales_payments SET amount_cad = 9999.00 WHERE id = $1`, [
+        firstPaymentId,
+      ]),
     ).rejects.toThrow(/strictly immutable financial ledger history \(INV-09\)/);
 
     // Attempting direct DELETE must be blocked
     await expect(
-      query(
-        `DELETE FROM sales_payments WHERE id = $1`,
-        [firstPaymentId],
-      ),
+      query(`DELETE FROM sales_payments WHERE id = $1`, [firstPaymentId]),
     ).rejects.toThrow(/strictly immutable financial ledger history \(INV-09\)/);
   });
 

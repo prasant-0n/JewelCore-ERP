@@ -335,7 +335,9 @@ describe("Customer Store Credit API (FEAT-RET-03, Entities 56 & 57 / INV-09)", (
 
   it("GET /api/v1/sales/store-credits/accounts/:accountId/transactions returns immutable ledger history (200 OK)", async () => {
     const res = await request(app)
-      .get(`/api/v1/sales/store-credits/accounts/${createdAccountId}/transactions`)
+      .get(
+        `/api/v1/sales/store-credits/accounts/${createdAccountId}/transactions`,
+      )
       .set("Authorization", `Bearer ${managerToken}`)
       .set("x-store-id", storeId);
 

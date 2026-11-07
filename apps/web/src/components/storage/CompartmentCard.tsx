@@ -56,8 +56,8 @@ export function CompartmentCard({
         isSelected
           ? "bg-surface-elevated border-2 border-gold shadow-[0_0_15px_rgba(212,175,55,0.18)]"
           : isVacant
-          ? "bg-surface/50 border border-dashed border-surface-border hover:border-gold/40 hover:bg-surface"
-          : "bg-surface border border-surface-border hover:border-gold/50 hover:bg-surface-elevated"
+            ? "bg-surface/50 border border-dashed border-surface-border hover:border-gold/40 hover:bg-surface"
+            : "bg-surface border border-surface-border hover:border-gold/50 hover:bg-surface-elevated"
       }`}
     >
       {isSelected && (
@@ -97,7 +97,10 @@ export function CompartmentCard({
       <div className="mt-2.5">
         <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground mb-1">
           <span>Occupancy:</span>
-          <span data-testid="occupancy-count" className="font-medium text-foreground">
+          <span
+            data-testid="occupancy-count"
+            className="font-medium text-foreground"
+          >
             {occupiedItemCount}{" "}
             {maxItemCapacity ? `/ ${maxItemCapacity} pcs` : "pcs"}
             {percentage > 0 ? ` (${percentage}%)` : ""}
@@ -118,7 +121,9 @@ export function CompartmentCard({
       {/* Bottom Sub-info / Metrological Rating */}
       <div className="mt-2.5 pt-2 border-t border-surface-border/50 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
         <span>
-          {maxWeightCapacityGrams ? `Max: ${maxWeightCapacityGrams}g` : "Standard"}
+          {maxWeightCapacityGrams
+            ? `Max: ${maxWeightCapacityGrams}g`
+            : "Standard"}
         </span>
         <a
           href={`/inventory?compartmentId=${id}`}

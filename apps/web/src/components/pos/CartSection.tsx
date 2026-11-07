@@ -39,11 +39,11 @@ export function CartSection({
 
   const totalValue = group.pieces.reduce(
     (acc, p) => acc + (p.totalPriceInr || 0),
-    0
+    0,
   );
   const totalGrossWeight = group.pieces.reduce(
     (acc, p) => acc + (p.grossWeightGrams || 0),
-    0
+    0,
   );
 
   return (
@@ -85,7 +85,9 @@ export function CartSection({
               <span>•</span>
               <span className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                {group.status === "CART_SECURED" ? "Cart Secured" : "Live Vitrine"}
+                {group.status === "CART_SECURED"
+                  ? "Cart Secured"
+                  : "Live Vitrine"}
               </span>
             </div>
           </div>

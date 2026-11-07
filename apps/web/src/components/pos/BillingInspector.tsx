@@ -11,7 +11,13 @@ import {
   BadgePercent,
   Wallet,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
@@ -42,18 +48,38 @@ export function BillingInspector({
   onAuthorizePayment,
   onApplyDiscount,
 }: BillingInspectorProps) {
-  const [tenderMethod, setTenderMethod] = useState<"RTGS" | "AMEX" | "BULLION_OFFSET" | "SPLIT">("RTGS");
+  const [tenderMethod, setTenderMethod] = useState<
+    "RTGS" | "AMEX" | "BULLION_OFFSET" | "SPLIT"
+  >("RTGS");
   const [isProcessing, setIsProcessing] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
 
   // Financial calculations
-  const totalGrossWeight = cartPieces.reduce((acc, p) => acc + (p.grossWeightGrams || 0), 0);
-  const grossMetalValue = cartPieces.reduce((acc, p) => acc + (p.metalValueInr || 0), 0);
-  const diamondValue = cartPieces.reduce((acc, p) => acc + (p.diamondValueInr || 0), 0);
-  const makingCharges = cartPieces.reduce((acc, p) => acc + (p.makingChargeInr || 0), 0);
+  const totalGrossWeight = cartPieces.reduce(
+    (acc, p) => acc + (p.grossWeightGrams || 0),
+    0,
+  );
+  const grossMetalValue = cartPieces.reduce(
+    (acc, p) => acc + (p.metalValueInr || 0),
+    0,
+  );
+  const diamondValue = cartPieces.reduce(
+    (acc, p) => acc + (p.diamondValueInr || 0),
+    0,
+  );
+  const makingCharges = cartPieces.reduce(
+    (acc, p) => acc + (p.makingChargeInr || 0),
+    0,
+  );
 
   const discountAmount = discountApplied ? Math.round(makingCharges * 0.15) : 0;
-  const taxableSubtotal = Math.max(0, grossMetalValue + diamondValue + (makingCharges - discountAmount) - oldGoldCreditInr);
+  const taxableSubtotal = Math.max(
+    0,
+    grossMetalValue +
+      diamondValue +
+      (makingCharges - discountAmount) -
+      oldGoldCreditInr,
+  );
   const cgstAmount = taxableSubtotal * 0.015;
   const sgstAmount = taxableSubtotal * 0.015;
   const finalInvoiceTotal = taxableSubtotal + cgstAmount + sgstAmount;
@@ -71,7 +97,11 @@ export function BillingInspector({
 
   const handleDiscountToggle = () => {
     setDiscountApplied(!discountApplied);
-    toast.info(!discountApplied ? "VIP 15% Making Charge Discount Applied" : "Discount Removed");
+    toast.info(
+      !discountApplied
+        ? "VIP 15% Making Charge Discount Applied"
+        : "Discount Removed",
+    );
     onApplyDiscount?.();
   };
 
@@ -88,7 +118,11 @@ export function BillingInspector({
               </CardTitle>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Client: <span className="font-semibold text-foreground">{clientName}</span> ({panNumber})
+              Client:{" "}
+              <span className="font-semibold text-foreground">
+                {clientName}
+              </span>{" "}
+              ({panNumber})
             </p>
           </div>
 
@@ -120,8 +154,13 @@ export function BillingInspector({
       <CardContent className="p-4 sm:p-5 border-b border-surface-border space-y-3.5">
         <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground font-mono">Invoice Net Payable:</span>
-            <TabularCurrency amount={finalInvoiceTotal} className="text-gold text-lg font-bold" />
+            <span className="text-muted-foreground font-mono">
+              Invoice Net Payable:
+            </span>
+            <TabularCurrency
+              amount={finalInvoiceTotal}
+              className="text-gold text-lg font-bold"
+            />
           </div>
           <div className="space-y-1 text-xs font-mono text-muted-foreground pt-1 border-t border-surface-border">
             <div className="flex justify-between">

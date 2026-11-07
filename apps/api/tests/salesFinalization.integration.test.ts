@@ -98,8 +98,12 @@ describe("Sales Finalization & Custody Release API (FEAT-SALES-04)", () => {
       "DELETE FROM goods_receipt_notes WHERE grn_number LIKE 'GRN-FIN-API-%';",
     );
     await query("DELETE FROM suppliers WHERE code LIKE 'SUP_FIN_API_%';");
-    await query("DELETE FROM product_skus WHERE sku_code LIKE 'SKU-FIN-API-%';");
-    await query("DELETE FROM products WHERE product_code LIKE 'PRD_FIN_API_%';");
+    await query(
+      "DELETE FROM product_skus WHERE sku_code LIKE 'SKU-FIN-API-%';",
+    );
+    await query(
+      "DELETE FROM products WHERE product_code LIKE 'PRD_FIN_API_%';",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_FIN_API_%';");
     await query("DELETE FROM materials WHERE code LIKE 'MAT_FIN_API_%';");
     await query("DELETE FROM categories WHERE code LIKE 'CAT_FIN_API_%';");
@@ -442,7 +446,9 @@ describe("Sales Finalization & Custody Release API (FEAT-SALES-04)", () => {
 
     // If piece already reserved, testing on a mock unpaid invoice ID
     const res = await request(app)
-      .post("/api/v1/sales/invoices/0192e301-0000-7000-8000-000000009999/finalize-release")
+      .post(
+        "/api/v1/sales/invoices/0192e301-0000-7000-8000-000000009999/finalize-release",
+      )
       .set("Authorization", `Bearer ${managerToken}`)
       .set("x-store-id", storeId);
 
@@ -455,7 +461,8 @@ describe("Sales Finalization & Custody Release API (FEAT-SALES-04)", () => {
       .set("Authorization", `Bearer ${managerToken}`)
       .set("x-store-id", storeId)
       .send({
-        reason: "Customer verified authenticity certificate and accepted handover",
+        reason:
+          "Customer verified authenticity certificate and accepted handover",
       });
 
     expect(res.status).toBe(200);
@@ -467,7 +474,10 @@ describe("Sales Finalization & Custody Release API (FEAT-SALES-04)", () => {
     expect(res.body.data.movementIds.length).toBe(1);
 
     // Verify piece is SOLD & RELEASED in DB
-    const pieceRes = await query<{ commercial_state: string; custody_state: string }>(
+    const pieceRes = await query<{
+      commercial_state: string;
+      custody_state: string;
+    }>(
       `SELECT commercial_state, custody_state FROM inventory_items WHERE id = $1`,
       [pieceId],
     );

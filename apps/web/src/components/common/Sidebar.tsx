@@ -30,9 +30,7 @@ interface NavSection {
 const NAV_SECTIONS: NavSection[] = [
   {
     title: "OVERVIEW",
-    items: [
-      { name: "Control Tower", href: "/", icon: LayoutDashboard },
-    ],
+    items: [{ name: "Control Tower", href: "/", icon: LayoutDashboard }],
   },
   {
     title: "INVENTORY & ATELIER",

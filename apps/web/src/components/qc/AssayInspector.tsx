@@ -11,7 +11,13 @@ import {
   RefreshCw,
   Waves,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
@@ -39,9 +45,13 @@ export function AssayInspector({
     return (
       <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
         <Microscope className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-foreground">No QC Item Selected</h4>
+        <h4 className="text-sm font-medium text-foreground">
+          No QC Item Selected
+        </h4>
         <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-          Select any fixture tile from the active inspection session to inspect its multi-element XRF decomposition, hydrostatic specific gravity, and hallmarking clearance.
+          Select any fixture tile from the active inspection session to inspect
+          its multi-element XRF decomposition, hydrostatic specific gravity, and
+          hallmarking clearance.
         </p>
       </Card>
     );
@@ -96,7 +106,9 @@ export function AssayInspector({
               </CardTitle>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Parent Asset: <span className="font-mono text-gold">{parentPieceSerial}</span> • {parentSessionName}
+              Parent Asset:{" "}
+              <span className="font-mono text-gold">{parentPieceSerial}</span> •{" "}
+              {parentSessionName}
             </p>
           </div>
 
@@ -143,28 +155,42 @@ export function AssayInspector({
         <div className="p-3 rounded-lg bg-surface-elevated border border-surface-border flex items-center justify-between text-xs font-mono">
           <div className="flex items-center space-x-2">
             <Waves className="w-4 h-4 text-status-indigo" />
-            <span className="text-muted-foreground">Hydrostatic Density (SG):</span>
+            <span className="text-muted-foreground">
+              Hydrostatic Density (SG):
+            </span>
           </div>
-          <span className="text-foreground font-bold">{specificGravity} g/cm³</span>
+          <span className="text-foreground font-bold">
+            {specificGravity} g/cm³
+          </span>
         </div>
 
         {/* Multi-Element XRF Spectrum */}
         <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground font-mono">XRF Spectrum Decomposition:</span>
-            <Badge variant="gold" size="sm">{finenessString} Fine</Badge>
+            <span className="text-muted-foreground font-mono">
+              XRF Spectrum Decomposition:
+            </span>
+            <Badge variant="gold" size="sm">
+              {finenessString} Fine
+            </Badge>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono pt-1">
             <div className="p-2 rounded bg-surface border border-surface-border">
-              <span className="text-[10px] text-muted-foreground block">Gold (Au)</span>
+              <span className="text-[10px] text-muted-foreground block">
+                Gold (Au)
+              </span>
               <span className="text-gold font-bold">{elements.au}%</span>
             </div>
             <div className="p-2 rounded bg-surface border border-surface-border">
-              <span className="text-[10px] text-muted-foreground block">Silver (Ag)</span>
+              <span className="text-[10px] text-muted-foreground block">
+                Silver (Ag)
+              </span>
               <span className="text-foreground font-bold">{elements.ag}%</span>
             </div>
             <div className="p-2 rounded bg-surface border border-surface-border">
-              <span className="text-[10px] text-muted-foreground block">Copper (Cu)</span>
+              <span className="text-[10px] text-muted-foreground block">
+                Copper (Cu)
+              </span>
               <span className="text-foreground font-bold">{elements.cu}%</span>
             </div>
           </div>
@@ -173,7 +199,9 @@ export function AssayInspector({
         {/* Destination Path */}
         <div className="p-3 rounded-lg bg-obsidian-deep border border-surface-border text-xs flex items-center justify-between">
           <span className="text-muted-foreground">Post-Assay Destination:</span>
-          <span className="font-mono text-foreground font-medium truncate max-w-[200px]">{destinationPath}</span>
+          <span className="font-mono text-foreground font-medium truncate max-w-[200px]">
+            {destinationPath}
+          </span>
         </div>
       </CardContent>
 

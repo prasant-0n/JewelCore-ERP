@@ -133,7 +133,9 @@ export async function recordSalesPayment(
           amountCad: input.amountCad,
           referenceDocumentType: "SALES_INVOICE",
           referenceDocumentId: input.salesInvoiceId,
-          notes: input.notes ?? `Payment tender on invoice ${invoice.invoice_number}`,
+          notes:
+            input.notes ??
+            `Payment tender on invoice ${invoice.invoice_number}`,
         },
         client,
       );

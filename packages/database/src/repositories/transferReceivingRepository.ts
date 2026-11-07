@@ -70,9 +70,20 @@ function mapDispute(row: DisputeRow): TransferDisputeRecord {
     resolutionNotes: row.resolution_notes,
     resolvedByUserId: row.resolved_by_user_id,
     resolvedByUserName: row.resolved_by_user_name,
-    resolvedAt: row.resolved_at instanceof Date ? row.resolved_at.toISOString() : (row.resolved_at ? String(row.resolved_at) : null),
-    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at),
-    updatedAt: row.updated_at instanceof Date ? row.updated_at.toISOString() : String(row.updated_at),
+    resolvedAt:
+      row.resolved_at instanceof Date
+        ? row.resolved_at.toISOString()
+        : row.resolved_at
+          ? String(row.resolved_at)
+          : null,
+    createdAt:
+      row.created_at instanceof Date
+        ? row.created_at.toISOString()
+        : String(row.created_at),
+    updatedAt:
+      row.updated_at instanceof Date
+        ? row.updated_at.toISOString()
+        : String(row.updated_at),
   };
 }
 
@@ -90,7 +101,9 @@ export async function receiveTransferManifest(
 ): Promise<ReceiveTransferResult> {
   // 1. Dual custody receiving check (INV-13)
   if (receiverUserId === input.witnessUserId) {
-    throw new ValidationError("Dual-custody receiving inspection requires distinct receiving and witness users (INV-13)");
+    throw new ValidationError(
+      "Dual-custody receiving inspection requires distinct receiving and witness users (INV-13)",
+    );
   }
 
   // 2. Witness user verification
@@ -121,8 +134,13 @@ export async function receiveTransferManifest(
       throw new NotFoundError(`Transfer manifest ${manifestId} not found`);
     }
 
-    if (manifest.status !== ManifestStatus.DISPATCHED && manifest.status !== ManifestStatus.IN_TRANSIT) {
-      throw new ValidationError(`Transfer manifest is in ${manifest.status} status and cannot be received`);
+    if (
+      manifest.status !== ManifestStatus.DISPATCHED &&
+      manifest.status !== ManifestStatus.IN_TRANSIT
+    ) {
+      throw new ValidationError(
+        `Transfer manifest is in ${manifest.status} status and cannot be received`,
+      );
     }
 
     const orderRes = await client.query<{
@@ -140,7 +158,9 @@ export async function receiveTransferManifest(
 
     const order = orderRes.rows[0];
     if (!order) {
-      throw new NotFoundError(`Transfer order ${manifest.transfer_order_id} not found`);
+      throw new NotFoundError(
+        `Transfer order ${manifest.transfer_order_id} not found`,
+      );
     }
 
     // 4. Compartment verification (must belong to destination store - INV-11)
@@ -151,11 +171,15 @@ export async function receiveTransferManifest(
 
     const comp = compRes.rows[0];
     if (!comp) {
-      throw new NotFoundError(`Destination compartment ${input.destinationCompartmentId} not found`);
+      throw new NotFoundError(
+        `Destination compartment ${input.destinationCompartmentId} not found`,
+      );
     }
 
     if (comp.store_id !== order.destination_store_id) {
-      throw new ValidationError("Destination compartment does not belong to receiving branch (INV-11)");
+      throw new ValidationError(
+        "Destination compartment does not belong to receiving branch (INV-11)",
+      );
     }
 
     const createdDisputes: TransferDisputeRecord[] = [];
@@ -171,9 +195,13 @@ export async function receiveTransferManifest(
     );
 
     for (const seal of existingSealsRes.rows) {
-      const ver = input.sealVerifications.find(v => v.sealNumber === seal.seal_number);
+      const ver = input.sealVerifications.find(
+        (v) => v.sealNumber === seal.seal_number,
+      );
       if (!ver) {
-        throw new ValidationError(`Verification missing for security seal ${seal.seal_number}`);
+        throw new ValidationError(
+          `Verification missing for security seal ${seal.seal_number}`,
+        );
       }
 
       await client.query(
@@ -183,7 +211,10 @@ export async function receiveTransferManifest(
         [ver.status, receiverUserId, seal.id],
       );
 
-      if (ver.status === SealStatus.BROKEN_TAMPERED || ver.status === SealStatus.DAMAGED) {
+      if (
+        ver.status === SealStatus.BROKEN_TAMPERED ||
+        ver.status === SealStatus.DAMAGED
+      ) {
         const disputeId = uuidv7();
         const disputeInsert = await client.query<DisputeRow>(
           `INSERT INTO transfer_disputes (
@@ -237,7 +268,9 @@ export async function receiveTransferManifest(
 
       const piece = pieceRes.rows[0];
       if (!piece) {
-        throw new NotFoundError(`Inventory item ${item.inventory_item_id} not found`);
+        throw new NotFoundError(
+          `Inventory item ${item.inventory_item_id} not found`,
+        );
       }
 
       if (receivedSet.has(piece.id)) {
@@ -246,7 +279,11 @@ export async function receiveTransferManifest(
           `UPDATE inventory_items
            SET store_id = $1, current_compartment_id = $2, custody_state = 'IN_VAULT', updated_at = clock_timestamp()
            WHERE id = $3`,
-          [order.destination_store_id, input.destinationCompartmentId, piece.id],
+          [
+            order.destination_store_id,
+            input.destinationCompartmentId,
+            piece.id,
+          ],
         );
 
         // Movement record: INTAKE_PLACEMENT
@@ -379,8 +416,12 @@ export async function receiveTransferManifest(
 
     // 7. Final status updates
     const hasDisputes = createdDisputes.length > 0;
-    const finalOrderStatus = hasDisputes ? TransferOrderStatus.DISPUTED : TransferOrderStatus.COMPLETED;
-    const finalManifestStatus = hasDisputes ? ManifestStatus.DISPUTED : ManifestStatus.RECEIVED;
+    const finalOrderStatus = hasDisputes
+      ? TransferOrderStatus.DISPUTED
+      : TransferOrderStatus.COMPLETED;
+    const finalManifestStatus = hasDisputes
+      ? ManifestStatus.DISPUTED
+      : ManifestStatus.RECEIVED;
 
     await client.query(
       `UPDATE transfer_orders SET status = $1, updated_at = clock_timestamp() WHERE id = $2`,
@@ -402,7 +443,9 @@ export async function receiveTransferManifest(
         organizationId,
         "TRANSFER_MANIFEST",
         manifestId,
-        hasDisputes ? "TRANSFER_RECEIVED_WITH_DISPUTES" : "TRANSFER_RECEIVED_CLEAN",
+        hasDisputes
+          ? "TRANSFER_RECEIVED_WITH_DISPUTES"
+          : "TRANSFER_RECEIVED_CLEAN",
         receiverUserId,
         JSON.stringify({
           manifestId,
@@ -414,8 +457,16 @@ export async function receiveTransferManifest(
       ],
     );
 
-    const updatedOrder = await getTransferOrderById(organizationId, order.id, client);
-    const updatedManifest = await getTransferManifestById(organizationId, manifestId, client);
+    const updatedOrder = await getTransferOrderById(
+      organizationId,
+      order.id,
+      client,
+    );
+    const updatedManifest = await getTransferManifestById(
+      organizationId,
+      manifestId,
+      client,
+    );
 
     return {
       order: updatedOrder!,
@@ -431,7 +482,9 @@ export async function createTransferDispute(
   input: CreateTransferDisputeInput,
 ): Promise<TransferDisputeRecord> {
   if (reportedByUserId === input.witnessUserId) {
-    throw new ValidationError("Dual-custody dispute reporting requires distinct reporter and witness users (INV-13)");
+    throw new ValidationError(
+      "Dual-custody dispute reporting requires distinct reporter and witness users (INV-13)",
+    );
   }
 
   const disputeId = uuidv7();
@@ -476,8 +529,13 @@ export async function resolveTransferDispute(
     throw new NotFoundError(`Transfer dispute ${disputeId} not found`);
   }
 
-  if (dispute.status === DisputeStatus.RESOLVED || dispute.status === DisputeStatus.WRITTEN_OFF) {
-    throw new ValidationError(`Dispute is already closed (current status: ${dispute.status})`);
+  if (
+    dispute.status === DisputeStatus.RESOLVED ||
+    dispute.status === DisputeStatus.WRITTEN_OFF
+  ) {
+    throw new ValidationError(
+      `Dispute is already closed (current status: ${dispute.status})`,
+    );
   }
 
   const updateRes = await query<DisputeRow>(
@@ -485,7 +543,13 @@ export async function resolveTransferDispute(
      SET status = $1, resolution_notes = $2, resolved_by_user_id = $3, resolved_at = clock_timestamp(), updated_at = clock_timestamp()
      WHERE id = $4 AND organization_id = $5
      RETURNING *`,
-    [input.resolutionStatus, input.resolutionNotes, resolvedByUserId, disputeId, organizationId],
+    [
+      input.resolutionStatus,
+      input.resolutionNotes,
+      resolvedByUserId,
+      disputeId,
+      organizationId,
+    ],
   );
 
   await query(
@@ -499,7 +563,10 @@ export async function resolveTransferDispute(
       disputeId,
       "TRANSFER_DISPUTE_RESOLVED",
       resolvedByUserId,
-      JSON.stringify({ resolutionStatus: input.resolutionStatus, resolutionNotes: input.resolutionNotes }),
+      JSON.stringify({
+        resolutionStatus: input.resolutionStatus,
+        resolutionNotes: input.resolutionNotes,
+      }),
     ],
   );
 
@@ -601,6 +668,6 @@ export async function listTransferDisputes(
     listParams,
   );
 
-  const disputes = listRes.rows.map(row => mapDispute(row));
+  const disputes = listRes.rows.map((row) => mapDispute(row));
   return { disputes, total };
 }

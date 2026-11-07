@@ -177,7 +177,9 @@ const KPI_ITEMS: KpiItem[] = [
 ];
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<"ALL" | "VAULT" | "DISPLAY" | "TRANSIT" | "QC">("ALL");
+  const [activeTab, setActiveTab] = useState<
+    "ALL" | "VAULT" | "DISPLAY" | "TRANSIT" | "QC"
+  >("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPiece, setSelectedPiece] = useState<PieceDetail | null>(null);
 
@@ -192,7 +194,8 @@ export default function HomePage() {
 
   const handleSyncScales = () => {
     toast.success("Synchronizing Vault Scales", {
-      description: "Polled 14 Mettler Toledo load cells. All balances within ±0.002g tolerance.",
+      description:
+        "Polled 14 Mettler Toledo load cells. All balances within ±0.002g tolerance.",
     });
   };
 
@@ -249,13 +252,19 @@ export default function HomePage() {
                       Live Bullion Fixing (IBJA)
                     </CardTitle>
                   </div>
-                  <span className="text-[10px] font-mono text-muted-foreground">14:50 IST</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">
+                    14:50 IST
+                  </span>
                 </CardHeader>
                 <CardContent className="pt-3 space-y-2.5">
                   <div className="flex items-center justify-between p-2.5 rounded-lg bg-surface-elevated border border-surface-border">
                     <div>
-                      <span className="text-xs font-medium text-foreground block">Gold 24K (999)</span>
-                      <span className="text-[10px] text-muted-foreground font-mono">Per 10 Grams</span>
+                      <span className="text-xs font-medium text-foreground block">
+                        Gold 24K (999)
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        Per 10 Grams
+                      </span>
                     </div>
                     <div className="text-right">
                       <span className="text-sm font-mono font-bold text-gold tabular-nums block">
@@ -270,8 +279,12 @@ export default function HomePage() {
 
                   <div className="flex items-center justify-between p-2.5 rounded-lg bg-surface-elevated border border-surface-border">
                     <div>
-                      <span className="text-xs font-medium text-foreground block">Gold 22K (916)</span>
-                      <span className="text-[10px] text-muted-foreground font-mono">Per 10 Grams</span>
+                      <span className="text-xs font-medium text-foreground block">
+                        Gold 22K (916)
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        Per 10 Grams
+                      </span>
                     </div>
                     <div className="text-right">
                       <span className="text-sm font-mono font-bold text-foreground tabular-nums block">
@@ -286,21 +299,31 @@ export default function HomePage() {
 
                   <div className="flex items-center justify-between p-2.5 rounded-lg bg-surface-elevated border border-surface-border">
                     <div>
-                      <span className="text-xs font-medium text-foreground block">Platinum 950</span>
-                      <span className="text-[10px] text-muted-foreground font-mono">Per 10 Grams</span>
+                      <span className="text-xs font-medium text-foreground block">
+                        Platinum 950
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        Per 10 Grams
+                      </span>
                     </div>
                     <div className="text-right">
                       <span className="text-sm font-mono font-bold text-foreground tabular-nums block">
                         ₹31,120.00
                       </span>
-                      <span className="text-[10px] font-mono text-muted-foreground block">0.00%</span>
+                      <span className="text-[10px] font-mono text-muted-foreground block">
+                        0.00%
+                      </span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between p-2.5 rounded-lg bg-surface-elevated border border-surface-border">
                     <div>
-                      <span className="text-xs font-medium text-foreground block">Silver 999</span>
-                      <span className="text-[10px] text-muted-foreground font-mono">Per 1 Kilogram</span>
+                      <span className="text-xs font-medium text-foreground block">
+                        Silver 999
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        Per 1 Kilogram
+                      </span>
                     </div>
                     <div className="text-right">
                       <span className="text-sm font-mono font-bold text-foreground tabular-nums block">
@@ -326,9 +349,12 @@ export default function HomePage() {
                   <div className="p-3 rounded-lg bg-status-emeraldBg border border-status-emerald/30 flex items-start space-x-3">
                     <CheckCircle2 className="w-4 h-4 text-status-emerald shrink-0 mt-0.5" />
                     <div className="text-xs">
-                      <div className="font-medium text-status-emerald">Vault Balance Verified</div>
+                      <div className="font-medium text-status-emerald">
+                        Vault Balance Verified
+                      </div>
                       <div className="text-muted-foreground mt-0.5">
-                        Physical scale balance matches ledger (tolerance &plusmn;0.002 g).
+                        Physical scale balance matches ledger (tolerance
+                        &plusmn;0.002 g).
                       </div>
                     </div>
                   </div>
@@ -337,7 +363,9 @@ export default function HomePage() {
                     <Button
                       variant="secondary"
                       className="w-full justify-between text-xs h-auto py-2.5"
-                      onClick={() => toast.info("Opening 3 pending discount approvals...")}
+                      onClick={() =>
+                        toast.info("Opening 3 pending discount approvals...")
+                      }
                     >
                       <span className="flex items-center space-x-2">
                         <ShieldAlert className="w-3.5 h-3.5 text-status-amber" />
@@ -349,7 +377,9 @@ export default function HomePage() {
                     <Button
                       variant="secondary"
                       className="w-full justify-between text-xs h-auto py-2.5"
-                      onClick={() => toast.info("Navigating to Inter-Branch Transit...")}
+                      onClick={() =>
+                        toast.info("Navigating to Inter-Branch Transit...")
+                      }
                     >
                       <span className="flex items-center space-x-2">
                         <Boxes className="w-3.5 h-3.5 text-gold" />
@@ -372,25 +402,30 @@ export default function HomePage() {
                     Live Custody & Inventory Feed
                   </CardTitle>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Track individual serialized assets across safes, display trays, and inter-branch transit.
+                    Track individual serialized assets across safes, display
+                    trays, and inter-branch transit.
                   </p>
                 </div>
 
                 {/* Filter Tabs */}
                 <div className="flex items-center bg-surface-elevated p-1 rounded-lg border border-surface-border text-xs">
-                  {(["ALL", "VAULT", "DISPLAY", "TRANSIT", "QC"] as const).map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                      className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-                        activeTab === tab
-                          ? "bg-surface text-gold shadow-sm font-semibold border border-surface-border"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {tab === "ALL" ? "All" : tab.charAt(0) + tab.slice(1).toLowerCase()}
-                    </button>
-                  ))}
+                  {(["ALL", "VAULT", "DISPLAY", "TRANSIT", "QC"] as const).map(
+                    (tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`px-2.5 py-1 rounded-md font-medium transition-all ${
+                          activeTab === tab
+                            ? "bg-surface text-gold shadow-sm font-semibold border border-surface-border"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {tab === "ALL"
+                          ? "All"
+                          : tab.charAt(0) + tab.slice(1).toLowerCase()}
+                      </button>
+                    ),
+                  )}
                 </div>
               </div>
 
@@ -432,9 +467,14 @@ export default function HomePage() {
                       <TableCell className="font-medium text-foreground max-w-[220px] truncate">
                         {item.itemName}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{item.metalPurity}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {item.metalPurity}
+                      </TableCell>
                       <TableCell className="text-right">
-                        <TabularWeight grams={item.grossWeightGrams} decimals={3} />
+                        <TabularWeight
+                          grams={item.grossWeightGrams}
+                          decimals={3}
+                        />
                       </TableCell>
                       <TableCell className="text-muted-foreground text-xs truncate max-w-[160px]">
                         {item.custodyLocation}

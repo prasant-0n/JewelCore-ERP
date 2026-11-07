@@ -141,9 +141,7 @@ export async function createGoldBuybackOrder(
   },
   clientOverride?: Queryable,
 ): Promise<GoldBuybackOrderRecord> {
-  const runner = async (
-    client: Queryable,
-  ): Promise<GoldBuybackOrderRecord> => {
+  const runner = async (client: Queryable): Promise<GoldBuybackOrderRecord> => {
     // 1. Verify customer
     const custRes = await client.query<{ id: string; name: string }>(
       `SELECT id, first_name || ' ' || last_name AS name FROM customers WHERE id = $1 AND organization_id = $2`,
@@ -213,7 +211,9 @@ export async function createGoldBuybackOrder(
       const metalType = purity.base_metal_type;
 
       // Fetch active market spot rate
-      const rateRes = await client.query<{ rate_per_gram_cad: string | number }>(
+      const rateRes = await client.query<{
+        rate_per_gram_cad: string | number;
+      }>(
         `
         SELECT rate_per_gram_cad
         FROM daily_market_rates
@@ -236,7 +236,8 @@ export async function createGoldBuybackOrder(
       }
 
       const ratePerGramCad = Number(rateRow.rate_per_gram_cad);
-      const fineMetalWeightGrams = item.netWeightGrams * (purityPercentage / 100);
+      const fineMetalWeightGrams =
+        item.netWeightGrams * (purityPercentage / 100);
       const meltValueCad = fineMetalWeightGrams * ratePerGramCad;
       const smeltingFeeCad = Number(item.smeltingFeeCad ?? 0);
 
@@ -475,9 +476,7 @@ export async function settleGoldBuybackOrder(
   },
   clientOverride?: Queryable,
 ): Promise<GoldBuybackOrderRecord> {
-  const runner = async (
-    client: Queryable,
-  ): Promise<GoldBuybackOrderRecord> => {
+  const runner = async (client: Queryable): Promise<GoldBuybackOrderRecord> => {
     // 1. Lock buyback order
     const orderRes = await client.query<GoldBuybackOrderRow>(
       `

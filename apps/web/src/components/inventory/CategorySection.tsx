@@ -2,12 +2,7 @@
 
 import React, { useState } from "react";
 import { PieceCard, InventoryPieceData } from "./PieceCard";
-import {
-  ChevronDown,
-  ChevronRight,
-  Gem,
-  Sparkles,
-} from "lucide-react";
+import { ChevronDown, ChevronRight, Gem, Sparkles } from "lucide-react";
 
 export interface InventoryCategoryData {
   id: string;
@@ -22,7 +17,10 @@ export interface InventoryCategoryData {
 interface CategorySectionProps {
   category: InventoryCategoryData;
   selectedPieceId?: string;
-  onSelectPiece?: (piece: InventoryPieceData, category: InventoryCategoryData) => void;
+  onSelectPiece?: (
+    piece: InventoryPieceData,
+    category: InventoryCategoryData,
+  ) => void;
   defaultExpanded?: boolean;
 }
 

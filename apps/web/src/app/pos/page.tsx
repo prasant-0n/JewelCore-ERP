@@ -23,7 +23,10 @@ import {
   TrendingUp,
   UserCheck,
 } from "lucide-react";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import {
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -143,7 +146,8 @@ const INITIAL_POS_GROUPS: PosSectionGroupData[] = [
 ];
 
 export default function PosTerminalPage() {
-  const [groups, setGroups] = useState<PosSectionGroupData[]>(INITIAL_POS_GROUPS);
+  const [groups, setGroups] =
+    useState<PosSectionGroupData[]>(INITIAL_POS_GROUPS);
   const [activeClient, setActiveClient] = useState<ClientProfileData>({
     id: "cli-01",
     name: "Mrs. Radhika Singhania",
@@ -155,7 +159,7 @@ export default function PosTerminalPage() {
     relationshipManager: "N. Mehta",
   });
   const [selectedPiece, setSelectedPiece] = useState<PosPieceData | null>(
-    INITIAL_POS_GROUPS[0].pieces[0]
+    INITIAL_POS_GROUPS[0].pieces[0],
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
@@ -216,7 +220,7 @@ export default function PosTerminalPage() {
           p.serialNumber.toLowerCase().includes(q) ||
           p.itemName.toLowerCase().includes(q) ||
           p.category.toLowerCase().includes(q) ||
-          p.epcTag.toLowerCase().includes(q)
+          p.epcTag.toLowerCase().includes(q),
       );
     }
     if (filterState === "CART") {
@@ -227,7 +231,10 @@ export default function PosTerminalPage() {
     return { ...group, pieces };
   });
 
-  const handleSelectPiece = (piece: PosPieceData, group: PosSectionGroupData) => {
+  const handleSelectPiece = (
+    piece: PosPieceData,
+    group: PosSectionGroupData,
+  ) => {
     setSelectedPiece(piece);
   };
 
@@ -239,11 +246,13 @@ export default function PosTerminalPage() {
         pieces: g.pieces.map((p) =>
           p.id === pieceId
             ? { ...p, status: p.status === "IN_CART" ? "AVAILABLE" : "IN_CART" }
-            : p
+            : p,
         ),
-      }))
+      })),
     );
-    toast.info("Cart Updated", { description: "Piece added/removed from active checkout session." });
+    toast.info("Cart Updated", {
+      description: "Piece added/removed from active checkout session.",
+    });
   };
 
   const handleSelectClient = (client: ClientProfileData) => {
@@ -270,7 +279,9 @@ export default function PosTerminalPage() {
             <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
               <span>Flagship Mumbai (INV-11)</span>
               <span>&gt;</span>
-              <span className="text-gold font-medium">Showroom POS &amp; Clienteling</span>
+              <span className="text-gold font-medium">
+                Showroom POS &amp; Clienteling
+              </span>
               <Badge variant="emerald" dot className="ml-2">
                 Terminal POS-01 Online • Tax Invoice Compliant
               </Badge>
@@ -320,9 +331,11 @@ export default function PosTerminalPage() {
                   prev.map((g) => ({
                     ...g,
                     pieces: g.pieces.map((p) =>
-                      p.status === "IN_CART" ? { ...p, status: "AVAILABLE" as const } : p
+                      p.status === "IN_CART"
+                        ? { ...p, status: "AVAILABLE" as const }
+                        : p,
                     ),
-                  }))
+                  })),
                 );
               }}
             />

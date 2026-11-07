@@ -36,7 +36,10 @@ interface PieceInspectorDrawerProps {
   onClose: () => void;
 }
 
-export function PieceInspectorDrawer({ piece, onClose }: PieceInspectorDrawerProps) {
+export function PieceInspectorDrawer({
+  piece,
+  onClose,
+}: PieceInspectorDrawerProps) {
   if (!piece) return null;
 
   const handleRequestMovement = () => {
@@ -48,7 +51,10 @@ export function PieceInspectorDrawer({ piece, onClose }: PieceInspectorDrawerPro
 
   return (
     <Sheet open={!!piece} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="w-full sm:max-w-md flex flex-col justify-between overflow-y-auto">
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-md flex flex-col justify-between overflow-y-auto"
+      >
         <div className="space-y-6">
           {/* Header */}
           <SheetHeader className="pb-4 border-b border-surface-border">
@@ -92,19 +98,27 @@ export function PieceInspectorDrawer({ piece, onClose }: PieceInspectorDrawerPro
             </span>
             <div className="grid grid-cols-2 gap-2 text-xs font-mono">
               <div className="p-2 rounded bg-surface border border-surface-border/60">
-                <span className="text-[10px] text-muted-foreground block">QUALITY</span>
+                <span className="text-[10px] text-muted-foreground block">
+                  QUALITY
+                </span>
                 <StatusBadge status={piece.qualityState} size="sm" />
               </div>
               <div className="p-2 rounded bg-surface border border-surface-border/60">
-                <span className="text-[10px] text-muted-foreground block">APPROVAL</span>
+                <span className="text-[10px] text-muted-foreground block">
+                  APPROVAL
+                </span>
                 <StatusBadge status={piece.approvalState} size="sm" />
               </div>
               <div className="p-2 rounded bg-surface border border-surface-border/60">
-                <span className="text-[10px] text-muted-foreground block">CUSTODY</span>
+                <span className="text-[10px] text-muted-foreground block">
+                  CUSTODY
+                </span>
                 <StatusBadge status={piece.custodyState} size="sm" />
               </div>
               <div className="p-2 rounded bg-surface border border-surface-border/60">
-                <span className="text-[10px] text-muted-foreground block">COMMERCIAL</span>
+                <span className="text-[10px] text-muted-foreground block">
+                  COMMERCIAL
+                </span>
                 <StatusBadge status={piece.commercialState} size="sm" />
               </div>
             </div>
@@ -117,7 +131,11 @@ export function PieceInspectorDrawer({ piece, onClose }: PieceInspectorDrawerPro
                 <Scale className="w-4 h-4 text-gold" />
                 <span>Gross Weight</span>
               </div>
-              <TabularWeight grams={piece.grossWeightGrams} decimals={4} className="text-foreground" />
+              <TabularWeight
+                grams={piece.grossWeightGrams}
+                decimals={4}
+                className="text-foreground"
+              />
             </div>
 
             <div className="flex items-center justify-between p-3 rounded-lg bg-surface-elevated border border-surface-border text-xs">
@@ -155,7 +173,11 @@ export function PieceInspectorDrawer({ piece, onClose }: PieceInspectorDrawerPro
           <Button variant="secondary" className="flex-1" onClick={onClose}>
             Close Inspector
           </Button>
-          <Button variant="gold" className="flex-1" onClick={handleRequestMovement}>
+          <Button
+            variant="gold"
+            className="flex-1"
+            onClick={handleRequestMovement}
+          >
             Request Movement
           </Button>
         </div>

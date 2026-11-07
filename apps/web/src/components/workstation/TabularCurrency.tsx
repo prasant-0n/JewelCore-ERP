@@ -17,7 +17,11 @@ export function TabularCurrency({
   const num = typeof amount === "string" ? parseFloat(amount) : amount;
 
   if (num === null || num === undefined || isNaN(num)) {
-    return <span className={cn("font-mono text-muted-foreground", className)}>—</span>;
+    return (
+      <span className={cn("font-mono text-muted-foreground", className)}>
+        —
+      </span>
+    );
   }
 
   const formatted = new Intl.NumberFormat("en-IN", {
@@ -26,7 +30,12 @@ export function TabularCurrency({
   }).format(num);
 
   return (
-    <span className={cn("font-mono tabular-nums tracking-tight font-medium inline-flex items-center", className)}>
+    <span
+      className={cn(
+        "font-mono tabular-nums tracking-tight font-medium inline-flex items-center",
+        className,
+      )}
+    >
       <span className="text-muted-foreground mr-0.5">{currency}</span>
       <span>{formatted}</span>
     </span>

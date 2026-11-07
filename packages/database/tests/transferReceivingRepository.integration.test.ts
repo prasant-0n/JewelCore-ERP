@@ -21,9 +21,7 @@ import {
   submitTransferOrder,
   approveTransferOrder,
 } from "../src/repositories/transferOrderRepository.js";
-import {
-  dispatchTransferOrder,
-} from "../src/repositories/transferDispatchRepository.js";
+import { dispatchTransferOrder } from "../src/repositories/transferDispatchRepository.js";
 import {
   receiveTransferManifest,
   createTransferDispute,
@@ -66,40 +64,100 @@ describe("Transfer Receiving & Dispute Repository (FEAT-XFR-03, Entity 62)", () 
   let disputedOrderId: string;
 
   async function cleanFixtures() {
-    await query("ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;",
+    );
 
-    await query("DELETE FROM transfer_disputes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM security_seals WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM transfer_manifests WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO')));");
-    await query("DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));");
-    await query("DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO')));");
-    await query("DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));");
-    await query("DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
+    await query(
+      "DELETE FROM transfer_disputes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM security_seals WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM transfer_manifests WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO')));",
+    );
+    await query(
+      "DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));",
+    );
+    await query(
+      "DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO')));",
+    );
+    await query(
+      "DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));",
+    );
+    await query(
+      "DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_RCV_REPO_%';");
-    await query("DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));");
-    await query("DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));");
-    await query("DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));");
-    await query("DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
-    await query("DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');");
+    await query(
+      "DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));",
+    );
+    await query(
+      "DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));",
+    );
+    await query(
+      "DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO'));",
+    );
+    await query(
+      "DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
+    await query(
+      "DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_RCV_REPO');",
+    );
     await query("DELETE FROM organizations WHERE code = 'ORG_RCV_REPO';");
 
-    await query("ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;",
+    );
   }
 
   beforeAll(async () => {
@@ -354,10 +412,19 @@ describe("Transfer Receiving & Dispute Repository (FEAT-XFR-03, Entity 62)", () 
        ($10, $2, $3, $4, $11, 'SN-DIS-01', 'Solitaire 3', 5.0000, 5.0000, $6, 'IN_VAULT', 'AVAILABLE_FOR_SALE', $7, clock_timestamp(), clock_timestamp()),
        ($12, $2, $3, $4, $13, 'SN-DIS-02', 'Solitaire 4', 5.0000, 5.0000, $6, 'IN_VAULT', 'AVAILABLE_FOR_SALE', $7, clock_timestamp(), clock_timestamp())`,
       [
-        cleanPiece1, orgId, sourceStoreId, sku.id, qcItems[0]!, purity.id, sourceCompId,
-        cleanPiece2, qcItems[1]!,
-        disputedPiece1, qcItems[2]!,
-        disputedPiece2, qcItems[3]!,
+        cleanPiece1,
+        orgId,
+        sourceStoreId,
+        sku.id,
+        qcItems[0]!,
+        purity.id,
+        sourceCompId,
+        cleanPiece2,
+        qcItems[1]!,
+        disputedPiece1,
+        qcItems[2]!,
+        disputedPiece2,
+        qcItems[3]!,
       ],
     );
 
@@ -405,7 +472,9 @@ describe("Transfer Receiving & Dispute Repository (FEAT-XFR-03, Entity 62)", () 
         witnessUserId: receiverUserId,
         destinationCompartmentId: destCompId,
         receivedItemIds: [cleanPiece1, cleanPiece2],
-        sealVerifications: [{ sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT }],
+        sealVerifications: [
+          { sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT },
+        ],
       }),
     ).rejects.toThrow(ValidationError);
   });
@@ -416,36 +485,59 @@ describe("Transfer Receiving & Dispute Repository (FEAT-XFR-03, Entity 62)", () 
         witnessUserId,
         destinationCompartmentId: otherStoreCompId, // 3rd branch store!
         receivedItemIds: [cleanPiece1, cleanPiece2],
-        sealVerifications: [{ sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT }],
+        sealVerifications: [
+          { sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT },
+        ],
       }),
     ).rejects.toThrow(ValidationError);
   });
 
   it("successfully receives clean transfer manifest, moves items to destination vault and completes order", async () => {
-    const result = await receiveTransferManifest(orgId, receiverUserId, cleanManifestId, {
-      witnessUserId,
-      destinationCompartmentId: destCompId,
-      receivedItemIds: [cleanPiece1, cleanPiece2],
-      sealVerifications: [{ sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT }],
-      notes: "All pieces received in pristine condition",
-    });
+    const result = await receiveTransferManifest(
+      orgId,
+      receiverUserId,
+      cleanManifestId,
+      {
+        witnessUserId,
+        destinationCompartmentId: destCompId,
+        receivedItemIds: [cleanPiece1, cleanPiece2],
+        sealVerifications: [
+          { sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT },
+        ],
+        notes: "All pieces received in pristine condition",
+      },
+    );
 
     expect(result.order.status).toBe(TransferOrderStatus.COMPLETED);
     expect(result.manifest.status).toBe(ManifestStatus.RECEIVED);
     expect(result.disputes).toHaveLength(0);
 
     // Verify pieces updated to destination store and compartment
-    const piecesRes = await query<{ store_id: string; current_compartment_id: string; custody_state: string }>(
+    const piecesRes = await query<{
+      store_id: string;
+      current_compartment_id: string;
+      custody_state: string;
+    }>(
       `SELECT store_id, current_compartment_id, custody_state FROM inventory_items WHERE id IN ($1, $2)`,
       [cleanPiece1, cleanPiece2],
     );
     expect(piecesRes.rows).toHaveLength(2);
-    expect(piecesRes.rows.every(r => r.store_id === destinationStoreId)).toBe(true);
-    expect(piecesRes.rows.every(r => r.current_compartment_id === destCompId)).toBe(true);
-    expect(piecesRes.rows.every(r => r.custody_state === "IN_VAULT")).toBe(true);
+    expect(piecesRes.rows.every((r) => r.store_id === destinationStoreId)).toBe(
+      true,
+    );
+    expect(
+      piecesRes.rows.every((r) => r.current_compartment_id === destCompId),
+    ).toBe(true);
+    expect(piecesRes.rows.every((r) => r.custody_state === "IN_VAULT")).toBe(
+      true,
+    );
 
     // Verify movements logged with INTAKE_PLACEMENT
-    const mvmRes = await query<{ movement_type: string; to_compartment_id: string; to_custody_state: string }>(
+    const mvmRes = await query<{
+      movement_type: string;
+      to_compartment_id: string;
+      to_custody_state: string;
+    }>(
       `SELECT movement_type, to_compartment_id, to_custody_state
        FROM inventory_movements
        WHERE reference_document_type = 'TRANSFER_ORDER' AND reference_document_id = $1`,
@@ -459,31 +551,50 @@ describe("Transfer Receiving & Dispute Repository (FEAT-XFR-03, Entity 62)", () 
 
   it("detects tampered seals and missing pieces, creates dispute claims and marks missing custody (Architectural Gap 2)", async () => {
     // disputedPiece1 received, disputedPiece2 missing! Seal BROKEN_TAMPERED!
-    const result = await receiveTransferManifest(orgId, receiverUserId, disputedManifestId, {
-      witnessUserId,
-      destinationCompartmentId: destCompId,
-      receivedItemIds: [disputedPiece1], // disputedPiece2 is missing
-      sealVerifications: [{ sealNumber: "SEAL-DIS-01", status: SealStatus.BROKEN_TAMPERED, notes: "Seal cable cut" }],
-      notes: "Package arrived with severed seal and 1 missing solitaire ring",
-    });
+    const result = await receiveTransferManifest(
+      orgId,
+      receiverUserId,
+      disputedManifestId,
+      {
+        witnessUserId,
+        destinationCompartmentId: destCompId,
+        receivedItemIds: [disputedPiece1], // disputedPiece2 is missing
+        sealVerifications: [
+          {
+            sealNumber: "SEAL-DIS-01",
+            status: SealStatus.BROKEN_TAMPERED,
+            notes: "Seal cable cut",
+          },
+        ],
+        notes: "Package arrived with severed seal and 1 missing solitaire ring",
+      },
+    );
 
     expect(result.order.status).toBe(TransferOrderStatus.DISPUTED);
     expect(result.manifest.status).toBe(ManifestStatus.DISPUTED);
     expect(result.disputes).toHaveLength(2);
 
-    const sealDispute = result.disputes.find(d => d.claimType === DisputeClaimType.DAMAGED_SEAL);
+    const sealDispute = result.disputes.find(
+      (d) => d.claimType === DisputeClaimType.DAMAGED_SEAL,
+    );
     expect(sealDispute).toBeDefined();
     expect(sealDispute!.severity).toBe(DisputeSeverity.CRITICAL);
     expect(sealDispute!.status).toBe(DisputeStatus.OPEN);
 
-    const missingPieceDispute = result.disputes.find(d => d.claimType === DisputeClaimType.MISSING_PIECE);
+    const missingPieceDispute = result.disputes.find(
+      (d) => d.claimType === DisputeClaimType.MISSING_PIECE,
+    );
     expect(missingPieceDispute).toBeDefined();
     expect(missingPieceDispute!.inventoryItemId).toBe(disputedPiece2);
     expect(missingPieceDispute!.severity).toBe(DisputeSeverity.CRITICAL);
     expect(missingPieceDispute!.status).toBe(DisputeStatus.OPEN);
 
     // Verify disputedPiece1 is IN_VAULT at destination store
-    const p1Res = await query<{ store_id: string; current_compartment_id: string; custody_state: string }>(
+    const p1Res = await query<{
+      store_id: string;
+      current_compartment_id: string;
+      custody_state: string;
+    }>(
       `SELECT store_id, current_compartment_id, custody_state FROM inventory_items WHERE id = $1`,
       [disputedPiece1],
     );
@@ -491,7 +602,10 @@ describe("Transfer Receiving & Dispute Repository (FEAT-XFR-03, Entity 62)", () 
     expect(p1Res.rows[0].store_id).toBe(destinationStoreId);
 
     // Verify disputedPiece2 is MISSING
-    const p2Res = await query<{ custody_state: string; current_compartment_id: string | null }>(
+    const p2Res = await query<{
+      custody_state: string;
+      current_compartment_id: string | null;
+    }>(
       `SELECT custody_state, current_compartment_id FROM inventory_items WHERE id = $1`,
       [disputedPiece2],
     );
@@ -508,13 +622,20 @@ describe("Transfer Receiving & Dispute Repository (FEAT-XFR-03, Entity 62)", () 
     expect(listRes.total).toBe(2);
 
     const disputeToResolve = listRes.disputes[0];
-    const resolved = await resolveTransferDispute(orgId, disputeToResolve.id, receiverUserId, {
-      resolutionStatus: DisputeStatus.RESOLVED,
-      resolutionNotes: "Insurance payout claim approved by carrier",
-    });
+    const resolved = await resolveTransferDispute(
+      orgId,
+      disputeToResolve.id,
+      receiverUserId,
+      {
+        resolutionStatus: DisputeStatus.RESOLVED,
+        resolutionNotes: "Insurance payout claim approved by carrier",
+      },
+    );
 
     expect(resolved.status).toBe(DisputeStatus.RESOLVED);
-    expect(resolved.resolutionNotes).toBe("Insurance payout claim approved by carrier");
+    expect(resolved.resolutionNotes).toBe(
+      "Insurance payout claim approved by carrier",
+    );
     expect(resolved.resolvedByUserId).toBe(receiverUserId);
     expect(resolved.resolvedAt).toBeDefined();
 

@@ -138,8 +138,12 @@ describe("POS Exchange & Trade-In API (FEAT-RET-04)", () => {
       "DELETE FROM goods_receipt_notes WHERE grn_number LIKE 'GRN-EXC-API-%';",
     );
     await query("DELETE FROM suppliers WHERE code LIKE 'SUP_EXC_API_%';");
-    await query("DELETE FROM product_skus WHERE sku_code LIKE 'SKU-EXC-API-%';");
-    await query("DELETE FROM products WHERE product_code LIKE 'PRD_EXC_API_%';");
+    await query(
+      "DELETE FROM product_skus WHERE sku_code LIKE 'SKU-EXC-API-%';",
+    );
+    await query(
+      "DELETE FROM products WHERE product_code LIKE 'PRD_EXC_API_%';",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_EXC_API_%';");
     await query("DELETE FROM materials WHERE code LIKE 'MAT_EXC_API_%';");
     await query("DELETE FROM categories WHERE code LIKE 'CAT_EXC_API_%';");

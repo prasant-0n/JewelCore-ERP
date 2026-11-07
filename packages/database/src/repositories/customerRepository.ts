@@ -54,8 +54,14 @@ export function mapRowToCustomer(row: CustomerRow): CustomerRecord {
     tags: Array.isArray(row.tags) ? row.tags : [],
     notes: row.notes,
     status: row.status as CustomerStatus,
-    createdAt: row.created_at instanceof Date ? row.created_at : new Date(row.created_at),
-    updatedAt: row.updated_at instanceof Date ? row.updated_at : new Date(row.updated_at),
+    createdAt:
+      row.created_at instanceof Date
+        ? row.created_at
+        : new Date(row.created_at),
+    updatedAt:
+      row.updated_at instanceof Date
+        ? row.updated_at
+        : new Date(row.updated_at),
   };
 }
 

@@ -51,39 +51,97 @@ describe("Transfer Dispatch Repository (FEAT-XFR-02, Entities 60 & 61)", () => {
   let compId: string;
 
   async function cleanFixtures() {
-    await query("ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;",
+    );
 
-    await query("DELETE FROM security_seals WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM transfer_manifests WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO')));");
-    await query("DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));");
-    await query("DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO')));");
-    await query("DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));");
-    await query("DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
+    await query(
+      "DELETE FROM security_seals WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM transfer_manifests WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO')));",
+    );
+    await query(
+      "DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));",
+    );
+    await query(
+      "DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO')));",
+    );
+    await query(
+      "DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));",
+    );
+    await query(
+      "DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_DSP_REPO_%';");
-    await query("DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));");
-    await query("DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));");
-    await query("DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));");
-    await query("DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
-    await query("DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');");
+    await query(
+      "DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));",
+    );
+    await query(
+      "DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));",
+    );
+    await query(
+      "DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO'));",
+    );
+    await query(
+      "DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
+    await query(
+      "DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_DSP_REPO');",
+    );
     await query("DELETE FROM organizations WHERE code = 'ORG_DSP_REPO';");
 
-    await query("ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;",
+    );
   }
 
   beforeAll(async () => {
@@ -272,10 +330,19 @@ describe("Transfer Dispatch Repository (FEAT-XFR-02, Entities 60 & 61)", () => {
        ($10, $2, $3, $4, $11, 'SN-DSP-03', 'Solitaire 3', 5.0000, 5.0000, $6, 'IN_VAULT', 'AVAILABLE_FOR_SALE', $7, clock_timestamp(), clock_timestamp()),
        ($12, $2, $3, $4, $13, 'SN-DSP-04', 'Solitaire 4', 5.0000, 5.0000, $6, 'IN_VAULT', 'AVAILABLE_FOR_SALE', $7, clock_timestamp(), clock_timestamp())`,
       [
-        pieceId1, orgId, sourceStoreId, sku.id, qcItems[0]!, purity.id, compId,
-        pieceId2, qcItems[1]!,
-        pieceId3, qcItems[2]!,
-        pieceId4, qcItems[3]!,
+        pieceId1,
+        orgId,
+        sourceStoreId,
+        sku.id,
+        qcItems[0]!,
+        purity.id,
+        compId,
+        pieceId2,
+        qcItems[1]!,
+        pieceId3,
+        qcItems[2]!,
+        pieceId4,
+        qcItems[3]!,
       ],
     );
   });
@@ -358,7 +425,9 @@ describe("Transfer Dispatch Repository (FEAT-XFR-02, Entities 60 & 61)", () => {
       `SELECT status FROM transfer_orders WHERE id = $1`,
       [order.id],
     );
-    expect(updatedOrderRes.rows[0]?.status).toBe(TransferOrderStatus.IN_TRANSIT);
+    expect(updatedOrderRes.rows[0]?.status).toBe(
+      TransferOrderStatus.IN_TRANSIT,
+    );
 
     // 4. Verify transfer order items status transitioned to DISPATCHED
     const itemsRes = await query<{ status: string }>(
@@ -366,18 +435,35 @@ describe("Transfer Dispatch Repository (FEAT-XFR-02, Entities 60 & 61)", () => {
       [order.id],
     );
     expect(itemsRes.rows).toHaveLength(2);
-    expect(itemsRes.rows.every(r => r.status === TransferOrderItemStatus.DISPATCHED)).toBe(true);
+    expect(
+      itemsRes.rows.every(
+        (r) => r.status === TransferOrderItemStatus.DISPATCHED,
+      ),
+    ).toBe(true);
 
     // 5. Verify inventory pieces transitioned to IN_TRANSIT and compartment cleared
-    const piecesRes = await query<{ custody_state: string; current_compartment_id: string | null }>(
+    const piecesRes = await query<{
+      custody_state: string;
+      current_compartment_id: string | null;
+    }>(
       `SELECT custody_state, current_compartment_id FROM inventory_items WHERE id IN ($1, $2)`,
       [pieceId3, pieceId4],
     );
     expect(piecesRes.rows).toHaveLength(2);
-    expect(piecesRes.rows.every(r => r.custody_state === "IN_TRANSIT" && r.current_compartment_id === null)).toBe(true);
+    expect(
+      piecesRes.rows.every(
+        (r) =>
+          r.custody_state === "IN_TRANSIT" && r.current_compartment_id === null,
+      ),
+    ).toBe(true);
 
     // 6. Verify custody movements logged with CUSTODY_DEPARTURE (INV-09, INV-13, INV-16)
-    const mvmRes = await query<{ movement_type: string; from_custody_state: string; to_custody_state: string; reference_document_type: string }>(
+    const mvmRes = await query<{
+      movement_type: string;
+      from_custody_state: string;
+      to_custody_state: string;
+      reference_document_type: string;
+    }>(
       `SELECT movement_type, from_custody_state, to_custody_state, reference_document_type
        FROM inventory_movements
        WHERE reference_document_id = $1`,
@@ -404,7 +490,10 @@ describe("Transfer Dispatch Repository (FEAT-XFR-02, Entities 60 & 61)", () => {
     expect(fetchedById!.manifestNumber).toBe(first.manifestNumber);
     expect(fetchedById!.seals!.length).toBeGreaterThanOrEqual(1);
 
-    const fetchedByOrderId = await getTransferManifestByOrderId(orgId, first.transferOrderId);
+    const fetchedByOrderId = await getTransferManifestByOrderId(
+      orgId,
+      first.transferOrderId,
+    );
     expect(fetchedByOrderId).not.toBeNull();
     expect(fetchedByOrderId!.id).toBe(first.id);
   });

@@ -52,7 +52,11 @@ export async function addTransferOrderItemHandler(
   try {
     const { orgId } = getAuthContext(req);
     const input = addTransferOrderItemSchema.parse(req.body);
-    const item = await addTransferOrderItem(orgId, req.params.id as string, input);
+    const item = await addTransferOrderItem(
+      orgId,
+      req.params.id as string,
+      input,
+    );
     res.status(201).json(item);
   } catch (err) {
     next(err);
@@ -66,7 +70,11 @@ export async function removeTransferOrderItemHandler(
 ): Promise<void> {
   try {
     const { orgId } = getAuthContext(req);
-    await removeTransferOrderItem(orgId, req.params.id as string, req.params.itemId as string);
+    await removeTransferOrderItem(
+      orgId,
+      req.params.id as string,
+      req.params.itemId as string,
+    );
     res.status(204).send();
   } catch (err) {
     next(err);
@@ -80,7 +88,11 @@ export async function submitTransferOrderHandler(
 ): Promise<void> {
   try {
     const { orgId, userId } = getAuthContext(req);
-    const order = await submitTransferOrder(orgId, req.params.id as string, userId);
+    const order = await submitTransferOrder(
+      orgId,
+      req.params.id as string,
+      userId,
+    );
     res.status(200).json(order);
   } catch (err) {
     next(err);
@@ -94,7 +106,11 @@ export async function approveTransferOrderHandler(
 ): Promise<void> {
   try {
     const { orgId, userId } = getAuthContext(req);
-    const order = await approveTransferOrder(orgId, req.params.id as string, userId);
+    const order = await approveTransferOrder(
+      orgId,
+      req.params.id as string,
+      userId,
+    );
     res.status(200).json(order);
   } catch (err) {
     next(err);
@@ -109,7 +125,12 @@ export async function rejectTransferOrderHandler(
   try {
     const { orgId, userId } = getAuthContext(req);
     const input = rejectTransferOrderSchema.parse(req.body);
-    const order = await rejectTransferOrder(orgId, req.params.id as string, userId, input);
+    const order = await rejectTransferOrder(
+      orgId,
+      req.params.id as string,
+      userId,
+      input,
+    );
     res.status(200).json(order);
   } catch (err) {
     next(err);
@@ -124,7 +145,12 @@ export async function cancelTransferOrderHandler(
   try {
     const { orgId, userId } = getAuthContext(req);
     const input = cancelTransferOrderSchema.parse(req.body || {});
-    const order = await cancelTransferOrder(orgId, req.params.id as string, userId, input.reason);
+    const order = await cancelTransferOrder(
+      orgId,
+      req.params.id as string,
+      userId,
+      input.reason,
+    );
     res.status(200).json(order);
   } catch (err) {
     next(err);

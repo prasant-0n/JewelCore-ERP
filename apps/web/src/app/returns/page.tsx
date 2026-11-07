@@ -21,7 +21,10 @@ import {
   Plus,
   TrendingUp,
 } from "lucide-react";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import {
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -110,12 +113,14 @@ const INITIAL_SCRAP_BATCHES: ScrapBatchGroupData[] = [
 ];
 
 export default function ReturnsRefiningPage() {
-  const [batches, setBatches] = useState<ScrapBatchGroupData[]>(INITIAL_SCRAP_BATCHES);
+  const [batches, setBatches] = useState<ScrapBatchGroupData[]>(
+    INITIAL_SCRAP_BATCHES,
+  );
   const [selectedItem, setSelectedItem] = useState<ScrapPieceData | null>(
-    INITIAL_SCRAP_BATCHES[0].items[0]
+    INITIAL_SCRAP_BATCHES[0].items[0],
   );
   const [selectedBatchTitle, setSelectedBatchTitle] = useState<string>(
-    INITIAL_SCRAP_BATCHES[0].batchTitle
+    INITIAL_SCRAP_BATCHES[0].batchTitle,
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
@@ -124,11 +129,16 @@ export default function ReturnsRefiningPage() {
   // Summary Metrics
   const totalScrapGrams = batches.reduce(
     (acc, b) => acc + b.items.reduce((sub, i) => sub + i.grossWeightGrams, 0),
-    0
+    0,
   );
   const totalBuybackPayout = batches.reduce(
-    (acc, b) => acc + b.items.reduce((sub, i) => sub + (i.calculatedValuationInr ?? i.payoutValueInr ?? 0), 0),
-    0
+    (acc, b) =>
+      acc +
+      b.items.reduce(
+        (sub, i) => sub + (i.calculatedValuationInr ?? i.payoutValueInr ?? 0),
+        0,
+      ),
+    0,
   );
 
   const returnsKpis: KpiItem[] = [
@@ -173,14 +183,19 @@ export default function ReturnsRefiningPage() {
       items = items.filter(
         (i) =>
           i.itemCode.toLowerCase().includes(q) ||
-          (i.itemDescription || i.description || "").toLowerCase().includes(q) ||
-          (i.customerName || "").toLowerCase().includes(q)
+          (i.itemDescription || i.description || "")
+            .toLowerCase()
+            .includes(q) ||
+          (i.customerName || "").toLowerCase().includes(q),
       );
     }
     return { ...batch, items };
   });
 
-  const handleSelectItem = (item: ScrapPieceData, batch: ScrapBatchGroupData) => {
+  const handleSelectItem = (
+    item: ScrapPieceData,
+    batch: ScrapBatchGroupData,
+  ) => {
     setSelectedItem(item);
     setSelectedBatchTitle(batch.batchTitle);
   };
@@ -188,8 +203,8 @@ export default function ReturnsRefiningPage() {
   const handleCreatedItem = (item: ScrapPieceData, targetBatchId: string) => {
     setBatches((prev) =>
       prev.map((b) =>
-        b.id === targetBatchId ? { ...b, items: [item, ...b.items] } : b
-      )
+        b.id === targetBatchId ? { ...b, items: [item, ...b.items] } : b,
+      ),
     );
     setSelectedItem(item);
   };
@@ -203,7 +218,9 @@ export default function ReturnsRefiningPage() {
             <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
               <span>Flagship Mumbai (INV-11)</span>
               <span>&gt;</span>
-              <span className="text-gold font-medium">Refining &amp; Scrap Melting</span>
+              <span className="text-gold font-medium">
+                Refining &amp; Scrap Melting
+              </span>
               <Badge variant="emerald" dot className="ml-2">
                 Induction Furnace Active • Niton XRF Verified
               </Badge>

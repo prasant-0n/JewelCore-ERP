@@ -52,40 +52,102 @@ describe("Transfer Orders API (FEAT-XFR-01, Entities 58 & 59)", () => {
   let pieceIdDifferentStore: string;
 
   async function cleanFixtures() {
-    await query("ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;",
+    );
 
-    await query("DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'))));");
-    await query("DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));");
-    await query("DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'))));");
-    await query("DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));");
-    await query("DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
+    await query(
+      "DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'))));",
+    );
+    await query(
+      "DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'))));",
+    );
+    await query(
+      "DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_XFR_API_%';");
-    await query("DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));");
-    await query("DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));");
-    await query("DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));");
-    await query("DELETE FROM user_roles WHERE user_id IN (SELECT id FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));");
-    await query("DELETE FROM store_memberships WHERE organization_membership_id IN (SELECT id FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));");
-    await query("DELETE FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));");
-    await query("DELETE FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT');");
+    await query(
+      "DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM user_roles WHERE user_id IN (SELECT id FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM store_memberships WHERE organization_membership_id IN (SELECT id FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM organizations WHERE code IN ('ORG_XFR_API', 'ORG_XFR_API_ALT');",
+    );
 
-    await query("ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;",
+    );
   }
 
   beforeAll(async () => {
@@ -360,10 +422,20 @@ describe("Transfer Orders API (FEAT-XFR-01, Entities 58 & 59)", () => {
        ($10, $2, $3, $4, $11, 'SN-XFR-API-03', 'Solitaire 3', 5.0000, 5.0000, $6, 'IN_VAULT', 'AVAILABLE_FOR_SALE', $7, clock_timestamp(), clock_timestamp()),
        ($12, $2, $13, $4, $14, 'SN-XFR-API-04', 'Solitaire 4', 5.0000, 5.0000, $6, 'IN_VAULT', 'AVAILABLE_FOR_SALE', NULL, clock_timestamp(), clock_timestamp())`,
       [
-        pieceId1, orgId, sourceStoreId, sku.id, qcItems[0]!, purity.id, comp.id,
-        pieceId2, qcItems[1]!,
-        pieceId3, qcItems[2]!,
-        pieceIdDifferentStore, destinationStoreId, qcItems[3]!,
+        pieceId1,
+        orgId,
+        sourceStoreId,
+        sku.id,
+        qcItems[0]!,
+        purity.id,
+        comp.id,
+        pieceId2,
+        qcItems[1]!,
+        pieceId3,
+        qcItems[2]!,
+        pieceIdDifferentStore,
+        destinationStoreId,
+        qcItems[3]!,
       ],
     );
   });
@@ -373,12 +445,10 @@ describe("Transfer Orders API (FEAT-XFR-01, Entities 58 & 59)", () => {
   });
 
   it("POST /api/v1/transfers/orders returns 401 if unauthenticated", async () => {
-    const res = await request(app)
-      .post("/api/v1/transfers/orders")
-      .send({
-        sourceStoreId,
-        destinationStoreId,
-      });
+    const res = await request(app).post("/api/v1/transfers/orders").send({
+      sourceStoreId,
+      destinationStoreId,
+    });
 
     expect(res.status).toBe(401);
   });
@@ -528,7 +598,9 @@ describe("Transfer Orders API (FEAT-XFR-01, Entities 58 & 59)", () => {
       });
     expect(rejectRes.status).toBe(200);
     expect(rejectRes.body.status).toBe(TransferOrderStatus.REJECTED);
-    expect(rejectRes.body.rejectionReason).toBe("Stock needed locally for festival season");
+    expect(rejectRes.body.rejectionReason).toBe(
+      "Stock needed locally for festival season",
+    );
   });
 
   it("GET /api/v1/transfers/orders lists orders and enforces multi-tenant isolation", async () => {

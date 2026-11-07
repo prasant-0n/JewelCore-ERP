@@ -15,7 +15,9 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
 
   if (!mounted) {
     return (
-      <div className={`w-9 h-9 rounded-lg border border-surface-border bg-surface flex items-center justify-center opacity-70 ${className}`} />
+      <div
+        className={`w-9 h-9 rounded-lg border border-surface-border bg-surface flex items-center justify-center opacity-70 ${className}`}
+      />
     );
   }
 
@@ -30,7 +32,11 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={toggleTheme}
       type="button"
       className={`relative inline-flex items-center justify-center w-9 h-9 rounded-lg border border-surface-border bg-surface hover:bg-surface-elevated text-muted-foreground hover:text-foreground transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold/50 ${className}`}
-      title={isDark ? "Switch to Ivory Atelier (Light Mode)" : "Switch to Dark Obsidian Mode"}
+      title={
+        isDark
+          ? "Switch to Ivory Atelier (Light Mode)"
+          : "Switch to Dark Obsidian Mode"
+      }
       aria-label="Toggle theme"
     >
       <AnimatePresence mode="wait" initial={false}>

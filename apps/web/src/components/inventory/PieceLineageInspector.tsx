@@ -14,7 +14,13 @@ import {
   X,
   ArrowRightLeft,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
@@ -42,9 +48,13 @@ export function PieceLineageInspector({
     return (
       <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
         <Gem className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-foreground">No Piece Selected</h4>
+        <h4 className="text-sm font-medium text-foreground">
+          No Piece Selected
+        </h4>
         <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-          Select any serialized jewellery piece from the category matrix to view its 4-dimensional state machine, GIA diamond specs, and cryptographic lineage ledger.
+          Select any serialized jewellery piece from the category matrix to view
+          its 4-dimensional state machine, GIA diamond specs, and cryptographic
+          lineage ledger.
         </p>
       </Card>
     );
@@ -72,14 +82,16 @@ export function PieceLineageInspector({
 
   const handleSellClick = () => {
     toast.success(`Sent to POS Checkout: ${serialNumber}`, {
-      description: "Added to active cashier cart. Calculating dynamic bullion rate and margin.",
+      description:
+        "Added to active cashier cart. Calculating dynamic bullion rate and margin.",
     });
     onCheckoutClick?.(piece);
   };
 
   const handleTransferClick = () => {
     toast.info(`Custody Transfer Request: ${serialNumber}`, {
-      description: "Inter-branch transfer requisition logged for armored courier manifest.",
+      description:
+        "Inter-branch transfer requisition logged for armored courier manifest.",
     });
     onTransferClick?.(piece);
   };
@@ -130,11 +142,15 @@ export function PieceLineageInspector({
       <CardContent className="p-4 sm:p-5 border-b border-surface-border space-y-3.5">
         <div className="grid grid-cols-2 gap-2 text-xs font-mono">
           <div className="p-2 rounded bg-surface-elevated border border-surface-border">
-            <span className="text-[10px] text-muted-foreground block">CUSTODY STATE</span>
+            <span className="text-[10px] text-muted-foreground block">
+              CUSTODY STATE
+            </span>
             <StatusBadge status={custodyState} size="sm" />
           </div>
           <div className="p-2 rounded bg-surface-elevated border border-surface-border">
-            <span className="text-[10px] text-muted-foreground block">APPROVAL STATE</span>
+            <span className="text-[10px] text-muted-foreground block">
+              APPROVAL STATE
+            </span>
             <StatusBadge status={approvalState} size="sm" />
           </div>
         </div>
@@ -157,7 +173,8 @@ export function PieceLineageInspector({
               <span className="text-muted-foreground">Diamond Spec:</span>
             </div>
             <span className="font-mono text-foreground font-semibold">
-              {diamondCarat} ct • {diamondClarity || "VVS"} / {diamondColor || "E"} ({giaCertNumber || "GIA"})
+              {diamondCarat} ct • {diamondClarity || "VVS"} /{" "}
+              {diamondColor || "E"} ({giaCertNumber || "GIA"})
             </span>
           </div>
         )}
@@ -165,8 +182,13 @@ export function PieceLineageInspector({
         {/* Valuation & Current Location */}
         <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground font-mono">Showroom Retail Tag:</span>
-            <TabularCurrency amount={priceInr} className="text-gold text-sm font-bold" />
+            <span className="text-muted-foreground font-mono">
+              Showroom Retail Tag:
+            </span>
+            <TabularCurrency
+              amount={priceInr}
+              className="text-gold text-sm font-bold"
+            />
           </div>
           <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
             <span>Location: {currentLocation}</span>
@@ -193,7 +215,9 @@ export function PieceLineageInspector({
               <div className="w-2 h-2 rounded-full bg-gold shrink-0 mt-1.5" />
               <div className="space-y-0.5">
                 <div className="font-semibold text-foreground">{ev.stage}</div>
-                <div className="text-[11px] text-muted-foreground font-mono">{ev.actor} • {ev.timestamp}</div>
+                <div className="text-[11px] text-muted-foreground font-mono">
+                  {ev.actor} • {ev.timestamp}
+                </div>
                 <div className="text-xs text-muted-foreground">{ev.detail}</div>
               </div>
             </div>

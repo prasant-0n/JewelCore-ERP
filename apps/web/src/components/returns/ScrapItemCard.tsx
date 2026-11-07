@@ -25,7 +25,12 @@ export interface ScrapPieceData {
   meltLossDeductionPercent?: number;
   calculatedValuationInr?: number;
   payoutValueInr?: number;
-  status: "VALUATED" | "ASSAY_PASSED" | "STONES_EXTRACTED" | "SMELT_QUEUED" | "REFINED";
+  status:
+    | "VALUATED"
+    | "ASSAY_PASSED"
+    | "STONES_EXTRACTED"
+    | "SMELT_QUEUED"
+    | "REFINED";
   containmentBucket?: string;
   receivedAt?: string;
   alloyClassification?: string;
@@ -44,12 +49,15 @@ export function ScrapItemCard({
 }: ScrapItemCardProps) {
   const isPassed = item.status === "ASSAY_PASSED" || item.status === "VALUATED";
   const desc = item.itemDescription || item.description || "Scrap Gold Lot";
-  const netAu = item.netGoldWeightGrams ?? item.netGoldGrams ?? item.grossWeightGrams;
-  const purity = item.assayedPurityPercent ?? item.assayedFinenessPercent ?? 91.6;
+  const netAu =
+    item.netGoldWeightGrams ?? item.netGoldGrams ?? item.grossWeightGrams;
+  const purity =
+    item.assayedPurityPercent ?? item.assayedFinenessPercent ?? 91.6;
   const sg = item.hydrostaticSpecificGravity ?? item.specificGravity ?? 17.5;
   const val = item.calculatedValuationInr ?? item.payoutValueInr ?? 0;
   const alloy = item.karatString || item.alloyClassification || "22K Scrap";
-  const hasStones = (item.extractedStoneCarats ?? (item.stoneWeightDeductionGrams ? 1 : 0)) > 0;
+  const hasStones =
+    (item.extractedStoneCarats ?? (item.stoneWeightDeductionGrams ? 1 : 0)) > 0;
 
   return (
     <div
@@ -77,7 +85,9 @@ export function ScrapItemCard({
             />
             <span
               className={`font-mono text-xs font-bold transition-colors ${
-                isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
+                isSelected
+                  ? "text-gold"
+                  : "text-foreground group-hover:text-gold"
               }`}
             >
               {item.itemCode}
@@ -115,7 +125,9 @@ export function ScrapItemCard({
       {/* Middle Specs Grid */}
       <div className="grid grid-cols-2 gap-2 my-2.5 py-2 border-y border-surface-border/60 text-[11px] font-mono">
         <div>
-          <span className="text-muted-foreground text-[9px] block uppercase">Weight / Net Au</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Weight / Net Au
+          </span>
           <span className="text-foreground font-semibold tabular-nums">
             {item.grossWeightGrams.toFixed(3)}g Gross
           </span>
@@ -125,7 +137,9 @@ export function ScrapItemCard({
         </div>
 
         <div className="text-right">
-          <span className="text-muted-foreground text-[9px] block uppercase">Purity / SG</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Purity / SG
+          </span>
           <span className="text-emerald-500 font-semibold tabular-nums">
             {purity.toFixed(2)}% Au
           </span>
@@ -137,7 +151,9 @@ export function ScrapItemCard({
 
       {/* Footer: Valuation */}
       <div className="flex items-center justify-between text-[11px] font-mono">
-        <span className="text-muted-foreground text-[9px] uppercase">Assayed Payout:</span>
+        <span className="text-muted-foreground text-[9px] uppercase">
+          Assayed Payout:
+        </span>
         <span className="text-emerald-500 font-bold text-xs tabular-nums">
           ₹ {val.toLocaleString("en-IN")}
         </span>

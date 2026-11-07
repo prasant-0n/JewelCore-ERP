@@ -38,11 +38,11 @@ export function ScrapBatchSection({
 
   const totalGrossWeight = batch.items.reduce(
     (acc, itm) => acc + (itm.grossWeightGrams || 0),
-    0
+    0,
   );
   const totalValuation = batch.items.reduce(
     (acc, itm) => acc + (itm.calculatedValuationInr ?? itm.payoutValueInr ?? 0),
-    0
+    0,
   );
 
   return (

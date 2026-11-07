@@ -76,7 +76,9 @@ export function IngotBarCard({
               : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
           }`}
         >
-          {toleranceStatus === "TOLERANCE_OK" ? "Tolerance OK" : "Variance Alert"}
+          {toleranceStatus === "TOLERANCE_OK"
+            ? "Tolerance OK"
+            : "Variance Alert"}
         </span>
       </div>
 
@@ -91,8 +93,14 @@ export function IngotBarCard({
               {grossWeightGrams.toFixed(3)} g
             </div>
             <div className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-medium">
-              {varianceGrams >= 0 ? `+${varianceGrams.toFixed(3)}g` : `${varianceGrams.toFixed(3)}g`}{" "}
-              ({variancePercent >= 0 ? `+${variancePercent.toFixed(3)}%` : `${variancePercent.toFixed(3)}%`})
+              {varianceGrams >= 0
+                ? `+${varianceGrams.toFixed(3)}g`
+                : `${varianceGrams.toFixed(3)}g`}{" "}
+              (
+              {variancePercent >= 0
+                ? `+${variancePercent.toFixed(3)}%`
+                : `${variancePercent.toFixed(3)}%`}
+              )
             </div>
           </div>
         </div>

@@ -55,42 +55,108 @@ describe("Transfer Manifests & Security Dispatch API (FEAT-XFR-02, Entities 60 &
   let approvedOrderId: string;
 
   async function cleanFixtures() {
-    await query("ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;",
+    );
 
-    await query("DELETE FROM security_seals WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM transfer_manifests WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'))));");
-    await query("DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));");
-    await query("DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'))));");
-    await query("DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));");
-    await query("DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
+    await query(
+      "DELETE FROM security_seals WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM transfer_manifests WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'))));",
+    );
+    await query(
+      "DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'))));",
+    );
+    await query(
+      "DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_MNF_API_%';");
-    await query("DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));");
-    await query("DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));");
-    await query("DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));");
-    await query("DELETE FROM user_roles WHERE user_id IN (SELECT id FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));");
-    await query("DELETE FROM store_memberships WHERE organization_membership_id IN (SELECT id FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));");
-    await query("DELETE FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));");
-    await query("DELETE FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT');");
+    await query(
+      "DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM user_roles WHERE user_id IN (SELECT id FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM store_memberships WHERE organization_membership_id IN (SELECT id FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM organizations WHERE code IN ('ORG_MNF_API', 'ORG_MNF_API_ALT');",
+    );
 
-    await query("ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;",
+    );
   }
 
   beforeAll(async () => {

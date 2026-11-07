@@ -56,13 +56,24 @@ function mapSeal(row: SealRow): SecuritySealRecord {
     sealNumber: row.seal_number,
     sealType: row.seal_type,
     status: row.status,
-    verifiedAt: row.verified_at instanceof Date ? row.verified_at.toISOString() : (row.verified_at ? String(row.verified_at) : null),
+    verifiedAt:
+      row.verified_at instanceof Date
+        ? row.verified_at.toISOString()
+        : row.verified_at
+          ? String(row.verified_at)
+          : null,
     verifiedByUserId: row.verified_by_user_id,
-    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at),
+    createdAt:
+      row.created_at instanceof Date
+        ? row.created_at.toISOString()
+        : String(row.created_at),
   };
 }
 
-function mapManifest(row: ManifestRow, seals?: SecuritySealRecord[]): TransferManifestRecord {
+function mapManifest(
+  row: ManifestRow,
+  seals?: SecuritySealRecord[],
+): TransferManifestRecord {
   return {
     id: row.id,
     organizationId: row.organization_id,
@@ -75,11 +86,22 @@ function mapManifest(row: ManifestRow, seals?: SecuritySealRecord[]): TransferMa
     witnessUserName: row.witness_user_name,
     carrierName: row.carrier_name,
     trackingNumber: row.tracking_number,
-    estimatedArrival: row.estimated_arrival instanceof Date ? row.estimated_arrival.toISOString() : (row.estimated_arrival ? String(row.estimated_arrival) : null),
-    dispatchedAt: row.dispatched_at instanceof Date ? row.dispatched_at.toISOString() : String(row.dispatched_at),
+    estimatedArrival:
+      row.estimated_arrival instanceof Date
+        ? row.estimated_arrival.toISOString()
+        : row.estimated_arrival
+          ? String(row.estimated_arrival)
+          : null,
+    dispatchedAt:
+      row.dispatched_at instanceof Date
+        ? row.dispatched_at.toISOString()
+        : String(row.dispatched_at),
     status: row.status,
     notes: row.notes,
-    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at),
+    createdAt:
+      row.created_at instanceof Date
+        ? row.created_at.toISOString()
+        : String(row.created_at),
     seals,
   };
 }
@@ -91,7 +113,9 @@ export async function dispatchTransferOrder(
 ): Promise<TransferManifestRecord> {
   // 1. Dual custody enforcement (INV-13)
   if (dispatcherUserId === input.witnessUserId) {
-    throw new ValidationError("Dual-custody sign-off requires distinct dispatcher and witness users (INV-13)");
+    throw new ValidationError(
+      "Dual-custody sign-off requires distinct dispatcher and witness users (INV-13)",
+    );
   }
 
   // 2. Witness user verification
@@ -107,11 +131,19 @@ export async function dispatchTransferOrder(
 
   // 3. Tamper-evident seal requirement (INV-16)
   if (!input.sealNumbers || input.sealNumbers.length === 0) {
-    throw new ValidationError("At least one tamper-evident security seal is required (INV-16)");
+    throw new ValidationError(
+      "At least one tamper-evident security seal is required (INV-16)",
+    );
   }
 
   const manifestId = uuidv7();
-  const manifestNumber = input.manifestNumber || `MNF-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 1000).toString().padStart(3, "0")}`;
+  const manifestNumber =
+    input.manifestNumber ||
+    `MNF-${Date.now().toString(36).toUpperCase()}-${Math.floor(
+      Math.random() * 1000,
+    )
+      .toString()
+      .padStart(3, "0")}`;
 
   return withTransaction(async (client) => {
     // 4. Verify Transfer Order
@@ -130,11 +162,15 @@ export async function dispatchTransferOrder(
 
     const order = orderRes.rows[0];
     if (!order) {
-      throw new NotFoundError(`Transfer order ${input.transferOrderId} not found`);
+      throw new NotFoundError(
+        `Transfer order ${input.transferOrderId} not found`,
+      );
     }
 
     if (order.status !== TransferOrderStatus.APPROVED) {
-      throw new ValidationError(`Transfer order must be in APPROVED state to dispatch (current state: ${order.status})`);
+      throw new ValidationError(
+        `Transfer order must be in APPROVED state to dispatch (current state: ${order.status})`,
+      );
     }
 
     // 5. Fetch and validate transfer order items
@@ -151,7 +187,9 @@ export async function dispatchTransferOrder(
     );
 
     if (itemsRes.rows.length === 0) {
-      throw new ValidationError("Cannot dispatch transfer order with zero items");
+      throw new ValidationError(
+        "Cannot dispatch transfer order with zero items",
+      );
     }
 
     // 6. Insert transfer_manifests record
@@ -183,7 +221,14 @@ export async function dispatchTransferOrder(
         `INSERT INTO security_seals (
           id, organization_id, transfer_manifest_id, seal_number, seal_type, status, created_at
         ) VALUES ($1, $2, $3, $4, $5, $6, clock_timestamp())`,
-        [sealId, organizationId, manifestId, sealNum, SealType.SECURITY_BAG, SealStatus.ATTACHED],
+        [
+          sealId,
+          organizationId,
+          manifestId,
+          sealNum,
+          SealType.SECURITY_BAG,
+          SealStatus.ATTACHED,
+        ],
       );
     }
 
@@ -204,7 +249,9 @@ export async function dispatchTransferOrder(
 
       const piece = pieceRes.rows[0];
       if (!piece) {
-        throw new NotFoundError(`Inventory item ${item.inventory_item_id} not found`);
+        throw new NotFoundError(
+          `Inventory item ${item.inventory_item_id} not found`,
+        );
       }
 
       if (piece.custody_state !== "IN_VAULT") {
@@ -305,7 +352,11 @@ export async function dispatchTransferOrder(
       ],
     );
 
-    const fullManifest = await getTransferManifestById(organizationId, manifestId, client);
+    const fullManifest = await getTransferManifestById(
+      organizationId,
+      manifestId,
+      client,
+    );
     return fullManifest!;
   });
 }
@@ -420,6 +471,6 @@ export async function listTransferManifests(
     listParams,
   );
 
-  const manifests = listRes.rows.map(row => mapManifest(row));
+  const manifests = listRes.rows.map((row) => mapManifest(row));
   return { manifests, total };
 }

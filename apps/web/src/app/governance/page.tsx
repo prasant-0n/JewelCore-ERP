@@ -12,7 +12,10 @@ import {
 } from "../../components/governance/GovernanceSection";
 import { GovernanceInspector } from "../../components/governance/GovernanceInspector";
 import { EmergencyOverrideModal } from "../../components/governance/EmergencyOverrideModal";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import {
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "../../components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +35,8 @@ const INITIAL_GOVERNANCE_BATCHES: GovernanceBatchGroupData[] = [
   {
     id: "batch-gov-01",
     batchNumber: "GOV-2026-091",
-    batchTitle: "Request #GOV-2026-091: High-Security Safe 01 Bullion Withdrawal",
+    batchTitle:
+      "Request #GOV-2026-091: High-Security Safe 01 Bullion Withdrawal",
     vaultSafeTag: "Main Safe 01",
     thresholdCategory: "Mandatory Dual-Key (>₹1 Cr)",
     status: "QUORUM_PENDING",
@@ -87,7 +91,8 @@ const INITIAL_GOVERNANCE_BATCHES: GovernanceBatchGroupData[] = [
   {
     id: "batch-gov-02",
     batchNumber: "GOV-2026-092",
-    batchTitle: "Request #GOV-2026-092: Brinks Armored Fleet Dispatch Gate Pass",
+    batchTitle:
+      "Request #GOV-2026-092: Brinks Armored Fleet Dispatch Gate Pass",
     vaultSafeTag: "Armored Safe B6",
     thresholdCategory: "Transit Specie Release",
     status: "QUORUM_PENDING",
@@ -137,13 +142,14 @@ const INITIAL_GOVERNANCE_BATCHES: GovernanceBatchGroupData[] = [
 ];
 
 export default function GovernanceApprovalPage() {
-  const [batches, setBatches] =
-    useState<GovernanceBatchGroupData[]>(INITIAL_GOVERNANCE_BATCHES);
+  const [batches, setBatches] = useState<GovernanceBatchGroupData[]>(
+    INITIAL_GOVERNANCE_BATCHES,
+  );
   const [selectedItem, setSelectedItem] = useState<GovernanceItemData | null>(
-    INITIAL_GOVERNANCE_BATCHES[0].items[0]
+    INITIAL_GOVERNANCE_BATCHES[0].items[0],
   );
   const [selectedBatchTitle, setSelectedBatchTitle] = useState<string>(
-    INITIAL_GOVERNANCE_BATCHES[0].batchTitle
+    INITIAL_GOVERNANCE_BATCHES[0].batchTitle,
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
@@ -152,8 +158,9 @@ export default function GovernanceApprovalPage() {
 
   // Compute metrics
   const pendingApprovalsCount = batches.reduce(
-    (acc, b) => acc + b.items.filter((i) => i.status === "AWAITING_SECOND_KEY").length,
-    0
+    (acc, b) =>
+      acc + b.items.filter((i) => i.status === "AWAITING_SECOND_KEY").length,
+    0,
   );
 
   // Filter logic
@@ -166,7 +173,7 @@ export default function GovernanceApprovalPage() {
           i.requestCode.toLowerCase().includes(q) ||
           i.actionTitle.toLowerCase().includes(q) ||
           i.keyholder1Name.toLowerCase().includes(q) ||
-          i.targetVaultLocation.toLowerCase().includes(q)
+          i.targetVaultLocation.toLowerCase().includes(q),
       );
     }
     if (filterState === "VAULT") {
@@ -183,7 +190,7 @@ export default function GovernanceApprovalPage() {
 
   const handleSelectItem = (
     item: GovernanceItemData,
-    batch: GovernanceBatchGroupData
+    batch: GovernanceBatchGroupData,
   ) => {
     setSelectedItem(item);
     setSelectedBatchTitle(batch.batchTitle);
@@ -192,7 +199,8 @@ export default function GovernanceApprovalPage() {
   const handleDualSignBatchAll = async () => {
     setIsDualSigningAll(true);
     toast.info("Validating Biometric Quorum against HSM Keystore...", {
-      description: "Signing Cryptographic SmartCard Token for all pending holds.",
+      description:
+        "Signing Cryptographic SmartCard Token for all pending holds.",
     });
 
     await new Promise((res) => setTimeout(res, 1200));
@@ -207,7 +215,7 @@ export default function GovernanceApprovalPage() {
           keyholder2Status: "SIGNED" as const,
           status: "DUAL_SIGNED_RELEASED" as const,
         })),
-      }))
+      })),
     );
     setSelectedItem((prev) =>
       prev
@@ -216,12 +224,13 @@ export default function GovernanceApprovalPage() {
             keyholder2Status: "SIGNED",
             status: "DUAL_SIGNED_RELEASED",
           }
-        : null
+        : null,
     );
 
     setIsDualSigningAll(false);
     toast.success("Batch Dual-Sign Completed", {
-      description: "All pending high-security approvals authorized! Vault solenoid relays unlatched & Merkle roots chained.",
+      description:
+        "All pending high-security approvals authorized! Vault solenoid relays unlatched & Merkle roots chained.",
     });
   };
 
@@ -236,12 +245,18 @@ export default function GovernanceApprovalPage() {
                 keyholder2Status: "SIGNED" as const,
                 status: "DUAL_SIGNED_RELEASED" as const,
               }
-            : i
+            : i,
         ),
-      }))
+      })),
     );
     setSelectedItem((prev) =>
-      prev ? { ...prev, keyholder2Status: "SIGNED", status: "DUAL_SIGNED_RELEASED" } : null
+      prev
+        ? {
+            ...prev,
+            keyholder2Status: "SIGNED",
+            status: "DUAL_SIGNED_RELEASED",
+          }
+        : null,
     );
   };
 
@@ -350,12 +365,12 @@ export default function GovernanceApprovalPage() {
                     items: b.items.map((i) =>
                       i.id === item.id
                         ? { ...i, status: "REJECTED_LOCKED" as const }
-                        : i
+                        : i,
                     ),
-                  }))
+                  })),
                 );
                 setSelectedItem((prev) =>
-                  prev ? { ...prev, status: "REJECTED_LOCKED" } : null
+                  prev ? { ...prev, status: "REJECTED_LOCKED" } : null,
                 );
               }}
             />
@@ -376,25 +391,27 @@ export default function GovernanceApprovalPage() {
               </div>
 
               <div className="flex items-center space-x-1.5 text-xs font-mono">
-                {(["ALL", "VAULT", "POS", "SMELT", "TRANSIT"] as const).map((key) => {
-                  const labels: Record<string, string> = {
-                    ALL: "All Requests",
-                    VAULT: "Vault Access",
-                    POS: "High-Value POS",
-                    SMELT: "Refining Smelt",
-                    TRANSIT: "Armored Transit",
-                  };
-                  return (
-                    <Button
-                      key={key}
-                      variant={filterState === key ? "gold" : "outline"}
-                      size="xs"
-                      onClick={() => setFilterState(key)}
-                    >
-                      {labels[key]}
-                    </Button>
-                  );
-                })}
+                {(["ALL", "VAULT", "POS", "SMELT", "TRANSIT"] as const).map(
+                  (key) => {
+                    const labels: Record<string, string> = {
+                      ALL: "All Requests",
+                      VAULT: "Vault Access",
+                      POS: "High-Value POS",
+                      SMELT: "Refining Smelt",
+                      TRANSIT: "Armored Transit",
+                    };
+                    return (
+                      <Button
+                        key={key}
+                        variant={filterState === key ? "gold" : "outline"}
+                        size="xs"
+                        onClick={() => setFilterState(key)}
+                      >
+                        {labels[key]}
+                      </Button>
+                    );
+                  },
+                )}
               </div>
             </div>
 
@@ -417,7 +434,8 @@ export default function GovernanceApprovalPage() {
                     No matching governance approval tickets found
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Try adjusting your search criteria or review the audit archive.
+                    Try adjusting your search criteria or review the audit
+                    archive.
                   </p>
                 </Card>
               )}

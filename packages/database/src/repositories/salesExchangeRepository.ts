@@ -99,7 +99,9 @@ export async function processPOSExchange(
     }
 
     // 3. Create sales invoice for new items selected by customer (FEAT-SALES-02)
-    const invoiceNumber = `INV-EXC-${Date.now()}-${Math.floor(Math.random() * 10000)
+    const invoiceNumber = `INV-EXC-${Date.now()}-${Math.floor(
+      Math.random() * 10000,
+    )
       .toString()
       .padStart(4, "0")}`;
 

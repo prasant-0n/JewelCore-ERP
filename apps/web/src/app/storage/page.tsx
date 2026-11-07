@@ -311,7 +311,9 @@ const SAMPLE_STORAGE_HIERARCHY: VaultHierarchyWithOccupancy[] = [
 ];
 
 export default function StoragePage() {
-  const [vaults, setVaults] = useState<VaultHierarchyWithOccupancy[]>(SAMPLE_STORAGE_HIERARCHY);
+  const [vaults, setVaults] = useState<VaultHierarchyWithOccupancy[]>(
+    SAMPLE_STORAGE_HIERARCHY,
+  );
 
   useEffect(() => {
     async function loadLiveHierarchy() {

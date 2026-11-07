@@ -70,43 +70,111 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
   let disputePiece2Id: string;
 
   async function cleanFixtures() {
-    await query("ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;",
+    );
 
-    await query("DELETE FROM transfer_disputes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM security_seals WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM transfer_manifests WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'))));");
-    await query("DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));");
-    await query("DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'))));");
-    await query("DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));");
-    await query("DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
+    await query(
+      "DELETE FROM transfer_disputes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM security_seals WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM transfer_manifests WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'))));",
+    );
+    await query(
+      "DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'))));",
+    );
+    await query(
+      "DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_RCV_API_%';");
-    await query("DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));");
-    await query("DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));");
-    await query("DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));");
-    await query("DELETE FROM user_roles WHERE user_id IN (SELECT id FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));");
-    await query("DELETE FROM store_memberships WHERE organization_membership_id IN (SELECT id FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));");
-    await query("DELETE FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));");
-    await query("DELETE FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT');");
+    await query(
+      "DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM user_roles WHERE user_id IN (SELECT id FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM store_memberships WHERE organization_membership_id IN (SELECT id FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT')));",
+    );
+    await query(
+      "DELETE FROM organization_memberships WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT'));",
+    );
+    await query(
+      "DELETE FROM organizations WHERE code IN ('ORG_RCV_API', 'ORG_RCV_API_ALT');",
+    );
 
-    await query("ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;",
+    );
   }
 
   beforeAll(async () => {
@@ -406,7 +474,16 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
            4.5000, 4.5000, $7, 'IN_VAULT', 'AVAILABLE_FOR_SALE', $8,
            clock_timestamp(), clock_timestamp()
          )`,
-        [itemId, orgId, sourceStoreId, sku.id, qciId, serial, purity.id, sourceCompId],
+        [
+          itemId,
+          orgId,
+          sourceStoreId,
+          sku.id,
+          qciId,
+          serial,
+          purity.id,
+          sourceCompId,
+        ],
       );
       return itemId;
     }
@@ -471,7 +548,9 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
         witnessUserId,
         destinationCompartmentId: destCompId,
         receivedItemIds: [cleanPieceId],
-        sealVerifications: [{ sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT }],
+        sealVerifications: [
+          { sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT },
+        ],
       });
 
     expect(res.status).toBe(401);
@@ -485,7 +564,9 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
         witnessUserId,
         destinationCompartmentId: destCompId,
         receivedItemIds: [cleanPieceId],
-        sealVerifications: [{ sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT }],
+        sealVerifications: [
+          { sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT },
+        ],
       });
 
     expect(res.status).toBe(403);
@@ -499,7 +580,9 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
         witnessUserId: receiverUserId, // SAME as receiver
         destinationCompartmentId: destCompId,
         receivedItemIds: [cleanPieceId],
-        sealVerifications: [{ sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT }],
+        sealVerifications: [
+          { sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT },
+        ],
       });
 
     expect(res.status).toBe(400);
@@ -514,7 +597,9 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
         witnessUserId,
         destinationCompartmentId: otherCompId, // Belongs to other store/org
         receivedItemIds: [cleanPieceId],
-        sealVerifications: [{ sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT }],
+        sealVerifications: [
+          { sealNumber: "SEAL-CLN-01", status: SealStatus.VERIFIED_INTACT },
+        ],
       });
 
     expect(res.status).toBe(400);
@@ -675,7 +760,9 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
 
     expect(resolveRes.status).toBe(200);
     expect(resolveRes.body.status).toBe(DisputeStatus.RESOLVED);
-    expect(resolveRes.body.resolutionNotes).toBe("Item located in staging transit buffer and verified");
+    expect(resolveRes.body.resolutionNotes).toBe(
+      "Item located in staging transit buffer and verified",
+    );
     expect(resolveRes.body.resolvedByUserId).toBe(receiverUserId);
   });
 
@@ -689,7 +776,8 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
         claimType: DisputeClaimType.WEIGHT_DISCREPANCY,
         severity: DisputeSeverity.MEDIUM,
         witnessUserId,
-        details: "Scale shows weight variation of 0.05g from manifest declaration",
+        details:
+          "Scale shows weight variation of 0.05g from manifest declaration",
       });
 
     expect(res.status).toBe(201);

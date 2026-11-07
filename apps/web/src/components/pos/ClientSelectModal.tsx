@@ -78,7 +78,7 @@ export function ClientSelectModal({
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.panNumber.toLowerCase().includes(search.toLowerCase()) ||
-      c.phone.includes(search)
+      c.phone.includes(search),
   );
 
   const handleSelect = (client: ClientProfileData) => {
@@ -98,8 +98,12 @@ export function ClientSelectModal({
               <UserCheck className="w-4 h-4" />
             </div>
             <div>
-              <DialogTitle>Select Private Client &amp; KYC Verification</DialogTitle>
-              <DialogDescription>Rule 114B PAN / PMLA High-Value Mandate</DialogDescription>
+              <DialogTitle>
+                Select Private Client &amp; KYC Verification
+              </DialogTitle>
+              <DialogDescription>
+                Rule 114B PAN / PMLA High-Value Mandate
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
@@ -128,16 +132,26 @@ export function ClientSelectModal({
               >
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="font-semibold text-foreground text-sm">{client.name}</span>
-                    <Badge variant="gold" size="sm">{client.vipTier}</Badge>
+                    <span className="font-semibold text-foreground text-sm">
+                      {client.name}
+                    </span>
+                    <Badge variant="gold" size="sm">
+                      {client.vipTier}
+                    </Badge>
                   </div>
                   <div className="text-xs text-muted-foreground font-mono mt-0.5">
-                    PAN: {client.panNumber} • {client.phone} • {client.assignedSalon}
+                    PAN: {client.panNumber} • {client.phone} •{" "}
+                    {client.assignedSalon}
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] text-muted-foreground block font-mono">Lifetime Spend</span>
-                  <TabularCurrency amount={client.lifetimeSpendInr} className="text-gold font-bold text-xs" />
+                  <span className="text-[10px] text-muted-foreground block font-mono">
+                    Lifetime Spend
+                  </span>
+                  <TabularCurrency
+                    amount={client.lifetimeSpendInr}
+                    className="text-gold font-bold text-xs"
+                  />
                 </div>
               </div>
             ))}

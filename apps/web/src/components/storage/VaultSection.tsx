@@ -16,7 +16,7 @@ interface VaultSectionProps {
   onSelectCompartment?: (
     compartment: CompartmentWithOccupancy,
     locker: LockerHierarchyWithOccupancy,
-    vault: VaultHierarchyWithOccupancy
+    vault: VaultHierarchyWithOccupancy,
   ) => void;
 }
 
@@ -30,18 +30,18 @@ export function VaultSection({
   const totalLockers = vault.lockers.length;
   const totalCompartments = vault.lockers.reduce(
     (acc, l) => acc + l.compartments.length,
-    0
+    0,
   );
   const totalPieces = vault.lockers.reduce(
     (acc, l) =>
       acc + l.compartments.reduce((cAcc, c) => cAcc + c.occupiedItemCount, 0),
-    0
+    0,
   );
   const totalCapacity = vault.lockers.reduce(
     (acc, l) =>
       acc +
       l.compartments.reduce((cAcc, c) => cAcc + (c.maxItemCapacity ?? 0), 0),
-    0
+    0,
   );
   const vaultOccupancy =
     totalCapacity > 0 ? Math.round((totalPieces / totalCapacity) * 100) : 0;
@@ -71,7 +71,12 @@ export function VaultSection({
             <Badge variant="gold" size="sm">
               {vault.code}
             </Badge>
-            <Badge variant="emerald" dot size="sm" className="hidden md:inline-flex">
+            <Badge
+              variant="emerald"
+              dot
+              size="sm"
+              className="hidden md:inline-flex"
+            >
               Armed &amp; Dual-Key Active
             </Badge>
           </div>

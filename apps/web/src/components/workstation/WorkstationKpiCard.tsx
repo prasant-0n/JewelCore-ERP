@@ -20,9 +20,17 @@ interface WorkstationKpiCardProps {
   className?: string;
 }
 
-export function WorkstationKpiCard({ item, className }: WorkstationKpiCardProps) {
+export function WorkstationKpiCard({
+  item,
+  className,
+}: WorkstationKpiCardProps) {
   return (
-    <Card className={cn("overflow-hidden hover:border-surface-border/80 transition-all", className)}>
+    <Card
+      className={cn(
+        "overflow-hidden hover:border-surface-border/80 transition-all",
+        className,
+      )}
+    >
       <CardContent className="p-3.5 sm:p-4">
         <div className="flex items-center justify-between gap-2 mb-2">
           <span className="text-xs font-medium text-muted-foreground truncate">
@@ -71,7 +79,7 @@ export function WorkstationKpiGrid({
     <div
       className={cn(
         "grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6",
-        className
+        className,
       )}
     >
       {items.map((item) => (

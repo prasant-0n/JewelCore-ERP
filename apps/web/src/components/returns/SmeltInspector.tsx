@@ -13,7 +13,13 @@ import {
   CreditCard,
   Wallet,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
@@ -39,7 +45,9 @@ export function SmeltInspector({
   onAuthorizePayout,
   onConvertToCredit,
 }: SmeltInspectorProps) {
-  const [tenderMethod, setTenderMethod] = useState<"RTGS" | "STORE_CREDIT" | "BULLION_RETURN">("RTGS");
+  const [tenderMethod, setTenderMethod] = useState<
+    "RTGS" | "STORE_CREDIT" | "BULLION_RETURN"
+  >("RTGS");
   const [isProcessing, setIsProcessing] = useState(false);
   const [bonusApplied, setBonusApplied] = useState(false);
 
@@ -47,9 +55,13 @@ export function SmeltInspector({
     return (
       <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
         <Flame className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-foreground">No Scrap Item Selected</h4>
+        <h4 className="text-sm font-medium text-foreground">
+          No Scrap Item Selected
+        </h4>
         <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-          Select any old gold buyback item or atelier melt lot to inspect Niton XRF spectral analysis, hydrostatic density, dross burn tolerance, and instant RTGS disbursement.
+          Select any old gold buyback item or atelier melt lot to inspect Niton
+          XRF spectral analysis, hydrostatic density, dross burn tolerance, and
+          instant RTGS disbursement.
         </p>
       </Card>
     );
@@ -58,8 +70,11 @@ export function SmeltInspector({
   const { itemCode } = item;
   const gross = item.grossWeightGrams || 0;
   const netAu = item.netGoldWeightGrams ?? item.netGoldGrams ?? gross;
-  const stonesDeduction = item.stoneWeightDeductionGrams ?? (item.extractedStoneCarats ? item.extractedStoneCarats * 0.2 : 0);
-  const purity = item.assayedPurityPercent ?? item.assayedFinenessPercent ?? 91.6;
+  const stonesDeduction =
+    item.stoneWeightDeductionGrams ??
+    (item.extractedStoneCarats ? item.extractedStoneCarats * 0.2 : 0);
+  const purity =
+    item.assayedPurityPercent ?? item.assayedFinenessPercent ?? 91.6;
   const karat = item.karatString || item.alloyClassification || "22K Old Gold";
   const sg = item.hydrostaticSpecificGravity ?? item.specificGravity ?? 17.55;
   const spotRate = item.spotGoldRatePerGram ?? 7450.0;
@@ -100,7 +115,11 @@ export function SmeltInspector({
               </CardTitle>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Client: <span className="font-semibold text-foreground">{item.customerName || clientName}</span> ({item.customerPan || "BPLPB1104M"})
+              Client:{" "}
+              <span className="font-semibold text-foreground">
+                {item.customerName || clientName}
+              </span>{" "}
+              ({item.customerPan || "BPLPB1104M"})
             </p>
           </div>
 
@@ -146,13 +165,20 @@ export function SmeltInspector({
         {/* Financial Valuation Decomposition */}
         <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground font-mono">Customer Net Buyback Valuation:</span>
-            <TabularCurrency amount={netPayable} className="text-gold text-lg font-bold" />
+            <span className="text-muted-foreground font-mono">
+              Customer Net Buyback Valuation:
+            </span>
+            <TabularCurrency
+              amount={netPayable}
+              className="text-gold text-lg font-bold"
+            />
           </div>
           <div className="space-y-1 text-xs font-mono text-muted-foreground pt-1 border-t border-surface-border">
             <div className="flex justify-between">
               <span>Assayed Karat Purity:</span>
-              <span className="text-foreground">{purity}% ({karat})</span>
+              <span className="text-foreground">
+                {purity}% ({karat})
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Spot MCX Gold Rate:</span>
@@ -201,7 +227,9 @@ export function SmeltInspector({
         {/* Containment Bucket */}
         <div className="p-3 rounded-lg bg-obsidian-deep border border-surface-border text-xs flex items-center justify-between">
           <span className="text-muted-foreground">Assigned Crucible:</span>
-          <span className="font-mono text-foreground font-medium">{bucket}</span>
+          <span className="font-mono text-foreground font-medium">
+            {bucket}
+          </span>
         </div>
       </CardContent>
 

@@ -24,7 +24,10 @@ export interface GovernanceBatchGroupData {
 interface GovernanceSectionProps {
   batch: GovernanceBatchGroupData;
   selectedItemId?: string;
-  onSelectItem?: (item: GovernanceItemData, batch: GovernanceBatchGroupData) => void;
+  onSelectItem?: (
+    item: GovernanceItemData,
+    batch: GovernanceBatchGroupData,
+  ) => void;
   defaultExpanded?: boolean;
 }
 
@@ -38,14 +41,14 @@ export function GovernanceSection({
 
   const totalValuation = batch.items.reduce(
     (acc, itm) => acc + (itm.valuationInr || 0),
-    0
+    0,
   );
   const totalGrossWeight = batch.items.reduce(
     (acc, itm) => acc + (itm.grossWeightGrams || 0),
-    0
+    0,
   );
   const pendingCount = batch.items.filter(
-    (i) => i.status === "AWAITING_SECOND_KEY"
+    (i) => i.status === "AWAITING_SECOND_KEY",
   ).length;
 
   return (
@@ -87,7 +90,9 @@ export function GovernanceSection({
               <span>•</span>
               <span
                 className={`flex items-center gap-1 font-medium ${
-                  pendingCount > 0 ? "text-amber-700 dark:text-amber-400" : "text-emerald-700 dark:text-emerald-400"
+                  pendingCount > 0
+                    ? "text-amber-700 dark:text-amber-400"
+                    : "text-emerald-700 dark:text-emerald-400"
                 }`}
               >
                 <span
@@ -97,7 +102,9 @@ export function GovernanceSection({
                       : "bg-emerald-500"
                   }`}
                 />
-                {pendingCount > 0 ? `${pendingCount} Awaiting 2nd Key` : "Quorum Reached"}
+                {pendingCount > 0
+                  ? `${pendingCount} Awaiting 2nd Key`
+                  : "Quorum Reached"}
               </span>
             </div>
           </div>

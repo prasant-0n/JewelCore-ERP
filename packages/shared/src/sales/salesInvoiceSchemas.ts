@@ -24,9 +24,7 @@ export const createSalesInvoiceItemSchema = z.object({
     .uuid("Invalid price snapshot UUID format")
     .optional()
     .nullable(),
-  unitPriceCad: z
-    .number()
-    .nonnegative("Unit price must be non-negative"),
+  unitPriceCad: z.number().nonnegative("Unit price must be non-negative"),
   discountAmountCad: z
     .number()
     .nonnegative("Discount amount must be non-negative")

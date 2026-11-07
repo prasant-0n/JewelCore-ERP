@@ -57,13 +57,15 @@ export function GovernanceItemCard({
                 isSelected
                   ? "text-gold"
                   : isPending
-                  ? "text-amber-600 dark:text-amber-400"
-                  : "text-emerald-600 dark:text-emerald-400"
+                    ? "text-amber-600 dark:text-amber-400"
+                    : "text-emerald-600 dark:text-emerald-400"
               }`}
             />
             <span
               className={`font-mono text-xs font-bold transition-colors ${
-                isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
+                isSelected
+                  ? "text-gold"
+                  : "text-foreground group-hover:text-gold"
               }`}
             >
               {item.requestCode}
@@ -82,8 +84,8 @@ export function GovernanceItemCard({
             isPending
               ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 animate-pulse font-semibold"
               : isReleased
-              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
-              : "bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/30"
+                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                : "bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/30"
           }`}
         >
           {isPending ? (
@@ -103,7 +105,9 @@ export function GovernanceItemCard({
       {/* Middle Specs Grid */}
       <div className="grid grid-cols-2 gap-2 my-2.5 py-2 border-y border-surface-border/60 text-[11px] font-mono">
         <div>
-          <span className="text-muted-foreground text-[9px] block uppercase">Weight / Val</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Weight / Val
+          </span>
           <span className="text-foreground font-semibold tabular-nums">
             {item.grossWeightGrams.toFixed(3)}g Gross
           </span>
@@ -113,16 +117,23 @@ export function GovernanceItemCard({
         </div>
 
         <div className="text-right">
-          <span className="text-muted-foreground text-[9px] block uppercase">Keyholder Quorum</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Keyholder Quorum
+          </span>
           <span className="text-emerald-700 dark:text-emerald-400 font-semibold text-[10px] block">
             Key 1: {item.keyholder1Name} ✓
           </span>
           <span
             className={`text-[10px] font-semibold block ${
-              item.keyholder2Status === "SIGNED" ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"
+              item.keyholder2Status === "SIGNED"
+                ? "text-emerald-700 dark:text-emerald-400"
+                : "text-amber-700 dark:text-amber-400"
             }`}
           >
-            Key 2: {item.keyholder2Status === "SIGNED" ? `${item.keyholder2Name} ✓` : "Pending PIN"}
+            Key 2:{" "}
+            {item.keyholder2Status === "SIGNED"
+              ? `${item.keyholder2Name} ✓`
+              : "Pending PIN"}
           </span>
         </div>
       </div>

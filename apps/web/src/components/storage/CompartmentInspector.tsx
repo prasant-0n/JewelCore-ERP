@@ -12,7 +12,13 @@ import {
   X,
   RefreshCw,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
@@ -84,9 +90,12 @@ export function CompartmentInspector({
     return (
       <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
         <Boxes className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-foreground">No Compartment Selected</h4>
+        <h4 className="text-sm font-medium text-foreground">
+          No Compartment Selected
+        </h4>
         <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-          Select any compartment cell from the 3-tier hierarchy matrix to inspect its live occupancy, weight load, and stored inventory.
+          Select any compartment cell from the 3-tier hierarchy matrix to
+          inspect its live occupancy, weight load, and stored inventory.
         </p>
       </Card>
     );
@@ -185,7 +194,11 @@ export function CompartmentInspector({
           maxValue={maxWeightCapacityGrams || 5000}
           unit="g"
           decimals={2}
-          status={currentWeightGrams / (maxWeightCapacityGrams || 5000) > 0.85 ? "warning" : "normal"}
+          status={
+            currentWeightGrams / (maxWeightCapacityGrams || 5000) > 0.85
+              ? "warning"
+              : "normal"
+          }
         />
 
         <MetrologyGauge
@@ -194,7 +207,11 @@ export function CompartmentInspector({
           maxValue={maxItemCapacity || 25}
           unit="pcs"
           decimals={0}
-          status={occupiedItemCount / (maxItemCapacity || 25) >= 0.9 ? "warning" : "passing"}
+          status={
+            occupiedItemCount / (maxItemCapacity || 25) >= 0.9
+              ? "warning"
+              : "passing"
+          }
         />
 
         {/* Audit Timestamp */}

@@ -26,7 +26,10 @@ export function MetrologyGauge({
   secondaryLabel,
   secondaryValue,
 }: MetrologyGaugeProps) {
-  const percentage = Math.min(Math.max((currentValue / (maxValue || 1)) * 100, 0), 100);
+  const percentage = Math.min(
+    Math.max((currentValue / (maxValue || 1)) * 100, 0),
+    100,
+  );
 
   const getBarColor = () => {
     if (status === "passing") return "bg-status-emerald";
@@ -36,24 +39,36 @@ export function MetrologyGauge({
   };
 
   return (
-    <div className={cn("space-y-1.5 p-3 rounded-lg bg-surface-elevated border border-surface-border", className)}>
+    <div
+      className={cn(
+        "space-y-1.5 p-3 rounded-lg bg-surface-elevated border border-surface-border",
+        className,
+      )}
+    >
       <div className="flex items-center justify-between text-xs">
         <span className="text-muted-foreground font-medium">{label}</span>
         <div className="flex items-center gap-2">
           {secondaryLabel && (
             <span className="text-[11px] text-muted-foreground font-mono">
-              {secondaryLabel}: <span className="text-foreground">{secondaryValue}</span>
+              {secondaryLabel}:{" "}
+              <span className="text-foreground">{secondaryValue}</span>
             </span>
           )}
           <span className="font-mono font-semibold tabular-nums text-foreground">
-            {currentValue.toFixed(decimals)} <span className="text-[10px] text-muted-foreground uppercase">{unit}</span>
+            {currentValue.toFixed(decimals)}{" "}
+            <span className="text-[10px] text-muted-foreground uppercase">
+              {unit}
+            </span>
           </span>
         </div>
       </div>
 
       <div className="relative h-2 w-full rounded-full bg-surface overflow-hidden border border-surface-border">
         <div
-          className={cn("h-full rounded-full transition-all duration-300 ease-out", getBarColor())}
+          className={cn(
+            "h-full rounded-full transition-all duration-300 ease-out",
+            getBarColor(),
+          )}
           style={{ width: `${percentage}%` }}
         />
       </div>
@@ -66,13 +81,19 @@ export function MetrologyGauge({
               "px-1 py-0.2 rounded font-semibold",
               Math.abs(toleranceDelta) <= 0.002
                 ? "text-status-emerald"
-                : "text-status-rose"
+                : "text-status-rose",
             )}
           >
-            Δ {toleranceDelta > 0 ? `+${toleranceDelta.toFixed(decimals)}` : toleranceDelta.toFixed(decimals)} {unit}
+            Δ{" "}
+            {toleranceDelta > 0
+              ? `+${toleranceDelta.toFixed(decimals)}`
+              : toleranceDelta.toFixed(decimals)}{" "}
+            {unit}
           </span>
         )}
-        <span>{maxValue.toFixed(decimals)} {unit}</span>
+        <span>
+          {maxValue.toFixed(decimals)} {unit}
+        </span>
       </div>
     </div>
   );

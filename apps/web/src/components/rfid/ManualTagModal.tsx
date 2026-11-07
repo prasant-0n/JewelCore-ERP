@@ -29,7 +29,9 @@ export function ManualTagModal({
   const [targetTrayId, setTargetTrayId] = useState("tray-01");
   const [epcTag, setEpcTag] = useState("E280-1160-2000-7741-0105");
   const [serialNumber, setSerialNumber] = useState("JC-SOL-2026-095");
-  const [itemName, setItemName] = useState("18K Solitaire Princess Diamond Ring (1.60ct)");
+  const [itemName, setItemName] = useState(
+    "18K Solitaire Princess Diamond Ring (1.60ct)",
+  );
   const [metalPurity, setMetalPurity] = useState("18K Yellow Gold (Au 750)");
   const [grossWeightGrams, setGrossWeightGrams] = useState("5.920");
   const [netGoldGrams, setNetGoldGrams] = useState("5.600");
@@ -39,7 +41,9 @@ export function ManualTagModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!epcTag || !serialNumber || !itemName) {
-      toast.error("Validation Error", { description: "Please fill in EPC tag, serial number, and item title." });
+      toast.error("Validation Error", {
+        description: "Please fill in EPC tag, serial number, and item title.",
+      });
       return;
     }
 
@@ -63,7 +67,10 @@ export function ManualTagModal({
         readCount: 168,
         frequencyMhz: 866.5,
         phaseAngleDeg: 120.4,
-        expectedLocation: targetTrayId === "tray-01" ? "Tray #01 (Solitaires)" : "Tray #02 (Kundan)",
+        expectedLocation:
+          targetTrayId === "tray-01"
+            ? "Tray #01 (Solitaires)"
+            : "Tray #02 (Kundan)",
         lastScannedAt: "Just now",
       };
 
@@ -89,7 +96,9 @@ export function ManualTagModal({
             </div>
             <div>
               <DialogTitle>Manual RFID Tag Registration</DialogTitle>
-              <DialogDescription>Impinj Speedway R420 Antenna Station</DialogDescription>
+              <DialogDescription>
+                Impinj Speedway R420 Antenna Station
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
@@ -104,9 +113,15 @@ export function ManualTagModal({
               onChange={(e) => setTargetTrayId(e.target.value)}
               className="w-full bg-obsidian-deep border border-surface-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-gold"
             >
-              <option value="tray-01">Tray #01: Solitaire Diamond Rings (Antenna 1)</option>
-              <option value="tray-02">Tray #02: Temple Heritage Kundan (Antenna 2)</option>
-              <option value="tray-03">Tray #03: Platinum & Polki Sets (Antenna 3)</option>
+              <option value="tray-01">
+                Tray #01: Solitaire Diamond Rings (Antenna 1)
+              </option>
+              <option value="tray-02">
+                Tray #02: Temple Heritage Kundan (Antenna 2)
+              </option>
+              <option value="tray-03">
+                Tray #03: Platinum & Polki Sets (Antenna 3)
+              </option>
             </select>
           </div>
 

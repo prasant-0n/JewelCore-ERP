@@ -42,9 +42,13 @@ export function GovernanceInspector({
     return (
       <Card className="h-full border-surface-border bg-surface-card p-8 flex flex-col items-center justify-center text-center text-muted-foreground shadow-sm">
         <KeyRound className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-foreground">No Governance Request Selected</h4>
+        <h4 className="text-sm font-medium text-foreground">
+          No Governance Request Selected
+        </h4>
         <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-          Select any dual-custody authorization, high-value vault release, or refining smelt ticket to inspect HSM cryptographic quorum, multi-signatory logs, and Merkle root proofs.
+          Select any dual-custody authorization, high-value vault release, or
+          refining smelt ticket to inspect HSM cryptographic quorum,
+          multi-signatory logs, and Merkle root proofs.
         </p>
       </Card>
     );
@@ -154,35 +158,46 @@ export function GovernanceInspector({
               <Fingerprint className="w-3.5 h-3.5" />
               Keyholders & Cryptographic Hardware State
             </span>
-            <Badge variant="emerald">
-              HSM v4.2.8 Enforced
-            </Badge>
+            <Badge variant="emerald">HSM v4.2.8 Enforced</Badge>
           </div>
 
           <div className="space-y-2 pt-1">
             <div className="p-2.5 rounded bg-surface-card border border-surface-border/60 flex items-center justify-between">
               <div>
-                <div className="text-[10px] text-muted-foreground">Keyholder 1 (Initiator / Head Custodian):</div>
-                <div className="text-foreground font-semibold mt-0.5">{keyholder1Name} (#CS-401)</div>
-                <div className="text-[10px] text-emerald-500 mt-0.5">Signed Biometric Token: {keyholder1SignedAt}</div>
+                <div className="text-[10px] text-muted-foreground">
+                  Keyholder 1 (Initiator / Head Custodian):
+                </div>
+                <div className="text-foreground font-semibold mt-0.5">
+                  {keyholder1Name} (#CS-401)
+                </div>
+                <div className="text-[10px] text-emerald-500 mt-0.5">
+                  Signed Biometric Token: {keyholder1SignedAt}
+                </div>
               </div>
               <div className="text-right">
-                <Badge variant="emerald">
-                  SIGNED ✓
-                </Badge>
+                <Badge variant="emerald">SIGNED ✓</Badge>
               </div>
             </div>
 
             <div className="p-2.5 rounded bg-surface-card border border-surface-border/60 flex items-center justify-between">
               <div>
-                <div className="text-[10px] text-muted-foreground">Keyholder 2 (Required / Chief Compliance Officer):</div>
-                <div className="text-foreground font-semibold mt-0.5">{keyholder2Name} (#CCO-102)</div>
+                <div className="text-[10px] text-muted-foreground">
+                  Keyholder 2 (Required / Chief Compliance Officer):
+                </div>
+                <div className="text-foreground font-semibold mt-0.5">
+                  {keyholder2Name} (#CCO-102)
+                </div>
                 <div className="text-[10px] text-amber-500 mt-0.5">
-                  {keyholder2Status === "SIGNED" ? "SmartCard PIN Verified" : "Awaiting Physical SmartCard Insertion"}
+                  {keyholder2Status === "SIGNED"
+                    ? "SmartCard PIN Verified"
+                    : "Awaiting Physical SmartCard Insertion"}
                 </div>
               </div>
               <div className="text-right">
-                <Badge variant={keyholder2Status === "SIGNED" ? "emerald" : "amber"} dot={keyholder2Status !== "SIGNED"}>
+                <Badge
+                  variant={keyholder2Status === "SIGNED" ? "emerald" : "amber"}
+                  dot={keyholder2Status !== "SIGNED"}
+                >
                   {keyholder2Status === "SIGNED" ? "SIGNED ✓" : "PENDING PIN"}
                 </Badge>
               </div>
@@ -197,9 +212,7 @@ export function GovernanceInspector({
               <FileCheck2 className="w-3.5 h-3.5" />
               Statutory PMLA & Value Authorization Rule
             </span>
-            <Badge variant="emerald">
-              Board Pre-Cleared
-            </Badge>
+            <Badge variant="emerald">Board Pre-Cleared</Badge>
           </div>
 
           <div className="space-y-1.5 pt-1 text-[11px]">
@@ -215,12 +228,16 @@ export function GovernanceInspector({
 
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Compliance Directive:</span>
-              <span className="text-foreground">Exceeds Mandatory ₹1 Cr Dual-Key Rule</span>
+              <span className="text-foreground">
+                Exceeds Mandatory ₹1 Cr Dual-Key Rule
+              </span>
             </div>
 
             <div className="flex items-center justify-between text-muted-foreground border-t border-surface-border/60 pt-1.5">
               <span>Session Timeout Countdown:</span>
-              <span className="text-amber-500 font-bold">Auto-cancels in 14m 28s</span>
+              <span className="text-amber-500 font-bold">
+                Auto-cancels in 14m 28s
+              </span>
             </div>
           </div>
         </div>
@@ -260,7 +277,9 @@ export function GovernanceInspector({
               className="text-foreground text-xs"
             >
               <ShieldCheck className="w-3.5 h-3.5 mr-1 text-muted-foreground" />
-              <span>{merkleViewActive ? "Hide Merkle Leaf" : "View Merkle Leaf"}</span>
+              <span>
+                {merkleViewActive ? "Hide Merkle Leaf" : "View Merkle Leaf"}
+              </span>
             </Button>
           </div>
 

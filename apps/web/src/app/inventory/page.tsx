@@ -12,15 +12,11 @@ import {
 } from "../../components/inventory/CategorySection";
 import { PieceLineageInspector } from "../../components/inventory/PieceLineageInspector";
 import { BirthPieceModal } from "../../components/inventory/BirthPieceModal";
+import { Gem, Scale, Search, Plus, Sparkles, Radio } from "lucide-react";
 import {
-  Gem,
-  Scale,
-  Search,
-  Plus,
-  Sparkles,
-  Radio,
-} from "lucide-react";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -61,7 +57,8 @@ const INITIAL_CATEGORIES: InventoryCategoryData[] = [
             stage: "Raw Ingot Smelting & Assay Passed",
             timestamp: "2026-11-01 10:15:00",
             actor: "Refinery Station #2",
-            detail: "Fineness 750.2 parts per 1,000 certified via Niton XL5 Plus",
+            detail:
+              "Fineness 750.2 parts per 1,000 certified via Niton XL5 Plus",
           },
           {
             stage: "Master Goldsmith Handcrafting",
@@ -73,7 +70,8 @@ const INITIAL_CATEGORIES: InventoryCategoryData[] = [
             stage: "Dual-Custody Hallmarking & Vault Deposit",
             timestamp: "2026-11-06 18:20:00",
             actor: "Vault Custodian M. Nair",
-            detail: "BIS 750 Hallmark verified. RFID EPC serialized into Drawer S-01",
+            detail:
+              "BIS 750 Hallmark verified. RFID EPC serialized into Drawer S-01",
           },
         ],
       },
@@ -101,7 +99,8 @@ const INITIAL_CATEGORIES: InventoryCategoryData[] = [
             stage: "Serialized Genesis",
             timestamp: "2026-11-02 09:00:00",
             actor: "QC Lab Tech",
-            detail: "GIA 2.01ct D-Flawless laser inscription verified under 40x microscope",
+            detail:
+              "GIA 2.01ct D-Flawless laser inscription verified under 40x microscope",
           },
         ],
       },
@@ -138,7 +137,8 @@ const INITIAL_CATEGORIES: InventoryCategoryData[] = [
             stage: "Antique Casting & Polki Setting",
             timestamp: "2026-10-28 11:00:00",
             actor: "Jaipur Atelier Master",
-            detail: "Natural meenakari reverse enameling and pure gold foil setting",
+            detail:
+              "Natural meenakari reverse enameling and pure gold foil setting",
           },
         ],
       },
@@ -147,30 +147,37 @@ const INITIAL_CATEGORIES: InventoryCategoryData[] = [
 ];
 
 export default function InventoryMasterPage() {
-  const [categories, setCategories] = useState<InventoryCategoryData[]>(INITIAL_CATEGORIES);
+  const [categories, setCategories] =
+    useState<InventoryCategoryData[]>(INITIAL_CATEGORIES);
   const [selectedPiece, setSelectedPiece] = useState<InventoryPieceData | null>(
-    INITIAL_CATEGORIES[0].pieces[0]
+    INITIAL_CATEGORIES[0].pieces[0],
   );
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>(
-    INITIAL_CATEGORIES[0].categoryName
+    INITIAL_CATEGORIES[0].categoryName,
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isBirthModalOpen, setIsBirthModalOpen] = useState(false);
 
   // Compute summary KPI metrics
-  const totalPiecesCount = categories.reduce((acc, cat) => acc + cat.pieces.length, 0);
+  const totalPiecesCount = categories.reduce(
+    (acc, cat) => acc + cat.pieces.length,
+    0,
+  );
   const totalValuationInr = categories.reduce(
-    (acc, cat) => acc + cat.pieces.reduce((sub, p) => sub + (p.priceInr || 0), 0),
-    0
+    (acc, cat) =>
+      acc + cat.pieces.reduce((sub, p) => sub + (p.priceInr || 0), 0),
+    0,
   );
   const totalGrossWeight = categories.reduce(
-    (acc, cat) => acc + cat.pieces.reduce((sub, p) => sub + (p.grossWeightGrams || 0), 0),
-    0
+    (acc, cat) =>
+      acc + cat.pieces.reduce((sub, p) => sub + (p.grossWeightGrams || 0), 0),
+    0,
   );
   const showroomPiecesCount = categories.reduce(
-    (acc, cat) => acc + cat.pieces.filter((p) => p.custodyState === "DISPLAY").length,
-    0
+    (acc, cat) =>
+      acc + cat.pieces.filter((p) => p.custodyState === "DISPLAY").length,
+    0,
   );
 
   const inventoryKpis: KpiItem[] = [
@@ -217,7 +224,7 @@ export default function InventoryMasterPage() {
           p.serialNumber.toLowerCase().includes(q) ||
           p.itemName.toLowerCase().includes(q) ||
           p.epcRfidTag.toLowerCase().includes(q) ||
-          p.metalPurity.toLowerCase().includes(q)
+          p.metalPurity.toLowerCase().includes(q),
       );
     }
     if (filterState === "VAULT") {
@@ -230,7 +237,10 @@ export default function InventoryMasterPage() {
     return { ...cat, pieces };
   });
 
-  const handleSelectPiece = (piece: InventoryPieceData, cat: InventoryCategoryData) => {
+  const handleSelectPiece = (
+    piece: InventoryPieceData,
+    cat: InventoryCategoryData,
+  ) => {
     setSelectedPiece(piece);
     setSelectedCategoryName(cat.categoryName);
   };
@@ -239,8 +249,12 @@ export default function InventoryMasterPage() {
     setCategories((prev) => {
       const targetCatIndex = prev.findIndex(
         (c) =>
-          c.categoryName.toLowerCase().includes(newPiece.category.toLowerCase()) ||
-          newPiece.category.toLowerCase().includes(c.categoryName.toLowerCase())
+          c.categoryName
+            .toLowerCase()
+            .includes(newPiece.category.toLowerCase()) ||
+          newPiece.category
+            .toLowerCase()
+            .includes(c.categoryName.toLowerCase()),
       );
       if (targetCatIndex >= 0) {
         const next = [...prev];
@@ -248,7 +262,8 @@ export default function InventoryMasterPage() {
           ...next[targetCatIndex],
           totalPieces: next[targetCatIndex].totalPieces + 1,
           totalGrossWeightGrams:
-            next[targetCatIndex].totalGrossWeightGrams + newPiece.grossWeightGrams,
+            next[targetCatIndex].totalGrossWeightGrams +
+            newPiece.grossWeightGrams,
           pieces: [newPiece, ...next[targetCatIndex].pieces],
         };
         return next;

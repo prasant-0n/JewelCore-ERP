@@ -76,7 +76,9 @@ export function ScanTraySection({
             <div className="text-xs text-muted-foreground flex items-center space-x-2 mt-0.5 font-mono">
               <span
                 className={`font-semibold ${
-                  hasDiscrepancy ? "text-rose-700 dark:text-rose-400" : "text-foreground"
+                  hasDiscrepancy
+                    ? "text-rose-700 dark:text-rose-400"
+                    : "text-foreground"
                 }`}
               >
                 {tray.detectedCount} / {tray.expectedCount} Detected
@@ -88,7 +90,9 @@ export function ScanTraySection({
               <span>•</span>
               <span
                 className={`flex items-center gap-1 font-medium ${
-                  hasDiscrepancy ? "text-rose-700 dark:text-rose-400" : "text-emerald-700 dark:text-emerald-400"
+                  hasDiscrepancy
+                    ? "text-rose-700 dark:text-rose-400"
+                    : "text-emerald-700 dark:text-emerald-400"
                 }`}
               >
                 <span

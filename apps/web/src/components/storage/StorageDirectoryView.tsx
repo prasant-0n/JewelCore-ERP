@@ -19,7 +19,10 @@ import {
   Plus,
   Scan,
 } from "lucide-react";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import {
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,17 +41,22 @@ export function StorageDirectoryView({
   storeCode = "INV-11",
   vaults,
 }: StorageDirectoryViewProps) {
-  const [filterStatus, setFilterStatus] = useState<CompartmentOccupancyStatus | "ALL">("ALL");
-  const [tierFilter, setTierFilter] = useState<"ALL" | "MAXIMUM" | "HIGH" | "SHOWROOM">("ALL");
+  const [filterStatus, setFilterStatus] = useState<
+    CompartmentOccupancyStatus | "ALL"
+  >("ALL");
+  const [tierFilter, setTierFilter] = useState<
+    "ALL" | "MAXIMUM" | "HIGH" | "SHOWROOM"
+  >("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCompartment, setSelectedCompartment] = useState<CompartmentWithOccupancy | null>(
-    vaults[0]?.lockers[0]?.compartments[0] || null
-  );
+  const [selectedCompartment, setSelectedCompartment] =
+    useState<CompartmentWithOccupancy | null>(
+      vaults[0]?.lockers[0]?.compartments[0] || null,
+    );
   const [selectedLockerName, setSelectedLockerName] = useState<string>(
-    vaults[0]?.lockers[0]?.name || "Locker 01"
+    vaults[0]?.lockers[0]?.name || "Locker 01",
   );
   const [selectedVaultName, setSelectedVaultName] = useState<string>(
-    vaults[0]?.name || "Vault 01"
+    vaults[0]?.name || "Vault 01",
   );
   const [isNewUnitModalOpen, setIsNewUnitModalOpen] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
@@ -120,7 +128,10 @@ export function StorageDirectoryView({
   const filteredVaults = vaults
     .filter((v) => {
       if (tierFilter === "ALL") return true;
-      return (v as any).vaultType?.includes(tierFilter) || (v as any).accessLevelRequired?.includes(tierFilter);
+      return (
+        (v as any).vaultType?.includes(tierFilter) ||
+        (v as any).accessLevelRequired?.includes(tierFilter)
+      );
     })
     .map((vault) => ({
       ...vault,
@@ -142,7 +153,7 @@ export function StorageDirectoryView({
   const handleSelectCompartment = (
     comp: CompartmentWithOccupancy,
     locker: LockerHierarchyWithOccupancy,
-    vault: VaultHierarchyWithOccupancy
+    vault: VaultHierarchyWithOccupancy,
   ) => {
     setSelectedCompartment(comp);
     setSelectedLockerName(locker.name);
@@ -165,9 +176,13 @@ export function StorageDirectoryView({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-4">
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-            <span>{storeName} ({storeCode})</span>
+            <span>
+              {storeName} ({storeCode})
+            </span>
             <span>&gt;</span>
-            <span className="text-gold font-medium">Storage &amp; Vault Hierarchy</span>
+            <span className="text-gold font-medium">
+              Storage &amp; Vault Hierarchy
+            </span>
             <Badge variant="emerald" dot className="ml-2">
               Live RFID Mesh Sync
             </Badge>
@@ -209,7 +224,9 @@ export function StorageDirectoryView({
             parentLockerName={selectedLockerName}
             parentVaultName={selectedVaultName}
             onTransferClick={() =>
-              toast.info(`Initiating Inter-Compartment Stock Transfer for ${selectedCompartment?.code}`)
+              toast.info(
+                `Initiating Inter-Compartment Stock Transfer for ${selectedCompartment?.code}`,
+              )
             }
           />
         }
@@ -240,7 +257,9 @@ export function StorageDirectoryView({
                       : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
                   }`}
                 >
-                  {tier === "ALL" ? "All Tiers" : tier.charAt(0) + tier.slice(1).toLowerCase()}
+                  {tier === "ALL"
+                    ? "All Tiers"
+                    : tier.charAt(0) + tier.slice(1).toLowerCase()}
                 </button>
               ))}
             </div>
@@ -272,7 +291,11 @@ export function StorageDirectoryView({
           id: v.id,
           name: v.name,
           code: v.code,
-          lockers: v.lockers.map((l) => ({ id: l.id, name: l.name, code: l.code })),
+          lockers: v.lockers.map((l) => ({
+            id: l.id,
+            name: l.name,
+            code: l.code,
+          })),
         }))}
       />
     </div>

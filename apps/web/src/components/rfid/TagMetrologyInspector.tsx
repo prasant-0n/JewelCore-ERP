@@ -15,7 +15,13 @@ import {
   X,
   CheckCircle2,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
@@ -46,9 +52,13 @@ export function TagMetrologyInspector({
     return (
       <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
         <Radio className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-foreground">No RFID Tag Selected</h4>
+        <h4 className="text-sm font-medium text-foreground">
+          No RFID Tag Selected
+        </h4>
         <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-          Select any serialized piece or tagged tray item to inspect live UHF signal telemetry, load cell gravimetric weight, and spatial antenna tracking.
+          Select any serialized piece or tagged tray item to inspect live UHF
+          signal telemetry, load cell gravimetric weight, and spatial antenna
+          tracking.
         </p>
       </Card>
     );
@@ -56,7 +66,10 @@ export function TagMetrologyInspector({
 
   const isMissing = item.status === "MISSING";
   const rssiValue = item.rssiDbm ?? -100;
-  const signalPercent = Math.max(0, Math.min(100, Math.round(((rssiValue + 80) / 50) * 100)));
+  const signalPercent = Math.max(
+    0,
+    Math.min(100, Math.round(((rssiValue + 80) / 50) * 100)),
+  );
 
   const handleSweepClick = async () => {
     setIsSweeping(true);
@@ -76,7 +89,8 @@ export function TagMetrologyInspector({
 
   const handleSeal = () => {
     toast.success("Tray Audit Sealed", {
-      description: "Cryptographic inventory verification hash committed to audit ledger.",
+      description:
+        "Cryptographic inventory verification hash committed to audit ledger.",
     });
     onSealTrayAudit?.();
   };
@@ -88,7 +102,9 @@ export function TagMetrologyInspector({
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center space-x-2">
-              <span className={`w-2.5 h-2.5 rounded-full ${isMissing ? "bg-status-rose animate-ping" : "bg-gold animate-pulse"}`} />
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${isMissing ? "bg-status-rose animate-ping" : "bg-gold animate-pulse"}`}
+              />
               <CardTitle className="text-base font-bold font-mono">
                 {item.serialNumber}
               </CardTitle>
@@ -113,7 +129,9 @@ export function TagMetrologyInspector({
         {/* Telemetry Status Badges */}
         <div className="flex flex-wrap items-center gap-2 mt-3">
           <Badge variant={isMissing ? "rose" : "emerald"} dot>
-            {isMissing ? "Tag Missing" : `Port #${item.antennaPort ?? 1} Online`}
+            {isMissing
+              ? "Tag Missing"
+              : `Port #${item.antennaPort ?? 1} Online`}
           </Badge>
           <Badge variant="gold">
             <Radio className="w-3 h-3 mr-1" />
@@ -127,8 +145,12 @@ export function TagMetrologyInspector({
       <CardContent className="p-4 sm:p-5 border-b border-surface-border space-y-3.5">
         <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground font-mono">UHF RSSI Signal Strength:</span>
-            <span className="font-mono text-gold font-bold">{rssiValue} dBm ({signalPercent}%)</span>
+            <span className="text-muted-foreground font-mono">
+              UHF RSSI Signal Strength:
+            </span>
+            <span className="font-mono text-gold font-bold">
+              {rssiValue} dBm ({signalPercent}%)
+            </span>
           </div>
           <div className="w-full bg-obsidian-deep h-1.5 rounded-full overflow-hidden border border-surface-border">
             <div
@@ -158,7 +180,9 @@ export function TagMetrologyInspector({
         {/* EPC Tag String */}
         <div className="p-3 rounded-lg bg-obsidian-deep border border-surface-border text-xs flex items-center justify-between">
           <span className="text-muted-foreground">EPC Hex Code:</span>
-          <span className="font-mono text-gold font-medium text-[11px] truncate max-w-[200px]">{item.epcTag}</span>
+          <span className="font-mono text-gold font-medium text-[11px] truncate max-w-[200px]">
+            {item.epcTag}
+          </span>
         </div>
       </CardContent>
 

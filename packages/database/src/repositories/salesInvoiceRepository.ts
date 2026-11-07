@@ -237,8 +237,7 @@ export async function createSalesInvoice(
       const discountAmountCad = itemInput.discountAmountCad ?? 0;
       const finalPriceCad = Math.max(0, unitPriceCad - discountAmountCad);
       const taxRate = itemInput.taxRate ?? 0.13;
-      const taxAmountCad =
-        Math.round(finalPriceCad * taxRate * 10000) / 10000;
+      const taxAmountCad = Math.round(finalPriceCad * taxRate * 10000) / 10000;
       const lineTotalCad =
         Math.round((finalPriceCad + taxAmountCad) * 10000) / 10000;
 

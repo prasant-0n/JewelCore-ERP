@@ -107,7 +107,10 @@ class ApiClient {
     return response.json();
   }
 
-  public get<T>(endpoint: string, headers?: Record<string, string>): Promise<T> {
+  public get<T>(
+    endpoint: string,
+    headers?: Record<string, string>,
+  ): Promise<T> {
     return this.request<T>(endpoint, { method: "GET", headers });
   }
 

@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { TrendingUp, Scale, CheckCircle2, ShieldCheck, Sparkles, AlertCircle } from "lucide-react";
+import {
+  TrendingUp,
+  Scale,
+  CheckCircle2,
+  ShieldCheck,
+  Sparkles,
+  AlertCircle,
+} from "lucide-react";
 
 export interface AlloyRuleData {
   id: string;
@@ -59,7 +66,9 @@ export function AlloyPricingCard({
             />
             <span
               className={`font-mono text-xs font-bold transition-colors ${
-                isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
+                isSelected
+                  ? "text-gold"
+                  : "text-foreground group-hover:text-gold"
               }`}
             >
               {alloy.alloyName}
@@ -94,14 +103,18 @@ export function AlloyPricingCard({
       {/* Price Grid */}
       <div className="my-2.5 py-2 border-y border-surface-border/60 space-y-1.5 text-[11px] font-mono">
         <div className="flex items-center justify-between">
-          <span className="text-muted-foreground text-[10px] uppercase">Spot Base Fix:</span>
+          <span className="text-muted-foreground text-[10px] uppercase">
+            Spot Base Fix:
+          </span>
           <span className="text-foreground font-bold tabular-nums">
             ₹ {alloy.spotPricePerGram.toFixed(2)} / g
           </span>
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-muted-foreground text-[10px] uppercase">Making Charge:</span>
+          <span className="text-muted-foreground text-[10px] uppercase">
+            Making Charge:
+          </span>
           <span className="text-gold font-semibold tabular-nums">
             {alloy.makingChargePercent > 0
               ? `${alloy.makingChargePercent.toFixed(1)}% Base`
@@ -110,7 +123,9 @@ export function AlloyPricingCard({
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-muted-foreground text-[10px] uppercase">Wastage Tolerance:</span>
+          <span className="text-muted-foreground text-[10px] uppercase">
+            Wastage Tolerance:
+          </span>
           <span className="text-foreground font-medium tabular-nums">
             {alloy.wastagePercent.toFixed(2)}%
           </span>
@@ -119,7 +134,9 @@ export function AlloyPricingCard({
 
       {/* Footer: Consumer Retail Rate */}
       <div className="flex items-center justify-between text-[11px] font-mono">
-        <span className="text-muted-foreground text-[9px] uppercase">Retail Benchmark:</span>
+        <span className="text-muted-foreground text-[9px] uppercase">
+          Retail Benchmark:
+        </span>
         <span className="text-emerald-700 dark:text-emerald-400 font-bold text-xs tabular-nums">
           ₹ {alloy.calculatedRetailPerGram.toFixed(2)} / g
         </span>

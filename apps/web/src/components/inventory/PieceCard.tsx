@@ -18,7 +18,8 @@ export interface InventoryPieceData {
   custodyState: "VAULT" | "DISPLAY" | "TRANSIT" | "QC";
   qualityState: "HALLMARKED" | "INSPECTION_PENDING" | "REJECTED";
   approvalState: "APPROVED" | "PENDING_APPROVAL" | "REJECTED";
-  commercialState: "AVAILABLE_FOR_SALE" | "MEMO_LOANED" | "SOLD" | "QUARANTINED";
+  commercialState:
+    "AVAILABLE_FOR_SALE" | "MEMO_LOANED" | "SOLD" | "QUARANTINED";
   priceInr: number;
   currentLocation: string;
   epcRfidTag: string;
@@ -87,10 +88,10 @@ export function PieceCard({
             custodyState === "VAULT"
               ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
               : custodyState === "DISPLAY"
-              ? "bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/30"
-              : custodyState === "TRANSIT"
-              ? "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/30"
-              : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                ? "bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/30"
+                : custodyState === "TRANSIT"
+                  ? "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/30"
+                  : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
           }`}
         >
           <span
@@ -98,10 +99,10 @@ export function PieceCard({
               custodyState === "VAULT"
                 ? "bg-emerald-500"
                 : custodyState === "DISPLAY"
-                ? "bg-cyan-500"
-                : custodyState === "TRANSIT"
-                ? "bg-blue-500"
-                : "bg-amber-500"
+                  ? "bg-cyan-500"
+                  : custodyState === "TRANSIT"
+                    ? "bg-blue-500"
+                    : "bg-amber-500"
             }`}
           />
           {custodyState}
@@ -123,7 +124,9 @@ export function PieceCard({
               {diamondCarat && (
                 <>
                   <span>•</span>
-                  <span className="text-gold font-semibold">{diamondCarat} ct</span>
+                  <span className="text-gold font-semibold">
+                    {diamondCarat} ct
+                  </span>
                 </>
               )}
             </div>
@@ -137,13 +140,17 @@ export function PieceCard({
         <div className="flex justify-between text-[10px] font-mono text-muted-foreground mb-1">
           <span>{metalPurity}</span>
           <span className="text-gold font-semibold">
-            {qualityState === "HALLMARKED" ? "100% Purity Hallmarked" : "QC Pending"}
+            {qualityState === "HALLMARKED"
+              ? "100% Purity Hallmarked"
+              : "QC Pending"}
           </span>
         </div>
         <div className="w-full bg-surface-elevated h-1.5 rounded-full overflow-hidden border border-surface-border/50">
           <div
             className={`h-full rounded-full ${
-              qualityState === "HALLMARKED" ? "bg-emerald-500 w-full" : "bg-amber-500 w-1/2"
+              qualityState === "HALLMARKED"
+                ? "bg-emerald-500 w-full"
+                : "bg-amber-500 w-1/2"
             }`}
           />
         </div>

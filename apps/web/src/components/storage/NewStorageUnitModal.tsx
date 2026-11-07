@@ -17,7 +17,12 @@ import { toast } from "sonner";
 interface NewStorageUnitModalProps {
   isOpen: boolean;
   onClose: () => void;
-  vaults: Array<{ id: string; name: string; code: string; lockers: Array<{ id: string; name: string; code: string }> }>;
+  vaults: Array<{
+    id: string;
+    name: string;
+    code: string;
+    lockers: Array<{ id: string; name: string; code: string }>;
+  }>;
   onCreated?: () => void;
 }
 
@@ -27,11 +32,15 @@ export function NewStorageUnitModal({
   vaults,
   onCreated,
 }: NewStorageUnitModalProps) {
-  const [unitType, setUnitType] = useState<"VAULT" | "LOCKER" | "COMPARTMENT">("COMPARTMENT");
+  const [unitType, setUnitType] = useState<"VAULT" | "LOCKER" | "COMPARTMENT">(
+    "COMPARTMENT",
+  );
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [selectedVaultId, setSelectedVaultId] = useState(vaults[0]?.id || "");
-  const [selectedLockerId, setSelectedLockerId] = useState(vaults[0]?.lockers[0]?.id || "");
+  const [selectedLockerId, setSelectedLockerId] = useState(
+    vaults[0]?.lockers[0]?.id || "",
+  );
   const [maxPieces, setMaxPieces] = useState("25");
   const [maxWeight, setMaxWeight] = useState("5000");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,7 +51,9 @@ export function NewStorageUnitModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !code) {
-      toast.error("Validation Error", { description: "Please fill in both Name and Code." });
+      toast.error("Validation Error", {
+        description: "Please fill in both Name and Code.",
+      });
       return;
     }
 
@@ -71,7 +82,9 @@ export function NewStorageUnitModal({
             </div>
             <div>
               <DialogTitle>Provision New Storage Unit</DialogTitle>
-              <DialogDescription>Flagship Mumbai (INV-11) Vault Registry</DialogDescription>
+              <DialogDescription>
+                Flagship Mumbai (INV-11) Vault Registry
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
@@ -160,8 +173,8 @@ export function NewStorageUnitModal({
                   unitType === "VAULT"
                     ? "e.g. Retail Strongroom"
                     : unitType === "LOCKER"
-                    ? "e.g. Diamond Solitaire Safe"
-                    : "e.g. Solitaire Tray 01"
+                      ? "e.g. Diamond Solitaire Safe"
+                      : "e.g. Solitaire Tray 01"
                 }
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -177,8 +190,8 @@ export function NewStorageUnitModal({
                   unitType === "VAULT"
                     ? "VLT-02"
                     : unitType === "LOCKER"
-                    ? "LCK-04"
-                    : "COMP-02-D1"
+                      ? "LCK-04"
+                      : "COMP-02-D1"
                 }
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}

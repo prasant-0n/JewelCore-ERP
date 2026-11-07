@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { ShoppingBag, Gem, Scale, CheckCircle2, Bookmark, Sparkles } from "lucide-react";
+import {
+  ShoppingBag,
+  Gem,
+  Scale,
+  CheckCircle2,
+  Bookmark,
+  Sparkles,
+} from "lucide-react";
 
 export interface PosPieceData {
   id: string;
@@ -64,7 +71,9 @@ export function PosPieceCard({
             />
             <span
               className={`font-mono text-xs font-bold transition-colors ${
-                isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
+                isSelected
+                  ? "text-gold"
+                  : "text-foreground group-hover:text-gold"
               }`}
             >
               {piece.serialNumber}
@@ -83,8 +92,8 @@ export function PosPieceCard({
             isInCart
               ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
               : isSaved
-              ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
-              : "bg-surface-elevated text-muted-foreground border border-surface-border"
+                ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                : "bg-surface-elevated text-muted-foreground border border-surface-border"
           }`}
         >
           {isInCart ? (
@@ -106,7 +115,9 @@ export function PosPieceCard({
       {/* Middle Specs Grid */}
       <div className="grid grid-cols-2 gap-2 my-2.5 py-2 border-y border-surface-border/60 text-[11px] font-mono">
         <div>
-          <span className="text-muted-foreground text-[9px] block uppercase">Weight / Alloy</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Weight / Alloy
+          </span>
           <span className="text-foreground font-semibold tabular-nums">
             {piece.grossWeightGrams.toFixed(3)}g Gross
           </span>
@@ -116,7 +127,9 @@ export function PosPieceCard({
         </div>
 
         <div className="text-right">
-          <span className="text-muted-foreground text-[9px] block uppercase">Certified Gem</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Certified Gem
+          </span>
           {piece.diamondCarat ? (
             <span className="text-gold font-semibold tabular-nums">
               {piece.diamondCarat.toFixed(2)} ct {piece.diamondSpecs || "VVS"}
@@ -130,7 +143,9 @@ export function PosPieceCard({
       {/* Footer: Price & Cart Action */}
       <div className="flex items-center justify-between text-[11px] font-mono">
         <div>
-          <span className="text-muted-foreground text-[9px] block uppercase">Retail Value:</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Retail Value:
+          </span>
           <span className="text-emerald-700 dark:text-emerald-400 font-bold text-xs tabular-nums">
             ₹ {piece.totalPriceInr.toLocaleString("en-IN")}
           </span>

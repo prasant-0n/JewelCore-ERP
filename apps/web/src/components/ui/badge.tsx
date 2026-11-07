@@ -8,11 +8,13 @@ const badgeVariants = cva(
     variants: {
       variant: {
         gold: "border-gold/30 bg-gold/10 text-gold",
-        emerald: "border-status-emerald/30 bg-status-emeraldBg text-status-emerald",
+        emerald:
+          "border-status-emerald/30 bg-status-emeraldBg text-status-emerald",
         amber: "border-status-amber/30 bg-status-amberBg text-status-amber",
         rose: "border-status-rose/30 bg-status-roseBg text-status-rose",
         indigo: "border-status-indigo/30 bg-status-indigoBg text-status-indigo",
-        secondary: "border-surface-border bg-surface-elevated text-muted-foreground",
+        secondary:
+          "border-surface-border bg-surface-elevated text-muted-foreground",
         outline: "border-surface-border text-foreground bg-transparent",
       },
       size: {
@@ -25,16 +27,24 @@ const badgeVariants = cva(
       variant: "secondary",
       size: "default",
     },
-  }
+  },
 );
 
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {
   dot?: boolean;
 }
 
-function Badge({ className, variant, size, dot, children, ...props }: BadgeProps) {
+function Badge({
+  className,
+  variant,
+  size,
+  dot,
+  children,
+  ...props
+}: BadgeProps) {
   return (
     <div className={cn(badgeVariants({ variant, size }), className)} {...props}>
       {dot && (
@@ -47,7 +57,7 @@ function Badge({ className, variant, size, dot, children, ...props }: BadgeProps
             variant === "rose" && "bg-status-rose",
             variant === "indigo" && "bg-status-indigo",
             (!variant || variant === "secondary" || variant === "outline") &&
-              "bg-muted-foreground"
+              "bg-muted-foreground",
           )}
         />
       )}

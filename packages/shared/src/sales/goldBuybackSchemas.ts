@@ -68,13 +68,10 @@ export const createGoldBuybackItemSchema = z
       .nullable(),
     notes: z.string().trim().max(500).optional().nullable(),
   })
-  .refine(
-    (data) => data.grossWeightGrams >= data.netWeightGrams,
-    {
-      message: "Gross weight cannot be less than net weight",
-      path: ["grossWeightGrams"],
-    },
-  );
+  .refine((data) => data.grossWeightGrams >= data.netWeightGrams, {
+    message: "Gross weight cannot be less than net weight",
+    path: ["grossWeightGrams"],
+  });
 
 export type CreateGoldBuybackItemInput = z.infer<
   typeof createGoldBuybackItemSchema

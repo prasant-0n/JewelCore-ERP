@@ -2,14 +2,7 @@
 
 import React, { useState } from "react";
 import { ConsignmentItemData } from "./ConsignmentItemCard";
-import {
-  Truck,
-  ShieldCheck,
-  Printer,
-  X,
-  MapPin,
-  KeyRound,
-} from "lucide-react";
+import { Truck, ShieldCheck, Printer, X, MapPin, KeyRound } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,9 +33,13 @@ export function TransitSecurityInspector({
     return (
       <Card className="h-full border-surface-border bg-surface-card p-8 flex flex-col items-center justify-center text-center text-muted-foreground shadow-sm">
         <Truck className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-foreground">No Consignment Selected</h4>
+        <h4 className="text-sm font-medium text-foreground">
+          No Consignment Selected
+        </h4>
         <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
-          Select any in-transit armored consignment or inter-branch transfer manifest to inspect real-time fleet telematics, geofence status, electronic tamper seals, and dual-custody de-sealing.
+          Select any in-transit armored consignment or inter-branch transfer
+          manifest to inspect real-time fleet telematics, geofence status,
+          electronic tamper seals, and dual-custody de-sealing.
         </p>
       </Card>
     );
@@ -72,7 +69,8 @@ export function TransitSecurityInspector({
 
   const handleGpsPing = () => {
     toast.info("Live Fleet Telematics Ping", {
-      description: "Latitude 21.1702° N, 72.8311° E • Speed 68 km/h • NH-48 Safe Zone corridor.",
+      description:
+        "Latitude 21.1702° N, 72.8311° E • Speed 68 km/h • NH-48 Safe Zone corridor.",
     });
   };
 
@@ -103,7 +101,9 @@ export function TransitSecurityInspector({
           </div>
 
           <div className="flex items-center space-x-2">
-            <StatusBadge status={status === "GEOFENCE_LOCKED" ? "COMPLETED" : "IN_TRANSIT"} />
+            <StatusBadge
+              status={status === "GEOFENCE_LOCKED" ? "COMPLETED" : "IN_TRANSIT"}
+            />
 
             {onClose && (
               <Button
@@ -155,27 +155,37 @@ export function TransitSecurityInspector({
           <div className="space-y-1.5 pt-1">
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Vehicle Telematics:</span>
-              <span className="text-foreground font-semibold">Brinks Van #04 (MH-01-BX-9021)</span>
+              <span className="text-foreground font-semibold">
+                Brinks Van #04 (MH-01-BX-9021)
+              </span>
             </div>
 
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Geofenced Corridor:</span>
-              <span className="text-foreground">NH-48 Expressway (Locked ±50m Width)</span>
+              <span className="text-foreground">
+                NH-48 Expressway (Locked ±50m Width)
+              </span>
             </div>
 
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Lead Armed Escort:</span>
-              <span className="text-foreground">Capt. R. Sengupta (Badge #SEC-891)</span>
+              <span className="text-foreground">
+                Capt. R. Sengupta (Badge #SEC-891)
+              </span>
             </div>
 
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Security Tier:</span>
-              <span className="text-foreground font-medium">{securityTier}</span>
+              <span className="text-foreground font-medium">
+                {securityTier}
+              </span>
             </div>
 
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Digital Chain-of-Custody:</span>
-              <span className="text-gold truncate max-w-[200px]">SHA-256: 9f8a42...310c89</span>
+              <span className="text-gold truncate max-w-[200px]">
+                SHA-256: 9f8a42...310c89
+              </span>
             </div>
           </div>
         </div>
@@ -187,9 +197,7 @@ export function TransitSecurityInspector({
               <ShieldCheck className="w-3.5 h-3.5" />
               Lloyd's Specie Transit Insurance Coverage
             </span>
-            <Badge variant="emerald">
-              $10M Policy Active
-            </Badge>
+            <Badge variant="emerald">$10M Policy Active</Badge>
           </div>
 
           <div className="space-y-1.5 pt-1 text-[11px]">
@@ -200,7 +208,9 @@ export function TransitSecurityInspector({
 
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Pieces Count:</span>
-              <span className="text-foreground font-bold">{pieceCount} Pieces Sealed</span>
+              <span className="text-foreground font-bold">
+                {pieceCount} Pieces Sealed
+              </span>
             </div>
 
             <div className="flex items-center justify-between text-muted-foreground">
@@ -215,12 +225,16 @@ export function TransitSecurityInspector({
 
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Policy Underwriter:</span>
-              <span className="text-foreground">Lloyd's Syndicate #LL-99128</span>
+              <span className="text-foreground">
+                Lloyd's Syndicate #LL-99128
+              </span>
             </div>
 
             <div className="flex items-center justify-between text-muted-foreground border-t border-surface-border/60 pt-1.5">
               <span>Estimated Vault Inward ETA:</span>
-              <span className="text-foreground font-bold">Today, 19:45 IST (In 3h 30m)</span>
+              <span className="text-foreground font-bold">
+                Today, 19:45 IST (In 3h 30m)
+              </span>
             </div>
           </div>
         </div>

@@ -420,7 +420,10 @@ export async function listStoreCreditTransactions(
     "sct.store_credit_account_id = $1",
     "sct.organization_id = $2",
   ];
-  const values: unknown[] = [params.storeCreditAccountId, params.organizationId];
+  const values: unknown[] = [
+    params.storeCreditAccountId,
+    params.organizationId,
+  ];
   let paramIdx = 3;
 
   if (params.storeId) {

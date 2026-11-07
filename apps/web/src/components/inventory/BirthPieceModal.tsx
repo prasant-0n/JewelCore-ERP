@@ -27,7 +27,9 @@ export function BirthPieceModal({
   onCreated,
 }: BirthPieceModalProps) {
   const [serialNumber, setSerialNumber] = useState("JC-SOL-2026-9041");
-  const [itemName, setItemName] = useState("18K Solitaire Emerald-Cut Diamond Ring (1.75ct)");
+  const [itemName, setItemName] = useState(
+    "18K Solitaire Emerald-Cut Diamond Ring (1.75ct)",
+  );
   const [category, setCategory] = useState("Solitaire Rings");
   const [metalPurity, setMetalPurity] = useState("18K Yellow Gold (Au 750)");
   const [grossWeightGrams, setGrossWeightGrams] = useState("5.850");
@@ -36,7 +38,9 @@ export function BirthPieceModal({
   const [diamondClarity, setDiamondClarity] = useState("VVS1");
   const [diamondColor, setDiamondColor] = useState("E");
   const [giaCertNumber, setGiaCertNumber] = useState("GIA-2210894511");
-  const [currentLocation, setCurrentLocation] = useState("Main Vault - Section A (Locker 01)");
+  const [currentLocation, setCurrentLocation] = useState(
+    "Main Vault - Section A (Locker 01)",
+  );
   const [epcRfidTag, setEpcRfidTag] = useState("E280-1160-2000-7741-0099");
   const [priceInr, setPriceInr] = useState("485000");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,7 +48,9 @@ export function BirthPieceModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!serialNumber || !itemName) {
-      toast.error("Validation Error", { description: "Please specify a serial number and item description." });
+      toast.error("Validation Error", {
+        description: "Please specify a serial number and item description.",
+      });
       return;
     }
 
@@ -74,7 +80,10 @@ export function BirthPieceModal({
         provenance: [
           {
             stage: "Serialized Genesis & Hallmarked",
-            timestamp: new Date().toISOString().replace("T", " ").substring(0, 19),
+            timestamp: new Date()
+              .toISOString()
+              .replace("T", " ")
+              .substring(0, 19),
             actor: "Master Craftsman / Vault Controller",
             detail: `Piece birthed with Gross Wt ${grossWeightGrams}g, Net Au ${netGoldGrams}g, BIS Hallmarked`,
           },
@@ -103,7 +112,9 @@ export function BirthPieceModal({
             </div>
             <div>
               <DialogTitle>Birth Serialized Inventory Piece</DialogTitle>
-              <DialogDescription>Lineage Master Register • Dual-Custody Verified</DialogDescription>
+              <DialogDescription>
+                Lineage Master Register • Dual-Custody Verified
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>

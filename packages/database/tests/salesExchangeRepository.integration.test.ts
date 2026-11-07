@@ -124,8 +124,12 @@ describe("POS Exchange & Trade-In Cross-Flow Orchestration (FEAT-RET-04)", () =>
       "DELETE FROM goods_receipt_notes WHERE grn_number LIKE 'GRN-EXC-REPO-%';",
     );
     await query("DELETE FROM suppliers WHERE code LIKE 'SUP_EXC_REPO_%';");
-    await query("DELETE FROM product_skus WHERE sku_code LIKE 'SKU-EXC-REPO-%';");
-    await query("DELETE FROM products WHERE product_code LIKE 'PRD_EXC_REPO_%';");
+    await query(
+      "DELETE FROM product_skus WHERE sku_code LIKE 'SKU-EXC-REPO-%';",
+    );
+    await query(
+      "DELETE FROM products WHERE product_code LIKE 'PRD_EXC_REPO_%';",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_EXC_REPO_%';");
     await query("DELETE FROM materials WHERE code LIKE 'MAT_EXC_REPO_%';");
     await query("DELETE FROM categories WHERE code LIKE 'CAT_EXC_REPO_%';");
@@ -439,7 +443,8 @@ describe("POS Exchange & Trade-In Cross-Flow Orchestration (FEAT-RET-04)", () =>
           cardLast4: "4242",
         },
       ],
-      notes: "VIP customer trading in old piece and scrap towards new eternity ring",
+      notes:
+        "VIP customer trading in old piece and scrap towards new eternity ring",
     });
 
     expect(result.salesReturn).toBeDefined();

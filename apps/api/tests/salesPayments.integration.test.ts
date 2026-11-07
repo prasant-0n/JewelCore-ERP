@@ -83,8 +83,12 @@ describe("Sales Payments API (FEAT-SALES-03, Entity 51)", () => {
       "DELETE FROM goods_receipt_notes WHERE grn_number LIKE 'GRN-PAY-API-%';",
     );
     await query("DELETE FROM suppliers WHERE code LIKE 'SUP_PAY_API_%';");
-    await query("DELETE FROM product_skus WHERE sku_code LIKE 'SKU-PAY-API-%';");
-    await query("DELETE FROM products WHERE product_code LIKE 'PRD_PAY_API_%';");
+    await query(
+      "DELETE FROM product_skus WHERE sku_code LIKE 'SKU-PAY-API-%';",
+    );
+    await query(
+      "DELETE FROM products WHERE product_code LIKE 'PRD_PAY_API_%';",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_PAY_API_%';");
     await query("DELETE FROM materials WHERE code LIKE 'MAT_PAY_API_%';");
     await query("DELETE FROM categories WHERE code LIKE 'CAT_PAY_API_%';");

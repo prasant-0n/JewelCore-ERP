@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { Radio, Wifi, WifiOff, AlertTriangle, CheckCircle2, ShieldCheck } from "lucide-react";
+import {
+  Radio,
+  Wifi,
+  WifiOff,
+  AlertTriangle,
+  CheckCircle2,
+  ShieldCheck,
+} from "lucide-react";
 
 export interface RfidPieceData {
   id: string;
@@ -43,8 +50,8 @@ export function RfidTagCard({
         isSelected
           ? "bg-surface-elevated border-2 border-gold shadow-[0_0_18px_rgba(212,175,55,0.22)]"
           : isMissing
-          ? "bg-rose-950/15 border border-rose-500/30 hover:border-rose-500/60"
-          : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/60"
+            ? "bg-rose-950/15 border border-rose-500/30 hover:border-rose-500/60"
+            : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/60"
       }`}
     >
       {isSelected && (
@@ -62,8 +69,8 @@ export function RfidTagCard({
                 isMissing
                   ? "text-rose-600 dark:text-rose-400"
                   : isSelected
-                  ? "text-gold animate-pulse"
-                  : "text-muted-foreground"
+                    ? "text-gold animate-pulse"
+                    : "text-muted-foreground"
               }`}
             />
             <span
@@ -71,8 +78,8 @@ export function RfidTagCard({
                 isSelected
                   ? "text-gold"
                   : isMissing
-                  ? "text-rose-700 dark:text-rose-300"
-                  : "text-foreground group-hover:text-gold"
+                    ? "text-rose-700 dark:text-rose-300"
+                    : "text-foreground group-hover:text-gold"
               }`}
             >
               {item.epcTag}
@@ -91,8 +98,8 @@ export function RfidTagCard({
             item.status === "VERIFIED"
               ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
               : item.status === "MISSING"
-              ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 animate-pulse font-semibold"
-              : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 animate-pulse font-semibold"
+                : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
           }`}
         >
           {item.status === "VERIFIED" ? (
@@ -112,7 +119,9 @@ export function RfidTagCard({
       {/* Middle Specs */}
       <div className="grid grid-cols-2 gap-2 my-2.5 py-2 border-y border-surface-border/60 text-[11px] font-mono">
         <div>
-          <span className="text-muted-foreground text-[9px] block uppercase">Purity / Gross</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Purity / Gross
+          </span>
           <span className="text-foreground font-semibold tabular-nums">
             {item.grossWeightGrams.toFixed(3)}g
           </span>
@@ -122,7 +131,9 @@ export function RfidTagCard({
         </div>
 
         <div className="text-right">
-          <span className="text-muted-foreground text-[9px] block uppercase">Net Gold / Stone</span>
+          <span className="text-muted-foreground text-[9px] block uppercase">
+            Net Gold / Stone
+          </span>
           <span className="text-foreground font-semibold tabular-nums">
             {item.netGoldGrams.toFixed(3)}g
           </span>
@@ -142,14 +153,18 @@ export function RfidTagCard({
           ) : (
             <Wifi className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
           )}
-          <span className={isMissing ? "text-rose-700 dark:text-rose-400 font-semibold" : "text-emerald-700 dark:text-emerald-400 font-medium"}>
+          <span
+            className={
+              isMissing
+                ? "text-rose-700 dark:text-rose-400 font-semibold"
+                : "text-emerald-700 dark:text-emerald-400 font-medium"
+            }
+          >
             {isMissing ? "No Response" : `${item.rssiDbm} dBm`}
           </span>
         </div>
 
-        <span className="text-muted-foreground">
-          Ant #{item.antennaPort}
-        </span>
+        <span className="text-muted-foreground">Ant #{item.antennaPort}</span>
       </div>
     </div>
   );

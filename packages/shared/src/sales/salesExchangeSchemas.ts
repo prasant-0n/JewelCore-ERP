@@ -1,6 +1,13 @@
 import { z } from "zod";
-import { ReturnReason, createSalesReturnItemSchema, type SalesReturnRecord } from "./salesReturnSchemas.js";
-import { createGoldBuybackItemSchema, type GoldBuybackOrderRecord } from "./goldBuybackSchemas.js";
+import {
+  ReturnReason,
+  createSalesReturnItemSchema,
+  type SalesReturnRecord,
+} from "./salesReturnSchemas.js";
+import {
+  createGoldBuybackItemSchema,
+  type GoldBuybackOrderRecord,
+} from "./goldBuybackSchemas.js";
 import { PaymentMethod } from "./salesPaymentSchemas.js";
 import type { SalesInvoiceRecord } from "./salesInvoiceSchemas.js";
 
@@ -28,7 +35,9 @@ export type POSExchangeItemInput = z.infer<typeof posExchangeItemSchema>;
  */
 export const posExchangeReturnSchema = z.object({
   salesInvoiceId: z.string().uuid("Invalid sales invoice UUID format"),
-  returnReason: z.nativeEnum(ReturnReason).default(ReturnReason.CUSTOMER_CHANGED_MIND),
+  returnReason: z
+    .nativeEnum(ReturnReason)
+    .default(ReturnReason.CUSTOMER_CHANGED_MIND),
   items: z
     .array(createSalesReturnItemSchema)
     .min(1, "Must return at least one piece"),
@@ -54,7 +63,11 @@ export const posExchangePaymentSchema = z.object({
   paymentMethod: z.nativeEnum(PaymentMethod),
   amountCad: z.number().positive("Payment amount must be positive"),
   referenceNumber: z.string().trim().max(100).optional().nullable(),
-  cardLast4: z.string().regex(/^\d{4}$/, "Must be 4 digits").optional().nullable(),
+  cardLast4: z
+    .string()
+    .regex(/^\d{4}$/, "Must be 4 digits")
+    .optional()
+    .nullable(),
 });
 
 export type POSExchangePaymentInput = z.infer<typeof posExchangePaymentSchema>;

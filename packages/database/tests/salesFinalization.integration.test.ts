@@ -84,8 +84,12 @@ describe("Atomic Sale Finalization & Custody Release (FEAT-SALES-04)", () => {
       "DELETE FROM goods_receipt_notes WHERE grn_number LIKE 'GRN-FIN-REPO-%';",
     );
     await query("DELETE FROM suppliers WHERE code LIKE 'SUP_FIN_REPO_%';");
-    await query("DELETE FROM product_skus WHERE sku_code LIKE 'SKU-FIN-REPO-%';");
-    await query("DELETE FROM products WHERE product_code LIKE 'PRD_FIN_REPO_%';");
+    await query(
+      "DELETE FROM product_skus WHERE sku_code LIKE 'SKU-FIN-REPO-%';",
+    );
+    await query(
+      "DELETE FROM products WHERE product_code LIKE 'PRD_FIN_REPO_%';",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_FIN_REPO_%';");
     await query("DELETE FROM materials WHERE code LIKE 'MAT_FIN_REPO_%';");
     await query("DELETE FROM categories WHERE code LIKE 'CAT_FIN_REPO_%';");
@@ -243,9 +247,10 @@ describe("Atomic Sale Finalization & Custody Release (FEAT-SALES-04)", () => {
     );
     const qcId = qcRes.rows[0]!.id;
 
-    const qcItems = await Promise.all([1, 2].map((seq) =>
-      query<{ id: string }>(
-        `
+    const qcItems = await Promise.all(
+      [1, 2].map((seq) =>
+        query<{ id: string }>(
+          `
         INSERT INTO quality_check_items (
           id, quality_check_id, shipment_item_id, item_sequence_number, status,
           gross_weight_grams, net_weight_grams, verified_material_id, verified_purity_id,
@@ -254,9 +259,10 @@ describe("Atomic Sale Finalization & Custody Release (FEAT-SALES-04)", () => {
         VALUES (gen_random_uuid(), $1, $2, $3, 'APPROVED', 6.5000, 6.0000, $4, $5, true, true, false)
         RETURNING id
         `,
-        [qcId, shipmentItemId, seq, mat.id, pur.id],
+          [qcId, shipmentItemId, seq, mat.id, pur.id],
+        ),
       ),
-    ));
+    );
 
     const item1 = await query<{ id: string }>(
       `
@@ -328,7 +334,9 @@ describe("Atomic Sale Finalization & Custody Release (FEAT-SALES-04)", () => {
       storeId,
       customerId,
       createdByUserId: userId,
-      items: [{ inventoryItemId: secondPieceId, unitPriceCad: 8000.0, taxRate: 0.0 }],
+      items: [
+        { inventoryItemId: secondPieceId, unitPriceCad: 8000.0, taxRate: 0.0 },
+      ],
     });
 
     await expect(
@@ -383,11 +391,16 @@ describe("Atomic Sale Finalization & Custody Release (FEAT-SALES-04)", () => {
     expect(movementRes.rows[0]!.reference_document_type).toBe("SALES_INVOICE");
 
     // 3. Verify status history has both COMMERCIAL and CUSTODY dimensions
-    const historyRes = await query<{ dimension_changed: string; new_state: string }>(
+    const historyRes = await query<{
+      dimension_changed: string;
+      new_state: string;
+    }>(
       `SELECT dimension_changed, new_state FROM inventory_status_history WHERE inventory_item_id = $1 ORDER BY dimension_changed ASC`,
       [pieceId],
     );
-    const dimensions = historyRes.rows.map((h) => `${h.dimension_changed}:${h.new_state}`);
+    const dimensions = historyRes.rows.map(
+      (h) => `${h.dimension_changed}:${h.new_state}`,
+    );
     expect(dimensions).toContain("COMMERCIAL:SOLD");
     expect(dimensions).toContain("CUSTODY:RELEASED");
 
@@ -407,7 +420,9 @@ describe("Atomic Sale Finalization & Custody Release (FEAT-SALES-04)", () => {
         organizationId: orgId,
         actorUserId: userId,
       }),
-    ).rejects.toThrow(/Physical custody of pieces on this invoice has already been released/);
+    ).rejects.toThrow(
+      /Physical custody of pieces on this invoice has already been released/,
+    );
   });
 
   it("Scenario 4: rejects custody release across organization boundaries", async () => {

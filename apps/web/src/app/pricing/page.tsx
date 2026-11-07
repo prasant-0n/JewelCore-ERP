@@ -21,7 +21,10 @@ import {
   Radio,
   Sliders,
 } from "lucide-react";
-import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import {
+  WorkstationKpiGrid,
+  KpiItem,
+} from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -117,19 +120,24 @@ const INITIAL_PRICING_GROUPS: PricingTierGroupData[] = [
 ];
 
 export default function PricingMasterPage() {
-  const [pricingGroups, setPricingGroups] = useState<PricingTierGroupData[]>(INITIAL_PRICING_GROUPS);
+  const [pricingGroups, setPricingGroups] = useState<PricingTierGroupData[]>(
+    INITIAL_PRICING_GROUPS,
+  );
   const [selectedAlloy, setSelectedAlloy] = useState<AlloyRuleData | null>(
-    INITIAL_PRICING_GROUPS[0].alloys[0]
+    INITIAL_PRICING_GROUPS[0].alloys[0],
   );
   const [selectedGroupName, setSelectedGroupName] = useState<string>(
-    INITIAL_PRICING_GROUPS[0].tierName
+    INITIAL_PRICING_GROUPS[0].tierName,
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isNewTierModalOpen, setIsNewTierModalOpen] = useState(false);
   const [isBroadcasting, setIsBroadcasting] = useState(false);
 
-  const totalRulesCount = pricingGroups.reduce((acc, g) => acc + g.alloys.length, 0);
+  const totalRulesCount = pricingGroups.reduce(
+    (acc, g) => acc + g.alloys.length,
+    0,
+  );
 
   const pricingKpiItems: KpiItem[] = [
     {
@@ -174,7 +182,7 @@ export default function PricingMasterPage() {
         (a) =>
           a.alloyName.toLowerCase().includes(q) ||
           a.karatTag.toLowerCase().includes(q) ||
-          a.finenessPurity.toLowerCase().includes(q)
+          a.finenessPurity.toLowerCase().includes(q),
       );
     }
     if (filterState === "24K") {
@@ -187,7 +195,10 @@ export default function PricingMasterPage() {
     return { ...group, alloys };
   });
 
-  const handleSelectAlloy = (alloy: AlloyRuleData, group: PricingTierGroupData) => {
+  const handleSelectAlloy = (
+    alloy: AlloyRuleData,
+    group: PricingTierGroupData,
+  ) => {
     setSelectedAlloy(alloy);
     setSelectedGroupName(group.tierName);
   };
@@ -197,18 +208,26 @@ export default function PricingMasterPage() {
     setTimeout(() => {
       setIsBroadcasting(false);
       toast.success("Bullion Spot Fixing Broadcasted", {
-        description: "Published updated rates to 14 POS counter terminals. Zero latency drift.",
+        description:
+          "Published updated rates to 14 POS counter terminals. Zero latency drift.",
       });
     }, 800);
   };
 
-  const handleTierCreated = (newAlloy: AlloyRuleData, targetGroupId: string) => {
+  const handleTierCreated = (
+    newAlloy: AlloyRuleData,
+    targetGroupId: string,
+  ) => {
     setPricingGroups((prev) =>
       prev.map((g) =>
         g.id === targetGroupId
-          ? { ...g, alloys: [newAlloy, ...g.alloys], activeCount: g.activeCount + 1 }
-          : g
-      )
+          ? {
+              ...g,
+              alloys: [newAlloy, ...g.alloys],
+              activeCount: g.activeCount + 1,
+            }
+          : g,
+      ),
     );
     setSelectedAlloy(newAlloy);
   };

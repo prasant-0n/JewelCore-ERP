@@ -50,37 +50,91 @@ describe("Transfer Order Repository (FEAT-XFR-01, Entities 58 & 59)", () => {
   let pieceIdDifferentStore: string;
 
   async function cleanFixtures() {
-    await query("ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events DISABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history DISABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements DISABLE TRIGGER trg_inventory_movements_immutability;",
+    );
 
-    await query("DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO')));");
-    await query("DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));");
-    await query("DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO')));");
-    await query("DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));");
-    await query("DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
+    await query(
+      "DELETE FROM transfer_order_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM transfer_orders WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM audit_events WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM inventory_status_history WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM inventory_movements WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM inventory_items WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM quality_check_items WHERE quality_check_id IN (SELECT id FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO')));",
+    );
+    await query(
+      "DELETE FROM quality_checks WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));",
+    );
+    await query(
+      "DELETE FROM shipment_items WHERE shipment_id IN (SELECT id FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO')));",
+    );
+    await query(
+      "DELETE FROM shipments WHERE goods_receipt_note_id IN (SELECT id FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));",
+    );
+    await query(
+      "DELETE FROM goods_receipt_notes WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM suppliers WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM product_skus WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM products WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_XFR_REPO_%';");
-    await query("DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));");
-    await query("DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));");
-    await query("DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));");
-    await query("DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
-    await query("DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');");
+    await query(
+      "DELETE FROM materials WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM categories WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM compartments WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));",
+    );
+    await query(
+      "DELETE FROM lockers WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));",
+    );
+    await query(
+      "DELETE FROM vaults WHERE store_id IN (SELECT id FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO'));",
+    );
+    await query(
+      "DELETE FROM users WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
+    await query(
+      "DELETE FROM stores WHERE organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_XFR_REPO');",
+    );
     await query("DELETE FROM organizations WHERE code = 'ORG_XFR_REPO';");
 
-    await query("ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;");
-    await query("ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;");
-    await query("ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;");
+    await query(
+      "ALTER TABLE audit_events ENABLE TRIGGER trg_audit_events_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_status_history ENABLE TRIGGER trg_inventory_status_history_immutability;",
+    );
+    await query(
+      "ALTER TABLE inventory_movements ENABLE TRIGGER trg_inventory_movements_immutability;",
+    );
   }
 
   beforeAll(async () => {
@@ -269,10 +323,20 @@ describe("Transfer Order Repository (FEAT-XFR-01, Entities 58 & 59)", () => {
        ($10, $2, $3, $4, $11, 'SN-XFR-03', 'Solitaire 3', 5.0000, 5.0000, $6, 'IN_VAULT', 'AVAILABLE_FOR_SALE', $7, clock_timestamp(), clock_timestamp()),
        ($12, $2, $13, $4, $14, 'SN-XFR-04', 'Solitaire 4', 5.0000, 5.0000, $6, 'IN_VAULT', 'AVAILABLE_FOR_SALE', NULL, clock_timestamp(), clock_timestamp())`,
       [
-        pieceId1, orgId, sourceStoreId, sku.id, qcItems[0]!, purity.id, comp.id,
-        pieceId2, qcItems[1]!,
-        pieceId3, qcItems[2]!,
-        pieceIdDifferentStore, destinationStoreId, qcItems[3]!,
+        pieceId1,
+        orgId,
+        sourceStoreId,
+        sku.id,
+        qcItems[0]!,
+        purity.id,
+        comp.id,
+        pieceId2,
+        qcItems[1]!,
+        pieceId3,
+        qcItems[2]!,
+        pieceIdDifferentStore,
+        destinationStoreId,
+        qcItems[3]!,
       ],
     );
   });
@@ -375,7 +439,9 @@ describe("Transfer Order Repository (FEAT-XFR-01, Entities 58 & 59)", () => {
       priority: TransferOrderPriority.NORMAL,
     });
 
-    await expect(submitTransferOrder(orgId, order.id, requesterUserId)).rejects.toThrow(ValidationError);
+    await expect(
+      submitTransferOrder(orgId, order.id, requesterUserId),
+    ).rejects.toThrow(ValidationError);
   });
 
   it("executes full transfer order submission, approval, rejection, and cancellation lifecycle", async () => {
@@ -387,7 +453,11 @@ describe("Transfer Order Repository (FEAT-XFR-01, Entities 58 & 59)", () => {
       itemIds: [pieceId1],
     });
 
-    const submitted = await submitTransferOrder(orgId, order.id, requesterUserId);
+    const submitted = await submitTransferOrder(
+      orgId,
+      order.id,
+      requesterUserId,
+    );
     expect(submitted.status).toBe(TransferOrderStatus.REQUESTED);
 
     // 2. Cannot add items after submission
@@ -396,7 +466,11 @@ describe("Transfer Order Repository (FEAT-XFR-01, Entities 58 & 59)", () => {
     ).rejects.toThrow(ValidationError);
 
     // 3. Approve
-    const approved = await approveTransferOrder(orgId, order.id, approverUserId);
+    const approved = await approveTransferOrder(
+      orgId,
+      order.id,
+      approverUserId,
+    );
     expect(approved.status).toBe(TransferOrderStatus.APPROVED);
     expect(approved.approvedByUserId).toBe(approverUserId);
     expect(approved.approvedByUserName).toBe("Approver Manager");
@@ -410,11 +484,18 @@ describe("Transfer Order Repository (FEAT-XFR-01, Entities 58 & 59)", () => {
       itemIds: [pieceId2],
     });
     await submitTransferOrder(orgId, order2.id, requesterUserId);
-    const rejected = await rejectTransferOrder(orgId, order2.id, approverUserId, {
-      rejectionReason: "Item needed for local VIP client appointment",
-    });
+    const rejected = await rejectTransferOrder(
+      orgId,
+      order2.id,
+      approverUserId,
+      {
+        rejectionReason: "Item needed for local VIP client appointment",
+      },
+    );
     expect(rejected.status).toBe(TransferOrderStatus.REJECTED);
-    expect(rejected.rejectionReason).toBe("Item needed for local VIP client appointment");
+    expect(rejected.rejectionReason).toBe(
+      "Item needed for local VIP client appointment",
+    );
 
     // 5. Test Cancellation flow on third order
     const order3 = await createTransferOrder(orgId, requesterUserId, {
@@ -423,7 +504,12 @@ describe("Transfer Order Repository (FEAT-XFR-01, Entities 58 & 59)", () => {
       priority: TransferOrderPriority.NORMAL,
       itemIds: [pieceId3],
     });
-    const cancelled = await cancelTransferOrder(orgId, order3.id, requesterUserId, "Store request recalled");
+    const cancelled = await cancelTransferOrder(
+      orgId,
+      order3.id,
+      requesterUserId,
+      "Store request recalled",
+    );
     expect(cancelled.status).toBe(TransferOrderStatus.CANCELLED);
     expect(cancelled.items![0].status).toBe(TransferOrderItemStatus.CANCELLED);
   });

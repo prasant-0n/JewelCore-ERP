@@ -33,11 +33,15 @@ export const receiveTransferManifestSchema = z.object({
   witnessUserId: z.string().uuid(),
   destinationCompartmentId: z.string().uuid(),
   receivedItemIds: z.array(z.string().uuid()),
-  sealVerifications: z.array(sealVerificationItemSchema).min(1, "All seals must be verified upon receipt"),
+  sealVerifications: z
+    .array(sealVerificationItemSchema)
+    .min(1, "All seals must be verified upon receipt"),
   notes: z.string().max(1000).optional(),
 });
 
-export type ReceiveTransferManifestInput = z.infer<typeof receiveTransferManifestSchema>;
+export type ReceiveTransferManifestInput = z.infer<
+  typeof receiveTransferManifestSchema
+>;
 
 export const createTransferDisputeSchema = z.object({
   transferOrderId: z.string().uuid(),
@@ -49,14 +53,18 @@ export const createTransferDisputeSchema = z.object({
   details: z.string().min(5).max(2000),
 });
 
-export type CreateTransferDisputeInput = z.infer<typeof createTransferDisputeSchema>;
+export type CreateTransferDisputeInput = z.infer<
+  typeof createTransferDisputeSchema
+>;
 
 export const resolveTransferDisputeSchema = z.object({
   resolutionStatus: z.enum([DisputeStatus.RESOLVED, DisputeStatus.WRITTEN_OFF]),
   resolutionNotes: z.string().min(5).max(2000),
 });
 
-export type ResolveTransferDisputeInput = z.infer<typeof resolveTransferDisputeSchema>;
+export type ResolveTransferDisputeInput = z.infer<
+  typeof resolveTransferDisputeSchema
+>;
 
 export const listTransferDisputesQuerySchema = z.object({
   transferOrderId: z.string().uuid().optional(),
@@ -68,7 +76,9 @@ export const listTransferDisputesQuerySchema = z.object({
   offset: z.coerce.number().min(0).default(0),
 });
 
-export type ListTransferDisputesQuery = z.infer<typeof listTransferDisputesQuerySchema>;
+export type ListTransferDisputesQuery = z.infer<
+  typeof listTransferDisputesQuerySchema
+>;
 
 export interface TransferDisputeRecord {
   id: string;

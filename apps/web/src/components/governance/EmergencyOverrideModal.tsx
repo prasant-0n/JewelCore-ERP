@@ -25,7 +25,9 @@ export function EmergencyOverrideModal({
   onClose,
   onAuthorized,
 }: EmergencyOverrideModalProps) {
-  const [reason, setReason] = useState("Hardware Biometric Scanner Malfunction - Urgent Customer Deposit");
+  const [reason, setReason] = useState(
+    "Hardware Biometric Scanner Malfunction - Urgent Customer Deposit",
+  );
   const [directorPin, setDirectorPin] = useState("");
   const [secondaryPasskey, setSecondaryPasskey] = useState("");
   const [targetSafe, setTargetSafe] = useState("Main Safe 01 (Primary Vault)");
@@ -36,7 +38,8 @@ export function EmergencyOverrideModal({
     e.preventDefault();
     if (!directorPin || !secondaryPasskey) {
       toast.error("Cryptographic Credential Missing", {
-        description: "Both Director PIN and Secondary Master Passkey are required for emergency override.",
+        description:
+          "Both Director PIN and Secondary Master Passkey are required for emergency override.",
       });
       return;
     }
@@ -55,7 +58,10 @@ export function EmergencyOverrideModal({
       onAuthorized?.();
     } catch (err) {
       toast.error("Override Failed", {
-        description: err instanceof Error ? err.message : "Failed to execute emergency override",
+        description:
+          err instanceof Error
+            ? err.message
+            : "Failed to execute emergency override",
       });
       setIsSubmitting(false);
     }
@@ -83,7 +89,9 @@ export function EmergencyOverrideModal({
         {/* Modal Form */}
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs text-amber-600 dark:text-amber-200/90 leading-relaxed font-mono">
-            ⚠️ Warning: Triggering this emergency override immediately broadcasts an encrypted SMS and email alert to the Board of Directors and logs the incident to the immutable audit ledger.
+            ⚠️ Warning: Triggering this emergency override immediately
+            broadcasts an encrypted SMS and email alert to the Board of
+            Directors and logs the incident to the immutable audit ledger.
           </div>
 
           {/* Target Safe */}
@@ -96,9 +104,15 @@ export function EmergencyOverrideModal({
               onChange={(e) => setTargetSafe(e.target.value)}
               className="w-full bg-surface-elevated border border-surface-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-rose-500"
             >
-              <option value="Main Safe 01 (Primary Vault)">Main Safe 01 (Primary Vault)</option>
-              <option value="Showroom Strongroom Safe 02">Showroom Strongroom Safe 02</option>
-              <option value="Intake Holding Safe (INV-11)">Intake Holding Safe (INV-11)</option>
+              <option value="Main Safe 01 (Primary Vault)">
+                Main Safe 01 (Primary Vault)
+              </option>
+              <option value="Showroom Strongroom Safe 02">
+                Showroom Strongroom Safe 02
+              </option>
+              <option value="Intake Holding Safe (INV-11)">
+                Intake Holding Safe (INV-11)
+              </option>
             </select>
           </div>
 

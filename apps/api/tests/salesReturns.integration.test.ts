@@ -98,11 +98,15 @@ describe("Customer Sales Returns API (FEAT-RET-01, Entities 52 & 53)", () => {
     await query(
       "DELETE FROM sales_invoices WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RET_API', 'ORG_RET_API_ALT'));",
     );
-    await query("ALTER TABLE store_credit_transactions DISABLE TRIGGER trg_store_credit_transactions_immutability;");
+    await query(
+      "ALTER TABLE store_credit_transactions DISABLE TRIGGER trg_store_credit_transactions_immutability;",
+    );
     await query(
       "DELETE FROM store_credit_transactions WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RET_API', 'ORG_RET_API_ALT'));",
     );
-    await query("ALTER TABLE store_credit_transactions ENABLE TRIGGER trg_store_credit_transactions_immutability;");
+    await query(
+      "ALTER TABLE store_credit_transactions ENABLE TRIGGER trg_store_credit_transactions_immutability;",
+    );
     await query(
       "DELETE FROM store_credit_accounts WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_RET_API', 'ORG_RET_API_ALT'));",
     );
@@ -128,8 +132,12 @@ describe("Customer Sales Returns API (FEAT-RET-01, Entities 52 & 53)", () => {
       "DELETE FROM goods_receipt_notes WHERE grn_number LIKE 'GRN-RET-API-%';",
     );
     await query("DELETE FROM suppliers WHERE code LIKE 'SUP_RET_API_%';");
-    await query("DELETE FROM product_skus WHERE sku_code LIKE 'SKU-RET-API-%';");
-    await query("DELETE FROM products WHERE product_code LIKE 'PRD_RET_API_%';");
+    await query(
+      "DELETE FROM product_skus WHERE sku_code LIKE 'SKU-RET-API-%';",
+    );
+    await query(
+      "DELETE FROM products WHERE product_code LIKE 'PRD_RET_API_%';",
+    );
     await query("DELETE FROM purities WHERE code LIKE 'PUR_RET_API_%';");
     await query("DELETE FROM materials WHERE code LIKE 'MAT_RET_API_%';");
     await query("DELETE FROM categories WHERE code LIKE 'CAT_RET_API_%';");
