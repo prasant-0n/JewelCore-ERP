@@ -39,6 +39,7 @@ interface PrintableTaxInvoiceModalProps {
   panNumber: string;
   tenderMethod: string;
   oldGoldCreditInr: number;
+  invoiceNumber?: string;
 }
 
 export function PrintableTaxInvoiceModal({
@@ -50,6 +51,7 @@ export function PrintableTaxInvoiceModal({
   panNumber,
   tenderMethod,
   oldGoldCreditInr,
+  invoiceNumber: propInvoiceNumber,
 }: PrintableTaxInvoiceModalProps) {
   const [activeTab, setActiveTab] = useState<"A4_INVOICE" | "THERMAL_PREVIEW">("A4_INVOICE");
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
@@ -84,7 +86,7 @@ export function PrintableTaxInvoiceModal({
   const sgstAmount = Math.round(taxableSubtotal * 0.015);
   const finalInvoiceTotal = taxableSubtotal + cgstAmount + sgstAmount;
 
-  const invoiceNumber = "JC/2026-27/0891";
+  const invoiceNumber = propInvoiceNumber || "JC/2026-27/0891";
   const invoiceDate = new Date().toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "short",

@@ -293,6 +293,7 @@ export async function seedShowroomDatabase(): Promise<void> {
   console.log("[6/6] Seeding Showroom VIP Clients (PMLA / AML Verified)...");
   const clients = [
     {
+      id: "0192e300-0080-7000-8000-000000000001",
       code: "CLI-01",
       firstName: "Radhika",
       lastName: "Singhania",
@@ -304,6 +305,7 @@ export async function seedShowroomDatabase(): Promise<void> {
       tags: ["UHNW", "Solitaire Collector", "Salon-1"],
     },
     {
+      id: "0192e300-0080-7000-8000-000000000002",
       code: "CLI-02",
       firstName: "Vikramaditya",
       lastName: "Birla",
@@ -315,6 +317,7 @@ export async function seedShowroomDatabase(): Promise<void> {
       tags: ["Centurion VIP", "High-Security Vault", "Heritage"],
     },
     {
+      id: "0192e300-0080-7000-8000-000000000003",
       code: "CLI-03",
       firstName: "Ananya",
       lastName: "Piramal",
@@ -330,9 +333,15 @@ export async function seedShowroomDatabase(): Promise<void> {
   for (const c of clients) {
     await pool.query(
       `INSERT INTO customers (id, organization_id, customer_code, first_name, last_name, email, phone, address_line1, city, country, tax_identifier, tags, status, created_at, updated_at)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, 'IN', $9, $10, 'ACTIVE', NOW(), NOW())
-       ON CONFLICT (organization_id, customer_code) DO NOTHING`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'IN', $10, $11, 'ACTIVE', NOW(), NOW())
+       ON CONFLICT (organization_id, customer_code) DO UPDATE
+       SET id = EXCLUDED.id,
+           first_name = EXCLUDED.first_name,
+           last_name = EXCLUDED.last_name,
+           tax_identifier = EXCLUDED.tax_identifier,
+           tags = EXCLUDED.tags`,
       [
+        c.id,
         orgId,
         c.code,
         c.firstName,
@@ -875,6 +884,191 @@ export async function seedShowroomDatabase(): Promise<void> {
         pol.wastage,
         pol.margin,
       ],
+    );
+  }
+
+  // 11. Seed Inbound GRN, Shipment, Technical QC, and Serialized Physical Pieces (FEAT-INV-01)
+  // eslint-disable-next-line no-console
+  console.log("[11/11] Seeding Inbound GRN, QC Approval Lineage & Serialized Showroom Pieces...");
+  const grnId = "0192e300-0050-7000-8000-000000000001";
+  await pool.query(
+    `INSERT INTO goods_receipt_notes (id, organization_id, store_id, supplier_id, grn_number, status, supplier_invoice_number, received_date, created_by_user_id, version, created_at, updated_at)
+     VALUES ($1, $2, $3, $4, 'GRN-2026-0842', 'RECEIVED', 'INV-VAL-90412', NOW(), $5, 1, NOW(), NOW())
+     ON CONFLICT (id) DO NOTHING`,
+    [grnId, orgId, storeInv11, "0192e300-0010-7000-8000-000000000001", adminId],
+  );
+
+  const shipmentId = "0192e300-0051-7000-8000-000000000001";
+  await pool.query(
+    `INSERT INTO shipments (id, goods_receipt_note_id, shipment_number, carrier_name, tracking_number, declared_package_count, received_package_count, status, received_at, received_by_user_id, created_at, updated_at)
+     VALUES ($1, $2, 'SHP-2026-0842', 'Brinks Armored Logistics', 'LX-94022', 1, 1, 'RECEIVED', NOW(), $3, NOW(), NOW())
+     ON CONFLICT (id) DO NOTHING`,
+    [shipmentId, grnId, adminId],
+  );
+
+  const shipmentItems = [
+    {
+      id: "0192e300-0052-7000-8000-000000000001",
+      skuId: "0192e300-0031-7000-8000-000000000001",
+      line: 1,
+      supplierCode: "VAL-SOL-081",
+      gross: 5.42,
+      net: 5.116,
+    },
+    {
+      id: "0192e300-0052-7000-8000-000000000002",
+      skuId: "0192e300-0031-7000-8000-000000000002",
+      line: 2,
+      supplierCode: "VAL-CHK-015",
+      gross: 68.3,
+      net: 52.1,
+    },
+    {
+      id: "0192e300-0052-7000-8000-000000000003",
+      skuId: "0192e300-0031-7000-8000-000000000003",
+      line: 3,
+      supplierCode: "VAL-KAD-005",
+      gross: 28.6,
+      net: 27.56,
+    },
+  ];
+
+  for (const si of shipmentItems) {
+    await pool.query(
+      `INSERT INTO shipment_items (id, shipment_id, product_sku_id, line_number, supplier_item_code, declared_piece_count, received_piece_count, declared_gross_weight_grams, measured_gross_weight_grams, declared_net_weight_grams, reconciliation_status, version, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, 1, 1, $6, $6, $7, 'MATCHED', 1, NOW(), NOW())
+       ON CONFLICT (id) DO NOTHING`,
+      [si.id, shipmentId, si.skuId, si.line, si.supplierCode, si.gross, si.net],
+    );
+  }
+
+  const qcId = "0192e300-0053-7000-8000-000000000001";
+  await pool.query(
+    `INSERT INTO quality_checks (id, shipment_id, store_id, inspector_user_id, session_sequence_number, status, inspection_type, started_at, completed_at, version, created_at, updated_at)
+     VALUES ($1, $2, $3, $4, 1, 'APPROVED', 'INITIAL_INTAKE', NOW(), NOW(), 1, NOW(), NOW())
+     ON CONFLICT (id) DO NOTHING`,
+    [qcId, shipmentId, storeInv11, adminId],
+  );
+
+  const qcItems = [
+    {
+      id: "0192e300-0054-7000-8000-000000000001",
+      shipmentItemId: "0192e300-0052-7000-8000-000000000001",
+      seq: 1,
+      gross: 5.42,
+      net: 5.116,
+      stoneCarat: 1.52,
+    },
+    {
+      id: "0192e300-0054-7000-8000-000000000002",
+      shipmentItemId: "0192e300-0052-7000-8000-000000000002",
+      seq: 2,
+      gross: 68.3,
+      net: 52.1,
+      stoneCarat: 18.5,
+    },
+    {
+      id: "0192e300-0054-7000-8000-000000000003",
+      shipmentItemId: "0192e300-0052-7000-8000-000000000003",
+      seq: 3,
+      gross: 28.6,
+      net: 27.56,
+      stoneCarat: 5.2,
+    },
+  ];
+
+  for (const qci of qcItems) {
+    await pool.query(
+      `INSERT INTO quality_check_items (id, quality_check_id, shipment_item_id, item_sequence_number, status, verified_material_id, verified_purity_id, gross_weight_grams, net_weight_grams, stone_weight_carats, hallmark_verified, visual_inspection_passed, damage_detected, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, 'APPROVED', $5, $6, $7, $8, $9, true, true, false, NOW(), NOW())
+       ON CONFLICT (id) DO NOTHING`,
+      [
+        qci.id,
+        qcId,
+        qci.shipmentItemId,
+        qci.seq,
+        goldMatId,
+        purity18kId,
+        qci.gross,
+        qci.net,
+        qci.stoneCarat,
+      ],
+    );
+  }
+
+  const inventoryPieces = [
+    {
+      id: "0192e300-0060-7000-8000-000000000001",
+      skuId: "0192e300-0031-7000-8000-000000000001",
+      qcItemId: "0192e300-0054-7000-8000-000000000001",
+      serial: "JC-SOL-2026-081",
+      name: "18K Oval Solitaire Diamond Ring (1.52ct F-VVS1)",
+      gross: 5.42,
+      net: 5.116,
+      price: 485000.0,
+      compartmentId: "0192e350-0003-7000-8000-000000000020",
+      epc: "EPC-E280-1160-9941",
+    },
+    {
+      id: "0192e300-0060-7000-8000-000000000002",
+      skuId: "0192e300-0031-7000-8000-000000000002",
+      qcItemId: "0192e300-0054-7000-8000-000000000002",
+      serial: "JC-CHK-2026-015",
+      name: "18K Rose Gold Waterfall Cascading Necklace (18.5ct)",
+      gross: 68.3,
+      net: 52.1,
+      price: 1850000.0,
+      compartmentId: "0192e350-0003-7000-8000-000000000002",
+      epc: "EPC-E280-1160-8813",
+    },
+    {
+      id: "0192e300-0060-7000-8000-000000000003",
+      skuId: "0192e300-0031-7000-8000-000000000003",
+      qcItemId: "0192e300-0054-7000-8000-000000000003",
+      serial: "JC-KAD-2026-005",
+      name: "18K White Gold Micro-Prong Tennis Bangle (5.20ct)",
+      gross: 28.6,
+      net: 27.56,
+      price: 625000.0,
+      compartmentId: "0192e350-0003-7000-8000-000000000004",
+      epc: "EPC-E280-1160-7714",
+    },
+  ];
+
+  for (const piece of inventoryPieces) {
+    await pool.query(
+      `INSERT INTO inventory_items (id, organization_id, store_id, product_sku_id, quality_check_item_id, serial_number, item_name, gross_weight_grams, net_weight_grams, purity_id, quality_state, approval_state, custody_state, commercial_state, current_compartment_id, selling_price_cad, version, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'QC_APPROVED', 'APPROVED', 'IN_DISPLAY', 'AVAILABLE_FOR_SALE', $11, $12, 1, NOW(), NOW())
+       ON CONFLICT (id) DO NOTHING`,
+      [
+        piece.id,
+        orgId,
+        storeInv11,
+        piece.skuId,
+        piece.qcItemId,
+        piece.serial,
+        piece.name,
+        piece.gross,
+        piece.net,
+        purity18kId,
+        piece.compartmentId,
+        piece.price,
+      ],
+    );
+
+    const tagId = `0192e300-0070-7000-8000-00000000000${piece.id.slice(-1)}`;
+    await pool.query(
+      `INSERT INTO rfid_tags (id, organization_id, epc, status, frequency_band, created_at, updated_at)
+       VALUES ($1, $2, $3, 'ACTIVE', 'UHF_860_960_MHZ', NOW(), NOW())
+       ON CONFLICT (organization_id, epc) DO NOTHING`,
+      [tagId, orgId, piece.epc],
+    );
+
+    await pool.query(
+      `INSERT INTO rfid_tag_assignments (id, organization_id, inventory_item_id, rfid_tag_id, status, assigned_by_user_id, created_at, updated_at)
+       VALUES (gen_random_uuid(), $1, $2, $3, 'ACTIVE', $4, NOW(), NOW())
+       ON CONFLICT DO NOTHING`,
+      [orgId, piece.id, tagId, adminId],
     );
   }
 

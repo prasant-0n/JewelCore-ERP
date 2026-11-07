@@ -321,6 +321,7 @@ export default function PosTerminalPage() {
             <BillingInspector
               cartPieces={cartPieces}
               selectedPiece={selectedPiece}
+              clientId={activeClient.id}
               clientName={activeClient.name}
               clientVipNumber={`VIP-${activeClient.id.slice(-4)}`}
               panNumber={`${activeClient.panNumber} (Verified)`}
