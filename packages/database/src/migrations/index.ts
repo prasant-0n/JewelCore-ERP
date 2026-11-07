@@ -46,6 +46,7 @@ import { migration00043CreateTransferDisputes } from "./00043_create_transfer_di
 import { migration00044CreateConciergeAppointments } from "./00044_create_concierge_appointments.js";
 import { migration00045CreateAccountingGeneralLedger } from "./00045_create_accounting_general_ledger.js";
 import { migration00046CreateAtelierManufacturingJobOrders } from "./00046_create_atelier_manufacturing_job_orders.js";
+import { migration00047CreateGoldSavingsSchemesAndLoyalty } from "./00047_create_gold_savings_schemes_and_loyalty.js";
 
 export const allMigrations: MigrationDefinition[] = [
   migration00001CreateIamOrganizationsAndStores,
@@ -94,6 +95,7 @@ export const allMigrations: MigrationDefinition[] = [
   migration00044CreateConciergeAppointments,
   migration00045CreateAccountingGeneralLedger,
   migration00046CreateAtelierManufacturingJobOrders,
+  migration00047CreateGoldSavingsSchemesAndLoyalty,
 ];
 
 /**
@@ -149,3 +151,4 @@ export * from "./00043_create_transfer_disputes.js";
 export * from "./00044_create_concierge_appointments.js";
 export * from "./00045_create_accounting_general_ledger.js";
 export * from "./00046_create_atelier_manufacturing_job_orders.js";
+export * from "./00047_create_gold_savings_schemes_and_loyalty.js";

@@ -23,6 +23,7 @@ import { createCertificatesRouter } from "./modules/certificates/certificateRout
 import { createPortalRouter } from "./modules/portal/portalRoutes.js";
 import { createAccountingRouter } from "./modules/accounting/accountingRoutes.js";
 import { createManufacturingRouter } from "./modules/manufacturing/manufacturingRoutes.js";
+import { createSchemeRouter } from "./modules/schemes/schemeRoutes.js";
 import { createDocsRouter } from "./docs/docsRoutes.js";
 
 export function createApp(configureRoutes?: (app: Express) => void): Express {
@@ -120,7 +121,10 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
   // 22. Atelier Manufacturing & Karigar Work Orders (FEAT-MFG-01)
   app.use("/api/v1/manufacturing", createManufacturingRouter());
 
-  // 23. Interactive OpenAPI / Swagger Documentation
+  // 23. Gold Savings Schemes & VIP Loyalty (FEAT-SCHEME-01)
+  app.use("/api/v1/schemes", createSchemeRouter());
+
+  // 24. Interactive OpenAPI / Swagger Documentation
   app.use(createDocsRouter());
 
   // Custom route injection (useful for test harnesses and integration mocks)

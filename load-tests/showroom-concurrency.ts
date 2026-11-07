@@ -44,6 +44,8 @@ async function runShowroomLoadTest(
     "/api/v1/portal/concierge/appointments/CLI-01",
     "/api/v1/manufacturing/jobs",
     "/api/v1/manufacturing/karigars",
+    "/api/v1/schemes",
+    "/api/v1/schemes/accounts",
   ];
 
   const startTime = Date.now();

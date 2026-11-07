@@ -19,6 +19,7 @@ import {
   Crown,
   Landmark,
   Hammer,
+  Coins,
 } from "lucide-react";
 
 interface NavSection {
@@ -66,6 +67,7 @@ const NAV_SECTIONS: NavSection[] = [
     title: "PRIVATE CLIENTELING",
     items: [
       { name: "VIP Client Portal", href: "/portal", icon: Crown },
+      { name: "Gold Savings (SIP)", href: "/schemes", icon: Coins, badge: 3 },
     ],
   },
   {
