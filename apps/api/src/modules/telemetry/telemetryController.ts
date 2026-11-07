@@ -55,3 +55,29 @@ export function triggerRfidSweepHandler(req: Request, res: Response): void {
     timestamp: new Date().toISOString(),
   });
 }
+
+export function broadcastDualSignHandler(req: Request, res: Response): void {
+  const { keyNumber, signatory, role, pieceId, action } = req.body ?? {};
+  const event = telemetryService.broadcastQuorumSign({
+    keyNumber: keyNumber === 2 ? 2 : 1,
+    signatory: String(signatory ?? "Authorized Signatory"),
+    role: String(role ?? "Vault Controller"),
+    pieceId: pieceId ? String(pieceId) : undefined,
+    action: action ?? "KEY_INSERTED",
+    timestamp: new Date().toISOString(),
+  });
+  res.status(200).json({
+    message: "Dual-sign quorum event broadcast to telemetry mesh",
+    data: event,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+export function syncAllScalesHandler(_req: Request, res: Response): void {
+  const result = telemetryService.broadcastScaleSyncAll();
+  res.status(200).json({
+    message: "All 8 vault scales synchronized across mesh",
+    data: result,
+    timestamp: new Date().toISOString(),
+  });
+}

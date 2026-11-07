@@ -12,6 +12,12 @@ import {
   Bell,
   Store,
   UserCheck,
+  Radio,
+  Scale,
+  Cpu,
+  Activity,
+  RefreshCw,
+  Shield,
 } from "lucide-react";
 import { api } from "../../lib/api";
 import { ThemeToggle } from "../theme/ThemeToggle";
@@ -72,9 +78,18 @@ export function TopHeader({
   privacyMode,
   onTogglePrivacy,
 }: TopHeaderProps) {
-  const { bullionData, isConnected } = useHardwareTelemetry();
+  const {
+    bullionData,
+    isConnected,
+    transport,
+    scaleData,
+    tareScale,
+    triggerRfidSweep,
+    syncAllScales,
+  } = useHardwareTelemetry();
   const { currentStore, stores, switchStore } = useStoreContext();
   const [isStoreOpen, setIsStoreOpen] = useState(false);
+  const [isMeshOpen, setIsMeshOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState(PERSONAS[0]);
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
 
@@ -211,8 +226,130 @@ export function TopHeader({
         </div>
       </div>
 
-      {/* Right: Bullion Ticker, Theme Toggle, & Profile */}
+      {/* Right: Hardware Mesh, Bullion Ticker, Theme Toggle, & Profile */}
       <div className="flex items-center space-x-3 sm:space-x-4">
+        {/* Hardware Mesh Telemetry Button & Popover */}
+        <div className="relative">
+          <button
+            onClick={() => setIsMeshOpen(!isMeshOpen)}
+            className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs font-mono"
+            title="Inspect Live Hardware Telemetry Mesh & Serial Instruments"
+          >
+            <Radio className="w-3.5 h-3.5 text-gold" />
+            <span className="text-foreground font-medium text-[11px]">Mesh</span>
+            <span className="px-1.5 py-0.2 text-[9px] font-bold rounded bg-surface border border-surface-border text-status-emerald">
+              4 Nodes
+            </span>
+          </button>
+
+          {isMeshOpen && (
+            <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-surface border border-surface-border rounded-lg shadow-2xl p-3 z-50 space-y-3">
+              {/* Header */}
+              <div className="flex items-center justify-between pb-2 border-b border-surface-border text-xs">
+                <div className="flex items-center space-x-1.5">
+                  <Activity className="w-4 h-4 text-status-emerald animate-pulse" />
+                  <span className="font-semibold text-foreground">Hardware Telemetry Mesh</span>
+                </div>
+                <span className="text-[10px] font-mono uppercase text-status-emerald bg-status-emerald/10 px-2 py-0.5 rounded border border-status-emerald/20 font-bold">
+                  {transport.toUpperCase()} LIVE
+                </span>
+              </div>
+
+              {/* 4 Connected Instrument Nodes */}
+              <div className="space-y-2 text-xs">
+                {/* Node 1: Mettler Toledo Balance */}
+                <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center space-x-1.5 text-foreground font-medium">
+                      <Scale className="w-3.5 h-3.5 text-gold" />
+                      <span>Mettler Toledo XP205</span>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                      Live: <span className="text-gold font-bold">{scaleData.weightGrams.toFixed(4)} g</span> • 0.0001g Verified
+                    </div>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      await tareScale();
+                      toast.success("Scale Calibrated", { description: "Zero-point balance tared to 0.0000g baseline." });
+                    }}
+                    className="px-2 py-1 text-[10px] font-mono rounded bg-surface border border-surface-border hover:bg-gold/10 hover:text-gold transition-colors font-medium"
+                  >
+                    Tare Scale
+                  </button>
+                </div>
+
+                {/* Node 2: Impinj Speedway RFID */}
+                <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center space-x-1.5 text-foreground font-medium">
+                      <Radio className="w-3.5 h-3.5 text-status-indigo" />
+                      <span>Impinj Speedway R420</span>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                      4 Ports • 865.7 MHz ETSI • Active
+                    </div>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      await triggerRfidSweep();
+                      toast.success("360° Antenna Sweep Completed", { description: "4-port circular sweep completed across active tray." });
+                    }}
+                    className="px-2 py-1 text-[10px] font-mono rounded bg-surface border border-surface-border hover:bg-gold/10 hover:text-gold transition-colors font-medium"
+                  >
+                    Sweep
+                  </button>
+                </div>
+
+                {/* Node 3: MCX Bullion Feed */}
+                <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center space-x-1.5 text-foreground font-medium">
+                      <Cpu className="w-3.5 h-3.5 text-status-amber" />
+                      <span>Bullion Market Ticker</span>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                      MCX / LBMA Parity • Real-Time Stream
+                    </div>
+                  </div>
+                  <span className="text-gold font-mono font-bold text-[11px]">
+                    ₹{bullionData.spotInrPerGram.toLocaleString()}/g
+                  </span>
+                </div>
+
+                {/* Node 4: Cryptographic HSM Quorum */}
+                <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center space-x-1.5 text-foreground font-medium">
+                      <Shield className="w-3.5 h-3.5 text-status-emerald" />
+                      <span>Dual-Sign HSM Quorum</span>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                      Key 1: Armed • Key 2: Standby
+                    </div>
+                  </div>
+                  <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-emerald/10 text-status-emerald border border-status-emerald/20 font-bold">
+                    Armed
+                  </span>
+                </div>
+              </div>
+
+              {/* Footer Sync Button */}
+              <button
+                onClick={async () => {
+                  await syncAllScales();
+                  toast.success("Synchronizing Vault Scales", { description: "All 8 Mettler Toledo digital scales re-synchronized across mesh." });
+                  setIsMeshOpen(false);
+                }}
+                className="w-full py-1.5 text-xs font-mono font-semibold rounded bg-gold text-black hover:bg-gold-light transition-all flex items-center justify-center space-x-1.5"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Sync All Vault Scales</span>
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Sleek Bullion Ticker with Live Telemetry Pulse */}
         <div className="hidden xl:flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-elevated border border-surface-border text-xs font-mono">
           <span className="relative flex h-2 w-2 mr-0.5">

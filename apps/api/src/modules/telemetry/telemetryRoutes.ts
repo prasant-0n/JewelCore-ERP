@@ -6,6 +6,8 @@ import {
   tareScaleHandler,
   simulateWeightHandler,
   triggerRfidSweepHandler,
+  broadcastDualSignHandler,
+  syncAllScalesHandler,
 } from "./telemetryController.js";
 
 export function createTelemetryRouter(): Router {
@@ -21,7 +23,9 @@ export function createTelemetryRouter(): Router {
   // Hardware control triggers
   router.post("/scale/tare", tareScaleHandler);
   router.post("/scale/simulate", simulateWeightHandler);
+  router.post("/scale/sync-all", syncAllScalesHandler);
   router.post("/rfid/sweep", triggerRfidSweepHandler);
+  router.post("/governance/dual-sign", broadcastDualSignHandler);
 
   return router;
 }

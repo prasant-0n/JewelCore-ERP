@@ -29,6 +29,24 @@ export interface BullionTick {
   timestamp: string;
 }
 
+export interface QuorumSignEvent {
+  keyNumber: 1 | 2;
+  signatory: string;
+  role: string;
+  pieceId?: string;
+  action: "KEY_INSERTED" | "UNLATCH_AUTHORIZED" | "RELEASE_GRANTED";
+  timestamp: string;
+}
+
+export interface StockApprovalBroadcastEvent {
+  approvalId: string;
+  itemId: string;
+  serialNumber?: string;
+  status: string;
+  authorizedBy: string;
+  timestamp: string;
+}
+
 export interface HardwareStatus {
   mettlerToledoScale: {
     status: "CONNECTED" | "OFFLINE";
@@ -167,6 +185,17 @@ class TelemetryService {
       { epc: "EPC-E280-1160-9945", port: 4, rssi: -45.0 },
     ];
 
+    // Emit live staggered tag interrogation events
+    mockTags.forEach((tag, idx) => {
+      setTimeout(() => {
+        this.broadcast("rfid:tag_interrogated", {
+          ...tag,
+          trayId,
+          timestamp: new Date().toISOString(),
+        });
+      }, (idx + 1) * 100);
+    });
+
     setTimeout(() => {
       const sweepComplete = {
         trayId,
@@ -183,6 +212,30 @@ class TelemetryService {
       detectedTagsCount: 42,
       timestamp: new Date().toISOString(),
     };
+  }
+
+  public broadcastQuorumSign(event: QuorumSignEvent): QuorumSignEvent {
+    this.broadcast("governance:quorum_sign", event);
+    return event;
+  }
+
+  public broadcastStockApproval(
+    event: StockApprovalBroadcastEvent,
+  ): StockApprovalBroadcastEvent {
+    this.broadcast("governance:stock_approved", event);
+    return event;
+  }
+
+  public broadcastScaleSyncAll(): {
+    synchronizedScales: number;
+    timestamp: string;
+  } {
+    const result = {
+      synchronizedScales: 8,
+      timestamp: new Date().toISOString(),
+    };
+    this.broadcast("scale:sync_all", result);
+    return result;
   }
 
   public getStatus(): HardwareStatus {
@@ -239,6 +292,15 @@ class TelemetryService {
       this.setSimulatedWeight(msg.grams);
     } else if (msg.action === "trigger_sweep") {
       this.triggerRfidSweep(msg.trayId);
+    } else if (msg.action === "sign_quorum" && msg.event) {
+      this.broadcastQuorumSign(msg.event);
+    } else if (msg.action === "sync_scales") {
+      this.broadcastScaleSyncAll();
+    } else if (msg.action === "ping") {
+      this.broadcast("mesh:pong", {
+        timestamp: new Date().toISOString(),
+        clientTimestamp: msg.timestamp,
+      });
     }
   }
 
