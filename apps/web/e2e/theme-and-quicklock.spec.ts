@@ -84,4 +84,35 @@ test.describe("Theme Toggle, Privacy Mode & QuickLock Terminal", () => {
     const finalTitle = await privacyBtn.getAttribute("title");
     expect(finalTitle).toContain("Enable Customer Privacy Mode");
   });
+
+  test("switches operational persona and governance roles in top header", async ({
+    page,
+  }) => {
+    // Locate the persona button in top header
+    const personaBtn = page.locator('button[title*="Switch User Identity"]');
+    await expect(personaBtn).toBeVisible({ timeout: 10000 });
+    await personaBtn.click();
+
+    // Verify persona dropdown is visible
+    await expect(page.locator("text=Switch Operational Persona")).toBeVisible();
+
+    // Switch to Vikram M. (Compliance Director)
+    const vikramOption = page.locator("text=Vikram M.").first();
+    await expect(vikramOption).toBeVisible();
+    await vikramOption.click();
+
+    // Verify persona button reflects Vikram M.
+    const activeHeaderUser = page.locator(
+      'button[title*="Switch User Identity"]',
+    );
+    await expect(activeHeaderUser.locator("text=Vikram M.")).toBeVisible();
+    await expect(
+      activeHeaderUser.locator("text=Compliance Director"),
+    ).toBeVisible();
+
+    // Toast notification should appear
+    await expect(
+      page.locator("text=Identity Switched to Vikram M."),
+    ).toBeVisible();
+  });
 });

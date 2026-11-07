@@ -19,7 +19,7 @@ export class ApiProblemError extends Error {
 }
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000/api/v1";
 
 // Default Store ID for multi-tenant showroom context (INV-11)
 export const DEFAULT_STORE_ID = "0192e300-0001-7000-8000-000000000001";

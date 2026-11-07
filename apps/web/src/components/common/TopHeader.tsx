@@ -10,15 +10,52 @@ import {
   ChevronDown,
   Bell,
   Store,
+  UserCheck,
 } from "lucide-react";
 import { api } from "../../lib/api";
 import { ThemeToggle } from "../theme/ThemeToggle";
+import { toast } from "sonner";
 
 interface TopHeaderProps {
   onLockClick?: () => void;
   privacyMode: boolean;
   onTogglePrivacy: () => void;
 }
+
+export const PERSONAS = [
+  {
+    id: "usr-01",
+    name: "Rachel R.",
+    initials: "RR",
+    role: "Store Manager",
+    permission: "Full Atelier Access",
+    token: "mock-jwt-store-manager",
+  },
+  {
+    id: "usr-02",
+    name: "Vikram M.",
+    initials: "VM",
+    role: "Compliance Director",
+    permission: "Dual-Key HSM Quorum",
+    token: "mock-jwt-compliance-director",
+  },
+  {
+    id: "usr-03",
+    name: "Devika S.",
+    initials: "DS",
+    role: "Senior QC Gemologist",
+    permission: "XRF Metrology & Hallmarking",
+    token: "mock-jwt-qc-gemologist",
+  },
+  {
+    id: "usr-04",
+    name: "Arjun K.",
+    initials: "AK",
+    role: "Showroom POS Cashier",
+    permission: "Sales Invoicing & Terminal",
+    token: "mock-jwt-pos-cashier",
+  },
+];
 
 const STORES = [
   {
@@ -45,11 +82,22 @@ export function TopHeader({
 }: TopHeaderProps) {
   const [selectedStore, setSelectedStore] = useState(STORES[0]);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
+  const [selectedPersona, setSelectedPersona] = useState(PERSONAS[0]);
+  const [isPersonaOpen, setIsPersonaOpen] = useState(false);
 
   const handleSelectStore = (store: (typeof STORES)[0]) => {
     setSelectedStore(store);
     api.setStoreId(store.id);
     setIsStoreOpen(false);
+  };
+
+  const handleSelectPersona = (p: (typeof PERSONAS)[0]) => {
+    setSelectedPersona(p);
+    api.setToken(p.token);
+    setIsPersonaOpen(false);
+    toast.success(`Identity Switched to ${p.name}`, {
+      description: `Active Role: ${p.role} • ${p.permission}`,
+    });
   };
 
   return (
@@ -184,19 +232,60 @@ export function TopHeader({
 
         <div className="h-4 w-px bg-surface-border" />
 
-        {/* User Avatar */}
-        <div className="flex items-center space-x-2.5">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-[11px] font-bold text-obsidian">
-            RR
-          </div>
-          <div className="hidden sm:block text-left">
-            <span className="block text-xs font-medium text-foreground leading-tight">
-              Rachel R.
-            </span>
-            <span className="block text-[10px] text-muted-foreground font-mono">
-              Store Manager
-            </span>
-          </div>
+        {/* User Persona & Role Selector */}
+        <div className="relative">
+          <button
+            onClick={() => setIsPersonaOpen(!isPersonaOpen)}
+            className="flex items-center space-x-2.5 p-1 -mr-1 rounded-md hover:bg-surface-elevated transition-colors text-left focus:outline-none"
+            title="Switch User Identity & Governance Role"
+          >
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-[11px] font-bold text-obsidian">
+              {selectedPersona.initials}
+            </div>
+            <div className="hidden sm:block">
+              <span className="block text-xs font-medium text-foreground leading-tight">
+                {selectedPersona.name}
+              </span>
+              <span className="block text-[10px] text-muted-foreground font-mono">
+                {selectedPersona.role}
+              </span>
+            </div>
+            <ChevronDown className="w-3 h-3 text-muted-foreground hidden sm:block" />
+          </button>
+
+          {isPersonaOpen && (
+            <div className="absolute top-full right-0 mt-1.5 w-64 bg-surface border border-surface-border rounded-lg shadow-2xl py-1 z-50">
+              <div className="px-3 py-1.5 text-[10px] uppercase font-mono text-muted-foreground border-b border-surface-border">
+                Switch Operational Persona
+              </div>
+              {PERSONAS.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => handleSelectPersona(p)}
+                  className={`w-full px-3 py-2 text-left text-xs flex items-center justify-between hover:bg-surface-elevated transition-colors ${
+                    p.id === selectedPersona.id
+                      ? "text-gold font-medium bg-gold/5"
+                      : "text-foreground"
+                  }`}
+                >
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-6 h-6 rounded-full bg-surface-elevated border border-surface-border flex items-center justify-center text-[10px] font-bold font-mono text-gold">
+                      {p.initials}
+                    </div>
+                    <div>
+                      <span className="block font-medium">{p.name}</span>
+                      <span className="block text-[10px] text-muted-foreground font-mono">
+                        {p.role}
+                      </span>
+                    </div>
+                  </div>
+                  {p.id === selectedPersona.id && (
+                    <UserCheck className="w-3.5 h-3.5 text-gold" />
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </header>
