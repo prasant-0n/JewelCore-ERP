@@ -8,6 +8,10 @@
     "typecheck": "pnpm --filter \"@jewelcore/*\" run typecheck",
     "test": "vitest run",
     "test:e2e": "pnpm --filter \"@jewelcore/web\" run test:e2e",
+    "db:seed": "pnpm --filter \"@jewelcore/database\" run seed",
+    "dev:api": "pnpm --filter \"@jewelcore/api\" run dev",
+    "dev:web": "pnpm --filter \"@jewelcore/web\" run dev",
+    "dev:all": "pnpm --parallel --filter \"@jewelcore/api\" --filter \"@jewelcore/web\" run dev",
     "format": "prettier --check \"**/*.{ts,tsx,json,md,yml,yaml}\"",
     "format:fix": "prettier --write \"**/*.{ts,tsx,json,md,yml,yaml}\""
   },

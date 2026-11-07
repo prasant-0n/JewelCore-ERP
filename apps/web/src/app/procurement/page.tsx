@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
 
 // Mock Inbound Shipments replicating approved Stitch design
 const INITIAL_SHIPMENTS: ShipmentData[] = [
@@ -222,7 +223,10 @@ export default function ProcurementPage() {
     );
   };
 
-  const handleTareScale = () => {
+  const { tareScale } = useHardwareTelemetry();
+
+  const handleTareScale = async () => {
+    await tareScale();
     toast.success("Scale Calibrated", {
       description:
         "Auto-Tare baseline re-zeroed (0.0000g). RS-232 telemetry live.",

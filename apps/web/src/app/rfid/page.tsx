@@ -29,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
 
 const INITIAL_TRAYS: ScanTrayData[] = [
   {
@@ -215,15 +216,18 @@ export default function RfidKioskPage() {
     setSelectedTrayName(tray.trayName);
   };
 
-  const handleTriggerFullSweep = () => {
+  const { triggerRfidSweep } = useHardwareTelemetry();
+
+  const handleTriggerFullSweep = async () => {
     setIsFullSweeping(true);
+    await triggerRfidSweep("tray-01");
     setTimeout(() => {
       setIsFullSweeping(false);
       toast.success("360° Antenna Sweep Completed", {
         description:
           "53 tags interrogated across 4 ports in 280ms. Signal map updated.",
       });
-    }, 900);
+    }, 600);
   };
 
   const handleRegisterManualTag = (

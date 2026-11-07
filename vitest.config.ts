@@ -7,7 +7,7 @@ export default defineConfig({
     fileParallelism: false,
     globalSetup: ["./vitest.global-setup.ts"],
     include: ["**/*.test.ts", "**/*.spec.ts"],
-    exclude: ["**/node_modules/**", "**/dist/**", "**/.next/**"],
+    exclude: ["**/node_modules/**", "**/dist/**", "**/.next/**", "**/e2e/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

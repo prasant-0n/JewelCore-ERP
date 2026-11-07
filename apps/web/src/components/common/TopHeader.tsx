@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { api } from "../../lib/api";
 import { ThemeToggle } from "../theme/ThemeToggle";
+import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -80,6 +81,7 @@ export function TopHeader({
   privacyMode,
   onTogglePrivacy,
 }: TopHeaderProps) {
+  const { bullionData, isConnected } = useHardwareTelemetry();
   const [selectedStore, setSelectedStore] = useState(STORES[0]);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState(PERSONAS[0]);
@@ -182,12 +184,31 @@ export function TopHeader({
 
       {/* Right: Bullion Ticker, Theme Toggle, & Profile */}
       <div className="flex items-center space-x-3 sm:space-x-4">
-        {/* Sleek Bullion Ticker */}
+        {/* Sleek Bullion Ticker with Live Telemetry Pulse */}
         <div className="hidden xl:flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-elevated border border-surface-border text-xs font-mono">
+          <span className="relative flex h-2 w-2 mr-0.5">
+            <span
+              className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                isConnected ? "bg-status-emerald" : "bg-gold"
+              }`}
+            />
+            <span
+              className={`relative inline-flex rounded-full h-2 w-2 ${
+                isConnected ? "bg-status-emerald" : "bg-gold"
+              }`}
+            />
+          </span>
           <span className="text-gold font-semibold">Au 24K</span>
-          <span className="text-foreground tabular-nums">₹7,450/g</span>
+          <span className="text-foreground tabular-nums">
+            ₹
+            {bullionData.spotInrPerGram.toLocaleString(undefined, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2,
+            })}
+            /g
+          </span>
           <span className="text-status-emerald text-[10px] font-medium">
-            ▲ +0.8%
+            ▲ {bullionData.changePercent}
           </span>
         </div>
 

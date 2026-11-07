@@ -13,7 +13,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed": "tsx src/seed/showroomSeeder.ts"
   },
   "dependencies": {
     "@jewelcore/shared": "workspace:*",
