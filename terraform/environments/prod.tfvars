@@ -1,0 +1,10 @@
+aws_region              = "ap-south-1"
+environment             = "production"
+cluster_name            = "jewelcore-prod-mumbai"
+vpc_cidr                = "10.100.0.0/16"
+app_node_instance_types = ["m6i.xlarge", "m6a.xlarge"]
+db_node_instance_types  = ["r6i.2xlarge"]
+min_nodes               = 3
+max_nodes               = 15
+desired_nodes           = 4
+backup_retention_days   = 90

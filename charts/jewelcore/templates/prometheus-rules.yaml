@@ -1,0 +1,55 @@
+{{- if .Values.monitoring.alertmanager.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "jewelcore.fullname" . }}-alerts
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "jewelcore.labels" . | nindent 4 }}
+    role: alert-rules
+spec:
+  groups:
+    - name: jewelcore.rules
+      rules:
+        - alert: JewelCoreHighLatencyP95
+          expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace="{{ .Values.namespace }}"}[5m])) by (le)) * 1000 > {{ .Values.monitoring.alertmanager.p95LatencyThresholdMs }}
+          for: 3m
+          labels:
+            severity: warning
+            team: atelier-sre
+          annotations:
+            summary: "High API response latency P95 on JewelCore cluster"
+            description: "JewelCore API 95th percentile latency is {{ $value }}ms (SLA threshold: {{ .Values.monitoring.alertmanager.p95LatencyThresholdMs }}ms)."
+
+        - alert: JewelCoreHighHttp5xxRate
+          expr: sum(rate(http_requests_total{status=~"5..",namespace="{{ .Values.namespace }}"}[5m])) / sum(rate(http_requests_total{namespace="{{ .Values.namespace }}"}[5m])) * 100 > {{ .Values.monitoring.alertmanager.http5xxErrorRateThresholdPercent }}
+          for: 2m
+          labels:
+            severity: critical
+            team: atelier-sre
+            pagerduty: "true"
+          annotations:
+            summary: "Elevated HTTP 5xx error rate detected across showroom endpoints"
+            description: "Error rate is {{ $value }}%, exceeding the {{ .Values.monitoring.alertmanager.http5xxErrorRateThresholdPercent }}% operational threshold."
+
+        - alert: JewelCoreRedisQueueBacklog
+          expr: bullmq_queue_waiting_jobs{namespace="{{ .Values.namespace }}"} > {{ .Values.monitoring.alertmanager.redisQueueBacklogThreshold }}
+          for: 5m
+          labels:
+            severity: warning
+            team: atelier-backend
+          annotations:
+            summary: "BullMQ asynchronous worker queue depth backlog"
+            description: "Queue backlog has {{ $value }} pending jobs (threshold: {{ .Values.monitoring.alertmanager.redisQueueBacklogThreshold }})."
+
+        - alert: JewelCorePostgresPoolNearExhaustion
+          expr: pg_stat_activity_count{namespace="{{ .Values.namespace }}"} / {{ .Values.postgresql.maxConnections }} * 100 > 85
+          for: 3m
+          labels:
+            severity: critical
+            team: atelier-dba
+            pagerduty: "true"
+          annotations:
+            summary: "PostgreSQL active connection pool near exhaustion (> 85%)"
+            description: "Current connection pool utilization is {{ $value }}% of {{ .Values.postgresql.maxConnections }} max connections."
+{{- end }}

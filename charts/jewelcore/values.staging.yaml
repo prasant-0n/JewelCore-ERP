@@ -1,0 +1,75 @@
+# Staging pre-production environment profile
+global:
+  environment: staging
+  domain: staging.jewelcore.internal
+  imagePullPolicy: IfNotPresent
+
+config:
+  nodeEnv: staging
+  logLevel: info
+
+postgresql:
+  storage:
+    size: 25Gi
+    storageClass: gp3
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+api:
+  replicas: 2
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+  resources:
+    requests:
+      cpu: 200m
+      memory: 384Mi
+    limits:
+      cpu: 750m
+      memory: 1Gi
+
+web:
+  replicas: 2
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+  resources:
+    requests:
+      cpu: 150m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 768Mi
+
+worker:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+ingress:
+  tls:
+    enabled: true
+    secretName: jewelcore-staging-tls-cert
+    clusterIssuer: letsencrypt-staging
+  hosts:
+    web: app.staging.jewelcore.internal
+    api: api.staging.jewelcore.internal
+    portal: portal.staging.jewelcore.internal
+
+backup:
+  enabled: true
+  schedule: "0 3 * * *"
+  retentionDays: 7
+  s3Bucket: jewelcore-database-backups-staging

@@ -1,0 +1,19 @@
+apiVersion: v2
+name: jewelcore
+description: Production Helm Chart for JewelCore Atelier Luxury ERP High-Availability Cluster
+type: application
+version: 1.0.0
+appVersion: "0.10.0"
+keywords:
+  - luxury-erp
+  - haute-horlogerie
+  - atelier
+  - high-concurrency
+  - postgresql
+  - redis
+home: https://jewelcore.internal
+sources:
+  - https://github.com/jewelcore/jewelcore-erp
+maintainers:
+  - name: JewelCore Infrastructure SRE Team
+    email: sre@jewelcore.internal

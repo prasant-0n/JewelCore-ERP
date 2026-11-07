@@ -1,0 +1,53 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: jewelcore-alerts
+  namespace: jewelcore
+  labels:
+    role: alert-rules
+    app.kubernetes.io/part-of: jewelcore-atelier-erp
+spec:
+  groups:
+    - name: jewelcore.rules
+      rules:
+        - alert: JewelCoreHighLatencyP95
+          expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace="jewelcore"}[5m])) by (le)) * 1000 > 200
+          for: 3m
+          labels:
+            severity: warning
+            team: atelier-sre
+          annotations:
+            summary: "High API response latency P95 on JewelCore cluster"
+            description: "JewelCore API 95th percentile latency is {{ $value }}ms (SLA threshold: 200ms)."
+
+        - alert: JewelCoreHighHttp5xxRate
+          expr: sum(rate(http_requests_total{status=~"5..",namespace="jewelcore"}[5m])) / sum(rate(http_requests_total{namespace="jewelcore"}[5m])) * 100 > 1.0
+          for: 2m
+          labels:
+            severity: critical
+            team: atelier-sre
+            pagerduty: "true"
+          annotations:
+            summary: "Elevated HTTP 5xx error rate detected across showroom endpoints"
+            description: "Error rate is {{ $value }}%, exceeding the 1.0% operational threshold."
+
+        - alert: JewelCoreRedisQueueBacklog
+          expr: bullmq_queue_waiting_jobs{namespace="jewelcore"} > 500
+          for: 5m
+          labels:
+            severity: warning
+            team: atelier-backend
+          annotations:
+            summary: "BullMQ asynchronous worker queue depth backlog"
+            description: "Queue backlog has {{ $value }} pending jobs (threshold: 500)."
+
+        - alert: JewelCorePostgresPoolNearExhaustion
+          expr: pg_stat_activity_count{namespace="jewelcore"} / 300 * 100 > 85
+          for: 3m
+          labels:
+            severity: critical
+            team: atelier-dba
+            pagerduty: "true"
+          annotations:
+            summary: "PostgreSQL active connection pool near exhaustion (> 85%)"
+            description: "Current connection pool utilization is {{ $value }}% of 300 max connections."

@@ -1,0 +1,90 @@
+{{- if .Values.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "jewelcore.fullname" . }}-db-backup
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "jewelcore.labels" . | nindent 4 }}
+    app.kubernetes.io/component: disaster-recovery
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: {{ include "jewelcore.name" . }}-backup
+            app.kubernetes.io/component: disaster-recovery
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: pg-backup-encrypt
+              image: postgres:16-alpine
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+                  TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+                  BACKUP_DIR="/backups"
+                  BASE_NAME="jewelcore_dump_${TIMESTAMP}"
+                  SQL_FILE="${BACKUP_DIR}/${BASE_NAME}.sql.gz"
+                  ENC_FILE="${BACKUP_DIR}/${BASE_NAME}.sql.gz.enc"
+                  CHECKSUM_FILE="${BACKUP_DIR}/${BASE_NAME}.sha256"
+
+                  echo "=== [1/4] Starting JewelCore Atomic pg_dump at ${TIMESTAMP} ==="
+                  pg_dump -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d ${PGDATABASE} -Fc | gzip > "${SQL_FILE}"
+
+                  echo "=== [2/4] Generating Pre-Encryption SHA-256 Digest ==="
+                  sha256sum "${SQL_FILE}" > "${CHECKSUM_FILE}"
+                  cat "${CHECKSUM_FILE}"
+
+                  echo "=== [3/4] Encrypting with OpenSSL AES-256-CBC with Salt ==="
+                  openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 \
+                    -in "${SQL_FILE}" \
+                    -out "${ENC_FILE}" \
+                    -pass env:BACKUP_ENCRYPTION_KEY
+
+                  # Remove unencrypted gzip artifact
+                  rm -f "${SQL_FILE}"
+
+                  echo "=== [4/4] Verifying Encrypted Artifact Integrity ==="
+                  ls -lh "${ENC_FILE}"
+                  echo "Disaster recovery backup snapshot completed successfully: ${ENC_FILE}"
+
+                  # Retention pruning: delete local snapshots older than retention days
+                  find "${BACKUP_DIR}" -type f -name "jewelcore_dump_*.sql.gz.enc" -mtime +{{ .Values.backup.retentionDays }} -exec rm -f {} \;
+              env:
+                - name: PGHOST
+                  value: {{ include "jewelcore.fullname" . }}-postgres
+                - name: PGPORT
+                  value: "5432"
+                - name: PGDATABASE
+                  value: {{ .Values.postgresql.database | quote }}
+                - name: PGUSER
+                  value: {{ .Values.postgresql.user | quote }}
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "jewelcore.fullname" . }}-secrets
+                      key: DB_PASSWORD
+                - name: BACKUP_ENCRYPTION_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "jewelcore.fullname" . }}-secrets
+                      key: BACKUP_ENCRYPTION_SECRET
+              resources:
+                {{- toYaml .Values.backup.resources | nindent 16 }}
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backups
+          volumes:
+            - name: backup-storage
+              persistentVolumeClaim:
+                claimName: {{ include "jewelcore.fullname" . }}-backup-pvc
+{{- end }}

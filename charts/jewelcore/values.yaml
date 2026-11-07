@@ -1,0 +1,151 @@
+# Default values for JewelCore Atelier ERP High-Availability Production Cluster
+global:
+  environment: production
+  domain: jewelcore.internal
+  imageRegistry: ghcr.io/jewelcore
+  imagePullPolicy: IfNotPresent
+
+namespace: jewelcore
+
+config:
+  nodeEnv: production
+  logLevel: info
+  port: 4000
+  webPort: 3000
+  dbPort: 5432
+  redisPort: 6379
+  jwtExpiresIn: 86400
+  jwtRefreshExpiresIn: 604800
+
+postgresql:
+  enabled: true
+  image: postgres:16-alpine
+  port: 5432
+  database: jewelcore
+  user: jewelcore_admin
+  storage:
+    size: 50Gi
+    storageClass: gp3
+    accessMode: ReadWriteOnce
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  maxConnections: 300
+  sharedBuffers: 1GB
+
+redis:
+  enabled: true
+  image: redis:7-alpine
+  port: 6379
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+api:
+  image: jewelcore-api:v0.10.0
+  port: 4000
+  replicas: 2
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1.5Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 75
+    targetMemoryUtilizationPercentage: 80
+  livenessProbe:
+    path: /api/v1/health
+    initialDelaySeconds: 15
+    periodSeconds: 10
+  readinessProbe:
+    path: /api/v1/health
+    initialDelaySeconds: 10
+    periodSeconds: 5
+
+web:
+  image: jewelcore-web:v0.10.0
+  port: 3000
+  replicas: 2
+  resources:
+    requests:
+      cpu: 200m
+      memory: 384Mi
+    limits:
+      cpu: 800m
+      memory: 1Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 8
+    targetCPUUtilizationPercentage: 70
+  livenessProbe:
+    path: /
+    initialDelaySeconds: 20
+    periodSeconds: 15
+  readinessProbe:
+    path: /
+    initialDelaySeconds: 10
+    periodSeconds: 5
+
+worker:
+  image: jewelcore-worker:v0.10.0
+  replicas: 2
+  resources:
+    requests:
+      cpu: 150m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 768Mi
+
+ingress:
+  enabled: true
+  className: nginx
+  tls:
+    enabled: true
+    secretName: jewelcore-tls-cert
+    clusterIssuer: letsencrypt-prod
+  hosts:
+    web: app.jewelcore.internal
+    api: api.jewelcore.internal
+    portal: portal.jewelcore.internal
+
+backup:
+  enabled: true
+  schedule: "0 2 * * *" # Daily at 02:00 UTC
+  retentionDays: 30
+  s3Bucket: jewelcore-database-backups-prod
+  encryption:
+    enabled: true
+    algorithm: AES-256-CBC
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+monitoring:
+  serviceMonitor:
+    enabled: true
+    interval: 15s
+    scrapeTimeout: 10s
+  alertmanager:
+    enabled: true
+    p95LatencyThresholdMs: 200
+    http5xxErrorRateThresholdPercent: 1.0
+    redisQueueBacklogThreshold: 500

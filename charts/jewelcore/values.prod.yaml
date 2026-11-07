@@ -1,0 +1,101 @@
+# Production High-Availability Cluster Profile
+global:
+  environment: production
+  domain: jewelcore.internal
+  imagePullPolicy: IfNotPresent
+
+config:
+  nodeEnv: production
+  logLevel: warn
+
+postgresql:
+  storage:
+    size: 100Gi
+    storageClass: gp3-iops
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+  maxConnections: 500
+  sharedBuffers: 2GB
+
+redis:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+api:
+  replicas: 4
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 15
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 75
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 3Gi
+
+web:
+  replicas: 3
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+  resources:
+    requests:
+      cpu: 350m
+      memory: 512Mi
+    limits:
+      cpu: 1500m
+      memory: 1.5Gi
+
+worker:
+  replicas: 3
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+ingress:
+  tls:
+    enabled: true
+    secretName: jewelcore-prod-tls-cert
+    clusterIssuer: letsencrypt-prod
+  hosts:
+    web: atelier.jewelcore.internal
+    api: api.jewelcore.internal
+    portal: vault.jewelcore.internal
+
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retentionDays: 90
+  s3Bucket: jewelcore-database-backups-prod-encrypted
+  encryption:
+    enabled: true
+    algorithm: AES-256-CBC
+
+monitoring:
+  serviceMonitor:
+    enabled: true
+    interval: 10s
+  alertmanager:
+    enabled: true
+    p95LatencyThresholdMs: 150
+    http5xxErrorRateThresholdPercent: 0.5
