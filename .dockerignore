@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+.next
+**/.next
+dist
+**/dist
+.git
+.github
+*.log
+.env.local
+.env.*.local
+*.tsbuildinfo
+**/*.tsbuildinfo
+coverage
+test-results
+playwright-report
+blob-report

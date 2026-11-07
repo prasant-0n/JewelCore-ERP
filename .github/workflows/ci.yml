@@ -1,4 +1,4 @@
-name: CI
+name: JewelCore Enterprise CI/CD Pipeline
 
 on:
   push:
@@ -8,8 +8,9 @@ on:
 
 jobs:
   verify:
-    name: Build & Test Verification
+    name: Typecheck, Test & E2E Verification
     runs-on: ubuntu-latest
+    timeout-minutes: 25
 
     services:
       postgres:
@@ -27,6 +28,17 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6380:6379
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5434
@@ -34,9 +46,13 @@ jobs:
       POSTGRES_PASSWORD: jewelcore_dev
       POSTGRES_DB: jewelcore_erp
       DATABASE_URL: postgres://jewelcore:jewelcore_dev@localhost:5434/jewelcore_erp
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6380
+      REDIS_URL: redis://127.0.0.1:6380
       NODE_ENV: test
       JWT_SECRET: jewelcore-test-jwt-secret-key-32-chars-long!
       PORT: 4000
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:4000/api/v1
 
     steps:
       - name: Checkout Code
@@ -54,8 +70,23 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck & Build Monorepo
-        run: pnpm build
+      - name: Monorepo Typecheck
+        run: pnpm run typecheck
 
-      - name: Run Monorepo Test Suites
+      - name: Monorepo Build
+        run: pnpm run build
+
+      - name: Multi-Tenant Database Migrations & Seeding
+        run: pnpm run db:seed
+
+      - name: Run Vitest Suite (778+ Tests)
         run: pnpm test
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter "@jewelcore/web" exec playwright install --with-deps chromium
+
+      - name: Run Playwright E2E Suite (34 Tests / 8 Workstation Suites)
+        run: pnpm run test:e2e
+
+      - name: Verify Docker Compose Production Specification
+        run: docker compose -f docker-compose.prod.yml config

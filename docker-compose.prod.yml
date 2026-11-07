@@ -1,0 +1,126 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: jewelcore_prod_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jewelcore}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jewelcore_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-jewelcore_erp}
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-jewelcore} -d ${POSTGRES_DB:-jewelcore_erp}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - jewelcore_mesh
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: jewelcore_prod_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6380}:6379"
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 3s
+    networks:
+      - jewelcore_mesh
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: jewelcore_prod_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgres://${POSTGRES_USER:-jewelcore}:${POSTGRES_PASSWORD:-jewelcore_dev}@postgres:5432/${POSTGRES_DB:-jewelcore_erp}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-jewelcore-production-secure-signature-secret-key-999}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:4000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - jewelcore_mesh
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    container_name: jewelcore_prod_worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER:-jewelcore}:${POSTGRES_PASSWORD:-jewelcore_dev}@postgres:5432/${POSTGRES_DB:-jewelcore_erp}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    networks:
+      - jewelcore_mesh
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: jewelcore_prod_web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000/api/v1}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - jewelcore_mesh
+
+networks:
+  jewelcore_mesh:
+    name: jewelcore_prod_network
+
+volumes:
+  postgres_prod_data:
+    name: jewelcore_prod_postgres_data
+  redis_prod_data:
+    name: jewelcore_prod_redis_data
