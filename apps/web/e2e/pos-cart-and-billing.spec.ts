@@ -87,17 +87,42 @@ test.describe("POS Showroom Cashier & Billing Workstation", () => {
     await authorizeBtn.click();
 
     // Verify Tax Invoice Modal with official JewelCore Logo appears
-    const invoiceModal = page.locator("text=TAX INVOICE / IRN");
+    const invoiceModal = page.locator("text=Tax Invoice & Authenticity Certificate").first();
     await expect(invoiceModal).toBeVisible({ timeout: 5000 });
     await expect(
-      page.locator("text=JewelCore Luxury Atelier Group").first(),
+      page.locator("text=JEWELCORE LUXURY ATELIER").first(),
     ).toBeVisible();
     await expect(
       page.locator('svg[aria-label="JewelCore Atelier Logo Mark"]').first(),
     ).toBeVisible();
 
+    // Switch to ESC/POS Thermal Receipt tab
+    const thermalTab = page.getByRole("button", { name: /ESC\/POS Thermal Receipt/i });
+    await expect(thermalTab).toBeVisible();
+    await thermalTab.click();
+    await expect(page.locator("pre").first()).toContainText("JEWELCORE LUXURY ATELIER");
+
+    // Switch back to A4 Tax Invoice
+    const a4Tab = page.getByRole("button", { name: /Legal A4 Tax Invoice/i });
+    await a4Tab.click();
+    await expect(page.locator("#tax-invoice-sheet")).toBeVisible();
+
+    // Open Jewellery Barcode Tags printing modal
+    const printTagsBtn = page.getByRole("button", { name: /Print Jewellery Barcode Tags/i });
+    await expect(printTagsBtn).toBeVisible();
+    await printTagsBtn.click();
+
+    // Verify Tag modal appears with butterfly tag dimension
+    await expect(page.locator("text=Jewellery RFID / Barcode Tag Printing Station")).toBeVisible();
+    await expect(page.locator("text=Tag Dimension: 50mm × 12mm Standard Butterfly")).toBeVisible();
+
+    // Close tag modal
+    const tagDoneBtn = page.getByRole("button", { name: "Done" });
+    await expect(tagDoneBtn).toBeVisible();
+    await tagDoneBtn.click();
+
     // Close invoice modal
-    const closeBtn = page.getByRole("button", { name: "Close & Complete" });
+    const closeBtn = page.getByRole("button", { name: "Close Window" });
     await expect(closeBtn).toBeVisible();
     await closeBtn.click();
     await expect(invoiceModal).not.toBeVisible();

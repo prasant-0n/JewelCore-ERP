@@ -24,6 +24,8 @@ import { Badge } from "@/components/ui/badge";
 import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
 import { TabularWeight } from "@/components/workstation/TabularWeight";
 import { StatusBadge } from "@/components/workstation/StatusBadge";
+import { JewelleryTagModal } from "../common/JewelleryTagModal";
+import { JewelleryTagData } from "../../lib/printing/zplBarcodeTagGenerator";
 import { toast } from "sonner";
 
 interface StoredItemMock {
@@ -85,6 +87,7 @@ export function CompartmentInspector({
   onTransferClick,
 }: CompartmentInspectorProps) {
   const [isAuditing, setIsAuditing] = useState(false);
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
 
   if (!compartment) {
     return (
@@ -127,8 +130,9 @@ export function CompartmentInspector({
   };
 
   const handlePrintManifest = () => {
-    toast.info(`Generating Audit Manifest PDF for ${code}`, {
-      description: "Dispatching printable barcode manifest to Zebra printer.",
+    setIsTagModalOpen(true);
+    toast.info(`Opening Barcode Tag Printing Station for ${code}`, {
+      description: `Loaded ${items.length} items for thermal label and ZPL generation.`,
     });
   };
 
@@ -290,6 +294,22 @@ export function CompartmentInspector({
           Transfer
         </Button>
       </CardFooter>
+
+      {/* Jewellery Barcode & RFID Tag Printing Station */}
+      <JewelleryTagModal
+        isOpen={isTagModalOpen}
+        onClose={() => setIsTagModalOpen(false)}
+        tags={items.map((it) => ({
+          serialNumber: it.serialNumber,
+          skuCode: `SKU-${it.purity.split(" ")[0]}`,
+          itemName: it.name,
+          metalPurity: it.purity,
+          grossWeightGrams: it.weightGrams,
+          netWeightGrams: Math.round(it.weightGrams * 0.92 * 1000) / 1000,
+          hallmarkId: `BIS-${code.replace(/[^a-zA-Z0-9]/g, "")}`,
+          retailPriceInr: Math.round(it.weightGrams * 7450),
+        }))}
+      />
     </Card>
   );
 }

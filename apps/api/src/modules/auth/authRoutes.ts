@@ -4,6 +4,7 @@ import {
   loginHandler,
   meHandler,
   myStoresHandler,
+  personaTokenHandler,
 } from "./authController.js";
 
 export function createAuthRouter(): Router {
@@ -11,6 +12,7 @@ export function createAuthRouter(): Router {
 
   router.post("/register", registerHandler);
   router.post("/login", loginHandler);
+  router.post("/persona-token", personaTokenHandler);
   router.get("/me", meHandler);
   router.get("/me/stores", myStoresHandler);
 

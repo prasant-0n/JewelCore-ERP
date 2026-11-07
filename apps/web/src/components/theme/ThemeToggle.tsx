@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -39,29 +38,22 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       }
       aria-label="Toggle theme"
     >
-      <AnimatePresence mode="wait" initial={false}>
-        {isDark ? (
-          <motion.div
-            key="moon"
-            initial={{ scale: 0.6, rotate: -90, opacity: 0 }}
-            animate={{ scale: 1, rotate: 0, opacity: 1 }}
-            exit={{ scale: 0.6, rotate: 90, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          >
-            <Moon className="w-4 h-4 text-gold hover:text-gold-light" />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="sun"
-            initial={{ scale: 0.6, rotate: 90, opacity: 0 }}
-            animate={{ scale: 1, rotate: 0, opacity: 1 }}
-            exit={{ scale: 0.6, rotate: -90, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          >
-            <Sun className="w-4 h-4 text-gold hover:text-gold-dark" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="relative w-4 h-4 flex items-center justify-center">
+        <Sun
+          className={`w-4 h-4 text-gold transition-all duration-300 ${
+            isDark
+              ? "-rotate-90 scale-0 opacity-0 absolute"
+              : "rotate-0 scale-100 opacity-100"
+          }`}
+        />
+        <Moon
+          className={`w-4 h-4 text-gold transition-all duration-300 ${
+            isDark
+              ? "rotate-0 scale-100 opacity-100"
+              : "rotate-90 scale-0 opacity-0 absolute"
+          }`}
+        />
+      </div>
     </button>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/common/AppShell";
 import {
   AlloyPricingCard,
@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { api } from "../../lib/api";
 import { toast } from "sonner";
 
 const INITIAL_PRICING_GROUPS: PricingTierGroupData[] = [
@@ -133,6 +134,62 @@ export default function PricingMasterPage() {
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isNewTierModalOpen, setIsNewTierModalOpen] = useState(false);
   const [isBroadcasting, setIsBroadcasting] = useState(false);
+
+  useEffect(() => {
+    async function loadLiveRates() {
+      try {
+        const res = await api.get<{
+          data: Array<{
+            metalType: string;
+            ratePerGramCad: number;
+            effectiveFrom: string;
+          }>;
+        }>("/pricing/rates");
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          const goldRate = res.data.find((r) => r.metalType === "GOLD")?.ratePerGramCad;
+          if (goldRate) {
+            setPricingGroups((prev) =>
+              prev.map((g) => {
+                if (g.id !== "grp-alloys") return g;
+                return {
+                  ...g,
+                  alloys: g.alloys.map((a) => {
+                    if (a.karatTag === "24K") {
+                      return {
+                        ...a,
+                        spotPricePerGram: Number(goldRate),
+                        calculatedRetailPerGram: Number(goldRate) * 1.002,
+                      };
+                    }
+                    if (a.karatTag === "22K") {
+                      const rate22k = Math.round(Number(goldRate) * 0.916);
+                      return {
+                        ...a,
+                        spotPricePerGram: rate22k,
+                        calculatedRetailPerGram: Math.round(rate22k * 1.125),
+                      };
+                    }
+                    if (a.karatTag === "18K") {
+                      const rate18k = Math.round(Number(goldRate) * 0.75);
+                      return {
+                        ...a,
+                        spotPricePerGram: rate18k,
+                        calculatedRetailPerGram: Math.round(rate18k * 1.18),
+                      };
+                    }
+                    return a;
+                  }),
+                };
+              }),
+            );
+          }
+        }
+      } catch {
+        // Fallback to INITIAL_PRICING_GROUPS
+      }
+    }
+    loadLiveRates();
+  }, []);
 
   const totalRulesCount = pricingGroups.reduce(
     (acc, g) => acc + g.alloys.length,

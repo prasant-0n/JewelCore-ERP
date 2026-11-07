@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Truck } from "lucide-react";
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { api } from "../../lib/api";
 import { toast } from "sonner";
 
 interface NewShipmentModalProps {
@@ -25,6 +26,14 @@ export function NewShipmentModal({
   onClose,
   onCreated,
 }: NewShipmentModalProps) {
+  const [suppliersList, setSuppliersList] = useState<
+    Array<{ id: string; name: string }>
+  >([
+    { id: "sup-01", name: "Valcambi Suisse (LBMA Good Delivery)" },
+    { id: "sup-02", name: "MMTC-PAMP India (NABL Accredited)" },
+    { id: "sup-03", name: "De Beers Diamond Sight-Holders" },
+    { id: "sup-04", name: "Argor-Heraeus SA (Switzerland)" },
+  ]);
   const [supplier, setSupplier] = useState("Valcambi Suisse");
   const [trackingNumber, setTrackingNumber] = useState("");
   const [metalType, setMetalType] = useState("Au 999.9 Fine Gold Ingot (24K)");
@@ -32,6 +41,26 @@ export function NewShipmentModal({
   const [declaredWeight, setDeclaredWeight] = useState("3000.000");
   const [sealNumber, setSealNumber] = useState("TS-8824");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    async function loadSuppliers() {
+      try {
+        const res = await api.get<{
+          data: Array<{ id: string; name: string }>;
+        }>("/procurement/suppliers");
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setSuppliersList(res.data);
+          if (res.data[0]) {
+            setSupplier(res.data[0].name);
+          }
+        }
+      } catch {
+        // Keep fallback suppliers
+      }
+    }
+    loadSuppliers();
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,16 +113,11 @@ export function NewShipmentModal({
               onChange={(e) => setSupplier(e.target.value)}
               className="w-full bg-obsidian-deep border border-surface-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-gold"
             >
-              <option value="Valcambi Suisse">
-                Valcambi Suisse (LBMA Good Delivery)
-              </option>
-              <option value="MMTC-PAMP India">
-                MMTC-PAMP India (NABL Accredited)
-              </option>
-              <option value="Argor-Heraeus SA">
-                Argor-Heraeus SA (Switzerland)
-              </option>
-              <option value="PAMP SA">PAMP SA (Suisse)</option>
+              {suppliersList.map((s) => (
+                <option key={s.id} value={s.name}>
+                  {s.name}
+                </option>
+              ))}
             </select>
           </div>
 

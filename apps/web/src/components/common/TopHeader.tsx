@@ -32,6 +32,7 @@ export const PERSONAS = [
     initials: "RR",
     role: "Store Manager",
     permission: "Full Atelier Access",
+    email: "rachel.r@jewelcore.internal",
     token: "mock-jwt-store-manager",
   },
   {
@@ -40,6 +41,7 @@ export const PERSONAS = [
     initials: "VM",
     role: "Compliance Director",
     permission: "Dual-Key HSM Quorum",
+    email: "vikram.m@jewelcore.internal",
     token: "mock-jwt-compliance-director",
   },
   {
@@ -48,6 +50,7 @@ export const PERSONAS = [
     initials: "DS",
     role: "Senior QC Gemologist",
     permission: "XRF Metrology & Hallmarking",
+    email: "devika.s@jewelcore.internal",
     token: "mock-jwt-qc-gemologist",
   },
   {
@@ -56,6 +59,7 @@ export const PERSONAS = [
     initials: "AK",
     role: "Showroom POS Cashier",
     permission: "Sales Invoicing & Terminal",
+    email: "arjun.k@jewelcore.internal",
     token: "mock-jwt-pos-cashier",
   },
 ];
@@ -89,16 +93,46 @@ export function TopHeader({
   const [selectedPersona, setSelectedPersona] = useState(PERSONAS[0]);
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
 
+  React.useEffect(() => {
+    api.setStoreId(selectedStore.id);
+    const syncPersonaToken = async () => {
+      try {
+        const res = await api.post<{ data: { accessToken: string } }>(
+          "/auth/persona-token",
+          { email: selectedPersona.email },
+        );
+        if (res.data?.accessToken) {
+          api.setToken(res.data.accessToken);
+        }
+      } catch {
+        api.setToken(selectedPersona.token);
+      }
+    };
+    void syncPersonaToken();
+  }, [selectedPersona, selectedStore]);
+
   const handleSelectStore = (store: (typeof STORES)[0]) => {
     setSelectedStore(store);
     api.setStoreId(store.id);
     setIsStoreOpen(false);
   };
 
-  const handleSelectPersona = (p: (typeof PERSONAS)[0]) => {
+  const handleSelectPersona = async (p: (typeof PERSONAS)[0]) => {
     setSelectedPersona(p);
-    api.setToken(p.token);
     setIsPersonaOpen(false);
+    try {
+      const res = await api.post<{ data: { accessToken: string } }>(
+        "/auth/persona-token",
+        { email: p.email },
+      );
+      if (res.data?.accessToken) {
+        api.setToken(res.data.accessToken);
+      } else {
+        api.setToken(p.token);
+      }
+    } catch {
+      api.setToken(p.token);
+    }
     toast.success(`Identity Switched to ${p.name}`, {
       description: `Active Role: ${p.role} • ${p.permission}`,
     });

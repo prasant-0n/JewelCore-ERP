@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { UserCheck, Search, ShieldCheck } from "lucide-react";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { TabularCurrency } from "@/components/workstation/TabularCurrency";
+import { api } from "../../lib/api";
 import { toast } from "sonner";
 
 export interface ClientProfileData {
@@ -72,9 +73,45 @@ export function ClientSelectModal({
   onSelectClient,
   currentClientId,
 }: ClientSelectModalProps) {
+  const [clients, setClients] = useState<ClientProfileData[]>(SAMPLE_CLIENTS);
   const [search, setSearch] = useState("");
 
-  const filtered = SAMPLE_CLIENTS.filter(
+  useEffect(() => {
+    if (!isOpen) return;
+    async function loadCustomers() {
+      try {
+        const res = await api.get<{
+          data: Array<{
+            id: string;
+            customerCode: string;
+            firstName: string;
+            lastName: string;
+            taxIdentifier?: string;
+            phone?: string;
+            tags?: string[];
+          }>;
+        }>("/sales/customers");
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          const mapped: ClientProfileData[] = res.data.map((c) => ({
+            id: c.id,
+            name: `${c.firstName} ${c.lastName}`.trim(),
+            vipTier: c.tags?.join(" • ") || "Verified Atelier Client",
+            panNumber: c.taxIdentifier || "PAN PENDING",
+            phone: c.phone || "+91 98200 00000",
+            lifetimeSpendInr: 24500000,
+            assignedSalon: "Private Salon Suite 1",
+            relationshipManager: "N. Mehta",
+          }));
+          setClients(mapped);
+        }
+      } catch {
+        // Keep SAMPLE_CLIENTS fallback
+      }
+    }
+    loadCustomers();
+  }, [isOpen]);
+
+  const filtered = clients.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.panNumber.toLowerCase().includes(search.toLowerCase()) ||

@@ -9,8 +9,16 @@ import {
   loginService,
   getCurrentUserService,
 } from "./authService.js";
-import { verifyJwt } from "./authUtils.js";
-import { getUserAccessibleStores } from "@jewelcore/database";
+import {
+  verifyJwt,
+  signAccessToken,
+  signRefreshToken,
+} from "./authUtils.js";
+import {
+  getUserAccessibleStores,
+  getUserByEmail,
+  toUserPublic,
+} from "@jewelcore/database";
 
 export async function registerHandler(
   req: Request,
@@ -110,3 +118,39 @@ export async function myStoresHandler(
     next(err);
   }
 }
+
+export async function personaTokenHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const email = req.body?.email || "rachel.r@jewelcore.internal";
+    const user = await getUserByEmail(email);
+    if (!user || !user.isActive) {
+      throw new UnauthorizedError(`Staff persona '${email}' not found or inactive`);
+    }
+
+    const accessToken = await signAccessToken({
+      userId: user.id,
+      orgId: user.organizationId,
+      email: user.email,
+    });
+    const refreshToken = await signRefreshToken({
+      userId: user.id,
+      orgId: user.organizationId,
+    });
+
+    res.status(200).json({
+      data: {
+        accessToken,
+        refreshToken,
+        user: toUserPublic(user),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+

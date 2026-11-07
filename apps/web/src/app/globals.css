@@ -146,3 +146,26 @@
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+/* Print styling for legal GSTR-1 Tax Invoices & Authenticity Certificates */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  header, nav, aside, button, .no-print {
+    display: none !important;
+  }
+
+  #tax-invoice-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    color: black !important;
+  }
+}
+
