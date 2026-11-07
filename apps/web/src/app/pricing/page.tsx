@@ -325,12 +325,13 @@ export default function PricingMasterPage() {
 
             {/* Hierarchical Pricing Groups */}
             <div className="space-y-4">
-              {filteredGroups.map((group) => (
+              {filteredGroups.map((group, idx) => (
                 <PricingTierSection
                   key={group.id}
                   group={group}
                   selectedAlloyId={selectedAlloy?.id}
                   onSelectAlloy={(alloy, g) => handleSelectAlloy(alloy, g)}
+                  defaultExpanded={idx === 0}
                 />
               ))}
 

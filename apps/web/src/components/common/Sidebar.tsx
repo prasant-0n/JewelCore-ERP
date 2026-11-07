@@ -63,7 +63,10 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-60 bg-surface border-r border-surface-border flex flex-col justify-between h-[calc(100vh-3.5rem)] flex-shrink-0">
+    <aside
+      data-testid="sidebar-nav"
+      className="w-60 bg-surface border-r border-surface-border flex flex-col justify-between h-[calc(100vh-3.5rem)] flex-shrink-0"
+    >
       <div className="py-4 px-3 space-y-6 overflow-y-auto">
         {NAV_SECTIONS.map((section) => (
           <div key={section.title} className="space-y-1">

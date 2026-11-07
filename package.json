@@ -7,6 +7,7 @@
     "build": "pnpm --filter \"@jewelcore/*\" run build",
     "typecheck": "pnpm --filter \"@jewelcore/*\" run typecheck",
     "test": "vitest run",
+    "test:e2e": "pnpm --filter \"@jewelcore/web\" run test:e2e",
     "format": "prettier --check \"**/*.{ts,tsx,json,md,yml,yaml}\"",
     "format:fix": "prettier --write \"**/*.{ts,tsx,json,md,yml,yaml}\""
   },

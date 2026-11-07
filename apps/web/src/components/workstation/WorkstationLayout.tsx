@@ -22,10 +22,13 @@ export function WorkstationLayout({
       )}
     >
       {/* 65% Main Work Area (Columns 1-8 of 12 = 66.7%) */}
-      <div className="lg:col-span-8 space-y-6">{children}</div>
+      <div data-testid="workstation-main" className="lg:col-span-8 space-y-6">
+        {children}
+      </div>
 
       {/* 35% Sticky Inspector Area (Columns 9-12 of 12 = 33.3%) */}
       <div
+        data-testid="workstation-inspector"
         className={cn(
           "lg:col-span-4 lg:sticky lg:top-20 space-y-4",
           inspectorClassName,
