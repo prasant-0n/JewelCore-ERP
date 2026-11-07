@@ -6,16 +6,29 @@ import { Flame, Scale, CheckCircle2, FlaskConical, Gem } from "lucide-react";
 export interface ScrapPieceData {
   id: string;
   itemCode: string;
-  description: string;
-  category: string;
+  customerName?: string;
+  customerPan?: string;
+  itemDescription?: string;
+  description?: string;
+  category?: string;
   grossWeightGrams: number;
-  netGoldGrams: number;
+  stoneWeightDeductionGrams?: number;
+  netGoldWeightGrams?: number;
+  netGoldGrams?: number;
   extractedStoneCarats?: number;
-  assayedFinenessPercent: number;
-  specificGravity: number;
-  payoutValueInr: number;
-  status: "ASSAY_PASSED" | "STONES_EXTRACTED" | "SMELT_QUEUED";
-  alloyClassification: string;
+  assayedPurityPercent?: number;
+  assayedFinenessPercent?: number;
+  karatString?: string;
+  hydrostaticSpecificGravity?: number;
+  specificGravity?: number;
+  spotGoldRatePerGram?: number;
+  meltLossDeductionPercent?: number;
+  calculatedValuationInr?: number;
+  payoutValueInr?: number;
+  status: "VALUATED" | "ASSAY_PASSED" | "STONES_EXTRACTED" | "SMELT_QUEUED" | "REFINED";
+  containmentBucket?: string;
+  receivedAt?: string;
+  alloyClassification?: string;
 }
 
 interface ScrapItemCardProps {
@@ -29,8 +42,14 @@ export function ScrapItemCard({
   isSelected = false,
   onSelect,
 }: ScrapItemCardProps) {
-  const isPassed = item.status === "ASSAY_PASSED";
-  const hasStones = (item.extractedStoneCarats ?? 0) > 0;
+  const isPassed = item.status === "ASSAY_PASSED" || item.status === "VALUATED";
+  const desc = item.itemDescription || item.description || "Scrap Gold Lot";
+  const netAu = item.netGoldWeightGrams ?? item.netGoldGrams ?? item.grossWeightGrams;
+  const purity = item.assayedPurityPercent ?? item.assayedFinenessPercent ?? 91.6;
+  const sg = item.hydrostaticSpecificGravity ?? item.specificGravity ?? 17.5;
+  const val = item.calculatedValuationInr ?? item.payoutValueInr ?? 0;
+  const alloy = item.karatString || item.alloyClassification || "22K Scrap";
+  const hasStones = (item.extractedStoneCarats ?? (item.stoneWeightDeductionGrams ? 1 : 0)) > 0;
 
   return (
     <div
@@ -58,25 +77,25 @@ export function ScrapItemCard({
             />
             <span
               className={`font-mono text-xs font-bold transition-colors ${
-                isSelected ? "text-gold" : "text-slate-100 group-hover:text-gold"
+                isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
               }`}
             >
               {item.itemCode}
             </span>
           </div>
-          <div className="text-[11px] text-platinum/80 font-medium truncate max-w-[190px] mt-0.5">
-            {item.description}
+          <div className="text-[11px] text-foreground/80 font-medium truncate max-w-[190px] mt-0.5">
+            {desc}
           </div>
-          <div className="text-[10px] font-mono text-platinum/60 mt-0.5">
-            {item.alloyClassification}
+          <div className="text-[10px] font-mono text-muted-foreground mt-0.5">
+            {alloy} • {item.containmentBucket || "Vault Bucket"}
           </div>
         </div>
 
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
             isPassed
-              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-              : "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
+              ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+              : "bg-cyan-500/10 text-cyan-500 border border-cyan-500/20"
           }`}
         >
           {isPassed ? (
@@ -87,7 +106,7 @@ export function ScrapItemCard({
           ) : (
             <>
               <Gem className="w-2.5 h-2.5" />
-              <span>STONES OFF</span>
+              <span>SMELT QUEUED</span>
             </>
           )}
         </span>
@@ -96,31 +115,31 @@ export function ScrapItemCard({
       {/* Middle Specs Grid */}
       <div className="grid grid-cols-2 gap-2 my-2.5 py-2 border-y border-surface-border/60 text-[11px] font-mono">
         <div>
-          <span className="text-platinum/60 text-[9px] block uppercase">Weight / Net Au</span>
-          <span className="text-slate-200 font-semibold tabular-nums">
+          <span className="text-muted-foreground text-[9px] block uppercase">Weight / Net Au</span>
+          <span className="text-foreground font-semibold tabular-nums">
             {item.grossWeightGrams.toFixed(3)}g Gross
           </span>
           <span className="text-gold text-[10px] block tabular-nums">
-            {item.netGoldGrams.toFixed(3)}g Pure Au
+            {netAu.toFixed(3)}g Pure Au
           </span>
         </div>
 
         <div className="text-right">
-          <span className="text-platinum/60 text-[9px] block uppercase">Purity / SG</span>
-          <span className="text-emerald-400 font-semibold tabular-nums">
-            {item.assayedFinenessPercent.toFixed(2)}% Au
+          <span className="text-muted-foreground text-[9px] block uppercase">Purity / SG</span>
+          <span className="text-emerald-500 font-semibold tabular-nums">
+            {purity.toFixed(2)}% Au
           </span>
-          <span className="text-platinum/60 text-[10px] block tabular-nums">
-            SG {item.specificGravity.toFixed(2)} g/cm³
+          <span className="text-muted-foreground text-[10px] block tabular-nums">
+            SG {sg.toFixed(2)} g/cm³
           </span>
         </div>
       </div>
 
       {/* Footer: Valuation */}
       <div className="flex items-center justify-between text-[11px] font-mono">
-        <span className="text-platinum/60 text-[9px] uppercase">Assayed Payout:</span>
-        <span className="text-emerald-400 font-bold text-xs tabular-nums">
-          ₹ {item.payoutValueInr.toLocaleString("en-IN")}
+        <span className="text-muted-foreground text-[9px] uppercase">Assayed Payout:</span>
+        <span className="text-emerald-500 font-bold text-xs tabular-nums">
+          ₹ {val.toLocaleString("en-IN")}
         </span>
       </div>
     </div>

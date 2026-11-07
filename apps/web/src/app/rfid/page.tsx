@@ -21,10 +21,14 @@ import {
   Search,
   Plus,
   RotateCw,
-  Sparkles,
-  Layers,
-  CheckCircle2,
 } from "lucide-react";
+import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 
 const INITIAL_TRAYS: ScanTrayData[] = [
   {
@@ -99,129 +103,31 @@ const INITIAL_TRAYS: ScanTrayData[] = [
   {
     id: "tray-02",
     trayNumber: "TRAY-SR-02",
-    trayName: "Tray #02: Kundan & Polki Bridal Necklaces",
+    trayName: "Tray #02: Temple Kundan Chokers & Polki",
     location: "Showroom Display Counter B",
     expectedCount: 12,
     detectedCount: 12,
-    totalWeightGrams: 742.6,
+    totalWeightGrams: 580.4,
     status: "SYNCHRONIZED",
     pieces: [
       {
-        id: "rfid-nk-01",
-        epcTag: "EPC-E280-1160-8812",
+        id: "rfid-chk-01",
+        epcTag: "EPC-E280-1160-9951",
         serialNumber: "JC-CHK-2026-014",
-        itemName: "22K Antique Heritage Jadau Choker with Polki",
-        category: "Necklaces & Chokers",
+        itemName: "22K Antique Heritage Jadau Polki Choker",
+        category: "Bridal Chokers",
         metalPurity: "22K Yellow Gold (Au 916)",
-        grossWeightGrams: 94.65,
-        netGoldGrams: 78.2,
-        diamondCarat: 14.2,
-        status: "VERIFIED",
-        rssiDbm: -36,
-        antennaPort: 1,
-        readCount: 184,
-        frequencyMhz: 865.7,
-        phaseAngleDeg: 112.1,
-        expectedLocation: "Showroom Counter B, Tray 02, Slot 01",
-        lastScannedAt: "15:20:12",
-      },
-      {
-        id: "rfid-nk-02",
-        epcTag: "EPC-E280-1160-8813",
-        serialNumber: "JC-CHK-2026-015",
-        itemName: "18K Rose Gold Waterfall Diamond Necklace",
-        category: "Necklaces & Chokers",
-        metalPurity: "18K Rose Gold (Au 750)",
-        grossWeightGrams: 68.3,
-        netGoldGrams: 52.1,
-        diamondCarat: 18.5,
-        status: "VERIFIED",
-        rssiDbm: -41,
-        antennaPort: 1,
-        readCount: 140,
-        frequencyMhz: 865.7,
-        phaseAngleDeg: 165.4,
-        expectedLocation: "Showroom Counter B, Tray 02, Slot 02",
-        lastScannedAt: "15:20:12",
-      },
-    ],
-  },
-  {
-    id: "tray-03",
-    trayNumber: "TRAY-VLT-04",
-    trayName: "Tray #03: Royal Calcutta Filigree Bangles",
-    location: "Main Vault Tray 04 (Safe C-01)",
-    expectedCount: 16,
-    detectedCount: 16,
-    totalWeightGrams: 480.2,
-    status: "SEALED",
-    pieces: [
-      {
-        id: "rfid-bg-01",
-        epcTag: "EPC-E280-1160-7711",
-        serialNumber: "JC-KAD-2026-004",
-        itemName: "22K Royal Filigree Kada Pair (62g Each)",
-        category: "Bangles & Kadas",
-        metalPurity: "22K Yellow Gold (Au 916)",
-        grossWeightGrams: 124.5,
-        netGoldGrams: 124.5,
-        status: "VERIFIED",
-        rssiDbm: -44,
-        antennaPort: 3,
-        readCount: 122,
-        frequencyMhz: 867.1,
-        phaseAngleDeg: 88.0,
-        expectedLocation: "Main Vault Safe C-01, Tray 04",
-        lastScannedAt: "15:19:40",
-      },
-      {
-        id: "rfid-bg-02",
-        epcTag: "EPC-E280-1160-7712",
-        serialNumber: "JC-KAD-2026-005",
-        itemName: "18K White Gold Tennis Bangle (5.20ct)",
-        category: "Bangles & Kadas",
-        metalPurity: "18K White Gold (Au 750)",
-        grossWeightGrams: 28.6,
-        netGoldGrams: 27.56,
-        diamondCarat: 5.2,
-        status: "VERIFIED",
-        rssiDbm: -40,
-        antennaPort: 3,
-        readCount: 138,
-        frequencyMhz: 867.1,
-        phaseAngleDeg: 134.2,
-        expectedLocation: "Main Vault Safe C-01, Tray 04",
-        lastScannedAt: "15:19:40",
-      },
-    ],
-  },
-  {
-    id: "tray-04",
-    trayNumber: "TRAY-ING-01",
-    trayName: "Tray #04: Minted Bullion & Ingot Assay Rack",
-    location: "Main Vault Ingot Compartment 01",
-    expectedCount: 15,
-    detectedCount: 15,
-    totalWeightGrams: 15000.0,
-    status: "RESTRICTED",
-    pieces: [
-      {
-        id: "rfid-bar-01",
-        epcTag: "EPC-E280-1160-5501",
-        serialNumber: "VAL-BAR-01",
-        itemName: "999.9 Fine Gold Cast Ingot (1000g)",
-        category: "Ingots & Bullion",
-        metalPurity: "24K Fine Gold (Au 999.9)",
-        grossWeightGrams: 1000.04,
-        netGoldGrams: 1000.04,
+        grossWeightGrams: 54.2,
+        netGoldGrams: 46.85,
+        diamondCarat: 6.5,
         status: "VERIFIED",
         rssiDbm: -35,
-        antennaPort: 4,
-        readCount: 210,
-        frequencyMhz: 866.9,
-        phaseAngleDeg: 72.0,
-        expectedLocation: "Main Vault Ingot Compartment 01",
-        lastScannedAt: "15:18:22",
+        antennaPort: 1,
+        readCount: 198,
+        frequencyMhz: 866.5,
+        phaseAngleDeg: 45.2,
+        expectedLocation: "Showroom Counter B, Tray 02, Slot 01",
+        lastScannedAt: "15:20:12",
       },
     ],
   },
@@ -239,16 +145,52 @@ export default function RfidKioskPage() {
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [isFullSweeping, setIsFullSweeping] = useState(false);
-  const [sweepNotification, setSweepNotification] = useState<string | null>(null);
 
-  // Compute summary metrics
+  // Compute metrics
   const totalExpected = trays.reduce((acc, t) => acc + t.expectedCount, 0);
   const totalDetected = trays.reduce((acc, t) => acc + t.detectedCount, 0);
   const totalDiscrepancies = totalExpected - totalDetected;
+  const matchRate = totalExpected > 0 ? Math.round((totalDetected / totalExpected) * 100) : 100;
   const totalWeight = trays.reduce((acc, t) => acc + t.totalWeightGrams, 0);
-  const matchRate = totalExpected > 0 ? ((totalDetected / totalExpected) * 100).toFixed(1) : "100";
 
-  // Filter logic
+  const rfidKpiItems: KpiItem[] = [
+    {
+      id: "kpi-detected",
+      title: "RFID Tags Detected",
+      value: `${totalDetected} / ${totalExpected}`,
+      subValue: `${matchRate}% Match Rate Verified`,
+      badge: { text: `${matchRate}%`, variant: "emerald" },
+      icon: <Radio className="w-3.5 h-3.5 text-status-emerald" />,
+    },
+    {
+      id: "kpi-discrepancies",
+      title: "Discrepancy / Flagged",
+      value: `${totalDiscrepancies} Flagged`,
+      subValue: totalDiscrepancies > 0 ? "Missing from Tray #01" : "All Reconciled",
+      badge: {
+        text: totalDiscrepancies > 0 ? "Alert" : "Clean",
+        variant: totalDiscrepancies > 0 ? "rose" : "emerald",
+      },
+      icon: <AlertTriangle className="w-3.5 h-3.5 text-status-rose" />,
+    },
+    {
+      id: "kpi-weight",
+      title: "Load Cell Total Weight",
+      value: `${totalWeight.toFixed(3)} g`,
+      subValue: "Mettler Toledo ±0.001g synced",
+      badge: { text: "Tare Synced", variant: "gold" },
+      icon: <Scale className="w-3.5 h-3.5 text-gold" />,
+    },
+    {
+      id: "kpi-rssi",
+      title: "Antenna RSSI Signal",
+      value: "-42 dBm Avg",
+      subValue: "Zero cross-talk isolation",
+      badge: { text: "4 Ports", variant: "secondary" },
+      icon: <Wifi className="w-3.5 h-3.5 text-status-indigo" />,
+    },
+  ];
+
   const filteredTrays = trays.map((tray) => {
     let pieces = tray.pieces;
     if (searchQuery.trim()) {
@@ -262,10 +204,6 @@ export default function RfidKioskPage() {
     }
     if (filterState === "MISSING") {
       pieces = pieces.filter((p) => p.status === "MISSING");
-    } else if (filterState === "SHOWROOM") {
-      pieces = pieces.filter((p) => tray.location.toLowerCase().includes("showroom"));
-    } else if (filterState === "VAULT") {
-      pieces = pieces.filter((p) => tray.location.toLowerCase().includes("vault"));
     }
     return { ...tray, pieces };
   });
@@ -275,56 +213,14 @@ export default function RfidKioskPage() {
     setSelectedTrayName(tray.trayName);
   };
 
-  const handleTriggerFullSweep = async () => {
+  const handleTriggerFullSweep = () => {
     setIsFullSweeping(true);
-    setSweepNotification("Multiplexing Antenna Ports #1-#4 • Sweeping carrier frequencies 865.7 - 867.5 MHz...");
-
-    await new Promise((res) => setTimeout(res, 1200));
-
-    setIsFullSweeping(false);
-    setSweepNotification("Full 360° Antenna Sweep Complete. 84 of 85 Tags Responding • Load Cell Weight Locked.");
-    setTimeout(() => setSweepNotification(null), 4000);
-  };
-
-  const handleResolveDiscrepancy = (item: RfidPieceData) => {
-    // Simulate finding the missing item via handheld wand
-    setTrays((prev) =>
-      prev.map((tray) => {
-        const itemExists = tray.pieces.some((p) => p.id === item.id);
-        if (itemExists) {
-          const nextPieces = tray.pieces.map((p) =>
-            p.id === item.id
-              ? {
-                  ...p,
-                  status: "VERIFIED" as const,
-                  rssiDbm: -46,
-                  readCount: 92,
-                  lastScannedAt: "Just now (Handheld Wand)",
-                }
-              : p
-          );
-          return {
-            ...tray,
-            detectedCount: tray.expectedCount,
-            status: "SYNCHRONIZED" as const,
-            pieces: nextPieces,
-          };
-        }
-        return tray;
-      })
-    );
-
-    setSelectedPiece((prev) =>
-      prev
-        ? {
-            ...prev,
-            status: "VERIFIED",
-            rssiDbm: -46,
-            readCount: 92,
-            lastScannedAt: "Just now (Handheld Wand)",
-          }
-        : null
-    );
+    setTimeout(() => {
+      setIsFullSweeping(false);
+      toast.success("360° Antenna Sweep Completed", {
+        description: "53 tags interrogated across 4 ports in 280ms. Signal map updated.",
+      });
+    }, 900);
   };
 
   const handleRegisterManualTag = (newPiece: RfidPieceData, targetTrayId: string) => {
@@ -343,182 +239,100 @@ export default function RfidKioskPage() {
       })
     );
     setSelectedPiece(newPiece);
-    const foundTray = trays.find((t) => t.id === targetTrayId);
-    if (foundTray) setSelectedTrayName(foundTray.trayName);
   };
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
         {/* Top Subheader: Breadcrumbs, RFID Telemetry & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-platinum/60">
-              <span>JewelCore ERP</span>
-              <span>/</span>
-              <span>RFID Telemetry & Mesh</span>
-              <span>/</span>
-              <span className="text-gold font-semibold">
-                Kiosk Rapid Scan Workstation
-              </span>
+            <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
+              <span>Flagship Mumbai (INV-11)</span>
+              <span>&gt;</span>
+              <span className="text-gold font-medium">RFID Telemetry &amp; Mesh</span>
+              <Badge variant="emerald" dot className="ml-2">
+                Impinj Speedway R420 UHF • 4-Antenna Matrix Active
+              </Badge>
             </div>
-            <h1 className="text-xl font-bold text-slate-100 tracking-tight mt-1 flex items-center space-x-3">
-              <span>Real-Time UHF RFID Showroom & Bulk Vault Scan Kiosk</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Impinj Speedway R420 UHF • 4-Antenna Matrix Active • 99.98% Sync
-              </span>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Real-Time RFID Showroom &amp; Bulk Vault Scan Kiosk
             </h1>
           </div>
 
           <div className="flex items-center space-x-3">
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => setIsManualModalOpen(true)}
-              className="px-3.5 py-2 rounded-lg bg-surface-elevated hover:bg-surface-border border border-surface-border text-slate-200 text-xs font-medium flex items-center space-x-1.5 transition-colors"
             >
-              <Plus className="w-3.5 h-3.5 text-platinum/70" />
-              <span>+ Manual Tag Intake</span>
-            </button>
-
-            <button
+              <Plus className="w-3.5 h-3.5 mr-1" />
+              <span>Manual Tag Intake</span>
+            </Button>
+            <Button
+              variant="gold"
+              size="sm"
               onClick={handleTriggerFullSweep}
-              disabled={isFullSweeping}
-              className="px-3.5 py-2 rounded-lg bg-gold hover:bg-gold-light text-obsidian text-xs font-bold font-mono shadow-lg shadow-gold/20 flex items-center space-x-2 transition-all transform active:scale-95 disabled:opacity-50"
+              isLoading={isFullSweeping}
             >
-              <RotateCw className={`w-4 h-4 text-obsidian ${isFullSweeping ? "animate-spin" : ""}`} />
-              <span>{isFullSweeping ? "Sweeping 360° Array..." : "Trigger 360° Antenna Sweep"}</span>
-            </button>
+              <RotateCw className="w-3.5 h-3.5 mr-1" />
+              <span>360° Antenna Sweep</span>
+            </Button>
           </div>
         </div>
 
-        {/* Sweep Status Notification Banner */}
-        {sweepNotification && (
-          <div className="p-3 rounded-xl bg-surface-card border border-gold/40 flex items-center justify-between text-xs font-mono text-gold animate-in fade-in slide-in-from-top-2 duration-200 shadow-md">
-            <div className="flex items-center space-x-2">
-              <Radio className="w-4 h-4 animate-pulse text-gold" />
-              <span>{sweepNotification}</span>
-            </div>
-            <span className="text-[10px] text-platinum/60">RSSI Calibrated</span>
-          </div>
-        )}
+        {/* 4 Summary Metric Cards */}
+        <WorkstationKpiGrid items={rfidKpiItems} />
 
-        {/* 4 Metric KPI Cards matching Screen 2 */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-surface-card border border-surface-border rounded-xl p-4 shadow-sm hover:border-gold/30 transition-colors">
-            <div className="flex items-center justify-between text-xs text-platinum/70 mb-1 font-mono">
-              <span>RFID Tags Detected</span>
-              <Radio className="w-4 h-4 text-emerald-400" />
-            </div>
-            <div className="text-2xl font-bold font-mono text-slate-100 tracking-tight">
-              {totalDetected} / {totalExpected} Detected
-            </div>
-            <div className="text-[10px] text-emerald-400 font-mono mt-1 flex items-center gap-1">
-              <span>{matchRate}% Match Rate</span>
-            </div>
-          </div>
-
-          <div className="bg-surface-card border border-surface-border rounded-xl p-4 shadow-sm hover:border-gold/30 transition-colors">
-            <div className="flex items-center justify-between text-xs text-platinum/70 mb-1 font-mono">
-              <span>Discrepancy / Flagged</span>
-              <AlertTriangle className={`w-4 h-4 ${totalDiscrepancies > 0 ? "text-rose-400" : "text-emerald-400"}`} />
-            </div>
-            <div className={`text-2xl font-bold font-mono tracking-tight ${totalDiscrepancies > 0 ? "text-rose-400" : "text-emerald-400"}`}>
-              {totalDiscrepancies} Piece Flagged
-            </div>
-            <div className="text-[10px] text-platinum/60 font-mono mt-1">
-              {totalDiscrepancies > 0 ? "Missing from Tray #01" : "All Trays Reconciled"}
-            </div>
-          </div>
-
-          <div className="bg-surface-card border border-surface-border rounded-xl p-4 shadow-sm hover:border-gold/30 transition-colors">
-            <div className="flex items-center justify-between text-xs text-platinum/70 mb-1 font-mono">
-              <span>Load Cell Total Weight</span>
-              <Scale className="w-4 h-4 text-gold" />
-            </div>
-            <div className="text-2xl font-bold font-mono text-slate-100 tracking-tight tabular-nums">
-              {totalWeight.toFixed(3)} g
-            </div>
-            <div className="text-[10px] text-platinum/60 font-mono mt-1">
-              Mettler Toledo ±0.001g synced
-            </div>
-          </div>
-
-          <div className="bg-surface-card border border-surface-border rounded-xl p-4 shadow-sm hover:border-gold/30 transition-colors">
-            <div className="flex items-center justify-between text-xs text-platinum/70 mb-1 font-mono">
-              <span>Antenna RSSI Signal</span>
-              <Wifi className="w-4 h-4 text-cyan-400" />
-            </div>
-            <div className="text-2xl font-bold font-mono text-cyan-400 tracking-tight">
-              -42 dBm Avg
-            </div>
-            <div className="text-[10px] text-platinum/60 font-mono mt-1">
-              Zero cross-talk isolation
-            </div>
-          </div>
-        </div>
-
-        {/* Master Workspace: 65% Directory + 35% Sticky Inspector */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column (65% -> col-span-12 lg:col-span-8) */}
-          <div className="lg:col-span-8 space-y-4">
-            {/* Filter & Search Bar */}
-            <div className="bg-surface-card border border-surface-border rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-              <div className="relative flex-1 min-w-[240px]">
-                <Search className="w-4 h-4 absolute left-3 top-2.5 text-platinum/50" />
-                <input
-                  type="text"
+        {/* Workstation 65% / 35% Layout */}
+        <WorkstationLayout
+          inspector={
+            <TagMetrologyInspector
+              item={selectedPiece}
+              parentTrayName={selectedTrayName}
+              onClose={() => setSelectedPiece(null)}
+              onReSweep={handleTriggerFullSweep}
+            />
+          }
+        >
+          {/* Left Column (65%): Trays & Piece Matrix */}
+          <div className="space-y-4">
+            {/* Search & Filter Toolbar */}
+            <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+                <Input
                   placeholder="Filter by EPC Tag, SKU, Jewellery Title..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-1.5 bg-surface-elevated border border-surface-border rounded-lg text-xs text-slate-100 placeholder:text-platinum/40 focus:outline-none focus:border-gold font-mono"
+                  className="pl-9 h-8"
                 />
               </div>
 
-              <div className="flex items-center space-x-1.5 text-xs font-mono">
-                <button
-                  onClick={() => setFilterState("ALL")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                    filterState === "ALL"
-                      ? "bg-gold text-obsidian font-bold"
-                      : "bg-surface-elevated text-platinum/70 hover:text-slate-100"
-                  }`}
-                >
-                  All Tags ({totalExpected})
-                </button>
-                <button
-                  onClick={() => setFilterState("MISSING")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                    filterState === "MISSING"
-                      ? "bg-rose-500 text-slate-100 font-bold"
-                      : "bg-surface-elevated text-platinum/70 hover:text-slate-100"
-                  }`}
-                >
-                  Discrepancies ({totalDiscrepancies})
-                </button>
-                <button
-                  onClick={() => setFilterState("SHOWROOM")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                    filterState === "SHOWROOM"
-                      ? "bg-gold text-obsidian font-bold"
-                      : "bg-surface-elevated text-platinum/70 hover:text-slate-100"
-                  }`}
-                >
-                  Showroom Trays
-                </button>
-                <button
-                  onClick={() => setFilterState("VAULT")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                    filterState === "VAULT"
-                      ? "bg-gold text-obsidian font-bold"
-                      : "bg-surface-elevated text-platinum/70 hover:text-slate-100"
-                  }`}
-                >
-                  Vault Drawers
-                </button>
+              {/* Filter Pills */}
+              <div className="flex items-center space-x-1 overflow-x-auto text-xs">
+                {[
+                  { id: "ALL", label: `All Tags (${totalExpected})` },
+                  { id: "MISSING", label: `Discrepancies (${totalDiscrepancies})` },
+                  { id: "SHOWROOM", label: "Showroom Trays" },
+                  { id: "VAULT", label: "Vault Drawers" },
+                ].map(({ id, label }) => (
+                  <button
+                    key={id}
+                    onClick={() => setFilterState(id)}
+                    className={`px-2.5 py-1 rounded-md font-mono text-[11px] font-medium transition-all whitespace-nowrap ${
+                      filterState === id
+                        ? "bg-gold text-black font-semibold shadow-sm"
+                        : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
-            </div>
+            </Card>
 
-            {/* Hierarchical Trays & Piece Matrix Grids */}
+            {/* Hierarchical Trays */}
             <div className="space-y-4">
               {filteredTrays.map((tray, idx) => (
                 <ScanTraySection
@@ -531,43 +345,13 @@ export default function RfidKioskPage() {
               ))}
 
               {filteredTrays.every((t) => t.pieces.length === 0) && (
-                <div className="bg-surface-card border border-surface-border rounded-xl p-12 text-center text-platinum/50">
-                  <Radio className="w-10 h-10 mx-auto text-platinum/30 mb-2" />
-                  <p className="text-sm font-medium text-slate-200">
-                    No matching RFID tag records found
-                  </p>
-                  <p className="text-xs text-platinum/60 mt-1">
-                    Try adjusting your search criteria or register a new tag via manual intake.
-                  </p>
-                </div>
+                <Card className="text-center py-12 text-muted-foreground text-xs">
+                  No matching RFID tag records found.
+                </Card>
               )}
             </div>
           </div>
-
-          {/* Right Column (35% -> col-span-12 lg:col-span-4) Sticky Inspector */}
-          <div className="lg:col-span-4 lg:sticky lg:top-20">
-            <TagMetrologyInspector
-              item={selectedPiece}
-              parentTrayName={selectedTrayName}
-              onClose={() => setSelectedPiece(null)}
-              onReSweep={() => {
-                handleTriggerFullSweep();
-              }}
-              onResolveDiscrepancy={(piece) => {
-                handleResolveDiscrepancy(piece);
-              }}
-              onSealTrayAudit={() => {
-                setTrays((prev) =>
-                  prev.map((t) =>
-                    t.trayName === selectedTrayName
-                      ? { ...t, status: "SEALED" as const }
-                      : t
-                  )
-                );
-              }}
-            />
-          </div>
-        </div>
+        </WorkstationLayout>
 
         {/* Modal for Manual Tag Intake */}
         <ManualTagModal

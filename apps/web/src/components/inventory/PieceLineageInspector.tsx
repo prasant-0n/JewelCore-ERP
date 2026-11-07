@@ -8,16 +8,20 @@ import {
   ShieldCheck,
   Printer,
   Sparkles,
-  CheckCircle2,
-  Lock,
-  Layers,
-  ArrowRightLeft,
   ShoppingBag,
   Clock,
   Radio,
   X,
-  RefreshCw,
+  ArrowRightLeft,
 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
+import { TabularWeight } from "@/components/workstation/TabularWeight";
+import { TabularCurrency } from "@/components/workstation/TabularCurrency";
+import { StatusBadge } from "@/components/workstation/StatusBadge";
+import { toast } from "sonner";
 
 interface PieceLineageInspectorProps {
   piece: InventoryPieceData | null;
@@ -34,18 +38,15 @@ export function PieceLineageInspector({
   onCheckoutClick,
   onTransferClick,
 }: PieceLineageInspectorProps) {
-  const [isTransferring, setIsTransferring] = useState(false);
-  const [soldSuccess, setSoldSuccess] = useState(false);
-
   if (!piece) {
     return (
-      <div className="h-full bg-surface-card border border-surface-border rounded-xl p-8 flex flex-col items-center justify-center text-center text-platinum/50 shadow-sm">
-        <Gem className="w-12 h-12 text-platinum/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-slate-200">No Piece Selected</h4>
-        <p className="text-xs text-platinum/60 mt-1 max-w-[260px]">
+      <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
+        <Gem className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
+        <h4 className="text-sm font-medium text-foreground">No Piece Selected</h4>
+        <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
           Select any serialized jewellery piece from the category matrix to view its 4-dimensional state machine, GIA diamond specs, and cryptographic lineage ledger.
         </p>
-      </div>
+      </Card>
     );
   }
 
@@ -70,199 +71,157 @@ export function PieceLineageInspector({
   } = piece;
 
   const handleSellClick = () => {
-    setSoldSuccess(true);
+    toast.success(`Sent to POS Checkout: ${serialNumber}`, {
+      description: "Added to active cashier cart. Calculating dynamic bullion rate and margin.",
+    });
     onCheckoutClick?.(piece);
-    setTimeout(() => setSoldSuccess(false), 3500);
+  };
+
+  const handleTransferClick = () => {
+    toast.info(`Custody Transfer Request: ${serialNumber}`, {
+      description: "Inter-branch transfer requisition logged for armored courier manifest.",
+    });
+    onTransferClick?.(piece);
   };
 
   return (
-    <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden flex flex-col h-full shadow-lg">
+    <Card className="overflow-hidden flex flex-col h-full">
       {/* Inspector Header */}
-      <div className="p-5 bg-surface-elevated/70 border-b border-surface-border">
+      <CardHeader className="p-4 sm:p-5 bg-surface-elevated/70 border-b border-surface-border">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center space-x-2">
               <span className="w-2.5 h-2.5 rounded-full bg-gold animate-pulse" />
-              <h3 className="text-base font-bold text-slate-100 font-mono">
-                Piece {serialNumber}
-              </h3>
+              <CardTitle className="text-base font-bold font-mono">
+                {serialNumber}
+              </CardTitle>
             </div>
-            <p className="text-xs text-platinum/70 mt-1">
-              {itemName} • {metalPurity}
+            <p className="text-xs text-muted-foreground mt-1 truncate max-w-[240px]">
+              {itemName}
             </p>
           </div>
 
           {onClose && (
-            <button
+            <Button
+              variant="ghost"
+              size="icon-sm"
               onClick={onClose}
-              className="p-1 rounded-md text-platinum/60 hover:text-slate-100 hover:bg-surface-border transition-colors"
+              className="text-muted-foreground hover:text-foreground"
             >
               <X className="w-4 h-4" />
-            </button>
+            </Button>
           )}
         </div>
 
-        {/* Status Badges */}
-        <div className="flex flex-wrap items-center gap-2 mt-4">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <ShieldCheck className="w-3 h-3" />
-            Hallmarked Approved
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-mono font-medium bg-gold/10 text-gold-light border border-gold/30">
-            <Radio className="w-3 h-3" />
-            RFID Tag Sealed #{epcRfidTag}
-          </span>
+        {/* Telemetry Status Badges */}
+        <div className="flex flex-wrap items-center gap-2 mt-3">
+          <Badge variant="emerald" dot>
+            RFID Tag Synced
+          </Badge>
+          <Badge variant="gold">
+            <ShieldCheck className="w-3 h-3 mr-1" />
+            {qualityState}
+          </Badge>
+          <StatusBadge status={commercialState} size="sm" />
         </div>
-      </div>
+      </CardHeader>
 
-      {/* 4-Dimensional State Quadrant */}
-      <div className="p-4 border-b border-surface-border bg-obsidian-deep/40 space-y-2">
-        <div className="text-[10px] font-mono uppercase tracking-wider text-platinum/70 font-medium">
-          4-Dimensional State Machine Matrix
-        </div>
-
+      {/* 4-Dimension State Matrix & Specifications */}
+      <CardContent className="p-4 sm:p-5 border-b border-surface-border space-y-3.5">
         <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-          <div className="p-2.5 rounded-lg bg-surface-card border border-surface-border">
-            <div className="text-platinum/60 text-[9px]">Custody State:</div>
-            <div className="font-bold text-cyan-400 mt-0.5 text-[11px] truncate">
-              {custodyState}
-            </div>
-            <div className="text-[9px] text-platinum/50 truncate mt-0.5">
-              {currentLocation}
-            </div>
+          <div className="p-2 rounded bg-surface-elevated border border-surface-border">
+            <span className="text-[10px] text-muted-foreground block">CUSTODY STATE</span>
+            <StatusBadge status={custodyState} size="sm" />
           </div>
-
-          <div className="p-2.5 rounded-lg bg-surface-card border border-surface-border">
-            <div className="text-platinum/60 text-[9px]">Quality State:</div>
-            <div className="font-bold text-emerald-400 mt-0.5 text-[11px]">
-              {qualityState}
-            </div>
-            <div className="text-[9px] text-platinum/50 mt-0.5">
-              BIS 18K 750 Stamp
-            </div>
-          </div>
-
-          <div className="p-2.5 rounded-lg bg-surface-card border border-surface-border">
-            <div className="text-platinum/60 text-[9px]">Approval State:</div>
-            <div className="font-bold text-slate-100 mt-0.5 text-[11px]">
-              {approvalState}
-            </div>
-            <div className="text-[9px] text-platinum/50 mt-0.5">
-              Dual-Custody Sign-Off
-            </div>
-          </div>
-
-          <div className="p-2.5 rounded-lg bg-surface-card border border-surface-border">
-            <div className="text-platinum/60 text-[9px]">Commercial State:</div>
-            <div className="font-bold text-gold-light mt-0.5 text-[11px]">
-              {commercialState}
-            </div>
-            <div className="text-[9px] text-platinum/50 mt-0.5">
-              ₹{priceInr.toLocaleString("en-IN")}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Metrological & Gemological Specs */}
-      <div className="p-4 border-b border-surface-border space-y-3">
-        {/* Metric 1: Weight Specs */}
-        <div>
-          <div className="flex justify-between items-center text-xs">
-            <span className="text-platinum/70 flex items-center gap-1.5">
-              <Scale className="w-3.5 h-3.5 text-platinum/50" />
-              Weight Breakdown:
-            </span>
-            <span className="font-mono text-slate-100 tabular-nums">
-              <strong className="text-gold-light font-semibold">
-                {grossWeightGrams.toFixed(3)} g
-              </strong>{" "}
-              Gross
-            </span>
-          </div>
-          <div className="flex justify-between text-[10px] font-mono text-platinum/60 mt-1">
-            <span>Net Fine Gold: {netGoldGrams.toFixed(3)} g</span>
-            <span>Stone: {diamondCarat ? `${diamondCarat} ct` : "None"}</span>
+          <div className="p-2 rounded bg-surface-elevated border border-surface-border">
+            <span className="text-[10px] text-muted-foreground block">APPROVAL STATE</span>
+            <StatusBadge status={approvalState} size="sm" />
           </div>
         </div>
 
-        {/* Metric 2: Diamond Gemology */}
+        <MetrologyGauge
+          label="Certified Gross Weight"
+          currentValue={grossWeightGrams}
+          maxValue={grossWeightGrams * 1.1}
+          unit="g"
+          decimals={3}
+          secondaryLabel="Net Fine Au"
+          secondaryValue={`${netGoldGrams.toFixed(3)}g`}
+        />
+
+        {/* Diamond / Gemstone Specs */}
         {diamondCarat && (
-          <div className="pt-2 border-t border-surface-border/50">
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-platinum/70 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-platinum/50" />
-                GIA Solitaire Certification:
-              </span>
-              <span className="font-mono text-cyan-400 font-semibold">
-                {diamondCarat} ct / {diamondClarity} / {diamondColor}
-              </span>
+          <div className="p-3 rounded-lg bg-surface-elevated border border-surface-border text-xs flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Gem className="w-4 h-4 text-gold" />
+              <span className="text-muted-foreground">Diamond Spec:</span>
             </div>
-            <div className="flex justify-between text-[10px] font-mono text-platinum/60 mt-1">
-              <span>Cert #{giaCertNumber || "GIA-22891"}</span>
-              <span className="text-emerald-400">Triple Excellent Cut</span>
-            </div>
+            <span className="font-mono text-foreground font-semibold">
+              {diamondCarat} ct • {diamondClarity || "VVS"} / {diamondColor || "E"} ({giaCertNumber || "GIA"})
+            </span>
           </div>
         )}
-      </div>
 
-      {/* Cryptographic Lineage Audit Timeline */}
-      <div className="p-4 flex-1 overflow-y-auto space-y-2.5">
-        <div className="text-[10px] font-mono uppercase tracking-wider text-platinum/70 font-medium flex items-center gap-1.5 mb-2">
-          <Clock className="w-3.5 h-3.5 text-platinum/50" />
-          Cryptographic Lineage Ledger
+        {/* Valuation & Current Location */}
+        <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground font-mono">Showroom Retail Tag:</span>
+            <TabularCurrency amount={priceInr} className="text-gold text-sm font-bold" />
+          </div>
+          <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+            <span>Location: {currentLocation}</span>
+            <span>RFID: {epcRfidTag.substring(0, 14)}...</span>
+          </div>
+        </div>
+      </CardContent>
+
+      {/* Provenance Lineage Timeline */}
+      <div className="flex-1 flex flex-col min-h-0">
+        <div className="px-4 py-2 bg-obsidian-deep border-b border-surface-border flex items-center justify-between">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-medium">
+            Cryptographic Provenance ({provenance.length} Events)
+          </span>
+          <span className="text-[10px] font-mono text-status-emerald flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
+            Verified
+          </span>
         </div>
 
-        <div className="relative pl-5 space-y-3 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-surface-border">
-          {provenance.map((step, idx) => (
-            <div key={idx} className="relative text-xs font-mono">
-              <div className="absolute -left-5 top-1 w-2 h-2 rounded-full bg-gold ring-4 ring-obsidian" />
-              <div className="flex items-center justify-between text-platinum/80">
-                <span className="font-semibold text-slate-200">{step.stage}</span>
-                <span className="text-[10px] text-platinum/50">{step.timestamp}</span>
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-48">
+          {provenance.map((ev, idx) => (
+            <div key={idx} className="flex gap-2.5 items-start text-xs">
+              <div className="w-2 h-2 rounded-full bg-gold shrink-0 mt-1.5" />
+              <div className="space-y-0.5">
+                <div className="font-semibold text-foreground">{ev.stage}</div>
+                <div className="text-[11px] text-muted-foreground font-mono">{ev.actor} • {ev.timestamp}</div>
+                <div className="text-xs text-muted-foreground">{ev.detail}</div>
               </div>
-              <div className="text-[11px] text-platinum/60 mt-0.5">{step.detail}</div>
-              <div className="text-[10px] text-gold/80">{step.actor}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Action Deck Toolbar */}
-      <div className="p-4 bg-surface-elevated/70 border-t border-surface-border space-y-2.5">
-        {soldSuccess && (
-          <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Piece dispatched to POS Checkout! Invoicing locked.</span>
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={() => onTransferClick?.(piece)}
-            className="px-3 py-2 rounded-lg bg-surface-card hover:bg-surface-border border border-surface-border text-xs font-medium text-slate-200 hover:text-slate-100 flex items-center justify-center space-x-1.5 transition-colors"
-          >
-            <ArrowRightLeft className="w-3.5 h-3.5 text-blue-400" />
-            <span>Initiate Transfer</span>
-          </button>
-
-          <button
-            onClick={() => alert(`Printing replacement EPC RFID Tag for ${serialNumber}`)}
-            className="px-3 py-2 rounded-lg bg-surface-card hover:bg-surface-border border border-surface-border text-xs font-medium text-slate-200 hover:text-slate-100 flex items-center justify-center space-x-1.5 transition-colors"
-          >
-            <Printer className="w-3.5 h-3.5 text-platinum/60" />
-            <span>Print RFID Tag</span>
-          </button>
-        </div>
-
-        <button
-          onClick={handleSellClick}
-          className="w-full px-4 py-2.5 rounded-lg bg-gold text-obsidian text-xs font-semibold hover:bg-gold-light flex items-center justify-center space-x-1.5 shadow-sm transition-colors"
+      {/* Action Footer */}
+      <CardFooter className="p-3 bg-surface-elevated/70 border-t border-surface-border flex gap-2">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex-1"
+          onClick={handleTransferClick}
         >
-          <ShoppingBag className="w-4 h-4" />
-          <span>Showroom POS Checkout / Sell Piece (₹{priceInr.toLocaleString("en-IN")})</span>
-        </button>
-      </div>
-    </div>
+          <ArrowRightLeft className="w-3.5 h-3.5 mr-1" />
+          Transfer
+        </Button>
+        <Button
+          variant="gold"
+          size="sm"
+          className="flex-1"
+          onClick={handleSellClick}
+        >
+          <ShoppingBag className="w-3.5 h-3.5 mr-1" />
+          POS Checkout
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

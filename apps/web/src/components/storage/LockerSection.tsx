@@ -6,7 +6,8 @@ import type {
   CompartmentWithOccupancy,
 } from "@jewelcore/shared";
 import { CompartmentCard } from "./CompartmentCard";
-import { ChevronDown, ChevronRight, Layers, KeySquare } from "lucide-react";
+import { ChevronDown, ChevronRight, KeySquare } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface LockerSectionProps {
   locker: LockerHierarchyWithOccupancy;
@@ -38,54 +39,51 @@ export function LockerSection({
   return (
     <div
       data-testid={`locker-section-${locker.code}`}
-      className="border border-surface-border rounded-xl bg-obsidian-deep overflow-hidden mb-4 shadow-sm"
+      className="border border-surface-border rounded-xl bg-surface overflow-hidden mb-4 shadow-sm"
     >
       {/* Locker Header Accordion */}
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="px-4 py-3 bg-surface-card hover:bg-surface-elevated/70 border-b border-surface-border flex items-center justify-between cursor-pointer select-none transition-colors"
+        className="px-4 py-3 bg-surface-elevated hover:bg-surface-elevated/80 border-b border-surface-border flex items-center justify-between cursor-pointer select-none transition-colors"
       >
         <div className="flex items-center space-x-2.5">
-          <span className="text-platinum/60 hover:text-gold transition-colors">
+          <span className="text-muted-foreground hover:text-gold transition-colors">
             {isOpen ? (
               <ChevronDown className="w-4 h-4 text-gold" />
             ) : (
               <ChevronRight className="w-4 h-4" />
             )}
           </span>
-          <span className="text-sm font-semibold text-slate-100 font-mono">
+          <span className="text-sm font-semibold text-foreground font-mono">
             {locker.name} ({locker.code})
           </span>
-          <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono text-platinum/70 bg-obsidian-deep px-2 py-0.5 rounded border border-surface-border">
-            <KeySquare className="w-3 h-3 text-gold/70" />
+          <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono text-muted-foreground bg-surface px-2 py-0.5 rounded border border-surface-border">
+            <KeySquare className="w-3 h-3 text-gold" />
             Cabinet #{locker.lockerNumber || "01"}
             {locker.capacityRating ? ` • Rating: ${locker.capacityRating}` : ""}
           </span>
         </div>
 
         <div className="flex items-center space-x-3 text-xs font-mono">
-          <span className="text-platinum/70 hidden sm:inline">
+          <span className="text-muted-foreground hidden sm:inline">
             {locker.compartments.length} Trays •{" "}
-            <strong className="text-slate-100">{totalPieces} pcs</strong>
+            <strong className="text-foreground">{totalPieces} pcs</strong>
             {totalCapacity > 0 ? ` / ${totalCapacity} cap` : ""}
           </span>
-          <span
-            className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-              occupancyPercentage >= 85
-                ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-            }`}
+          <Badge
+            variant={occupancyPercentage >= 85 ? "amber" : "emerald"}
+            size="sm"
           >
             {occupancyPercentage}% Cap
-          </span>
+          </Badge>
         </div>
       </div>
 
       {/* Locker Body: Compartments Grid */}
       {isOpen && (
-        <div className="p-4 bg-obsidian-deep/80">
+        <div className="p-4 bg-obsidian-deep/40">
           {locker.compartments.length === 0 ? (
-            <div className="text-center py-6 text-xs text-platinum/40 italic">
+            <div className="text-center py-6 text-xs text-muted-foreground italic">
               No compartments configured in this locker.
             </div>
           ) : (

@@ -17,10 +17,15 @@ import {
   Scale,
   Search,
   Plus,
-  Radio,
   Scan,
-  RefreshCw,
 } from "lucide-react";
+import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 
 interface StorageDirectoryViewProps {
   storeName?: string;
@@ -46,6 +51,7 @@ export function StorageDirectoryView({
     vaults[0]?.name || "Vault 01"
   );
   const [isNewUnitModalOpen, setIsNewUnitModalOpen] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
 
   // Compute summary metrics
   const totalVaults = vaults.length;
@@ -71,6 +77,44 @@ export function StorageDirectoryView({
     totalCapacity > 0
       ? Math.round((totalOccupiedPieces / totalCapacity) * 100)
       : 68;
+
+  const storageKpiItems: KpiItem[] = [
+    {
+      id: "kpi-vaults",
+      title: "Total Vaults",
+      value: `${totalVaults} Active`,
+      subValue: "Primary Safe, Strongroom, Lab Vault",
+      badge: { text: "Secure", variant: "emerald" },
+      icon: <Lock className="w-3.5 h-3.5 text-gold" />,
+    },
+    {
+      id: "kpi-lockers",
+      title: "Total Lockers",
+      value: `${totalLockers} Lockers`,
+      subValue: `Allocated across ${totalVaults} physical vaults`,
+      badge: { text: "Biometric", variant: "secondary" },
+      icon: <Layers className="w-3.5 h-3.5 text-foreground" />,
+    },
+    {
+      id: "kpi-utilization",
+      title: "Compartment Utilization",
+      value: `${overallUtilization}%`,
+      subValue: `${totalOccupiedPieces} / ${totalCapacity > 0 ? totalCapacity : 208} Cells`,
+      badge: {
+        text: overallUtilization > 85 ? "Near Cap" : "Optimal",
+        variant: overallUtilization > 85 ? "amber" : "emerald",
+      },
+      icon: <PieChart className="w-3.5 h-3.5 text-status-emerald" />,
+    },
+    {
+      id: "kpi-gold-weight",
+      title: "Stored Fine Gold",
+      value: "4,821.500 g",
+      subValue: "Au 24K Eqv. • Mark-to-market verified",
+      badge: { text: "Au 99.9%", variant: "gold" },
+      icon: <Scale className="w-3.5 h-3.5 text-gold" />,
+    },
+  ];
 
   // Filter vaults
   const filteredVaults = vaults
@@ -105,137 +149,82 @@ export function StorageDirectoryView({
     setSelectedVaultName(vault.name);
   };
 
+  const handleScanRfid = () => {
+    setIsScanning(true);
+    setTimeout(() => {
+      setIsScanning(false);
+      toast.success("RFID Sweep Completed", {
+        description: `142 tags synchronized in 220ms across ${selectedCompartment?.code || "active compartment"}. Zero discrepancies.`,
+      });
+    }, 700);
+  };
+
   return (
-    <div className="max-w-[1600px] mx-auto space-y-8 pb-12">
+    <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
       {/* Sub-Header & Breadcrumb Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-4">
         <div>
-          <div className="flex items-center space-x-2 text-xs font-mono text-platinum/70 uppercase tracking-wider mb-1">
+          <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
             <span>{storeName} ({storeCode})</span>
             <span>&gt;</span>
             <span className="text-gold font-medium">Storage &amp; Vault Hierarchy</span>
-            <span className="inline-flex items-center gap-1.5 ml-2 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <Badge variant="emerald" dot className="ml-2">
               Live RFID Mesh Sync
-            </span>
+            </Badge>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-100">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Interactive Vault &amp; Storage Directory Visualizer
           </h1>
         </div>
 
         <div className="flex items-center space-x-3">
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setIsNewUnitModalOpen(true)}
-            className="px-3.5 py-1.5 rounded-md bg-surface-card border border-surface-border text-xs font-medium text-slate-200 hover:border-gold/50 hover:text-gold flex items-center space-x-1.5 transition-colors"
           >
-            <Plus className="w-3.5 h-3.5 text-platinum/60" />
-            <span>+ New Storage Unit</span>
-          </button>
-          <button
-            onClick={() => alert("RFID Scanner Polling: 142 tags synchronized in 220ms.")}
-            className="px-3.5 py-1.5 rounded-md bg-gold text-obsidian text-xs font-semibold hover:bg-gold-light flex items-center space-x-1.5 shadow-sm transition-colors"
+            <Plus className="w-3.5 h-3.5 mr-1" />
+            <span>New Storage Unit</span>
+          </Button>
+          <Button
+            variant="gold"
+            size="sm"
+            onClick={handleScanRfid}
+            isLoading={isScanning}
           >
-            <Scan className="w-3.5 h-3.5" />
+            <Scan className="w-3.5 h-3.5 mr-1" />
             <span>Scan Compartment RFID</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* 4 Primary Summary Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* Metric 1: Total Vaults */}
-        <div className="p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm">
-          <div className="flex items-center justify-between text-xs font-medium text-platinum">
-            <span className="uppercase font-mono text-[10px] tracking-wider">Total Vaults</span>
-            <Lock className="w-4 h-4 text-gold/70" />
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-bold tracking-tight font-mono text-slate-100">
-              {totalVaults} Active
-            </div>
-            <p className="mt-1 text-xs text-platinum/60">
-              Primary Safe, Retail Strongroom, Lab Vault
-            </p>
-          </div>
-        </div>
+      <WorkstationKpiGrid items={storageKpiItems} />
 
-        {/* Metric 2: Total Lockers */}
-        <div className="p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm">
-          <div className="flex items-center justify-between text-xs font-medium text-platinum">
-            <span className="uppercase font-mono text-[10px] tracking-wider">Total Lockers</span>
-            <Layers className="w-4 h-4 text-platinum/60" />
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-bold tracking-tight font-mono text-slate-100">
-              {totalLockers} Lockers
-            </div>
-            <p className="mt-1 text-xs text-platinum/60">
-              Allocated across {totalVaults} physical vaults
-            </p>
-          </div>
-        </div>
-
-        {/* Metric 3: Compartment Utilization */}
-        <div className="p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm">
-          <div className="flex items-center justify-between text-xs font-medium text-platinum">
-            <span className="uppercase font-mono text-[10px] tracking-wider">Utilization</span>
-            <PieChart className="w-4 h-4 text-emerald-400" />
-          </div>
-          <div className="mt-3">
-            <div className="flex items-baseline justify-between">
-              <span className="text-2xl font-bold tracking-tight font-mono text-gold-light">
-                {overallUtilization}%
-              </span>
-              <span className="text-xs font-mono text-platinum/60">
-                {totalOccupiedPieces} / {totalCapacity > 0 ? totalCapacity : 208} Cells
-              </span>
-            </div>
-            {/* Segmented mini progress bar */}
-            <div className="w-full bg-obsidian-deep h-1.5 rounded-full overflow-hidden flex gap-0.5 mt-2 border border-surface-border/50">
-              <div
-                style={{ width: `${Math.min(overallUtilization, 70)}%` }}
-                className="bg-gold h-full"
-              />
-              <div
-                style={{ width: `${Math.max(overallUtilization - 70, 0)}%` }}
-                className="bg-emerald-400 h-full"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Metric 4: Stored Fine Gold */}
-        <div className="p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm">
-          <div className="flex items-center justify-between text-xs font-medium text-platinum">
-            <span className="uppercase font-mono text-[10px] tracking-wider">Stored Fine Gold</span>
-            <Scale className="w-4 h-4 text-gold/80" />
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-bold tracking-tight font-mono tabular-nums text-slate-100">
-              4,821.500 <span className="text-sm font-sans font-normal text-platinum">g</span>
-            </div>
-            <p className="mt-1 text-xs text-platinum/60">
-              Au 24K Eqv. • Mark-to-market verified
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 2-Column Main Workspace */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-        {/* Left Column (8 of 12 spans = ~65%): 3-Tier Storage Hierarchy */}
-        <div className="xl:col-span-8 space-y-6">
+      {/* Workstation 65% / 35% Layout */}
+      <WorkstationLayout
+        inspector={
+          <CompartmentInspector
+            compartment={selectedCompartment}
+            parentLockerName={selectedLockerName}
+            parentVaultName={selectedVaultName}
+            onTransferClick={() =>
+              toast.info(`Initiating Inter-Compartment Stock Transfer for ${selectedCompartment?.code}`)
+            }
+          />
+        }
+      >
+        {/* Left Column (65%): 3-Tier Storage Hierarchy */}
+        <div className="space-y-4">
           {/* Filters & Search Toolbar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-surface-card p-3 rounded-xl border border-surface-border shadow-sm">
+          <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-platinum/50 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
+              <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+              <Input
                 placeholder="Search vault, locker, or cell ID (e.g. COMP-02)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-obsidian-deep border border-surface-border rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-100 placeholder-platinum/40 focus:outline-none focus:border-gold/60 transition-colors"
+                className="pl-9 h-8"
               />
             </div>
 
@@ -247,21 +236,21 @@ export function StorageDirectoryView({
                   onClick={() => setTierFilter(tier)}
                   className={`px-2.5 py-1 rounded-md font-mono text-[11px] font-medium transition-all whitespace-nowrap ${
                     tierFilter === tier
-                      ? "bg-gold text-obsidian font-bold shadow-sm"
-                      : "text-platinum/70 hover:text-slate-100 bg-obsidian-deep border border-surface-border"
+                      ? "bg-gold text-black font-semibold shadow-sm"
+                      : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
                   }`}
                 >
                   {tier === "ALL" ? "All Tiers" : tier.charAt(0) + tier.slice(1).toLowerCase()}
                 </button>
               ))}
             </div>
-          </div>
+          </Card>
 
           {/* Vault Sections List */}
           {filteredVaults.length === 0 ? (
-            <div className="text-center py-12 bg-surface-card border border-surface-border rounded-xl text-platinum/50 text-xs">
+            <Card className="text-center py-12 text-muted-foreground text-xs">
               No storage locations match your current filter criteria.
-            </div>
+            </Card>
           ) : (
             filteredVaults.map((vault) => (
               <VaultSection
@@ -273,19 +262,7 @@ export function StorageDirectoryView({
             ))
           )}
         </div>
-
-        {/* Right Column (4 of 12 spans = ~35%): Selected Compartment Inspector */}
-        <div className="xl:col-span-4 sticky top-6 self-start h-[calc(100vh-140px)]">
-          <CompartmentInspector
-            compartment={selectedCompartment}
-            parentLockerName={selectedLockerName}
-            parentVaultName={selectedVaultName}
-            onTransferClick={() =>
-              alert(`Initiating Inter-Compartment Stock Transfer for ${selectedCompartment?.code}`)
-            }
-          />
-        </div>
-      </div>
+      </WorkstationLayout>
 
       {/* New Storage Unit Provisioning Modal */}
       <NewStorageUnitModal

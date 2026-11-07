@@ -41,7 +41,7 @@ export function ScrapBatchSection({
     0
   );
   const totalValuation = batch.items.reduce(
-    (acc, itm) => acc + (itm.payoutValueInr || 0),
+    (acc, itm) => acc + (itm.calculatedValuationInr ?? itm.payoutValueInr ?? 0),
     0
   );
 

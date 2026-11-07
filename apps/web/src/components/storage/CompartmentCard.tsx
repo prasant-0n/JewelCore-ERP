@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { CompartmentWithOccupancy } from "@jewelcore/shared";
+import { Badge } from "@/components/ui/badge";
 
 interface CompartmentCardProps {
   compartment: CompartmentWithOccupancy;
@@ -29,22 +30,21 @@ export function CompartmentCard({
   const percentage = occupancyPercentage ?? 0;
   const isVacant = occupiedItemCount === 0;
 
-  // Determine status chip styling
-  let badgeClasses = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-  let barColorClass = "bg-emerald-400";
+  let badgeVariant: "emerald" | "amber" | "rose" | "secondary" = "emerald";
+  let barColorClass = "bg-status-emerald";
   let statusLabel = "Available";
 
   if (status === "FULL" || percentage >= 100) {
-    badgeClasses = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
-    barColorClass = "bg-rose-400";
+    badgeVariant = "rose";
+    barColorClass = "bg-status-rose";
     statusLabel = "Full";
   } else if (status === "NEAR_CAPACITY" || percentage >= 85) {
-    badgeClasses = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
-    barColorClass = "bg-amber-400";
+    badgeVariant = "amber";
+    barColorClass = "bg-status-amber";
     statusLabel = `${percentage}% Alert`;
   } else if (isVacant) {
-    badgeClasses = "bg-slate-800 text-slate-400 border border-slate-700";
-    barColorClass = "bg-slate-600";
+    badgeVariant = "secondary";
+    barColorClass = "bg-muted";
     statusLabel = "Vacant";
   }
 
@@ -56,12 +56,12 @@ export function CompartmentCard({
         isSelected
           ? "bg-surface-elevated border-2 border-gold shadow-[0_0_15px_rgba(212,175,55,0.18)]"
           : isVacant
-          ? "bg-obsidian-deep/60 border border-dashed border-surface-border hover:border-gold/40 hover:bg-surface-card"
-          : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/70"
+          ? "bg-surface/50 border border-dashed border-surface-border hover:border-gold/40 hover:bg-surface"
+          : "bg-surface border border-surface-border hover:border-gold/50 hover:bg-surface-elevated"
       }`}
     >
       {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
+        <div className="absolute -top-2 -right-2 bg-gold text-black text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
           Selected
         </div>
       )}
@@ -71,36 +71,33 @@ export function CompartmentCard({
         <div className="flex items-center space-x-1.5 truncate">
           <span
             className={`font-mono text-xs font-semibold truncate transition-colors ${
-              isSelected ? "text-gold" : "text-slate-100 group-hover:text-gold"
+              isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
             }`}
           >
             {code}
           </span>
           {compartmentNumber && (
-            <span className="text-[10px] text-platinum/50 font-mono">
+            <span className="text-[10px] text-muted-foreground font-mono">
               #{compartmentNumber}
             </span>
           )}
         </div>
 
-        <span
-          data-testid="status-chip"
-          className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-medium ${badgeClasses}`}
-        >
+        <Badge variant={badgeVariant} size="sm">
           {statusLabel}
-        </span>
+        </Badge>
       </div>
 
       {/* Compartment Name / Purpose */}
-      <div className="text-[11px] text-platinum/70 truncate mt-1">
+      <div className="text-[11px] text-muted-foreground truncate mt-1">
         {name}
       </div>
 
       {/* Occupancy Progress & Count */}
       <div className="mt-2.5">
-        <div className="flex items-center justify-between text-[11px] font-mono text-platinum/80 mb-1">
-          <span className="text-platinum/60">Occupancy:</span>
-          <span data-testid="occupancy-count" className="font-medium text-slate-200">
+        <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground mb-1">
+          <span>Occupancy:</span>
+          <span data-testid="occupancy-count" className="font-medium text-foreground">
             {occupiedItemCount}{" "}
             {maxItemCapacity ? `/ ${maxItemCapacity} pcs` : "pcs"}
             {percentage > 0 ? ` (${percentage}%)` : ""}
@@ -119,7 +116,7 @@ export function CompartmentCard({
       </div>
 
       {/* Bottom Sub-info / Metrological Rating */}
-      <div className="mt-2.5 pt-2 border-t border-surface-border/50 flex items-center justify-between text-[10px] font-mono text-platinum/50">
+      <div className="mt-2.5 pt-2 border-t border-surface-border/50 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
         <span>
           {maxWeightCapacityGrams ? `Max: ${maxWeightCapacityGrams}g` : "Standard"}
         </span>
@@ -127,7 +124,7 @@ export function CompartmentCard({
           href={`/inventory?compartmentId=${id}`}
           data-testid="resident-items-link"
           onClick={(e) => e.stopPropagation()}
-          className="text-gold/80 hover:text-gold hover:underline transition-colors"
+          className="text-gold hover:underline transition-colors"
         >
           View Items →
         </a>

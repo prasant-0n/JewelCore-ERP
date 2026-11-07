@@ -5,18 +5,19 @@ import { ConsignmentItemData } from "./ConsignmentItemCard";
 import {
   Truck,
   ShieldCheck,
-  Lock,
   Printer,
-  Sparkles,
-  CheckCircle2,
   X,
-  RotateCw,
-  Radio,
   MapPin,
-  Clock,
   KeyRound,
-  FileCheck2,
 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
+import { TabularWeight } from "@/components/workstation/TabularWeight";
+import { TabularCurrency } from "@/components/workstation/TabularCurrency";
+import { StatusBadge } from "@/components/workstation/StatusBadge";
+import { toast } from "sonner";
 
 interface TransitSecurityInspectorProps {
   item: ConsignmentItemData | null;
@@ -34,19 +35,16 @@ export function TransitSecurityInspector({
   onAcknowledgeDeSeal,
 }: TransitSecurityInspectorProps) {
   const [isDeSealing, setIsDeSealing] = useState(false);
-  const [deSealSuccess, setDeSealSuccess] = useState(false);
-  const [gpsPingNotification, setGpsPingNotification] = useState(false);
-  const [gatePassSuccess, setGatePassSuccess] = useState(false);
 
   if (!item) {
     return (
-      <div className="h-full bg-surface-card border border-surface-border rounded-xl p-8 flex flex-col items-center justify-center text-center text-platinum/50 shadow-sm">
-        <Truck className="w-12 h-12 text-platinum/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-slate-200">No Consignment Selected</h4>
-        <p className="text-xs text-platinum/60 mt-1 max-w-[260px]">
+      <Card className="h-full border-surface-border bg-surface-card p-8 flex flex-col items-center justify-center text-center text-muted-foreground shadow-sm">
+        <Truck className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
+        <h4 className="text-sm font-medium text-foreground">No Consignment Selected</h4>
+        <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
           Select any in-transit armored consignment or inter-branch transfer manifest to inspect real-time fleet telematics, geofence status, electronic tamper seals, and dual-custody de-sealing.
         </p>
-      </div>
+      </Card>
     );
   }
 
@@ -66,241 +64,208 @@ export function TransitSecurityInspector({
     setIsDeSealing(true);
     await new Promise((res) => setTimeout(res, 800));
     setIsDeSealing(false);
-    setDeSealSuccess(true);
-    setTimeout(() => {
-      setDeSealSuccess(false);
-      onAcknowledgeDeSeal?.(item);
-    }, 1500);
+    toast.success("De-Seal Verified & Handover Accepted", {
+      description: `Dual biometric signature verified for ${itemCode}. Tamper seal ${electronicSealId} safely decommissioned.`,
+    });
+    onAcknowledgeDeSeal?.(item);
   };
 
   const handleGpsPing = () => {
-    setGpsPingNotification(true);
-    setTimeout(() => setGpsPingNotification(false), 2500);
+    toast.info("Live Fleet Telematics Ping", {
+      description: "Latitude 21.1702° N, 72.8311° E • Speed 68 km/h • NH-48 Safe Zone corridor.",
+    });
   };
 
   const handlePrintGatePass = () => {
-    setGatePassSuccess(true);
-    setTimeout(() => setGatePassSuccess(false), 2000);
+    toast.success("Armored Waybill Dispatched", {
+      description: `Gate Pass & Consignment custody sheet printed for ${itemCode}.`,
+    });
   };
 
   return (
-    <div className="bg-surface-card border border-surface-border rounded-xl p-5 shadow-sm space-y-5">
+    <Card className="border-surface-border bg-surface-card shadow-sm space-y-4">
       {/* Top Header */}
-      <div className="flex items-start justify-between border-b border-surface-border pb-4">
-        <div className="space-y-1">
+      <CardHeader className="pb-3 border-b border-surface-border">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <Truck className="w-4 h-4 text-gold" />
+              <CardTitle className="font-mono text-sm font-bold text-foreground">
+                {itemCode}: {trayDescription}
+              </CardTitle>
+            </div>
+            <div className="text-xs text-foreground/80 font-medium">
+              {parentRouteTitle}
+            </div>
+            <div className="text-[11px] font-mono text-muted-foreground">
+              Escort: {carrierPlate} • Seal: {electronicSealId}
+            </div>
+          </div>
+
           <div className="flex items-center space-x-2">
-            <Truck className="w-4 h-4 text-gold" />
-            <h3 className="font-mono text-sm font-bold text-slate-100">
-              {itemCode}: {trayDescription}
-            </h3>
+            <StatusBadge status={status === "GEOFENCE_LOCKED" ? "COMPLETED" : "IN_TRANSIT"} />
+
+            {onClose && (
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={onClose}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
           </div>
-          <div className="text-xs text-platinum font-medium">
-            {parentRouteTitle}
+        </div>
+      </CardHeader>
+
+      <CardContent className="space-y-4 pt-1">
+        {/* Dual Metrology Gauges: Transit Progress & Tamper Seal Integrity */}
+        <div className="space-y-3">
+          <MetrologyGauge
+            label="Route Corridor Progress (NH-48 Safe Zone)"
+            currentValue={68.4}
+            maxValue={100}
+            unit="%"
+            decimals={1}
+            status="normal"
+          />
+          <MetrologyGauge
+            label="Electronic Tamper Seal Mesh Integrity"
+            currentValue={100}
+            maxValue={100}
+            unit="%"
+            decimals={0}
+            status="passing"
+          />
+        </div>
+
+        {/* Fleet & Geofence Coordinates Box */}
+        <div className="p-3.5 bg-surface-elevated/40 border border-surface-border rounded-xl space-y-2.5 font-mono text-xs">
+          <div className="flex items-center justify-between text-gold font-medium">
+            <span className="flex items-center gap-1.5">
+              <Truck className="w-3.5 h-3.5" />
+              Brinks Armored B6 Fleet & Geofence Coordinates
+            </span>
+            <Badge variant="emerald" dot>
+              GPS ±1.2m Active
+            </Badge>
           </div>
-          <div className="text-[11px] font-mono text-platinum/60">
-            Escort: {carrierPlate} • Seal: {electronicSealId}
+
+          <div className="space-y-1.5 pt-1">
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Vehicle Telematics:</span>
+              <span className="text-foreground font-semibold">Brinks Van #04 (MH-01-BX-9021)</span>
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Geofenced Corridor:</span>
+              <span className="text-foreground">NH-48 Expressway (Locked ±50m Width)</span>
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Lead Armed Escort:</span>
+              <span className="text-foreground">Capt. R. Sengupta (Badge #SEC-891)</span>
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Security Tier:</span>
+              <span className="text-foreground font-medium">{securityTier}</span>
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Digital Chain-of-Custody:</span>
+              <span className="text-gold truncate max-w-[200px]">SHA-256: 9f8a42...310c89</span>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Geofence Locked
-          </span>
+        {/* Specie Insurance & Valuation Overview */}
+        <div className="p-3.5 bg-surface-elevated/40 border border-surface-border rounded-xl space-y-2 font-mono text-xs">
+          <div className="flex items-center justify-between text-gold font-medium">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Lloyd's Specie Transit Insurance Coverage
+            </span>
+            <Badge variant="emerald">
+              $10M Policy Active
+            </Badge>
+          </div>
 
-          {onClose && (
-            <button
-              onClick={onClose}
-              className="p-1 rounded text-platinum/60 hover:text-slate-100 hover:bg-surface-border transition-colors"
+          <div className="space-y-1.5 pt-1 text-[11px]">
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Consignment Gross Weight:</span>
+              <TabularWeight grams={grossWeightGrams} />
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Pieces Count:</span>
+              <span className="text-foreground font-bold">{pieceCount} Pieces Sealed</span>
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Net Gold Mass:</span>
+              <TabularWeight grams={netGoldGrams} />
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Specie Cover Valuation:</span>
+              <TabularCurrency amount={specieValuationInr} />
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Policy Underwriter:</span>
+              <span className="text-foreground">Lloyd's Syndicate #LL-99128</span>
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground border-t border-surface-border/60 pt-1.5">
+              <span>Estimated Vault Inward ETA:</span>
+              <span className="text-foreground font-bold">Today, 19:45 IST (In 3h 30m)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Deck */}
+        <div className="space-y-2 pt-2 border-t border-surface-border">
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleGpsPing}
+              className="text-foreground"
             >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      </div>
+              <MapPin className="w-3.5 h-3.5 mr-1 text-muted-foreground" />
+              <span>Ping Live GPS</span>
+            </Button>
 
-      {/* Dual Gauges: Transit Progress & Tamper Seal Mesh */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Gauge 1: Armored Transit Progress */}
-        <div className="p-3 bg-surface-elevated/40 border border-surface-border rounded-xl space-y-2">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-platinum/70 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-gold" />
-              Route Corridor
-            </span>
-            <span className="font-bold text-slate-100 tabular-nums">
-              68.4%
-            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrintGatePass}
+              className="text-foreground"
+            >
+              <Printer className="w-3.5 h-3.5 mr-1 text-muted-foreground" />
+              <span>Print Gate Pass</span>
+            </Button>
           </div>
 
-          <div className="w-full bg-surface-border h-2 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gold shadow-[0_0_8px_rgba(212,175,55,0.4)] rounded-full"
-              style={{ width: "68.4%" }}
-            />
-          </div>
-
-          <div className="flex items-center justify-between text-[10px] font-mono text-platinum/60">
-            <span>NH-48 National Corridor</span>
-            <span className="text-emerald-400 font-semibold">In Safe Zone</span>
-          </div>
-        </div>
-
-        {/* Gauge 2: Tamper Mesh Integrity */}
-        <div className="p-3 bg-surface-elevated/40 border border-surface-border rounded-xl space-y-2">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-platinum/70 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              E-Seal Integrity
-            </span>
-            <span className="font-bold text-emerald-400 tabular-nums">
-              100%
-            </span>
-          </div>
-
-          <div className="w-full bg-surface-border h-2 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.5)] rounded-full"
-              style={{ width: "100%" }}
-            />
-          </div>
-
-          <div className="flex items-center justify-between text-[10px] font-mono text-platinum/60">
-            <span>UHF Tamper Sensor</span>
-            <span className="text-emerald-400 font-semibold">Active Mesh</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Fleet & Geofence Coordinates Box */}
-      <div className="p-3.5 bg-surface-elevated/40 border border-surface-border rounded-xl space-y-2.5 font-mono">
-        <div className="flex items-center justify-between text-xs text-gold font-medium">
-          <span className="flex items-center gap-1.5">
-            <Truck className="w-3.5 h-3.5" />
-            Brinks Armored B6 Fleet & Geofence Coordinates
-          </span>
-          <span className="text-[10px] text-emerald-400 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            GPS ±1.2m Active
-          </span>
-        </div>
-
-        <div className="space-y-1.5 text-xs pt-1">
-          <div className="flex items-center justify-between text-platinum/70">
-            <span>Vehicle Telematics:</span>
-            <span className="text-slate-100 font-semibold">Brinks Van #04 (MH-01-BX-9021)</span>
-          </div>
-
-          <div className="flex items-center justify-between text-platinum/70">
-            <span>Geofenced Corridor:</span>
-            <span className="text-slate-200">NH-48 Expressway (Locked ±50m Width)</span>
-          </div>
-
-          <div className="flex items-center justify-between text-platinum/70">
-            <span>Lead Armed Escort:</span>
-            <span className="text-slate-100">Capt. R. Sengupta (Badge #SEC-891)</span>
-          </div>
-
-          <div className="flex items-center justify-between text-platinum/70">
-            <span>Digital Chain-of-Custody:</span>
-            <span className="text-gold truncate max-w-[210px]">SHA-256: 9f8a42...310c89</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Specie Insurance & Valuation Overview */}
-      <div className="p-4 bg-surface-elevated/40 border border-surface-border rounded-xl space-y-2 text-xs font-mono">
-        <div className="flex items-center justify-between text-gold font-medium">
-          <span className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            Lloyd's Specie Transit Insurance Coverage
-          </span>
-          <span className="text-[10px] text-emerald-400 font-semibold">
-            $10M Policy Active
-          </span>
-        </div>
-
-        <div className="space-y-1.5 pt-1 text-[11px]">
-          <div className="flex items-center justify-between text-platinum/70">
-            <span>Consignment Weight:</span>
-            <span className="text-slate-100 font-bold tabular-nums">
-              {grossWeightGrams.toFixed(3)} g ({pieceCount} Pieces)
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between text-platinum/70">
-            <span>Specie Cover Valuation:</span>
-            <span className="text-emerald-400 font-bold tabular-nums">
-              ₹ {specieValuationInr.toLocaleString("en-IN")}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between text-platinum/70">
-            <span>Policy Underwriter:</span>
-            <span className="text-slate-200">Lloyd's Syndicate #LL-99128</span>
-          </div>
-
-          <div className="flex items-center justify-between text-platinum/70 border-t border-surface-border/60 pt-1.5">
-            <span>Estimated Vault Inward ETA:</span>
-            <span className="text-slate-100 font-bold">Today, 19:45 IST (In 3h 30m)</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Feedback Messages */}
-      {gpsPingNotification && (
-        <div className="p-2.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 font-mono flex items-center gap-1.5">
-          <MapPin className="w-4 h-4" />
-          <span>Live GPS Ping: Latitude 21.1702° N, 72.8311° E • Speed 68 km/h • Route On-Time.</span>
-        </div>
-      )}
-
-      {gatePassSuccess && (
-        <div className="p-2.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 font-mono flex items-center gap-1.5">
-          <Printer className="w-4 h-4" />
-          <span>Armored Transit Security Gate Pass & Waybill printed!</span>
-        </div>
-      )}
-
-      {deSealSuccess && (
-        <div className="p-2.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 font-mono flex items-center gap-1.5">
-          <CheckCircle2 className="w-4 h-4" />
-          <span>Dual Biometric Signatures Accepted! Electronic Seal De-activated & Vault Inward Stored.</span>
-        </div>
-      )}
-
-      {/* Action Deck */}
-      <div className="space-y-2 pt-2 border-t border-surface-border">
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={handleGpsPing}
-            className="px-3 py-2 rounded-lg bg-surface-elevated hover:bg-surface-border border border-surface-border text-xs font-medium text-slate-200 flex items-center justify-center space-x-1.5 transition-colors"
+          <Button
+            variant="gold"
+            size="default"
+            onClick={handleDeSeal}
+            disabled={isDeSealing || status === "DE_SEALED"}
+            isLoading={isDeSealing}
+            className="w-full font-mono text-xs"
           >
-            <MapPin className="w-3.5 h-3.5 text-platinum/70" />
-            <span>Ping Live GPS</span>
-          </button>
-
-          <button
-            onClick={handlePrintGatePass}
-            className="px-3 py-2 rounded-lg bg-surface-elevated hover:bg-surface-border border border-surface-border text-xs font-medium text-slate-200 flex items-center justify-center space-x-1.5 transition-colors"
-          >
-            <Printer className="w-3.5 h-3.5 text-platinum/70" />
-            <span>Print Gate Pass</span>
-          </button>
+            <KeyRound className="w-4 h-4 mr-1.5" />
+            <span>
+              {status === "DE_SEALED"
+                ? "Vault Inward Handover Confirmed"
+                : "Acknowledge Inward Vault Handover & De-Seal"}
+            </span>
+          </Button>
         </div>
-
-        <button
-          onClick={handleDeSeal}
-          disabled={isDeSealing || deSealSuccess}
-          className="w-full py-2.5 px-4 rounded-lg bg-gold hover:bg-gold-light text-obsidian text-xs font-bold font-mono tracking-wide shadow-lg shadow-gold/20 flex items-center justify-center space-x-2 transition-all transform active:scale-95 disabled:opacity-50"
-        >
-          <KeyRound className="w-4 h-4 text-obsidian" />
-          <span>
-            {isDeSealing
-              ? "Verifying Dual Biometrics..."
-              : "Acknowledge Inward Vault Handover & De-Seal"}
-          </span>
-        </button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

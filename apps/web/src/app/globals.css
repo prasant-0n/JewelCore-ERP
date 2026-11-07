@@ -4,16 +4,122 @@
 
 @layer base {
   :root {
-    --background: #0B0F17;
-    --foreground: #F8FAFC;
+    /* Ivory Atelier Light Mode */
+    --background: 210 20% 98%; /* #F8F9FA */
+    --background-deep: 210 25% 95%; /* #F1F3F5 */
+    --foreground: 222 47% 11%; /* #0F172A */
+
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 222 47% 11%; /* #0F172A */
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --surface: 0 0% 100%; /* #FFFFFF */
+    --surface-card: 0 0% 100%;
+    --surface-elevated: 210 20% 96%; /* #F1F5F9 */
+    --surface-hover: 210 20% 93%;
+    --surface-border: 214 32% 91%; /* #E2E8F0 */
+    --surface-border-muted: 214 32% 88%;
+
+    --primary: 38 92% 33%; /* #A16207 Antique Champagne Gold */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 94%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 20% 95%;
+    --muted-foreground: 215 16% 47%; /* #64748B */
+
+    --accent: 38 80% 94%;
+    --accent-foreground: 38 92% 33%;
+
+    --destructive: 347 77% 50%; /* #E11D48 */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%; /* #E2E8F0 */
+    --input: 214 32% 91%;
+    --ring: 38 92% 38%;
+
+    --gold: 38 92% 33%;
+    --gold-light: 42 85% 42%;
+    --gold-dark: 38 95% 24%;
+
+    --platinum: 215 16% 47%;
+    --platinum-light: 222 47% 11%;
+    --platinum-dark: 215 25% 27%;
+
+    --status-emerald: 160 84% 28%;
+    --status-amber: 32 95% 44%;
+    --status-rose: 343 82% 41%;
+    --status-indigo: 239 84% 67%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark Obsidian Mode */
+    --background: 222 35% 7%; /* #0B0F17 */
+    --background-deep: 223 43% 5%; /* #070A10 */
+    --foreground: 210 40% 98%; /* #F8FAFC */
+
+    --card: 220 38% 12%; /* #131B2B */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 38% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --surface: 220 38% 12%; /* #131B2B */
+    --surface-card: 220 38% 12%;
+    --surface-elevated: 220 35% 17%; /* #1C263B */
+    --surface-hover: 220 35% 21%; /* #222F47 */
+    --surface-border: 220 33% 18%; /* #1F293D */
+    --surface-border-muted: 220 34% 15%; /* #1A2334 */
+
+    --primary: 46 65% 52%; /* #D4AF37 Brushed Gold */
+    --primary-foreground: 222 35% 7%;
+
+    --secondary: 220 35% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 35% 17%;
+    --muted-foreground: 215 20% 65%; /* #94A3B8 */
+
+    --accent: 220 35% 17%;
+    --accent-foreground: 46 65% 52%;
+
+    --destructive: 347 87% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 33% 18%; /* #1F293D */
+    --input: 220 33% 18%;
+    --ring: 46 65% 52%;
+
+    --gold: 46 65% 52%; /* #D4AF37 */
+    --gold-light: 45 74% 62%; /* #E5C358 */
+    --gold-dark: 46 64% 44%; /* #B89628 */
+
+    --platinum: 215 20% 65%; /* #94A3B8 */
+    --platinum-light: 210 40% 98%; /* #E2E8F0 */
+    --platinum-dark: 215 16% 47%; /* #64748B */
+
+    --status-emerald: 160 84% 39%; /* #10B981 */
+    --status-amber: 38 92% 50%; /* #F59E0B */
+    --status-rose: 347 87% 60%; /* #F43F5E */
+    --status-indigo: 239 84% 67%; /* #6366F1 */
+  }
+
+  * {
+    border-color: hsl(var(--border));
   }
 
   body {
-    background-color: #0B0F17;
-    color: #F8FAFC;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
@@ -24,16 +130,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B0F17;
+  background: hsl(var(--background));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1F293D;
+  background: hsl(var(--surface-border));
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: hsl(var(--muted-foreground));
 }
 
 /* Numeric tabular figures for sub-milligram and financial amounts */

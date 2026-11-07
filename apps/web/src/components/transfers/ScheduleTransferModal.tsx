@@ -1,8 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Truck, ShieldCheck, Plus, Check } from "lucide-react";
+import { Truck } from "lucide-react";
 import { ConsignmentItemData } from "./ConsignmentItemCard";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface ScheduleTransferModalProps {
   isOpen: boolean;
@@ -24,20 +35,15 @@ export function ScheduleTransferModal({
   const [electronicSealId, setElectronicSealId] = useState("ELEC-SEAL-9920");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!trayDescription || !grossWeightGrams) {
-      setError("Please fill in tray description and gross weight.");
+      toast.error("Validation Error", { description: "Please fill in tray description and gross weight." });
       return;
     }
 
     setIsSubmitting(true);
-    setError(null);
 
     try {
       await new Promise((res) => setTimeout(res, 600));
@@ -60,69 +66,51 @@ export function ScheduleTransferModal({
         securityTier: "Armored Safe B6",
       };
 
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        setIsSubmitting(false);
-        onClose();
-        onScheduled?.(newItem, targetManifestId);
-      }, 900);
+      toast.success("Armored Transfer Scheduled", {
+        description: `Electronic seal ${electronicSealId} paired with destination ${destinationVault.split(" ")[0]}.`,
+      });
+
+      setIsSubmitting(false);
+      onClose();
+      onScheduled?.(newItem, targetManifestId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to schedule transfer");
+      toast.error("Transfer Error", {
+        description: err instanceof Error ? err.message : "Failed to schedule transfer",
+      });
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-obsidian/75 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-surface-card border border-surface-border rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-        {/* Modal Header */}
-        <div className="px-6 py-4 bg-surface-elevated border-b border-surface-border flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-lg border-surface-border bg-surface-card text-foreground">
+        <DialogHeader>
+          <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-lg bg-gold/15 border border-gold/30 flex items-center justify-center text-gold">
               <Truck className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-slate-100">
+              <DialogTitle className="text-base font-bold text-foreground font-mono">
                 Schedule Armored Transit & Dual-Custody Manifest
-              </h3>
-              <p className="text-[11px] text-platinum/60 font-mono">
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground font-mono">
                 Brinks B6 Armored Transit Protocol • Lloyd's Specie Insured
-              </p>
+              </DialogDescription>
             </div>
           </div>
-
-          <button
-            onClick={onClose}
-            className="p-1 rounded text-platinum/60 hover:text-slate-100 hover:bg-surface-border transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+        </DialogHeader>
 
         {/* Modal Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error && (
-            <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300">
-              {error}
-            </div>
-          )}
-          {success && (
-            <div className="p-2.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center gap-1.5 font-mono">
-              <Check className="w-4 h-4" />
-              <span>Armored dispatch scheduled! Electronic tamper seal paired & logged.</span>
-            </div>
-          )}
-
+        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           {/* Destination Vault Selection */}
-          <div>
-            <label className="text-xs font-medium text-platinum/80 block mb-1">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground block">
               Destination Vault / Target Branch:
             </label>
             <select
               value={destinationVault}
               onChange={(e) => setDestinationVault(e.target.value)}
-              className="w-full bg-surface-elevated border border-surface-border rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-gold"
+              className="w-full bg-surface-elevated border border-surface-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-gold"
             >
               <option value="New Delhi Connaught Place Vault (INV-02)">New Delhi Connaught Place Vault (INV-02)</option>
               <option value="Bangalore Indiranagar Showroom (INV-05)">Bangalore Indiranagar Showroom (INV-05)</option>
@@ -132,95 +120,97 @@ export function ScheduleTransferModal({
           </div>
 
           {/* Tray Description */}
-          <div>
-            <label className="text-xs font-medium text-platinum/80 block mb-1">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground block">
               Consignment Description:
             </label>
-            <input
+            <Input
               type="text"
               value={trayDescription}
               onChange={(e) => setTrayDescription(e.target.value)}
-              className="w-full bg-surface-elevated border border-surface-border rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-gold"
+              className="bg-surface-elevated border-surface-border text-foreground"
               required
             />
           </div>
 
           {/* Weights & Seals */}
           <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="text-xs font-medium text-platinum/80 block mb-1">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground block">
                 Pieces Count:
               </label>
-              <input
+              <Input
                 type="number"
                 value={pieceCount}
                 onChange={(e) => setPieceCount(e.target.value)}
-                className="w-full bg-surface-elevated border border-surface-border rounded-lg px-2.5 py-2 text-xs text-slate-100 font-mono focus:outline-none focus:border-gold"
+                className="bg-surface-elevated border-surface-border font-mono text-foreground"
                 required
               />
             </div>
-            <div>
-              <label className="text-xs font-medium text-platinum/80 block mb-1">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground block">
                 Gross Wt (g):
               </label>
-              <input
+              <Input
                 type="number"
                 step="0.001"
                 value={grossWeightGrams}
                 onChange={(e) => setGrossWeightGrams(e.target.value)}
-                className="w-full bg-surface-elevated border border-surface-border rounded-lg px-2.5 py-2 text-xs text-gold font-mono focus:outline-none focus:border-gold"
+                className="bg-surface-elevated border-surface-border font-mono text-gold font-semibold"
                 required
               />
             </div>
-            <div>
-              <label className="text-xs font-medium text-platinum/80 block mb-1">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground block">
                 Declared ₹ Val:
               </label>
-              <input
+              <Input
                 type="number"
                 value={specieValuationInr}
                 onChange={(e) => setSpecieValuationInr(e.target.value)}
-                className="w-full bg-surface-elevated border border-surface-border rounded-lg px-2.5 py-2 text-xs text-emerald-400 font-mono focus:outline-none focus:border-gold"
+                className="bg-surface-elevated border-surface-border font-mono text-emerald-500 font-semibold"
                 required
               />
             </div>
           </div>
 
           {/* Electronic Seal */}
-          <div>
-            <label className="text-xs font-medium text-platinum/80 block mb-1">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground block">
               UHF Electronic Tamper Seal Barcode:
             </label>
-            <input
+            <Input
               type="text"
               value={electronicSealId}
               onChange={(e) => setElectronicSealId(e.target.value)}
-              className="w-full bg-surface-elevated border border-surface-border rounded-lg px-3 py-2 text-xs text-gold font-mono focus:outline-none focus:border-gold"
+              className="bg-surface-elevated border-surface-border font-mono text-gold font-semibold"
               required
             />
           </div>
 
           {/* Modal Actions */}
-          <div className="pt-3 border-t border-surface-border flex items-center justify-end space-x-3">
-            <button
+          <DialogFooter className="pt-3 border-t border-surface-border gap-2">
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 rounded-lg text-xs font-medium text-platinum/80 hover:bg-surface-elevated transition-colors"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              disabled={isSubmitting}
-              className="px-4 py-2 rounded-lg text-xs font-semibold bg-gold hover:bg-gold-light text-obsidian shadow-lg shadow-gold/20 flex items-center space-x-1.5 transition-colors disabled:opacity-50"
+              variant="gold"
+              size="sm"
+              isLoading={isSubmitting}
             >
-              <Truck className="w-3.5 h-3.5" />
-              <span>{isSubmitting ? "Pairing Geofence Mesh..." : "Schedule Armored Dispatch"}</span>
-            </button>
-          </div>
+              <Truck className="w-3.5 h-3.5 mr-1" />
+              <span>Schedule Armored Dispatch</span>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

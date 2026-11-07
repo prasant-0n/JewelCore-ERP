@@ -65,11 +65,11 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-60 bg-obsidian border-r border-surface-border flex flex-col justify-between h-[calc(100vh-3.5rem)] flex-shrink-0">
+    <aside className="w-60 bg-surface border-r border-surface-border flex flex-col justify-between h-[calc(100vh-3.5rem)] flex-shrink-0">
       <div className="py-4 px-3 space-y-6 overflow-y-auto">
         {NAV_SECTIONS.map((section) => (
           <div key={section.title} className="space-y-1">
-            <div className="px-3 text-[10px] font-mono tracking-wider text-platinum/60 uppercase font-semibold">
+            <div className="px-3 text-[10px] font-mono tracking-wider text-muted-foreground uppercase font-semibold">
               {section.title}
             </div>
             <div className="space-y-0.5 pt-1">
@@ -83,14 +83,14 @@ export function Sidebar() {
                     href={item.href}
                     className={`flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-all ${
                       isActive
-                        ? "bg-surface-card text-gold border-l-2 border-gold font-semibold shadow-sm"
-                        : "text-slate-300 hover:text-slate-100 hover:bg-surface-card/60"
+                        ? "bg-surface-elevated text-gold border-l-2 border-gold font-semibold shadow-sm"
+                        : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated/60"
                     }`}
                   >
                     <div className="flex items-center space-x-2.5">
                       <Icon
                         className={`w-4 h-4 ${
-                          isActive ? "text-gold" : "text-platinum/70"
+                          isActive ? "text-gold" : "text-muted-foreground"
                         }`}
                       />
                       <span>{item.name}</span>
@@ -101,7 +101,7 @@ export function Sidebar() {
                         className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-semibold ${
                           isActive
                             ? "bg-gold/20 text-gold"
-                            : "bg-surface-border text-platinum"
+                            : "bg-surface border border-surface-border text-muted-foreground"
                         }`}
                       >
                         {item.badge}
@@ -116,13 +116,13 @@ export function Sidebar() {
       </div>
 
       {/* Terminal Health Footer */}
-      <div className="p-3 border-t border-surface-border bg-obsidian">
-        <div className="px-3 py-2 rounded-md bg-surface-card border border-surface-border flex items-center justify-between text-[10px] font-mono text-platinum">
+      <div className="p-3 border-t border-surface-border bg-surface">
+        <div className="px-3 py-2 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between text-[10px] font-mono text-muted-foreground">
           <div className="flex items-center space-x-2">
             <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
-            <span>Terminal: SHW-01</span>
+            <span className="text-foreground">Terminal: SHW-01</span>
           </div>
-          <span className="text-platinum/60">v0.10</span>
+          <span className="text-muted-foreground">v0.10</span>
         </div>
       </div>
     </aside>

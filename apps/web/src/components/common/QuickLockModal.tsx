@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Lock, Unlock, ShieldAlert } from "lucide-react";
+import { Lock, ShieldAlert } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface QuickLockModalProps {
   isOpen: boolean;
@@ -13,8 +20,6 @@ const DEFAULT_PIN = "1234";
 export function QuickLockModal({ isOpen, onUnlock }: QuickLockModalProps) {
   const [pin, setPin] = useState("");
   const [error, setError] = useState(false);
-
-  if (!isOpen) return null;
 
   const handleDigit = (digit: string) => {
     if (pin.length < 4) {
@@ -43,21 +48,23 @@ export function QuickLockModal({ isOpen, onUnlock }: QuickLockModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-obsidian/90 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="w-full max-w-sm bg-surface-card border border-surface-border rounded-xl shadow-2xl p-6 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
-        <div className="w-12 h-12 rounded-full bg-gold/10 border border-gold/40 flex items-center justify-center text-gold mb-3">
+    <Dialog open={isOpen}>
+      <DialogContent className="max-w-xs sm:max-w-sm flex flex-col items-center text-center p-6 border-surface-border bg-surface">
+        <div className="w-12 h-12 rounded-full bg-gold/10 border border-gold/40 flex items-center justify-center text-gold mb-1">
           <Lock className="w-6 h-6" />
         </div>
 
-        <h3 className="text-sm font-semibold tracking-wider uppercase text-slate-100">
-          Terminal Locked
-        </h3>
-        <p className="text-xs text-platinum mt-1 mb-5">
-          Enter your 4-digit staff PIN to resume showroom operations.
-        </p>
+        <DialogHeader className="items-center text-center pb-0 border-none">
+          <DialogTitle className="text-sm font-semibold tracking-wider uppercase text-foreground">
+            Terminal Locked
+          </DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground mt-1 mb-3">
+            Enter your 4-digit staff PIN to resume showroom operations.
+          </DialogDescription>
+        </DialogHeader>
 
         {/* PIN Indicators */}
-        <div className="flex space-x-3 mb-6">
+        <div className="flex space-x-3 my-4">
           {[0, 1, 2, 3].map((idx) => (
             <div
               key={idx}
@@ -84,32 +91,32 @@ export function QuickLockModal({ isOpen, onUnlock }: QuickLockModalProps) {
           {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num) => (
             <button
               key={num}
+              type="button"
               onClick={() => handleDigit(num)}
-              className="h-11 rounded-lg bg-surface-elevated hover:bg-surface-hover border border-surface-border text-slate-100 font-mono text-base font-semibold transition-all active:scale-95"
+              className="h-11 rounded-lg bg-surface-elevated hover:bg-surface-hover border border-surface-border text-foreground font-mono text-base font-semibold transition-all active:scale-95"
             >
               {num}
             </button>
           ))}
           <button
+            type="button"
             onClick={handleClear}
-            className="h-11 rounded-lg bg-surface-elevated hover:bg-surface-hover border border-surface-border text-platinum font-mono text-xs font-medium transition-all active:scale-95"
+            className="h-11 rounded-lg bg-surface-elevated hover:bg-surface-hover border border-surface-border text-muted-foreground font-mono text-xs font-medium transition-all active:scale-95"
           >
             Clear
           </button>
           <button
+            type="button"
             onClick={() => handleDigit("0")}
-            className="h-11 rounded-lg bg-surface-elevated hover:bg-surface-hover border border-surface-border text-slate-100 font-mono text-base font-semibold transition-all active:scale-95"
+            className="h-11 rounded-lg bg-surface-elevated hover:bg-surface-hover border border-surface-border text-foreground font-mono text-base font-semibold transition-all active:scale-95"
           >
             0
           </button>
-          <button
-            onClick={() => onUnlock()}
-            className="h-11 rounded-lg bg-gold/15 hover:bg-gold/25 border border-gold/40 text-gold flex items-center justify-center transition-all active:scale-95"
-          >
-            <Unlock className="w-4 h-4" />
-          </button>
+          <div className="h-11 rounded-lg bg-transparent flex items-center justify-center text-[10px] font-mono text-muted-foreground/40">
+            PIN:1234
+          </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

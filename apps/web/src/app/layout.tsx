@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "JewelCore ERP — Next-Gen Jewellery Enterprise Management",
@@ -13,9 +15,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-obsidian text-slate-100 min-h-screen antialiased selection:bg-gold/30 selection:text-gold-light">
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-background text-foreground min-h-screen antialiased selection:bg-gold/30 selection:text-gold-light">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={true}
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster position="bottom-right" />
+        </ThemeProvider>
       </body>
     </html>
   );

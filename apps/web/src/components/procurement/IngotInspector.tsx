@@ -16,6 +16,14 @@ import {
   X,
   RefreshCw,
 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
+import { TabularWeight } from "@/components/workstation/TabularWeight";
+import { TabularCurrency } from "@/components/workstation/TabularCurrency";
+import { StatusBadge } from "@/components/workstation/StatusBadge";
+import { toast } from "sonner";
 
 interface IngotInspectorProps {
   ingot: IngotBarItem | null;
@@ -32,17 +40,16 @@ export function IngotInspector({
 }: IngotInspectorProps) {
   const [isCapturing, setIsCapturing] = useState(false);
   const [isAuthorizing, setIsAuthorizing] = useState(false);
-  const [authSuccess, setAuthSuccess] = useState(false);
 
   if (!ingot) {
     return (
-      <div className="h-full bg-surface-card border border-surface-border rounded-xl p-8 flex flex-col items-center justify-center text-center text-platinum/50 shadow-sm">
-        <Scale className="w-12 h-12 text-platinum/30 mb-3 stroke-[1.5]" />
-        <h4 className="text-sm font-medium text-slate-200">No Ingot Lot Selected</h4>
-        <p className="text-xs text-platinum/60 mt-1 max-w-[260px]">
+      <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
+        <Scale className="w-12 h-12 text-muted-foreground/30 mb-3 stroke-[1.5]" />
+        <h4 className="text-sm font-medium text-foreground">No Ingot Lot Selected</h4>
+        <p className="text-xs text-muted-foreground mt-1 max-w-[260px]">
           Select any ingot bar tile from the active shipment directory to inspect its dual-scale metrology, purity assay, and landed valuation.
         </p>
-      </div>
+      </Card>
     );
   }
 
@@ -56,8 +63,8 @@ export function IngotInspector({
   } = ingot;
 
   // Commercial calculations
-  const baseSpotRate = 7240.0; // ₹/g
-  const refinerPremium = 12.5; // ₹/g
+  const baseSpotRate = 7450.0;
+  const refinerPremium = 12.5;
   const effectiveRate = baseSpotRate + refinerPremium;
   const landedValue = grossWeightGrams * effectiveRate;
 
@@ -65,6 +72,9 @@ export function IngotInspector({
     setIsCapturing(true);
     setTimeout(() => {
       setIsCapturing(false);
+      toast.success(`Mettler Toledo Scale Polled for ${barCode}`, {
+        description: `Certified weight captured: ${grossWeightGrams.toFixed(4)}g. Variance within tolerance band.`,
+      });
     }, 600);
   };
 
@@ -72,197 +82,111 @@ export function IngotInspector({
     setIsAuthorizing(true);
     setTimeout(() => {
       setIsAuthorizing(false);
-      setAuthSuccess(true);
+      toast.success(`GRN Authorization Confirmed for ${barCode}`, {
+        description: "Assay clearance passed. Lot committed to primary vault ledger.",
+      });
       onAuthorizeSuccess?.(ingot);
-      setTimeout(() => setAuthSuccess(false), 3500);
-    }, 1000);
+    }, 800);
   };
 
   return (
-    <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden flex flex-col h-full shadow-lg">
+    <Card className="overflow-hidden flex flex-col h-full">
       {/* Inspector Header */}
-      <div className="p-5 bg-surface-elevated/70 border-b border-surface-border">
+      <CardHeader className="p-4 sm:p-5 bg-surface-elevated/70 border-b border-surface-border">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center space-x-2">
               <span className="w-2.5 h-2.5 rounded-full bg-gold animate-pulse" />
-              <h3 className="text-base font-bold text-slate-100 font-mono">
+              <CardTitle className="text-base font-bold font-mono">
                 Ingot Bar {barCode}
-              </h3>
+              </CardTitle>
             </div>
-            <p className="text-xs text-platinum/70 mt-1">
-              {parentShipmentName} • 24K Cast Bar
+            <p className="text-xs text-muted-foreground mt-1">
+              {parentShipmentName}
             </p>
           </div>
 
           {onClose && (
-            <button
+            <Button
+              variant="ghost"
+              size="icon-sm"
               onClick={onClose}
-              className="p-1 rounded-md text-platinum/60 hover:text-slate-100 hover:bg-surface-border transition-colors"
+              className="text-muted-foreground hover:text-foreground"
             >
               <X className="w-4 h-4" />
-            </button>
+            </Button>
           )}
         </div>
 
-        {/* Status Badges */}
-        <div className="flex flex-wrap items-center gap-2 mt-4">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <Scale className="w-3 h-3" />
-            Dual-Scale Verified
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-mono font-medium bg-gold/10 text-gold-light border border-gold/30">
-            <ShieldCheck className="w-3 h-3" />
-            Tamper Seal #TS-8821 Intact
-          </span>
+        {/* Telemetry Status Badges */}
+        <div className="flex flex-wrap items-center gap-2 mt-3">
+          <Badge variant="emerald" dot>
+            Dual Scale Calibrated (0.001g)
+          </Badge>
+          <Badge variant="gold">
+            <ShieldCheck className="w-3 h-3 mr-1" />
+            LBMA Good Delivery Bar
+          </Badge>
+          <StatusBadge status={ingot.status} size="sm" />
         </div>
-      </div>
+      </CardHeader>
 
-      {/* Dual Metrological Gauges */}
-      <div className="p-5 border-b border-surface-border space-y-4">
-        {/* Gauge 1: Certified Weight Load */}
-        <div>
-          <div className="flex justify-between items-center text-xs">
-            <span className="text-platinum/70 flex items-center gap-1.5">
-              <Scale className="w-3.5 h-3.5 text-platinum/50" />
-              Certified Weight Load:
-            </span>
-            <span className="font-mono text-slate-100 tabular-nums">
-              <strong className="text-gold-light font-semibold">
-                {grossWeightGrams.toFixed(3)} g
-              </strong>
-            </span>
-          </div>
-          <div className="w-full bg-obsidian-deep h-1.5 rounded-full overflow-hidden mt-2 border border-surface-border/50">
-            <div className="bg-emerald-400 h-full rounded-full w-full" />
-          </div>
-          <div className="flex justify-between text-[10px] font-mono text-platinum/60 mt-1">
-            <span>Inv: {invoiceWeightGrams.toFixed(3)} g</span>
-            <span className="text-emerald-400 font-medium">
-              +{varianceGrams.toFixed(3)}g / +{variancePercent.toFixed(3)}% Tolerance OK
-            </span>
-          </div>
-        </div>
+      {/* Dual Weight Metrology Gauges */}
+      <CardContent className="p-4 sm:p-5 border-b border-surface-border space-y-3.5">
+        <MetrologyGauge
+          label="Physical Scale Gross Weight"
+          currentValue={grossWeightGrams}
+          maxValue={invoiceWeightGrams * 1.002}
+          unit="g"
+          decimals={3}
+          toleranceDelta={varianceGrams}
+          secondaryLabel="Invoice Declared"
+          secondaryValue={`${invoiceWeightGrams.toFixed(3)}g`}
+          status={Math.abs(varianceGrams) <= 0.05 ? "passing" : "warning"}
+        />
 
-        {/* Gauge 2: Spectrometric Fineness */}
-        <div>
-          <div className="flex justify-between items-center text-xs">
-            <span className="text-platinum/70 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-platinum/50" />
-              Spectrometric Fineness:
-            </span>
-            <span className="font-mono text-gold-light font-semibold">
-              {fineness} / 1000 Au
-            </span>
+        {/* Financial Landed Cost Box */}
+        <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground font-mono">Landed Bullion Valuation:</span>
+            <TabularCurrency amount={landedValue} className="text-gold text-sm font-bold" />
           </div>
-          <div className="w-full bg-obsidian-deep h-1.5 rounded-full overflow-hidden mt-2 border border-surface-border/50">
-            <div className="bg-gold h-full rounded-full w-[99.99%]" />
-          </div>
-          <div className="flex justify-between text-[10px] font-mono text-platinum/60 mt-1">
-            <span>Standard: 999.0 Min</span>
-            <span className="text-gold font-medium">99.99% Ultra Fine Hallmark</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Commercial Landed Cost Card */}
-      <div className="p-5 border-b border-surface-border space-y-3 bg-obsidian-deep/40">
-        <div className="text-[10px] font-mono uppercase tracking-wider text-platinum/70 font-medium flex items-center justify-between">
-          <span>Commercial Spot Rate Lock</span>
-          <span className="text-gold flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" />
-            IBJA Market Fixing
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-          <div className="p-2.5 rounded-lg bg-surface-card border border-surface-border">
-            <div className="text-platinum/60 text-[10px]">Base Spot 24K:</div>
-            <div className="font-bold text-slate-100 tabular-nums mt-0.5">
-              ₹{baseSpotRate.toFixed(2)}/g
-            </div>
-          </div>
-          <div className="p-2.5 rounded-lg bg-surface-card border border-surface-border">
-            <div className="text-platinum/60 text-[10px]">Refiner Premium:</div>
-            <div className="font-bold text-slate-100 tabular-nums mt-0.5">
-              +₹{refinerPremium.toFixed(2)}/g
-            </div>
+          <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+            <span>Locked Rate: ₹{effectiveRate.toFixed(2)}/g</span>
+            <span>Fineness: {fineness}</span>
           </div>
         </div>
 
-        <div className="p-3 rounded-lg bg-gold/10 border border-gold/30 flex items-center justify-between">
-          <div>
-            <span className="text-[10px] font-mono text-platinum/80 uppercase block">
-              Computed Landed Lot Value
-            </span>
-            <span className="text-base font-mono font-bold text-gold-light tabular-nums">
-              ₹{landedValue.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-            </span>
-          </div>
-          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-            Auto-Calculated
-          </span>
+        {/* Containment Route */}
+        <div className="p-3 rounded-lg bg-obsidian-deep border border-surface-border text-xs flex items-center justify-between">
+          <span className="text-muted-foreground">Allocated Vault Cell:</span>
+          <span className="font-mono text-foreground font-medium">{ingot.containmentPath}</span>
         </div>
-      </div>
+      </CardContent>
 
-      {/* Target Containment Route */}
-      <div className="p-5 flex-1 flex flex-col justify-between">
-        <div className="space-y-2">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-platinum/70 font-medium flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-platinum/50" />
-            Target Containment Allocation
-          </span>
-
-          <div className="p-3 rounded-lg bg-obsidian-deep border border-surface-border text-xs font-mono">
-            <div className="text-gold-light font-semibold">
-              Vault 03 (QC Safe) &gt; Locker 05 &gt; Tray Q1
-            </div>
-            <div className="text-[11px] text-platinum/60 mt-1">
-              Quarantine Slot 04 • Metrology Isolation Holding
-            </div>
-          </div>
-        </div>
-
-        {/* Action Buttons Toolbar */}
-        <div className="space-y-2.5 pt-4">
-          {authSuccess && (
-            <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>GRN Authorised! Tag RFID-Au-994821 spooled &amp; quarantined.</span>
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={handleCaptureWeight}
-              disabled={isCapturing}
-              className="px-3 py-2 rounded-lg bg-surface-card hover:bg-surface-border border border-surface-border text-xs font-medium text-slate-200 hover:text-slate-100 flex items-center justify-center space-x-1.5 transition-colors disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isCapturing ? "animate-spin" : ""}`} />
-              <span>{isCapturing ? "Streaming..." : "Capture Scale Weight"}</span>
-            </button>
-
-            <button
-              onClick={() => alert(`Printing Metrological Weight Slip for ${barCode}`)}
-              className="px-3 py-2 rounded-lg bg-surface-card hover:bg-surface-border border border-surface-border text-xs font-medium text-slate-200 hover:text-slate-100 flex items-center justify-center space-x-1.5 transition-colors"
-            >
-              <Printer className="w-3.5 h-3.5 text-platinum/60" />
-              <span>Print Weight Slip</span>
-            </button>
-          </div>
-
-          <button
-            onClick={handleAuthorizeGRN}
-            disabled={isAuthorizing}
-            className="w-full px-4 py-2.5 rounded-lg bg-gold text-obsidian text-xs font-semibold hover:bg-gold-light flex items-center justify-center space-x-1.5 shadow-sm transition-colors disabled:opacity-50"
-          >
-            <ShieldCheck className="w-4 h-4" />
-            <span>
-              {isAuthorizing ? "Generating Cryptographic RFID..." : "Authorize GRN & Issue Serialized RFID Tag"}
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
+      {/* Action Footer */}
+      <CardFooter className="p-3 bg-surface-elevated/70 border-t border-surface-border flex gap-2">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex-1"
+          onClick={handleCaptureWeight}
+          isLoading={isCapturing}
+        >
+          <RefreshCw className="w-3.5 h-3.5 mr-1" />
+          Tare Scale
+        </Button>
+        <Button
+          variant="gold"
+          size="sm"
+          className="flex-1"
+          onClick={handleAuthorizeGRN}
+          isLoading={isAuthorizing}
+        >
+          <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+          Authorize GRN
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

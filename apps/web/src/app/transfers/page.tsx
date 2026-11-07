@@ -12,18 +12,21 @@ import {
 } from "../../components/transfers/ManifestSection";
 import { TransitSecurityInspector } from "../../components/transfers/TransitSecurityInspector";
 import { ScheduleTransferModal } from "../../components/transfers/ScheduleTransferModal";
+import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import { WorkstationLayout } from "../../components/workstation/WorkstationLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 import {
   Truck,
   ShieldCheck,
   Lock,
   Search,
   Plus,
-  Radio,
   MapPin,
-  Sparkles,
-  Layers,
   CheckCircle2,
-  TrendingUp,
 } from "lucide-react";
 
 const INITIAL_MANIFESTS: ManifestGroupData[] = [
@@ -143,15 +146,6 @@ export default function TransfersTransitPage() {
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isSigningDispatch, setIsSigningDispatch] = useState(false);
-  const [dispatchNotification, setDispatchNotification] = useState<
-    string | null
-  >(null);
-
-  // Compute metrics
-  const activeDispatchesCount = 4;
-  const sealedPiecesCount = 186;
-  const etaCompliance = "99.4% On-Schedule";
-  const securityBreaches = 0;
 
   // Filter manifests
   const filteredManifests = manifests.map((manifest) => {
@@ -186,17 +180,16 @@ export default function TransfersTransitPage() {
 
   const handleDualSignDispatch = async () => {
     setIsSigningDispatch(true);
-    setDispatchNotification(
-      "Signing outward cryptographic vault handover token • Armored fleet escort protocol armed..."
-    );
+    toast.info("Signing cryptographic dispatch token...", {
+      description: "Armored fleet escort protocol armed via HSM key custody.",
+    });
 
     await new Promise((res) => setTimeout(res, 1200));
 
     setIsSigningDispatch(false);
-    setDispatchNotification(
-      "Dispatch Dual-Signed! Brinks Armored Van #04 cleared for departure via National Highway 48."
-    );
-    setTimeout(() => setDispatchNotification(null), 4000);
+    toast.success("Dispatch Dual-Signed & Authorized", {
+      description: "Brinks Armored Van #04 cleared for departure via National Highway 48 corridor.",
+    });
   };
 
   const handleScheduledItem = (
@@ -222,13 +215,48 @@ export default function TransfersTransitPage() {
     }
   };
 
+  const kpis: KpiItem[] = [
+    {
+      id: "active-dispatches",
+      title: "Active In-Transit Shipments",
+      value: "4 Dispatches",
+      subValue: "₹ 18.42 Cr Specie Insured",
+      badge: { text: "Insured", variant: "emerald" },
+      icon: <Truck className="w-4 h-4 text-emerald-500" />,
+    },
+    {
+      id: "sealed-pieces",
+      title: "Custody Sealed Pieces",
+      value: "186 Pieces",
+      subValue: "100% RFID Tamper-Taped",
+      badge: { text: "Tamper-Sealed", variant: "gold" },
+      icon: <Lock className="w-4 h-4 text-gold" />,
+    },
+    {
+      id: "eta-compliance",
+      title: "Transit ETA Compliance",
+      value: "99.4% On-Schedule",
+      subValue: "GPS Geofenced Corridor",
+      badge: { text: "On-Time", variant: "emerald" },
+      icon: <MapPin className="w-4 h-4 text-cyan-500" />,
+    },
+    {
+      id: "security-incidents",
+      title: "Security Incidents",
+      value: "0 Breach Alerts",
+      subValue: "Armored Escort Guard Active",
+      badge: { text: "Secure", variant: "emerald" },
+      icon: <ShieldCheck className="w-4 h-4 text-emerald-500" />,
+    },
+  ];
+
   return (
     <AppShell>
       <div className="space-y-6">
         {/* Top Subheader: Breadcrumbs, Telemetry & Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-platinum/60">
+            <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground">
               <span>JewelCore ERP</span>
               <span>/</span>
               <span>Logistics & Fleet Custody</span>
@@ -237,169 +265,99 @@ export default function TransfersTransitPage() {
                 Inter-Branch Transfers & Armored Transit
               </span>
             </div>
-            <h1 className="text-xl font-bold text-slate-100 tracking-tight mt-1 flex items-center space-x-3">
+            <h1 className="text-xl font-bold text-foreground tracking-tight mt-1 flex items-center space-x-3">
               <span>Armored Fleet Tracking & Dual-Custody Manifests</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Brinks Armored Van #MH-01-BX-9021 • GPS / Cellular Gate Locked • Latency 12ms
-              </span>
+              <Badge variant="emerald" dot>
+                Brinks Van #MH-01-BX-9021 • GPS / Gate Locked • 12ms
+              </Badge>
             </h1>
           </div>
 
           <div className="flex items-center space-x-3">
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setIsScheduleModalOpen(true)}
-              className="px-3.5 py-2 rounded-lg bg-surface-elevated hover:bg-surface-border border border-surface-border text-slate-200 text-xs font-medium flex items-center space-x-1.5 transition-colors"
             >
-              <Plus className="w-3.5 h-3.5 text-platinum/70" />
-              <span>+ Schedule Armored Transfer</span>
-            </button>
+              <Plus className="w-3.5 h-3.5 mr-1" />
+              <span>Schedule Transfer</span>
+            </Button>
 
-            <button
+            <Button
+              variant="gold"
+              size="sm"
               onClick={handleDualSignDispatch}
               disabled={isSigningDispatch}
-              className="px-3.5 py-2 rounded-lg bg-gold hover:bg-gold-light text-obsidian text-xs font-bold font-mono shadow-lg shadow-gold/20 flex items-center space-x-2 transition-all transform active:scale-95 disabled:opacity-50"
+              isLoading={isSigningDispatch}
             >
-              <ShieldCheck
-                className={`w-4 h-4 text-obsidian ${
-                  isSigningDispatch ? "animate-pulse" : ""
-                }`}
-              />
-              <span>
-                {isSigningDispatch
-                  ? "Signing Vault Transit..."
-                  : "Dual-Sign Vault Transit Dispatch"}
-              </span>
-            </button>
+              <ShieldCheck className="w-4 h-4 mr-1.5" />
+              <span>Dual-Sign Transit Dispatch</span>
+            </Button>
           </div>
         </div>
 
-        {/* Dispatch Status Notification Banner */}
-        {dispatchNotification && (
-          <div className="p-3 rounded-xl bg-surface-card border border-gold/40 flex items-center justify-between text-xs font-mono text-gold animate-in fade-in slide-in-from-top-2 duration-200 shadow-md">
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-gold" />
-              <span>{dispatchNotification}</span>
-            </div>
-            <span className="text-[10px] text-emerald-400 font-semibold">
-              Geofence Armed
-            </span>
-          </div>
-        )}
-
-        {/* 4 Metric KPI Cards matching Screen 2 */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-surface-card border border-surface-border rounded-xl p-4 shadow-sm hover:border-gold/30 transition-colors">
-            <div className="flex items-center justify-between text-xs text-platinum/70 mb-1 font-mono">
-              <span>Active In-Transit Shipments</span>
-              <Truck className="w-4 h-4 text-emerald-400" />
-            </div>
-            <div className="text-2xl font-bold font-mono text-slate-100 tracking-tight">
-              {activeDispatchesCount} Dispatches
-            </div>
-            <div className="text-[10px] text-emerald-400 font-mono mt-1 flex items-center gap-1">
-              <span>₹ 18.42 Cr Specie Insured</span>
-            </div>
-          </div>
-
-          <div className="bg-surface-card border border-surface-border rounded-xl p-4 shadow-sm hover:border-gold/30 transition-colors">
-            <div className="flex items-center justify-between text-xs text-platinum/70 mb-1 font-mono">
-              <span>Custody Sealed Pieces</span>
-              <Lock className="w-4 h-4 text-gold" />
-            </div>
-            <div className="text-2xl font-bold font-mono text-gold tracking-tight">
-              {sealedPiecesCount} Pieces
-            </div>
-            <div className="text-[10px] text-platinum/60 font-mono mt-1">
-              100% RFID Tamper-Taped
-            </div>
-          </div>
-
-          <div className="bg-surface-card border border-surface-border rounded-xl p-4 shadow-sm hover:border-gold/30 transition-colors">
-            <div className="flex items-center justify-between text-xs text-platinum/70 mb-1 font-mono">
-              <span>Transit ETA Compliance</span>
-              <MapPin className="w-4 h-4 text-cyan-400" />
-            </div>
-            <div className="text-2xl font-bold font-mono text-cyan-400 tracking-tight">
-              {etaCompliance}
-            </div>
-            <div className="text-[10px] text-platinum/60 font-mono mt-1">
-              GPS Geofenced Corridor
-            </div>
-          </div>
-
-          <div className="bg-surface-card border border-surface-border rounded-xl p-4 shadow-sm hover:border-gold/30 transition-colors">
-            <div className="flex items-center justify-between text-xs text-platinum/70 mb-1 font-mono">
-              <span>Security Incidents</span>
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            </div>
-            <div className="text-2xl font-bold font-mono text-slate-100 tracking-tight">
-              {securityBreaches} Breach Alerts
-            </div>
-            <div className="text-[10px] text-platinum/60 font-mono mt-1">
-              Armored Escort Guard Active
-            </div>
-          </div>
-        </div>
+        {/* 4 Metric KPI Cards */}
+        <WorkstationKpiGrid items={kpis} />
 
         {/* Master Workspace: 65% Directory + 35% Sticky Inspector */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column (65% -> col-span-12 lg:col-span-8) */}
-          <div className="lg:col-span-8 space-y-4">
+        <WorkstationLayout
+          inspector={
+            <TransitSecurityInspector
+              item={selectedItem}
+              parentRouteTitle={selectedRouteTitle}
+              carrierPlate={selectedCarrierPlate}
+              onClose={() => setSelectedItem(null)}
+              onAcknowledgeDeSeal={(item) => {
+                setManifests((prev) =>
+                  prev.map((m) => ({
+                    ...m,
+                    items: m.items.map((i) =>
+                      i.id === item.id
+                        ? { ...i, status: "DE_SEALED" as const }
+                        : i
+                    ),
+                  }))
+                );
+                setSelectedItem((prev) =>
+                  prev ? { ...prev, status: "DE_SEALED" } : null
+                );
+              }}
+            />
+          }
+        >
+          <div className="space-y-4">
             {/* Filter & Search Bar */}
             <div className="bg-surface-card border border-surface-border rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
               <div className="relative flex-1 min-w-[240px]">
-                <Search className="w-4 h-4 absolute left-3 top-2.5 text-platinum/50" />
-                <input
+                <Search className="w-4 h-4 absolute left-3 top-2.5 text-muted-foreground" />
+                <Input
                   type="text"
                   placeholder="Filter by Manifest ID, Vehicle Plate, Electronic Seal ID..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-1.5 bg-surface-elevated border border-surface-border rounded-lg text-xs text-slate-100 placeholder:text-platinum/40 focus:outline-none focus:border-gold font-mono"
+                  className="pl-9 bg-surface-elevated border-surface-border font-mono text-xs"
                 />
               </div>
 
               <div className="flex items-center space-x-1.5 text-xs font-mono">
-                <button
-                  onClick={() => setFilterState("ALL")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                    filterState === "ALL"
-                      ? "bg-gold text-obsidian font-bold"
-                      : "bg-surface-elevated text-platinum/70 hover:text-slate-100"
-                  }`}
-                >
-                  All Dispatches
-                </button>
-                <button
-                  onClick={() => setFilterState("DELHI")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                    filterState === "DELHI"
-                      ? "bg-gold text-obsidian font-bold"
-                      : "bg-surface-elevated text-platinum/70 hover:text-slate-100"
-                  }`}
-                >
-                  Delhi Safe
-                </button>
-                <button
-                  onClick={() => setFilterState("ATELIER")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                    filterState === "ATELIER"
-                      ? "bg-gold text-obsidian font-bold"
-                      : "bg-surface-elevated text-platinum/70 hover:text-slate-100"
-                  }`}
-                >
-                  Surat Atelier
-                </button>
-                <button
-                  onClick={() => setFilterState("BANGALORE")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] transition-colors ${
-                    filterState === "BANGALORE"
-                      ? "bg-gold text-obsidian font-bold"
-                      : "bg-surface-elevated text-platinum/70 hover:text-slate-100"
-                  }`}
-                >
-                  Bangalore Showroom
-                </button>
+                {(["ALL", "DELHI", "ATELIER", "BANGALORE"] as const).map((key) => {
+                  const labels: Record<string, string> = {
+                    ALL: "All Dispatches",
+                    DELHI: "Delhi Safe",
+                    ATELIER: "Surat Atelier",
+                    BANGALORE: "Bangalore Showroom",
+                  };
+                  return (
+                    <Button
+                      key={key}
+                      variant={filterState === key ? "gold" : "outline"}
+                      size="xs"
+                      onClick={() => setFilterState(key)}
+                    >
+                      {labels[key]}
+                    </Button>
+                  );
+                })}
               </div>
             </div>
 
@@ -416,45 +374,19 @@ export default function TransfersTransitPage() {
               ))}
 
               {filteredManifests.every((m) => m.items.length === 0) && (
-                <div className="bg-surface-card border border-surface-border rounded-xl p-12 text-center text-platinum/50">
-                  <Truck className="w-10 h-10 mx-auto text-platinum/30 mb-2" />
-                  <p className="text-sm font-medium text-slate-200">
+                <Card className="border-surface-border bg-surface-card p-12 text-center text-muted-foreground">
+                  <Truck className="w-10 h-10 mx-auto text-muted-foreground/30 mb-2" />
+                  <p className="text-sm font-medium text-foreground">
                     No matching transit consignments found
                   </p>
-                  <p className="text-xs text-platinum/60 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Try adjusting your search criteria or schedule a new armored transfer.
                   </p>
-                </div>
+                </Card>
               )}
             </div>
           </div>
-
-          {/* Right Column (35% -> col-span-12 lg:col-span-4) Sticky Inspector */}
-          <div className="lg:col-span-4 lg:sticky lg:top-20">
-            <TransitSecurityInspector
-              item={selectedItem}
-              parentRouteTitle={selectedRouteTitle}
-              carrierPlate={selectedCarrierPlate}
-              onClose={() => setSelectedItem(null)}
-              onAcknowledgeDeSeal={(item) => {
-                // Update item status to DE_SEALED
-                setManifests((prev) =>
-                  prev.map((m) => ({
-                    ...m,
-                    items: m.items.map((i) =>
-                      i.id === item.id
-                        ? { ...i, status: "DE_SEALED" as const }
-                        : i
-                    ),
-                  }))
-                );
-                setSelectedItem((prev) =>
-                  prev ? { ...prev, status: "DE_SEALED" } : null
-                );
-              }}
-            />
-          </div>
-        </div>
+        </WorkstationLayout>
 
         {/* Modal for Scheduling Armored Transfer */}
         <ScheduleTransferModal

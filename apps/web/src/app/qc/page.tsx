@@ -17,8 +17,14 @@ import {
   Search,
   Plus,
   Microscope,
-  Sliders,
 } from "lucide-react";
+import { WorkstationKpiGrid, KpiItem } from "@/components/workstation/WorkstationKpiCard";
+import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 
 const INITIAL_QC_SESSIONS: QcSessionData[] = [
   {
@@ -98,91 +104,66 @@ const INITIAL_QC_SESSIONS: QcSessionData[] = [
     isIsoCertified: true,
     items: [
       {
-        id: "qc-itm-11",
-        itemCode: "QC-ITM-11",
+        id: "qc-itm-04",
+        itemCode: "QC-ITM-04",
         parentPieceSerial: "JWL-2026-08913",
-        materialDescription: "22K Solid Gold Kundan Choker",
+        materialDescription: "22K Kundan Choker Necklace",
         grossWeightGrams: 48.65,
         hydrostaticWeightGrams: 45.92,
-        specificGravity: 17.82,
+        specificGravity: 17.65,
         standardGrossWeightGrams: 48.65,
         varianceGrams: 0.0,
         variancePercent: 0.0,
         purityPercent: 91.68,
-        finenessString: "916.8",
-        elements: { au: 91.68, ag: 5.2, cu: 3.12 },
+        finenessString: "916 (22K)",
+        elements: { au: 91.68, ag: 5.12, cu: 3.2 },
         toleranceStatus: "TOLERANCE_OK",
         status: "PASSED",
-        destinationPath: "Vault 02 (Retail Strongroom) > Safe 01 > Tray B1",
-      },
-    ],
-  },
-  {
-    id: "qc-sess-1190",
-    sessionNumber: "Session QC-2026-1190",
-    batchName: "Solitaire Diamond Rings 1.25ct (Pt950)",
-    inspectorName: "Dr. A. Joshi",
-    instrumentModel: "Mettler Hydrostatic Density Stage",
-    itemsCount: 8,
-    status: "PASSED",
-    isIsoCertified: true,
-    items: [
-      {
-        id: "qc-itm-21",
-        itemCode: "QC-ITM-21",
-        parentPieceSerial: "JWL-2026-08915",
-        materialDescription: "Platinum Eternity Band 0.85ct",
-        grossWeightGrams: 6.84,
-        hydrostaticWeightGrams: 6.52,
-        specificGravity: 21.45,
-        standardGrossWeightGrams: 6.84,
-        varianceGrams: 0.0,
-        variancePercent: 0.0,
-        purityPercent: 95.2,
-        finenessString: "952.0",
-        elements: { au: 0.0, ag: 0.0, cu: 4.8, pt: 95.2 },
-        toleranceStatus: "TOLERANCE_OK",
-        status: "PASSED",
-        destinationPath: "Vault 01 (Primary Safe) > Locker 02 > Tray B1",
-      },
-    ],
-  },
-  {
-    id: "qc-sess-1191",
-    sessionNumber: "Session QC-2026-1191",
-    batchName: "Argor-Heraeus Dore Bar Inward Quarantine",
-    inspectorName: "R. Sen",
-    instrumentModel: "Thermo Niton XL5 Plus (COM4)",
-    itemsCount: 4,
-    status: "QUARANTINED",
-    isIsoCertified: true,
-    items: [
-      {
-        id: "qc-itm-31",
-        itemCode: "QC-ITM-31",
-        parentPieceSerial: "AH-DORE-01",
-        materialDescription: "Au 995.0 Unrefined Dore Bar",
-        grossWeightGrams: 4449.88,
-        hydrostaticWeightGrams: 4212.1,
-        specificGravity: 18.72,
-        standardGrossWeightGrams: 4450.0,
-        varianceGrams: -0.12,
-        variancePercent: -0.003,
-        purityPercent: 99.48,
-        finenessString: "994.8",
-        elements: { au: 99.48, ag: 0.35, cu: 0.17 },
-        toleranceStatus: "TOLERANCE_OK",
-        status: "QUARANTINED",
-        destinationPath: "Vault 03 (QC Safe) > Locker 05 > Tray Q1",
+        destinationPath: "Vault 01 > Safe 01 > Locker 02-B1",
       },
     ],
   },
 ];
 
-export default function QcLabPage() {
+const QC_KPIS: KpiItem[] = [
+  {
+    id: "kpi-sessions",
+    title: "Active QC Sessions",
+    value: "4 Inspection Lots",
+    subValue: "Inward Gold, Kundan Chokers, Solitaire Rings",
+    badge: { text: "Active", variant: "gold" },
+    icon: <FlaskConical className="w-3.5 h-3.5 text-gold" />,
+  },
+  {
+    id: "kpi-pieces",
+    title: "Pieces Tested Today",
+    value: "48 / 60 Items",
+    subValue: "Au 999.9, Au 916, Pt 950 Verified",
+    badge: { text: "80% Complete", variant: "emerald" },
+    icon: <Scale className="w-3.5 h-3.5 text-status-emerald" />,
+  },
+  {
+    id: "kpi-quarantine",
+    title: "Quarantine Hold",
+    value: "4 Discrepant Lots",
+    subValue: "Awaiting Senior Metallurgist Review",
+    badge: { text: "Action Req", variant: "amber" },
+    icon: <ShieldAlert className="w-3.5 h-3.5 text-status-amber" />,
+  },
+  {
+    id: "kpi-hallmark",
+    title: "Hallmark Rate",
+    value: "96.8% Passed",
+    subValue: "Zero tolerance deviation across 142 assays",
+    badge: { text: "BIS Compliant", variant: "emerald" },
+    icon: <CheckCircle2 className="w-3.5 h-3.5 text-status-emerald" />,
+  },
+];
+
+export default function QcPage() {
   const [sessions, setSessions] = useState<QcSessionData[]>(INITIAL_QC_SESSIONS);
   const [activeFilter, setActiveFilter] = useState<
-    "ALL" | "UNDER_INSPECTION" | "QUARANTINED" | "PASSED"
+    "ALL" | "UNDER_INSPECTION" | "PASSED" | "FAILED"
   >("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<QcItemData | null>(
@@ -193,7 +174,6 @@ export default function QcLabPage() {
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Dynamic filter
   const filteredSessions = sessions
     .filter((sess) => {
       if (activeFilter === "ALL") return true;
@@ -218,166 +198,107 @@ export default function QcLabPage() {
     setSelectedSessionName(session.sessionNumber + " > " + session.batchName);
   };
 
+  const handleCalibrate = () => {
+    toast.success("Spectrometer Calibrated", {
+      description: "Drift calibration zeroed: Reference standard Au999.9 certified.",
+    });
+  };
+
   return (
     <AppShell>
-      <div className="max-w-[1600px] mx-auto space-y-8 pb-12">
+      <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
         {/* Top Header Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-platinum/70 uppercase tracking-wider mb-1">
+            <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
               <span>Flagship Mumbai (INV-11)</span>
               <span>&gt;</span>
               <span className="text-gold font-medium">
                 Analytical QC &amp; Assay Lab
               </span>
-              <span className="inline-flex items-center gap-1.5 ml-2 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <Badge variant="emerald" dot className="ml-2">
                 Thermo Niton XRF Spectrometer COM4 Live • Calibrated
-              </span>
+              </Badge>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-100">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Analytical QC &amp; Metallurgical Assay Directory
             </h1>
           </div>
 
           <div className="flex items-center space-x-3">
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => setIsModalOpen(true)}
-              className="px-3.5 py-1.5 rounded-md bg-surface-card border border-surface-border text-xs font-medium text-slate-200 hover:border-gold/50 hover:text-gold flex items-center space-x-1.5 transition-colors"
             >
-              <FlaskConical className="w-3.5 h-3.5 text-platinum/60" />
-              <span>+ New Inspection Batch</span>
-            </button>
-            <button
-              onClick={() => alert("Spectrometer COM4 Drift Calibration Zeroed: Reference Standard Au999.9 Verified.")}
-              className="px-3.5 py-1.5 rounded-md bg-gold text-obsidian text-xs font-semibold hover:bg-gold-light flex items-center space-x-1.5 shadow-sm transition-colors"
+              <FlaskConical className="w-3.5 h-3.5 mr-1" />
+              <span>New Inspection Batch</span>
+            </Button>
+            <Button
+              variant="gold"
+              size="sm"
+              onClick={handleCalibrate}
             >
-              <Microscope className="w-3.5 h-3.5" />
+              <Microscope className="w-3.5 h-3.5 mr-1" />
               <span>Calibrate Spectrometer</span>
-            </button>
+            </Button>
           </div>
         </div>
 
-        {/* 4 Summary Metric Cards (Matching Screen 2 & Screen 3) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {/* Metric 1: Active QC Sessions */}
-          <div className="p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm">
-            <div className="flex items-center justify-between text-xs font-medium text-platinum">
-              <span className="uppercase font-mono text-[10px] tracking-wider">
-                Active QC Sessions
-              </span>
-              <FlaskConical className="w-4 h-4 text-gold/70" />
-            </div>
-            <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight font-mono text-slate-100">
-                4 Inspection Lots
-              </div>
-              <p className="mt-1 text-xs text-platinum/60 truncate">
-                Inward Gold, Kundan Chokers, Solitaire Rings
-              </p>
-            </div>
-          </div>
+        {/* 4 Summary Metric Cards */}
+        <WorkstationKpiGrid items={QC_KPIS} />
 
-          {/* Metric 2: Pieces Tested Today */}
-          <div className="p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm">
-            <div className="flex items-center justify-between text-xs font-medium text-platinum">
-              <span className="uppercase font-mono text-[10px] tracking-wider">
-                Pieces Tested Today
-              </span>
-              <Scale className="w-4 h-4 text-emerald-400" />
-            </div>
-            <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight font-mono text-gold-light tabular-nums">
-                48 / 60 <span className="text-sm font-sans font-normal text-platinum">Items</span>
-              </div>
-              <p className="mt-1 text-xs text-emerald-400 flex items-center gap-1">
-                <span>● Au 999.9, Au 916, Pt 950 Verified</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Metric 3: Quarantine Hold Rate */}
-          <div className="p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm">
-            <div className="flex items-center justify-between text-xs font-medium text-platinum">
-              <span className="uppercase font-mono text-[10px] tracking-wider">
-                Quarantine Hold
-              </span>
-              <ShieldAlert className="w-4 h-4 text-amber-400" />
-            </div>
-            <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight font-mono text-amber-300">
-                4 Discrepant Lots
-              </div>
-              <p className="mt-1 text-xs text-platinum/60">
-                Awaiting Senior Metallurgist Review
-              </p>
-            </div>
-          </div>
-
-          {/* Metric 4: First-Pass Hallmarking */}
-          <div className="p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm">
-            <div className="flex items-center justify-between text-xs font-medium text-platinum">
-              <span className="uppercase font-mono text-[10px] tracking-wider">
-                Hallmark Rate
-              </span>
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            </div>
-            <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight font-mono tabular-nums text-slate-100">
-                96.8% Passed
-              </div>
-              <p className="mt-1 text-xs text-platinum/60">
-                Zero tolerance deviation across 142 assays
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* 2-Column Main Workspace (65% Directory / 35% Inspector) */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-          {/* Left Column (8 of 12 spans = 65%): QC Inspection Directory */}
-          <div className="xl:col-span-8 space-y-6">
+        {/* Workstation 65% / 35% Layout */}
+        <WorkstationLayout
+          inspector={
+            <AssayInspector
+              item={selectedItem}
+              parentSessionName={selectedSessionName}
+            />
+          }
+        >
+          {/* Left Column (65%): QC Inspection Directory */}
+          <div className="space-y-4">
             {/* Search & Filter Toolbar */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-surface-card p-3 rounded-xl border border-surface-border shadow-sm">
+            <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <div className="relative flex-1">
-                <Search className="w-4 h-4 text-platinum/50 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Filter by QC Batch ID, Item Serial, Alloy, or Metallurgist..."
+                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+                <Input
+                  placeholder="Filter by Specimen ID, Assay Batch, or Metallurgist..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-obsidian-deep border border-surface-border rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-100 placeholder-platinum/40 focus:outline-none focus:border-gold/60 transition-colors"
+                  className="pl-9 h-8"
                 />
               </div>
 
               {/* Filter Pills */}
               <div className="flex items-center space-x-1 overflow-x-auto text-xs">
                 {[
-                  { id: "ALL", label: "All Batches" },
-                  { id: "UNDER_INSPECTION", label: "Under Inspection" },
-                  { id: "QUARANTINED", label: "Quarantined" },
-                  { id: "PASSED", label: "Hallmark Passed" },
+                  { id: "ALL", label: "All Sessions" },
+                  { id: "UNDER_INSPECTION", label: "In Testing" },
+                  { id: "PASSED", label: "Assay Passed" },
+                  { id: "FAILED", label: "Quarantined" },
                 ].map(({ id, label }) => (
                   <button
                     key={id}
                     onClick={() => setActiveFilter(id as any)}
                     className={`px-2.5 py-1 rounded-md font-mono text-[11px] font-medium transition-all whitespace-nowrap ${
                       activeFilter === id
-                        ? "bg-gold text-obsidian font-bold shadow-sm"
-                        : "text-platinum/70 hover:text-slate-100 bg-obsidian-deep border border-surface-border"
+                        ? "bg-gold text-black font-semibold shadow-sm"
+                        : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
                     }`}
                   >
                     {label}
                   </button>
                 ))}
               </div>
-            </div>
+            </Card>
 
-            {/* QC Session Cards */}
+            {/* Inspection Session Sections */}
             {filteredSessions.length === 0 ? (
-              <div className="text-center py-12 bg-surface-card border border-surface-border rounded-xl text-platinum/50 text-xs">
-                No QC inspection sessions match your filter criteria.
-              </div>
+              <Card className="text-center py-12 text-muted-foreground text-xs">
+                No metallurgical assay sessions match your filter criteria.
+              </Card>
             ) : (
               filteredSessions.map((session, idx) => (
                 <QcSessionSection
@@ -390,23 +311,12 @@ export default function QcLabPage() {
               ))
             )}
           </div>
-
-          {/* Right Column (4 of 12 spans = 35%): Selected QC Item Assay Inspector */}
-          <div className="xl:col-span-4 sticky top-6 self-start h-[calc(100vh-140px)]">
-            <AssayInspector
-              item={selectedItem}
-              parentSessionName={selectedSessionName}
-            />
-          </div>
-        </div>
+        </WorkstationLayout>
 
         {/* New QC Batch Modal */}
         <NewQcBatchModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onCreated={() => {
-            // refresh data
-          }}
         />
       </div>
     </AppShell>

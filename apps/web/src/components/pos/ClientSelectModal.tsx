@@ -1,7 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, UserCheck, Search, Check, ShieldCheck, Sparkles } from "lucide-react";
+import { UserCheck, Search, ShieldCheck } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { TabularCurrency } from "@/components/workstation/TabularCurrency";
+import { toast } from "sonner";
 
 export interface ClientProfileData {
   id: string;
@@ -50,145 +62,88 @@ const SAMPLE_CLIENTS: ClientProfileData[] = [
 interface ClientSelectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectClient?: (client: ClientProfileData) => void;
+  onSelectClient: (client: ClientProfileData) => void;
+  currentClientId?: string;
 }
 
 export function ClientSelectModal({
   isOpen,
   onClose,
   onSelectClient,
+  currentClientId,
 }: ClientSelectModalProps) {
   const [search, setSearch] = useState("");
-  const [selectedId, setSelectedId] = useState<string>("cli-01");
 
-  if (!isOpen) return null;
-
-  const filteredClients = SAMPLE_CLIENTS.filter(
+  const filtered = SAMPLE_CLIENTS.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.panNumber.toLowerCase().includes(search.toLowerCase()) ||
       c.phone.includes(search)
   );
 
-  const handleConfirm = () => {
-    const client = SAMPLE_CLIENTS.find((c) => c.id === selectedId);
-    if (client) {
-      onSelectClient?.(client);
-      onClose();
-    }
+  const handleSelect = (client: ClientProfileData) => {
+    toast.success(`Client Linked: ${client.name}`, {
+      description: `PAN verified (${client.panNumber}) for Section 269ST & PMLA compliance.`,
+    });
+    onSelectClient(client);
+    onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-obsidian/75 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-surface-card border border-surface-border rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-        {/* Modal Header */}
-        <div className="px-6 py-4 bg-surface-elevated border-b border-surface-border flex items-center justify-between">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-xl">
+        <DialogHeader>
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-lg bg-gold/15 border border-gold/30 flex items-center justify-center text-gold">
               <UserCheck className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-slate-100">
-                Select VIP Client & Salon Session
-              </h3>
-              <p className="text-[11px] text-platinum/60 font-mono">
-                PMLA / AML Verified Client Registry • Flagship Salon
-              </p>
+              <DialogTitle>Select Private Client &amp; KYC Verification</DialogTitle>
+              <DialogDescription>Rule 114B PAN / PMLA High-Value Mandate</DialogDescription>
             </div>
           </div>
+        </DialogHeader>
 
-          <button
-            onClick={onClose}
-            className="p-1 rounded text-platinum/60 hover:text-slate-100 hover:bg-surface-border transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Search */}
-        <div className="p-4 border-b border-surface-border">
+        <div className="space-y-3">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-platinum/50" />
-            <input
-              type="text"
-              placeholder="Search by Client Name, PAN, or Mobile #..."
+            <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+            <Input
+              placeholder="Search by client name, PAN card #, or mobile..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-surface-elevated border border-surface-border rounded-lg text-xs text-slate-100 placeholder:text-platinum/40 focus:outline-none focus:border-gold font-mono"
+              className="pl-9 h-8"
             />
           </div>
-        </div>
 
-        {/* Client List */}
-        <div className="p-4 space-y-2.5 max-h-72 overflow-y-auto">
-          {filteredClients.map((client) => {
-            const isSelected = selectedId === client.id;
-            return (
+          <div className="divide-y divide-surface-border/40 max-h-72 overflow-y-auto">
+            {filtered.map((client) => (
               <div
                 key={client.id}
-                onClick={() => setSelectedId(client.id)}
-                className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
-                  isSelected
-                    ? "bg-surface-elevated border-gold shadow-[0_0_12px_rgba(212,175,55,0.18)]"
-                    : "bg-surface-card border-surface-border hover:border-gold/40"
+                onClick={() => handleSelect(client)}
+                className={`p-3 rounded-lg cursor-pointer transition-colors flex items-center justify-between ${
+                  currentClientId === client.id
+                    ? "bg-surface-elevated border border-gold/40"
+                    : "hover:bg-surface-elevated/60"
                 }`}
               >
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-bold text-slate-100 font-mono">
-                      {client.name}
-                    </span>
-                    <span className="px-1.5 py-0.5 rounded bg-gold/15 border border-gold/30 text-gold text-[9px] font-mono uppercase font-semibold">
-                      {client.vipTier}
-                    </span>
+                    <span className="font-semibold text-foreground text-sm">{client.name}</span>
+                    <Badge variant="gold" size="sm">{client.vipTier}</Badge>
                   </div>
-
-                  <div className="text-[11px] text-platinum/70 flex items-center space-x-2 mt-1 font-mono">
-                    <span>PAN: {client.panNumber}</span>
-                    <span>•</span>
-                    <span>{client.phone}</span>
-                    <span>•</span>
-                    <span className="text-emerald-400">
-                      ₹ {(client.lifetimeSpendInr / 10000000).toFixed(2)} Cr Lifetime
-                    </span>
+                  <div className="text-xs text-muted-foreground font-mono mt-0.5">
+                    PAN: {client.panNumber} • {client.phone} • {client.assignedSalon}
                   </div>
                 </div>
-
-                <div className="shrink-0">
-                  <div
-                    className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                      isSelected
-                        ? "border-gold bg-gold text-obsidian"
-                        : "border-surface-border bg-surface-elevated"
-                    }`}
-                  >
-                    {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                  </div>
+                <div className="text-right">
+                  <span className="text-[10px] text-muted-foreground block font-mono">Lifetime Spend</span>
+                  <TabularCurrency amount={client.lifetimeSpendInr} className="text-gold font-bold text-xs" />
                 </div>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
-
-        {/* Modal Actions */}
-        <div className="px-6 py-4 bg-surface-elevated border-t border-surface-border flex items-center justify-end space-x-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg text-xs font-medium text-platinum/80 hover:bg-surface-card transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleConfirm}
-            className="px-4 py-2 rounded-lg text-xs font-semibold bg-gold hover:bg-gold-light text-obsidian shadow-lg shadow-gold/20 flex items-center space-x-1.5 transition-colors"
-          >
-            <Check className="w-3.5 h-3.5" />
-            <span>Assign Client to POS Cart</span>
-          </button>
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
