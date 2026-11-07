@@ -46,7 +46,7 @@ test.describe("Master-Detail Workstation Inspectors", () => {
     ).toBeVisible();
   });
 
-  test("Bullion Pricing: selecting alloy cards updates dynamic pricing rules", async ({
+  test("Bullion Pricing: selecting alloy cards updates dynamic pricing rules and broadcasts spot fix", async ({
     page,
   }) => {
     await page.goto("/pricing");
@@ -65,6 +65,42 @@ test.describe("Master-Detail Workstation Inspectors", () => {
     await expect(
       inspector.locator("text=Au 916 Standard Gold (22K)").first(),
     ).toBeVisible();
+
+    // Test "Broadcast Spot" from inspector
+    const lockSpotBtn = inspector.getByRole("button", {
+      name: "Broadcast Spot",
+    });
+    await expect(lockSpotBtn).toBeVisible();
+    await lockSpotBtn.click();
+
+    // Verify toast
+    await expect(
+      page.locator("text=Spot Rate Locked for Au 916 Standard Gold (22K)").first(),
+    ).toBeVisible({ timeout: 5000 });
+
+    // Open Publish Spot Fix modal from top action bar
+    const broadcastBtn = page.getByRole("button", {
+      name: "Broadcast Spot Fix",
+    });
+    await expect(broadcastBtn).toBeVisible();
+    await broadcastBtn.click();
+
+    // Modal should be visible
+    await expect(
+      page.locator("text=Publish Bullion Spot Rate Fix").first(),
+    ).toBeVisible();
+
+    // Submit modal
+    const publishBtn = page.getByRole("button", {
+      name: /Broadcast & Lock Rates/i,
+    });
+    await expect(publishBtn).toBeVisible();
+    await publishBtn.click();
+
+    // Toast appears
+    await expect(
+      page.locator("text=Bullion Spot Rate Fixing Published").first(),
+    ).toBeVisible({ timeout: 5000 });
   });
 
   test("Inventory Master: clicking jewellery piece cards inspects pedigree lineage", async ({

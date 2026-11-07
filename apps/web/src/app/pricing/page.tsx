@@ -12,6 +12,7 @@ import {
 } from "../../components/pricing/PricingTierSection";
 import { AlloyRuleInspector } from "../../components/pricing/AlloyRuleInspector";
 import { NewPricingTierModal } from "../../components/pricing/NewPricingTierModal";
+import { PublishRateFixModal } from "../../components/pricing/PublishRateFixModal";
 import {
   TrendingUp,
   Scale,
@@ -133,7 +134,8 @@ export default function PricingMasterPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isNewTierModalOpen, setIsNewTierModalOpen] = useState(false);
-  const [isBroadcasting, setIsBroadcasting] = useState(false);
+  const [isRateFixModalOpen, setIsRateFixModalOpen] = useState(false);
+  const [liveGoldRate, setLiveGoldRate] = useState<number>(7450.5);
 
   useEffect(() => {
     async function loadLiveRates() {
@@ -148,6 +150,8 @@ export default function PricingMasterPage() {
         if (Array.isArray(res.data) && res.data.length > 0) {
           const goldRate = res.data.find((r) => r.metalType === "GOLD")?.ratePerGramCad;
           if (goldRate) {
+            const numGold = Number(goldRate);
+            setLiveGoldRate(numGold);
             setPricingGroups((prev) =>
               prev.map((g) => {
                 if (g.id !== "grp-alloys") return g;
@@ -157,12 +161,12 @@ export default function PricingMasterPage() {
                     if (a.karatTag === "24K") {
                       return {
                         ...a,
-                        spotPricePerGram: Number(goldRate),
-                        calculatedRetailPerGram: Number(goldRate) * 1.002,
+                        spotPricePerGram: numGold,
+                        calculatedRetailPerGram: numGold * 1.002,
                       };
                     }
                     if (a.karatTag === "22K") {
-                      const rate22k = Math.round(Number(goldRate) * 0.916);
+                      const rate22k = Math.round(numGold * 0.916);
                       return {
                         ...a,
                         spotPricePerGram: rate22k,
@@ -170,7 +174,7 @@ export default function PricingMasterPage() {
                       };
                     }
                     if (a.karatTag === "18K") {
-                      const rate18k = Math.round(Number(goldRate) * 0.75);
+                      const rate18k = Math.round(numGold * 0.75);
                       return {
                         ...a,
                         spotPricePerGram: rate18k,
@@ -200,15 +204,15 @@ export default function PricingMasterPage() {
     {
       id: "kpi-mcx-spot",
       title: "MCX 24K Gold Spot",
-      value: "₹7,450.50 / g",
+      value: `₹${liveGoldRate.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / g`,
       subValue: "+0.64% Today (+₹46.80)",
-      badge: { text: "+0.64%", variant: "emerald" },
+      badge: { text: "MCX Fix", variant: "emerald" },
       icon: <TrendingUp className="w-3.5 h-3.5 text-status-emerald" />,
     },
     {
       id: "kpi-22k-bench",
       title: "22K Benchmark (Au 916)",
-      value: "₹6,824.00 / g",
+      value: `₹${(Math.round(liveGoldRate * 0.916 * 10) / 10).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / g`,
       subValue: "Base Jeweller Standard",
       badge: { text: "Au 916", variant: "gold" },
       icon: <Scale className="w-3.5 h-3.5 text-gold" />,
@@ -261,14 +265,70 @@ export default function PricingMasterPage() {
   };
 
   const handleBroadcast = () => {
-    setIsBroadcasting(true);
-    setTimeout(() => {
-      setIsBroadcasting(false);
-      toast.success("Bullion Spot Fixing Broadcasted", {
-        description:
-          "Published updated rates to 14 POS counter terminals. Zero latency drift.",
-      });
-    }, 800);
+    setIsRateFixModalOpen(true);
+  };
+
+  const handleRatesPublished = (rates: {
+    gold24k: number;
+    gold22k: number;
+    gold18k: number;
+    platinum: number;
+    silver: number;
+  }) => {
+    setLiveGoldRate(rates.gold24k);
+    setPricingGroups((prev) =>
+      prev.map((g) => {
+        if (g.id !== "grp-alloys") return g;
+        return {
+          ...g,
+          alloys: g.alloys.map((a) => {
+            if (a.karatTag === "24K") {
+              const updated = {
+                ...a,
+                spotPricePerGram: rates.gold24k,
+                calculatedRetailPerGram:
+                  Math.round(rates.gold24k * 1.002 * 10) / 10,
+                lastUpdated: new Date().toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              };
+              if (selectedAlloy?.id === a.id) setSelectedAlloy(updated);
+              return updated;
+            }
+            if (a.karatTag === "22K") {
+              const updated = {
+                ...a,
+                spotPricePerGram: rates.gold22k,
+                calculatedRetailPerGram:
+                  Math.round(rates.gold22k * 1.125 * 10) / 10,
+                lastUpdated: new Date().toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              };
+              if (selectedAlloy?.id === a.id) setSelectedAlloy(updated);
+              return updated;
+            }
+            if (a.karatTag === "18K") {
+              const updated = {
+                ...a,
+                spotPricePerGram: rates.gold18k,
+                calculatedRetailPerGram:
+                  Math.round(rates.gold18k * 1.18 * 10) / 10,
+                lastUpdated: new Date().toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              };
+              if (selectedAlloy?.id === a.id) setSelectedAlloy(updated);
+              return updated;
+            }
+            return a;
+          }),
+        };
+      }),
+    );
   };
 
   const handleTierCreated = (
@@ -302,7 +362,7 @@ export default function PricingMasterPage() {
                 Bullion Fixing & Dynamic Pricing Engine
               </span>
               <Badge variant="emerald" dot className="ml-2">
-                MCX Gold Spot ₹7,450.50/g • Reuters IBJA Feed Live
+                MCX Gold Spot ₹{liveGoldRate.toLocaleString("en-IN", { minimumFractionDigits: 1 })}/g • Reuters IBJA Feed Live
               </Badge>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
@@ -323,7 +383,6 @@ export default function PricingMasterPage() {
               variant="gold"
               size="sm"
               onClick={handleBroadcast}
-              isLoading={isBroadcasting}
             >
               <Radio className="w-3.5 h-3.5 mr-1" />
               <span>Broadcast Spot Fix</span>
@@ -406,6 +465,14 @@ export default function PricingMasterPage() {
           isOpen={isNewTierModalOpen}
           onClose={() => setIsNewTierModalOpen(false)}
           onCreated={handleTierCreated}
+        />
+
+        {/* Modal for Live Bullion Rate Fix & Price Snapshots */}
+        <PublishRateFixModal
+          isOpen={isRateFixModalOpen}
+          onClose={() => setIsRateFixModalOpen(false)}
+          currentGoldRate={liveGoldRate}
+          onRatesPublished={handleRatesPublished}
         />
       </div>
     </AppShell>
