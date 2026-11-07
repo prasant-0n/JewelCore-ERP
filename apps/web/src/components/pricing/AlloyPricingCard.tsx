@@ -1,0 +1,129 @@
+"use client";
+
+import React from "react";
+import { TrendingUp, Scale, CheckCircle2, ShieldCheck, Sparkles, AlertCircle } from "lucide-react";
+
+export interface AlloyRuleData {
+  id: string;
+  alloyName: string;
+  karatTag: string;
+  finenessPurity: string;
+  spotPricePerGram: number;
+  makingChargePercent: number;
+  makingChargeFixedPerGram: number;
+  wastagePercent: number;
+  calculatedRetailPerGram: number;
+  status: "LOCKED" | "ACTIVE" | "PENDING_FIX";
+  volatilityIndexPercent: number;
+  hedgingCoverPercent: number;
+  targetTerminalsCount: number;
+  lastUpdated: string;
+}
+
+interface AlloyPricingCardProps {
+  alloy: AlloyRuleData;
+  isSelected?: boolean;
+  onSelect?: (alloy: AlloyRuleData) => void;
+}
+
+export function AlloyPricingCard({
+  alloy,
+  isSelected = false,
+  onSelect,
+}: AlloyPricingCardProps) {
+  const isLocked = alloy.status === "LOCKED";
+
+  return (
+    <div
+      onClick={() => onSelect?.(alloy)}
+      className={`relative rounded-xl p-3.5 cursor-pointer transition-all duration-200 select-none flex flex-col justify-between ${
+        isSelected
+          ? "bg-surface-elevated border-2 border-gold shadow-[0_0_18px_rgba(212,175,55,0.22)]"
+          : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/60"
+      }`}
+    >
+      {isSelected && (
+        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
+          Selected
+        </div>
+      )}
+
+      {/* Top Header: Alloy Name & Status Badge */}
+      <div className="flex items-start justify-between gap-1">
+        <div>
+          <div className="flex items-center space-x-1.5">
+            <Scale
+              className={`w-3.5 h-3.5 ${
+                isSelected ? "text-gold" : "text-platinum/60"
+              }`}
+            />
+            <span
+              className={`font-mono text-xs font-bold transition-colors ${
+                isSelected ? "text-gold" : "text-slate-100 group-hover:text-gold"
+              }`}
+            >
+              {alloy.alloyName}
+            </span>
+          </div>
+          <div className="text-[11px] text-platinum/80 font-medium truncate max-w-[190px] mt-0.5">
+            {alloy.finenessPurity}
+          </div>
+        </div>
+
+        <span
+          className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
+            isLocked
+              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+              : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+          }`}
+        >
+          {isLocked ? (
+            <>
+              <CheckCircle2 className="w-2.5 h-2.5" />
+              <span>LIVE FIX LOCKED</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-2.5 h-2.5" />
+              <span>ACTIVE</span>
+            </>
+          )}
+        </span>
+      </div>
+
+      {/* Price Grid */}
+      <div className="my-2.5 py-2 border-y border-surface-border/60 space-y-1.5 text-[11px] font-mono">
+        <div className="flex items-center justify-between">
+          <span className="text-platinum/60 text-[10px] uppercase">Spot Base Fix:</span>
+          <span className="text-slate-100 font-bold tabular-nums">
+            ₹ {alloy.spotPricePerGram.toFixed(2)} / g
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-platinum/60 text-[10px] uppercase">Making Charge:</span>
+          <span className="text-gold font-semibold tabular-nums">
+            {alloy.makingChargePercent > 0
+              ? `${alloy.makingChargePercent.toFixed(1)}% Base`
+              : `₹ ${alloy.makingChargeFixedPerGram.toFixed(2)}/g`}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-platinum/60 text-[10px] uppercase">Wastage Tolerance:</span>
+          <span className="text-platinum/80 tabular-nums">
+            {alloy.wastagePercent.toFixed(2)}%
+          </span>
+        </div>
+      </div>
+
+      {/* Footer: Consumer Retail Rate */}
+      <div className="flex items-center justify-between text-[11px] font-mono">
+        <span className="text-platinum/60 text-[9px] uppercase">Retail Benchmark:</span>
+        <span className="text-emerald-400 font-bold text-xs tabular-nums">
+          ₹ {alloy.calculatedRetailPerGram.toFixed(2)} / g
+        </span>
+      </div>
+    </div>
+  );
+}
