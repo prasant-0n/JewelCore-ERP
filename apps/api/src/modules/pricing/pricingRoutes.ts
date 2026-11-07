@@ -31,15 +31,31 @@ import {
   listPriceSnapshotsHandler,
   getPriceSnapshotByIdHandler,
 } from "./priceSnapshotController.js";
+import {
+  syncBullionFeedHandler,
+  getBullionFeedStatusHandler,
+  getBullionFeedHistoryHandler,
+} from "./bullionFeedController.js";
 
 export function createPricingRouter(): Router {
   const router = Router();
 
-  // All pricing endpoints require authentication
+  // Public/Kiosk Live Bullion Feed Telemetry (unauthenticated for showroom floor displays & ticker widgets)
+  router.get("/feed/status", getBullionFeedStatusHandler);
+  router.get("/feed/history", getBullionFeedHistoryHandler);
+
+  // All subsequent pricing endpoints require authentication
   router.use(authenticate);
 
   // Store-context scoping & multi-store isolation (INV-11)
   router.use(storeContextMiddleware);
+
+  // Live Exchange Spot Feed Ingestion Trigger (Pathway C)
+  router.post(
+    "/feed/sync",
+    requirePermission("pricing:rate:create"),
+    syncBullionFeedHandler,
+  );
 
   // Precious Metal Market Spot Rates (Entity 44 - FEAT-PRICE-01)
   router.post(

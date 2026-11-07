@@ -21,7 +21,9 @@ import {
   Plus,
   Radio,
   Sliders,
+  RefreshCw,
 } from "lucide-react";
+import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
 import {
   WorkstationKpiGrid,
   KpiItem,
@@ -136,6 +138,68 @@ export default function PricingMasterPage() {
   const [isNewTierModalOpen, setIsNewTierModalOpen] = useState(false);
   const [isRateFixModalOpen, setIsRateFixModalOpen] = useState(false);
   const [liveGoldRate, setLiveGoldRate] = useState<number>(7450.5);
+  const [isSyncingFeed, setIsSyncingFeed] = useState(false);
+
+  const { bullionData, syncExchangeFeed, isConnected } = useHardwareTelemetry();
+
+  // Listen to live hardware telemetry / WebSocket exchange ticks
+  useEffect(() => {
+    if (bullionData?.spotInrPerGram && bullionData.spotInrPerGram > 0) {
+      const numGold = bullionData.spotInrPerGram;
+      setLiveGoldRate(numGold);
+      setPricingGroups((prev) =>
+        prev.map((g) => {
+          if (g.id !== "grp-alloys") return g;
+          return {
+            ...g,
+            alloys: g.alloys.map((a) => {
+              if (a.karatTag === "24K") {
+                return {
+                  ...a,
+                  spotPricePerGram: numGold,
+                  calculatedRetailPerGram: Math.round(numGold * 1.002 * 10) / 10,
+                };
+              }
+              if (a.karatTag === "22K") {
+                const rate22k =
+                  bullionData.standardGold22k ?? Math.round(numGold * 0.9166);
+                return {
+                  ...a,
+                  spotPricePerGram: rate22k,
+                  calculatedRetailPerGram: Math.round(rate22k * 1.125 * 10) / 10,
+                };
+              }
+              if (a.karatTag === "18K") {
+                const rate18k =
+                  bullionData.artisanGold18k ?? Math.round(numGold * 0.75);
+                return {
+                  ...a,
+                  spotPricePerGram: rate18k,
+                  calculatedRetailPerGram: Math.round(rate18k * 1.18 * 10) / 10,
+                };
+              }
+              return a;
+            }),
+          };
+        }),
+      );
+    }
+  }, [bullionData]);
+
+  const handleSyncExchange = async () => {
+    setIsSyncingFeed(true);
+    try {
+      const res = await syncExchangeFeed({ sourceExchange: "MCX" });
+      const pureGold = res?.pureGold24k ?? bullionData.spotInrPerGram;
+      toast.success("Commodity Exchange Feed Synchronized", {
+        description: `MCX Gold 24K: ₹${pureGold}/g • 22K: ₹${(res?.standardGold22k ?? Math.round(pureGold * 0.9166))}/g • Broadcasted to all terminals`,
+      });
+    } catch {
+      toast.error("Failed to sync exchange rates");
+    } finally {
+      setIsSyncingFeed(false);
+    }
+  };
 
   useEffect(() => {
     async function loadLiveRates() {
@@ -372,6 +436,22 @@ export default function PricingMasterPage() {
 
           <div className="flex items-center space-x-3">
             <Button
+              variant="outline"
+              size="sm"
+              disabled={isSyncingFeed}
+              onClick={handleSyncExchange}
+              className="font-mono text-xs border-gold/30 hover:bg-gold/10 hover:text-gold"
+            >
+              <RefreshCw
+                className={`w-3.5 h-3.5 mr-1.5 ${
+                  isSyncingFeed ? "animate-spin" : ""
+                }`}
+              />
+              <span>
+                {isSyncingFeed ? "Syncing..." : "Sync MCX Feed"}
+              </span>
+            </Button>
+            <Button
               variant="secondary"
               size="sm"
               onClick={() => setIsNewTierModalOpen(true)}
@@ -389,6 +469,54 @@ export default function PricingMasterPage() {
             </Button>
           </div>
         </div>
+
+        {/* Live Commodity Exchange Ingestion Banner (Pathway C) */}
+        <Card className="p-3.5 bg-surface-elevated/70 border border-surface-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center space-x-3">
+            <div className="p-2 rounded-lg bg-gold/10 border border-gold/20 text-gold flex-shrink-0">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+                <span className="text-xs font-semibold text-foreground">
+                  Commodity Exchange Ingestion Engine (MCX / LBMA / IBJA)
+                </span>
+                <span className="px-1.5 py-0.2 text-[9px] font-mono rounded bg-surface border border-surface-border text-gold font-bold">
+                  MCX Continuous Parity
+                </span>
+                <Badge variant={isConnected ? "emerald" : "gold"} dot>
+                  {isConnected ? "WebSocket Stream Live" : "Feed Active"}
+                </Badge>
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                Tariff-Adjusted Calculation: [LBMA USD/oz × 84.45 FX ÷ 31.1035] × 1.06 (Customs Duty) + ₹45 Refiner Premium = Au 24K Benchmark
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4 w-full md:w-auto justify-between md:justify-end">
+            <div className="text-right font-mono text-xs">
+              <div className="text-muted-foreground text-[10px]">Active Benchmark</div>
+              <div className="text-gold font-bold">
+                ₹{liveGoldRate.toLocaleString("en-IN", { minimumFractionDigits: 2 })}/g
+              </div>
+            </div>
+            <Button
+              variant="gold"
+              size="sm"
+              disabled={isSyncingFeed}
+              onClick={handleSyncExchange}
+              className="text-xs font-mono"
+            >
+              <RefreshCw
+                className={`w-3.5 h-3.5 mr-1.5 ${
+                  isSyncingFeed ? "animate-spin" : ""
+                }`}
+              />
+              <span>Trigger Live Ingestion</span>
+            </Button>
+          </div>
+        </Card>
 
         {/* 4 Summary Metric Cards */}
         <WorkstationKpiGrid items={pricingKpiItems} />

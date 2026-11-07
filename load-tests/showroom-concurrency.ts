@@ -46,6 +46,8 @@ async function runShowroomLoadTest(
     "/api/v1/manufacturing/karigars",
     "/api/v1/schemes",
     "/api/v1/schemes/accounts",
+    "/api/v1/pricing/feed/status",
+    "/api/v1/pricing/feed/history",
   ];
 
   const startTime = Date.now();

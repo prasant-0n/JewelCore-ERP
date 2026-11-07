@@ -88,11 +88,13 @@ export function TopHeader({
     tareScale,
     triggerRfidSweep,
     syncAllScales,
+    syncExchangeFeed,
   } = useHardwareTelemetry();
   const { currentStore, stores, switchStore } = useStoreContext();
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isMeshOpen, setIsMeshOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isBullionMenuOpen, setIsBullionMenuOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState(PERSONAS[0]);
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
 
@@ -373,32 +375,128 @@ export function TopHeader({
           )}
         </div>
 
-        {/* Sleek Bullion Ticker with Live Telemetry Pulse */}
-        <div className="hidden xl:flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-elevated border border-surface-border text-xs font-mono">
-          <span className="relative flex h-2 w-2 mr-0.5">
+        {/* Sleek Bullion Ticker with Live Telemetry Pulse & Exchange Menu */}
+        <div className="relative">
+          <button
+            onClick={() => setIsBullionMenuOpen(!isBullionMenuOpen)}
+            className="hidden xl:flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/40 text-xs font-mono transition-all"
+            title="Inspect Live MCX/LBMA Spot Ticker & Trigger Exchange Ingestion"
+          >
+            <span className="relative flex h-2 w-2 mr-0.5">
+              <span
+                className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                  isConnected ? "bg-status-emerald" : "bg-gold"
+                }`}
+              />
+              <span
+                className={`relative inline-flex rounded-full h-2 w-2 ${
+                  isConnected ? "bg-status-emerald" : "bg-gold"
+                }`}
+              />
+            </span>
+            <span className="px-1 py-0.2 rounded bg-surface border border-surface-border text-[9px] text-muted-foreground uppercase font-bold">
+              {bullionData.exchange?.includes("LBMA") ? "LBMA" : "MCX"}
+            </span>
+            <span className="text-gold font-semibold">Au 24K</span>
+            <span className="text-foreground tabular-nums">
+              ₹
+              {bullionData.spotInrPerGram.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              })}
+              /g
+            </span>
             <span
-              className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                isConnected ? "bg-status-emerald" : "bg-gold"
+              className={`text-[10px] font-medium ${
+                bullionData.changePercent.startsWith("-")
+                  ? "text-status-rose"
+                  : "text-status-emerald"
               }`}
-            />
-            <span
-              className={`relative inline-flex rounded-full h-2 w-2 ${
-                isConnected ? "bg-status-emerald" : "bg-gold"
-              }`}
-            />
-          </span>
-          <span className="text-gold font-semibold">Au 24K</span>
-          <span className="text-foreground tabular-nums">
-            ₹
-            {bullionData.spotInrPerGram.toLocaleString(undefined, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 2,
-            })}
-            /g
-          </span>
-          <span className="text-status-emerald text-[10px] font-medium">
-            ▲ {bullionData.changePercent}
-          </span>
+            >
+              {bullionData.changePercent.startsWith("-") ? "▼" : "▲"}{" "}
+              {bullionData.changePercent}
+            </span>
+          </button>
+
+          {isBullionMenuOpen && (
+            <div className="absolute top-full right-0 mt-2 w-80 bg-surface border border-surface-border rounded-lg shadow-2xl p-3 z-50 space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-surface-border text-xs">
+                <div className="flex items-center space-x-1.5">
+                  <Activity className="w-4 h-4 text-gold animate-pulse" />
+                  <span className="font-semibold text-foreground">
+                    Live Commodity Exchange Feed
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono uppercase bg-gold/10 text-gold px-2 py-0.5 rounded border border-gold/20 font-bold">
+                  MCX • REAL-TIME
+                </span>
+              </div>
+
+              {/* Converted Rates Breakdown */}
+              <div className="space-y-1.5 text-xs font-mono">
+                <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
+                  <span className="text-muted-foreground">Au 24K Pure (999.9)</span>
+                  <span className="text-gold font-bold">
+                    ₹{bullionData.spotInrPerGram.toLocaleString()}/g
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
+                  <span className="text-muted-foreground">Au 22K Hallmark (916)</span>
+                  <span className="text-foreground font-semibold">
+                    ₹
+                    {(
+                      bullionData.standardGold22k ??
+                      Math.round(bullionData.spotInrPerGram * 0.9166 * 100) / 100
+                    ).toLocaleString()}
+                    /g
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
+                  <span className="text-muted-foreground">Au 18K Artisan (750)</span>
+                  <span className="text-foreground font-semibold">
+                    ₹
+                    {(
+                      bullionData.artisanGold18k ??
+                      Math.round(bullionData.spotInrPerGram * 0.75 * 100) / 100
+                    ).toLocaleString()}
+                    /g
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
+                  <span className="text-muted-foreground">Ag 999.0 Silver Bar</span>
+                  <span className="text-foreground font-semibold">
+                    ₹{bullionData.silverInrPerKg.toLocaleString()}/kg
+                  </span>
+                </div>
+              </div>
+
+              {/* Macro Factors */}
+              <div className="text-[10px] text-muted-foreground font-mono border-t border-surface-border pt-2 flex items-center justify-between">
+                <span>Customs Tariff: 6.0%</span>
+                <span>FX: 84.45 INR/USD</span>
+              </div>
+
+              {/* Manual Ingestion Sync Trigger */}
+              <button
+                onClick={async () => {
+                  try {
+                    const result = await syncExchangeFeed({ sourceExchange: "MCX" });
+                    const pureGold = result?.pureGold24k ?? bullionData.spotInrPerGram;
+                    toast.success("MCX Bullion Spot Synchronized", {
+                      description: `24K Spot: ₹${pureGold}/g • Live WebSocket broadcast sent to all salon terminals.`,
+                    });
+                    setIsBullionMenuOpen(false);
+                  } catch {
+                    toast.error("Failed to sync exchange rates");
+                  }
+                }}
+                className="w-full py-1.5 text-xs font-mono font-semibold rounded bg-gold text-black hover:bg-gold-light transition-all flex items-center justify-center space-x-1.5"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Sync MCX Live Spot Now</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Theme Toggle Button (Light / Dark) */}

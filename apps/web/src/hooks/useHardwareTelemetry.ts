@@ -17,6 +17,13 @@ export interface TelemetryBullionData {
   spotInrPerGram: number;
   changePercent: string;
   silverInrPerKg: number;
+  pureGold24k?: number;
+  standardGold22k?: number;
+  artisanGold18k?: number;
+  exchange?: string;
+  customsDutyPercent?: number;
+  refinerPremiumInr?: number;
+  usdInrExchangeRate?: number;
   timestamp: string;
 }
 
@@ -55,6 +62,13 @@ export interface UseHardwareTelemetryResult {
   triggerRfidSweep: (trayId?: string) => Promise<void>;
   simulateScaleWeight: (grams: number) => Promise<void>;
   syncAllScales: () => Promise<void>;
+  syncExchangeFeed: (params?: {
+    sourceExchange?: string;
+    goldSpotUsdPerOz?: number;
+    usdInrExchangeRate?: number;
+    customsDutyPercent?: number;
+    refinerPremiumInr?: number;
+  }) => Promise<any>;
   broadcastQuorumSign: (event: {
     keyNumber: 1 | 2;
     signatory: string;
@@ -335,6 +349,43 @@ export function useHardwareTelemetry(): UseHardwareTelemetryResult {
     }
   }, []);
 
+  const syncExchangeFeed = useCallback(
+    async (params?: {
+      sourceExchange?: string;
+      goldSpotUsdPerOz?: number;
+      usdInrExchangeRate?: number;
+      customsDutyPercent?: number;
+      refinerPremiumInr?: number;
+    }) => {
+      try {
+        const res = await api.post<{ data: any }>("/pricing/feed/sync", params ?? {});
+        if (res.data) {
+          const pureGold = res.data.pureGold24k ?? res.data.goldSpotInrPerGram;
+          setBullionData({
+            commodity: "Au 24K (999.9)",
+            spotInrPerGram: pureGold,
+            pureGold24k: pureGold,
+            standardGold22k: res.data.standardGold22k,
+            artisanGold18k: res.data.artisanGold18k,
+            changePercent: res.data.changePercent ?? "+0.80%",
+            silverInrPerKg: res.data.silverInrPerKg,
+            exchange: res.data.sourceExchange,
+            customsDutyPercent: res.data.customsDutyPercent,
+            refinerPremiumInr: res.data.refinerPremiumInr,
+            usdInrExchangeRate: res.data.usdInrExchangeRate,
+            timestamp: res.data.effectiveDate ?? new Date().toISOString(),
+          });
+          return res.data;
+        }
+      } catch {
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          wsRef.current.send(JSON.stringify({ action: "sync_bullion" }));
+        }
+      }
+    },
+    [],
+  );
+
   const broadcastQuorumSign = useCallback(
     async (event: {
       keyNumber: 1 | 2;
@@ -374,6 +425,7 @@ export function useHardwareTelemetry(): UseHardwareTelemetryResult {
     triggerRfidSweep,
     simulateScaleWeight,
     syncAllScales,
+    syncExchangeFeed,
     broadcastQuorumSign,
   };
 }

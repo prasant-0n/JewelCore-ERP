@@ -26,6 +26,13 @@ export interface BullionTick {
   spotInrPerGram: number;
   changePercent: string;
   silverInrPerKg: number;
+  pureGold24k?: number;
+  standardGold22k?: number;
+  artisanGold18k?: number;
+  exchange?: string;
+  customsDutyPercent?: number;
+  refinerPremiumInr?: number;
+  usdInrExchangeRate?: number;
   timestamp: string;
 }
 
@@ -275,13 +282,63 @@ class TelemetryService {
   }
 
   public getBullionTick(): BullionTick {
+    const pureGold24k = Number(this.currentGoldRate.toFixed(2));
+    const standardGold22k = Number((pureGold24k * 0.9166).toFixed(2));
+    const artisanGold18k = Number((pureGold24k * 0.75).toFixed(2));
     return {
       commodity: "Au 24K (999.9)",
-      spotInrPerGram: Number(this.currentGoldRate.toFixed(2)),
+      spotInrPerGram: pureGold24k,
+      pureGold24k,
+      standardGold22k,
+      artisanGold18k,
       changePercent: "+0.80%",
       silverInrPerKg: Number(this.currentSilverRate.toFixed(2)),
+      exchange: "MCX Mumbai / LBMA Spot Parity",
       timestamp: new Date().toISOString(),
     };
+  }
+
+  public updateBullionRates(data: {
+    goldSpotInrPerGram: number;
+    silverInrPerKg?: number;
+    changePercent?: string;
+    exchange?: string;
+    customsDutyPercent?: number;
+    refinerPremiumInr?: number;
+    usdInrExchangeRate?: number;
+  }): BullionTick {
+    const prevRate = this.currentGoldRate;
+    this.currentGoldRate = Number(data.goldSpotInrPerGram.toFixed(2));
+    if (typeof data.silverInrPerKg === "number") {
+      this.currentSilverRate = Number(data.silverInrPerKg.toFixed(2));
+    }
+
+    const delta = this.currentGoldRate - prevRate;
+    const deltaPercent = prevRate > 0 ? ((delta / prevRate) * 100).toFixed(2) : "0.00";
+    const sign = delta >= 0 ? "+" : "";
+    const changeStr = data.changePercent ?? `${sign}${deltaPercent}%`;
+
+    const pureGold24k = this.currentGoldRate;
+    const standardGold22k = Number((pureGold24k * 0.9166).toFixed(2));
+    const artisanGold18k = Number((pureGold24k * 0.75).toFixed(2));
+
+    const tick: BullionTick = {
+      commodity: "Au 24K (999.9)",
+      spotInrPerGram: pureGold24k,
+      pureGold24k,
+      standardGold22k,
+      artisanGold18k,
+      changePercent: changeStr,
+      silverInrPerKg: Number(this.currentSilverRate.toFixed(2)),
+      exchange: data.exchange ?? "MCX Mumbai / LBMA Spot Parity",
+      customsDutyPercent: data.customsDutyPercent,
+      refinerPremiumInr: data.refinerPremiumInr,
+      usdInrExchangeRate: data.usdInrExchangeRate,
+      timestamp: new Date().toISOString(),
+    };
+
+    this.broadcast("bullion:spot_tick", tick);
+    return tick;
   }
 
   private handleClientCommand(msg: any): void {
@@ -296,6 +353,9 @@ class TelemetryService {
       this.broadcastQuorumSign(msg.event);
     } else if (msg.action === "sync_scales") {
       this.broadcastScaleSyncAll();
+    } else if (msg.action === "sync_bullion") {
+      const tick = this.getBullionTick();
+      this.broadcast("bullion:spot_tick", tick);
     } else if (msg.action === "ping") {
       this.broadcast("mesh:pong", {
         timestamp: new Date().toISOString(),
