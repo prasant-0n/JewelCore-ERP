@@ -1,11 +1,19 @@
+"use client";
+
 import React from "react";
 import type { CompartmentWithOccupancy } from "@jewelcore/shared";
 
 interface CompartmentCardProps {
   compartment: CompartmentWithOccupancy;
+  isSelected?: boolean;
+  onSelect?: (compartment: CompartmentWithOccupancy) => void;
 }
 
-export function CompartmentCard({ compartment }: CompartmentCardProps) {
+export function CompartmentCard({
+  compartment,
+  isSelected = false,
+  onSelect,
+}: CompartmentCardProps) {
   const {
     code,
     name,
@@ -18,148 +26,110 @@ export function CompartmentCard({ compartment }: CompartmentCardProps) {
     id,
   } = compartment;
 
+  const percentage = occupancyPercentage ?? 0;
+  const isVacant = occupiedItemCount === 0;
+
   // Determine status chip styling
-  let badgeColor = "#10b981"; // Green (AVAILABLE)
-  let badgeBg = "#ecfdf5";
+  let badgeClasses = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+  let barColorClass = "bg-emerald-400";
   let statusLabel = "Available";
 
-  if (status === "FULL") {
-    badgeColor = "#ef4444"; // Red (FULL)
-    badgeBg = "#fef2f2";
+  if (status === "FULL" || percentage >= 100) {
+    badgeClasses = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
+    barColorClass = "bg-rose-400";
     statusLabel = "Full";
-  } else if (status === "NEAR_CAPACITY") {
-    badgeColor = "#f59e0b"; // Amber (NEAR_CAPACITY)
-    badgeBg = "#fffbeb";
-    statusLabel = "Near Capacity";
-  } else if (status === "UNLIMITED") {
-    badgeColor = "#6366f1";
-    badgeBg = "#eef2ff";
-    statusLabel = "Unlimited";
+  } else if (status === "NEAR_CAPACITY" || percentage >= 85) {
+    badgeClasses = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+    barColorClass = "bg-amber-400";
+    statusLabel = `${percentage}% Alert`;
+  } else if (isVacant) {
+    badgeClasses = "bg-slate-800 text-slate-400 border border-slate-700";
+    barColorClass = "bg-slate-600";
+    statusLabel = "Vacant";
   }
-
-  const percentage = occupancyPercentage ?? 0;
 
   return (
     <div
       data-testid={`compartment-card-${code}`}
-      style={{
-        border: "1px solid #e2e8f0",
-        borderRadius: "8px",
-        padding: "1rem",
-        backgroundColor: "#ffffff",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.5rem",
-      }}
+      onClick={() => onSelect?.(compartment)}
+      className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 select-none ${
+        isSelected
+          ? "bg-surface-elevated border-2 border-gold shadow-[0_0_15px_rgba(212,175,55,0.18)]"
+          : isVacant
+          ? "bg-obsidian-deep/60 border border-dashed border-surface-border hover:border-gold/40 hover:bg-surface-card"
+          : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/70"
+      }`}
     >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div>
+      {isSelected && (
+        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
+          Selected
+        </div>
+      )}
+
+      {/* Top Header Row: Code & Status */}
+      <div className="flex items-center justify-between gap-1">
+        <div className="flex items-center space-x-1.5 truncate">
           <span
-            style={{ fontWeight: 600, fontSize: "0.95rem", color: "#0f172a" }}
+            className={`font-mono text-xs font-semibold truncate transition-colors ${
+              isSelected ? "text-gold" : "text-slate-100 group-hover:text-gold"
+            }`}
           >
             {code}
           </span>
-          <span
-            style={{
-              marginLeft: "0.5rem",
-              fontSize: "0.8rem",
-              color: "#64748b",
-            }}
-          >
-            (Tray #{compartmentNumber})
-          </span>
+          {compartmentNumber && (
+            <span className="text-[10px] text-platinum/50 font-mono">
+              #{compartmentNumber}
+            </span>
+          )}
         </div>
+
         <span
           data-testid="status-chip"
-          style={{
-            fontSize: "0.75rem",
-            fontWeight: 600,
-            color: badgeColor,
-            backgroundColor: badgeBg,
-            padding: "0.2rem 0.6rem",
-            borderRadius: "9999px",
-            textTransform: "uppercase",
-          }}
+          className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-medium ${badgeClasses}`}
         >
           {statusLabel}
         </span>
       </div>
 
-      <div style={{ fontSize: "0.85rem", color: "#334155" }}>{name}</div>
+      {/* Compartment Name / Purpose */}
+      <div className="text-[11px] text-platinum/70 truncate mt-1">
+        {name}
+      </div>
 
-      {/* Real-Time Occupancy Visualizer Bar */}
-      <div style={{ marginTop: "0.25rem" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            fontSize: "0.8rem",
-            color: "#475569",
-          }}
-        >
-          <span>Occupancy:</span>
-          <span data-testid="occupancy-count" style={{ fontWeight: 600 }}>
+      {/* Occupancy Progress & Count */}
+      <div className="mt-2.5">
+        <div className="flex items-center justify-between text-[11px] font-mono text-platinum/80 mb-1">
+          <span className="text-platinum/60">Occupancy:</span>
+          <span data-testid="occupancy-count" className="font-medium text-slate-200">
             {occupiedItemCount}{" "}
-            {maxItemCapacity ? `/ ${maxItemCapacity} pieces` : "pieces"}
-            {occupancyPercentage !== null ? ` (${occupancyPercentage}%)` : ""}
+            {maxItemCapacity ? `/ ${maxItemCapacity} pcs` : "pcs"}
+            {percentage > 0 ? ` (${percentage}%)` : ""}
           </span>
         </div>
+
         {maxItemCapacity && (
-          <div
-            style={{
-              width: "100%",
-              height: "6px",
-              backgroundColor: "#f1f5f9",
-              borderRadius: "3px",
-              overflow: "hidden",
-              marginTop: "4px",
-            }}
-          >
+          <div className="w-full bg-obsidian-deep h-1.5 rounded-full overflow-hidden border border-surface-border/50">
             <div
               data-testid="occupancy-progress-bar"
-              style={{
-                width: `${percentage}%`,
-                height: "100%",
-                backgroundColor: badgeColor,
-                transition: "width 0.3s ease",
-              }}
+              style={{ width: `${Math.min(percentage, 100)}%` }}
+              className={`h-full rounded-full transition-all duration-300 ${barColorClass}`}
             />
           </div>
         )}
       </div>
 
-      {maxWeightCapacityGrams && (
-        <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
-          Max Weight Rating: {maxWeightCapacityGrams}g
-        </div>
-      )}
-
-      {/* Link to resident inventory items */}
-      <div
-        style={{
-          marginTop: "0.5rem",
-          borderTop: "1px solid #f1f5f9",
-          paddingTop: "0.5rem",
-        }}
-      >
+      {/* Bottom Sub-info / Metrological Rating */}
+      <div className="mt-2.5 pt-2 border-t border-surface-border/50 flex items-center justify-between text-[10px] font-mono text-platinum/50">
+        <span>
+          {maxWeightCapacityGrams ? `Max: ${maxWeightCapacityGrams}g` : "Standard"}
+        </span>
         <a
           href={`/inventory?compartmentId=${id}`}
           data-testid="resident-items-link"
-          style={{
-            fontSize: "0.8rem",
-            color: "#2563eb",
-            textDecoration: "none",
-            fontWeight: 500,
-          }}
+          onClick={(e) => e.stopPropagation()}
+          className="text-gold/80 hover:text-gold hover:underline transition-colors"
         >
-          View Resident Items &rarr;
+          View Items →
         </a>
       </div>
     </div>
