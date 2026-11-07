@@ -72,12 +72,12 @@ export function PieceCard({
         <div>
           <span
             className={`font-mono text-xs font-bold transition-colors ${
-              isSelected ? "text-gold" : "text-slate-100 group-hover:text-gold"
+              isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
             }`}
           >
             {serialNumber}
           </span>
-          <div className="text-[11px] text-platinum/80 font-medium truncate max-w-[180px] mt-0.5">
+          <div className="text-[11px] text-muted-foreground font-medium truncate max-w-[180px] mt-0.5">
             {itemName}
           </div>
         </div>
@@ -85,23 +85,23 @@ export function PieceCard({
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 ${
             custodyState === "VAULT"
-              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
               : custodyState === "DISPLAY"
-              ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
+              ? "bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/30"
               : custodyState === "TRANSIT"
-              ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-              : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+              ? "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/30"
+              : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
           }`}
         >
           <span
             className={`w-1 h-1 rounded-full ${
               custodyState === "VAULT"
-                ? "bg-emerald-400"
+                ? "bg-emerald-500"
                 : custodyState === "DISPLAY"
-                ? "bg-cyan-400"
+                ? "bg-cyan-500"
                 : custodyState === "TRANSIT"
-                ? "bg-blue-400"
-                : "bg-amber-400"
+                ? "bg-blue-500"
+                : "bg-amber-500"
             }`}
           />
           {custodyState}
@@ -109,42 +109,41 @@ export function PieceCard({
       </div>
 
       {/* Center Metrology & Stone Reading Box */}
-      <div className="my-3 py-2 px-2.5 bg-obsidian-deep/80 border border-surface-border/60 rounded-lg flex items-center justify-between">
+      <div className="my-3 py-2 px-2.5 bg-surface-elevated border border-surface-border/60 rounded-lg flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="w-7 h-7 rounded bg-gold/10 border border-gold/30 flex items-center justify-center text-gold">
             <Gem className="w-3.5 h-3.5" />
           </div>
           <div>
-            <div className="font-mono text-xs font-bold text-slate-100 tabular-nums">
+            <div className="font-mono text-xs font-bold text-foreground tabular-nums">
               {grossWeightGrams.toFixed(3)} g Gross
             </div>
-            <div className="text-[10px] font-mono text-platinum/70 flex items-center gap-1">
+            <div className="text-[10px] font-mono text-muted-foreground flex items-center gap-1 font-medium">
               <span>Au: {netGoldGrams.toFixed(3)}g</span>
               {diamondCarat && (
                 <>
                   <span>•</span>
-                  <span className="text-gold-light">{diamondCarat} ct</span>
+                  <span className="text-gold font-semibold">{diamondCarat} ct</span>
                 </>
               )}
             </div>
           </div>
         </div>
-        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
       </div>
 
       {/* Bottom Purity / Hallmarking Progress */}
       <div>
-        <div className="flex justify-between text-[10px] font-mono text-platinum/70 mb-1">
+        <div className="flex justify-between text-[10px] font-mono text-muted-foreground mb-1">
           <span>{metalPurity}</span>
-          <span className="text-gold-light font-semibold">
+          <span className="text-gold font-semibold">
             {qualityState === "HALLMARKED" ? "100% Purity Hallmarked" : "QC Pending"}
           </span>
         </div>
-        <div className="w-full bg-obsidian-deep h-1.5 rounded-full overflow-hidden border border-surface-border/50">
+        <div className="w-full bg-surface-elevated h-1.5 rounded-full overflow-hidden border border-surface-border/50">
           <div
-            style={{ width: qualityState === "HALLMARKED" ? "100%" : "60%" }}
-            className={`h-full rounded-full transition-all duration-300 ${
-              qualityState === "HALLMARKED" ? "bg-gold" : "bg-amber-400"
+            className={`h-full rounded-full ${
+              qualityState === "HALLMARKED" ? "bg-emerald-500 w-full" : "bg-amber-500 w-1/2"
             }`}
           />
         </div>

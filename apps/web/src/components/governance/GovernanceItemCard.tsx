@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, KeyRound, Lock, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
+import { KeyRound, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 
 export interface GovernanceItemData {
   id: string;
@@ -54,21 +54,25 @@ export function GovernanceItemCard({
           <div className="flex items-center space-x-1.5">
             <KeyRound
               className={`w-3.5 h-3.5 ${
-                isSelected ? "text-gold" : isPending ? "text-amber-400" : "text-emerald-400"
+                isSelected
+                  ? "text-gold"
+                  : isPending
+                  ? "text-amber-600 dark:text-amber-400"
+                  : "text-emerald-600 dark:text-emerald-400"
               }`}
             />
             <span
               className={`font-mono text-xs font-bold transition-colors ${
-                isSelected ? "text-gold" : "text-slate-100 group-hover:text-gold"
+                isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
               }`}
             >
               {item.requestCode}
             </span>
           </div>
-          <div className="text-[11px] text-platinum/80 font-medium truncate max-w-[190px] mt-0.5">
+          <div className="text-[11px] text-muted-foreground font-medium truncate max-w-[190px] mt-0.5">
             {item.actionTitle}
           </div>
-          <div className="text-[10px] font-mono text-platinum/60 mt-0.5">
+          <div className="text-[10px] font-mono text-muted-foreground mt-0.5">
             Safe: {item.targetVaultLocation}
           </div>
         </div>
@@ -76,10 +80,10 @@ export function GovernanceItemCard({
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
             isPending
-              ? "bg-amber-500/15 text-amber-300 border border-amber-500/30 animate-pulse"
+              ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 animate-pulse font-semibold"
               : isReleased
-              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-              : "bg-rose-500/10 text-rose-300 border border-rose-500/20"
+              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+              : "bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/30"
           }`}
         >
           {isPending ? (
@@ -99,23 +103,23 @@ export function GovernanceItemCard({
       {/* Middle Specs Grid */}
       <div className="grid grid-cols-2 gap-2 my-2.5 py-2 border-y border-surface-border/60 text-[11px] font-mono">
         <div>
-          <span className="text-platinum/60 text-[9px] block uppercase">Weight / Val</span>
-          <span className="text-slate-200 font-semibold tabular-nums">
+          <span className="text-muted-foreground text-[9px] block uppercase">Weight / Val</span>
+          <span className="text-foreground font-semibold tabular-nums">
             {item.grossWeightGrams.toFixed(3)}g Gross
           </span>
-          <span className="text-emerald-400 text-[10px] block tabular-nums">
+          <span className="text-emerald-700 dark:text-emerald-400 text-[10px] block tabular-nums font-bold">
             ₹ {item.valuationInr.toLocaleString("en-IN")}
           </span>
         </div>
 
         <div className="text-right">
-          <span className="text-platinum/60 text-[9px] block uppercase">Keyholder Quorum</span>
-          <span className="text-emerald-400 font-semibold text-[10px] block">
+          <span className="text-muted-foreground text-[9px] block uppercase">Keyholder Quorum</span>
+          <span className="text-emerald-700 dark:text-emerald-400 font-semibold text-[10px] block">
             Key 1: {item.keyholder1Name} ✓
           </span>
           <span
             className={`text-[10px] font-semibold block ${
-              item.keyholder2Status === "SIGNED" ? "text-emerald-400" : "text-amber-400"
+              item.keyholder2Status === "SIGNED" ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"
             }`}
           >
             Key 2: {item.keyholder2Status === "SIGNED" ? `${item.keyholder2Name} ✓` : "Pending PIN"}
@@ -124,8 +128,8 @@ export function GovernanceItemCard({
       </div>
 
       {/* Footer: Merkle Root Hash */}
-      <div className="flex items-center justify-between text-[10px] font-mono text-platinum/60">
-        <span className="text-platinum/50 uppercase text-[9px]">Merkle Proof:</span>
+      <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground">
+        <span className="uppercase text-[9px]">Merkle Proof:</span>
         <span className="text-gold font-mono truncate max-w-[150px]">
           {item.merkleProofHash}
         </span>

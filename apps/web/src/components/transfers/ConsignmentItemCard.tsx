@@ -51,21 +51,21 @@ export function ConsignmentItemCard({
           <div className="flex items-center space-x-1.5">
             <Lock
               className={`w-3.5 h-3.5 ${
-                isSelected ? "text-gold" : "text-emerald-400"
+                isSelected ? "text-gold" : "text-emerald-700 dark:text-emerald-400"
               }`}
             />
             <span
               className={`font-mono text-xs font-bold transition-colors ${
-                isSelected ? "text-gold" : "text-slate-100 group-hover:text-gold"
+                isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
               }`}
             >
               {item.itemCode}
             </span>
           </div>
-          <div className="text-[11px] text-platinum/80 font-medium truncate max-w-[190px] mt-0.5">
+          <div className="text-[11px] text-muted-foreground font-medium truncate max-w-[190px] mt-0.5">
             {item.trayDescription}
           </div>
-          <div className="text-[10px] font-mono text-platinum/60 mt-0.5">
+          <div className="text-[10px] font-mono text-muted-foreground mt-0.5">
             Seal: {item.electronicSealId}
           </div>
         </div>
@@ -73,8 +73,8 @@ export function ConsignmentItemCard({
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
             isLocked
-              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-              : "bg-surface-border text-platinum/70 border border-surface-border"
+              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+              : "bg-surface-elevated text-muted-foreground border border-surface-border"
           }`}
         >
           <CheckCircle2 className="w-2.5 h-2.5" />
@@ -85,8 +85,8 @@ export function ConsignmentItemCard({
       {/* Middle Specs Grid */}
       <div className="grid grid-cols-2 gap-2 my-2.5 py-2 border-y border-surface-border/60 text-[11px] font-mono">
         <div>
-          <span className="text-platinum/60 text-[9px] block uppercase">Weight / Count</span>
-          <span className="text-slate-200 font-semibold tabular-nums">
+          <span className="text-muted-foreground text-[9px] block uppercase">Weight / Count</span>
+          <span className="text-foreground font-semibold tabular-nums">
             {item.grossWeightGrams.toFixed(3)}g Gross
           </span>
           <span className="text-gold text-[10px] block tabular-nums">
@@ -95,11 +95,11 @@ export function ConsignmentItemCard({
         </div>
 
         <div className="text-right">
-          <span className="text-platinum/60 text-[9px] block uppercase">Net Au / Tier</span>
-          <span className="text-emerald-400 font-semibold tabular-nums">
+          <span className="text-muted-foreground text-[9px] block uppercase">Net Au / Tier</span>
+          <span className="text-emerald-700 dark:text-emerald-400 font-semibold tabular-nums">
             {item.netGoldGrams.toFixed(3)}g Au
           </span>
-          <span className="text-platinum/60 text-[10px] block">
+          <span className="text-muted-foreground text-[10px] block">
             {item.securityTier}
           </span>
         </div>
@@ -107,8 +107,8 @@ export function ConsignmentItemCard({
 
       {/* Footer: Specie Valuation */}
       <div className="flex items-center justify-between text-[11px] font-mono">
-        <span className="text-platinum/60 text-[9px] uppercase">Specie Cover:</span>
-        <span className="text-emerald-400 font-bold text-xs tabular-nums">
+        <span className="text-muted-foreground text-[9px] uppercase">Specie Cover:</span>
+        <span className="text-emerald-700 dark:text-emerald-400 font-bold text-xs tabular-nums">
           ₹ {item.specieValuationInr.toLocaleString("en-IN")}
         </span>
       </div>

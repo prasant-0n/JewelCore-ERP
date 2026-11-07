@@ -59,12 +59,12 @@ export function IngotBarCard({
         <div>
           <span
             className={`font-mono text-xs font-bold transition-colors ${
-              isSelected ? "text-gold" : "text-slate-100 group-hover:text-gold"
+              isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
             }`}
           >
             {barCode}
           </span>
-          <div className="text-[10px] font-mono uppercase text-platinum/60 mt-0.5">
+          <div className="text-[10px] font-mono uppercase text-muted-foreground mt-0.5">
             {materialType}
           </div>
         </div>
@@ -72,8 +72,8 @@ export function IngotBarCard({
         <span
           className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-medium ${
             toleranceStatus === "TOLERANCE_OK"
-              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-              : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+              : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
           }`}
         >
           {toleranceStatus === "TOLERANCE_OK" ? "Tolerance OK" : "Variance Alert"}
@@ -81,31 +81,31 @@ export function IngotBarCard({
       </div>
 
       {/* Center Gravimetric Weight Box */}
-      <div className="my-3 py-2 px-2.5 bg-obsidian-deep/80 border border-surface-border/60 rounded-lg flex items-center justify-between">
+      <div className="my-3 py-2 px-2.5 bg-surface-elevated border border-surface-border/60 rounded-lg flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="w-7 h-7 rounded bg-gold/10 border border-gold/30 flex items-center justify-center text-gold">
             <Boxes className="w-3.5 h-3.5" />
           </div>
           <div>
-            <div className="font-mono text-xs font-bold text-slate-100 tabular-nums">
+            <div className="font-mono text-xs font-bold text-foreground tabular-nums">
               {grossWeightGrams.toFixed(3)} g
             </div>
-            <div className="text-[10px] font-mono text-emerald-400">
+            <div className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-medium">
               {varianceGrams >= 0 ? `+${varianceGrams.toFixed(3)}g` : `${varianceGrams.toFixed(3)}g`}{" "}
               ({variancePercent >= 0 ? `+${variancePercent.toFixed(3)}%` : `${variancePercent.toFixed(3)}%`})
             </div>
           </div>
         </div>
-        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
       </div>
 
       {/* Bottom Purity Progress Bar */}
       <div>
-        <div className="flex justify-between text-[10px] font-mono text-platinum/70 mb-1">
+        <div className="flex justify-between text-[10px] font-mono text-muted-foreground mb-1">
           <span>Purity Assay</span>
-          <span className="text-gold-light font-semibold">100.0% Pure (24K)</span>
+          <span className="text-gold font-semibold">100.0% Pure (24K)</span>
         </div>
-        <div className="w-full bg-obsidian-deep h-1.5 rounded-full overflow-hidden border border-surface-border/50">
+        <div className="w-full bg-surface-elevated h-1.5 rounded-full overflow-hidden border border-surface-border/50">
           <div className="bg-gold h-full rounded-full w-full" />
         </div>
       </div>

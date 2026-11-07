@@ -66,7 +66,7 @@ export function GovernanceSection({
 
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-bold text-slate-100 font-mono tracking-tight">
+              <span className="text-sm font-bold text-foreground font-mono tracking-tight">
                 {batch.batchTitle}
               </span>
               <span className="px-1.5 py-0.5 rounded bg-gold/15 border border-gold/30 text-gold text-[9px] font-mono uppercase font-semibold">
@@ -74,27 +74,27 @@ export function GovernanceSection({
               </span>
             </div>
 
-            <div className="text-xs text-platinum/70 flex items-center space-x-2 mt-0.5 font-mono">
+            <div className="text-xs text-muted-foreground flex items-center space-x-2 mt-0.5 font-mono">
               <span>{batch.items.length} Approvals Queued</span>
               <span>•</span>
-              <span className="text-slate-100 font-bold tabular-nums">
+              <span className="text-foreground font-bold tabular-nums">
                 {totalGrossWeight.toFixed(3)} g Load
               </span>
               <span>•</span>
-              <span className="text-emerald-400 font-bold tabular-nums">
+              <span className="text-emerald-700 dark:text-emerald-400 font-bold tabular-nums">
                 ₹ {totalValuation.toLocaleString("en-IN")} Total Val
               </span>
               <span>•</span>
               <span
-                className={`flex items-center gap-1 ${
-                  pendingCount > 0 ? "text-amber-400" : "text-emerald-400"
+                className={`flex items-center gap-1 font-medium ${
+                  pendingCount > 0 ? "text-amber-700 dark:text-amber-400" : "text-emerald-700 dark:text-emerald-400"
                 }`}
               >
                 <span
                   className={`w-1.5 h-1.5 rounded-full ${
                     pendingCount > 0
-                      ? "bg-amber-400 animate-pulse"
-                      : "bg-emerald-400"
+                      ? "bg-amber-500 animate-pulse"
+                      : "bg-emerald-500"
                   }`}
                 />
                 {pendingCount > 0 ? `${pendingCount} Awaiting 2nd Key` : "Quorum Reached"}
@@ -108,8 +108,8 @@ export function GovernanceSection({
           <span
             className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium border ${
               pendingCount > 0
-                ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
-                : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 font-semibold"
+                : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
             }`}
           >
             {batch.thresholdCategory}
@@ -119,13 +119,13 @@ export function GovernanceSection({
 
       {/* Expanded Action Matrix */}
       {isOpen && (
-        <div className="p-5 bg-obsidian-deep/50">
+        <div className="p-5 bg-surface-elevated/40">
           <div className="flex items-center justify-between mb-3 text-xs font-mono">
-            <span className="text-platinum/70 uppercase text-[10px] tracking-wider font-medium">
+            <span className="text-muted-foreground uppercase text-[10px] tracking-wider font-medium">
               Dual-Sign Custody Queue ({batch.items.length} High-Value Requests)
             </span>
-            <span className="text-emerald-400 text-[10px] flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center gap-1 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               HSM v4.2.8 Cryptographic Keystore Active
             </span>
           </div>

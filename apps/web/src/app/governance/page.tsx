@@ -311,7 +311,7 @@ export default function GovernanceApprovalPage() {
               variant="outline"
               size="sm"
               onClick={() => setIsOverrideModalOpen(true)}
-              className="hover:border-rose-500 hover:text-rose-400"
+              className="hover:border-rose-500 hover:text-rose-600 dark:hover:text-rose-400"
             >
               <AlertTriangle className="w-3.5 h-3.5 mr-1 text-rose-500" />
               <span>Emergency Override Request</span>

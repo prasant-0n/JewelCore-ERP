@@ -56,7 +56,7 @@ export function ShipmentSection({
 
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-bold text-slate-100 font-mono tracking-tight">
+              <span className="text-sm font-bold text-foreground font-mono tracking-tight">
                 {shipment.shipmentNumber}: {shipment.supplierName}
               </span>
               {shipment.isLbmaCertified && (
@@ -66,15 +66,15 @@ export function ShipmentSection({
               )}
             </div>
 
-            <div className="text-xs text-platinum/70 flex items-center space-x-2 mt-0.5 font-mono">
+            <div className="text-xs text-muted-foreground flex items-center space-x-2 mt-0.5 font-mono">
               <span>{shipment.ingots.length} Ingot Cast Bars</span>
               <span>•</span>
-              <span className="text-slate-100 font-bold tabular-nums">
+              <span className="text-foreground font-bold tabular-nums">
                 {shipment.totalWeightGrams.toFixed(3)} g Gross
               </span>
               <span>•</span>
-              <span className="text-emerald-400 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Security Seal OK (#{shipment.sealNumber})
               </span>
             </div>
@@ -83,16 +83,16 @@ export function ShipmentSection({
 
         {/* Right Info Tags */}
         <div className="flex items-center space-x-3">
-          <span className="text-[10px] font-mono text-platinum/60 bg-obsidian-deep px-2 py-1 rounded border border-surface-border">
+          <span className="text-[10px] font-mono text-muted-foreground bg-surface-elevated px-2 py-1 rounded border border-surface-border">
             WAYBILL #{shipment.trackingNumber}
           </span>
           <span
             className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium ${
               shipment.status === "QUARANTINED"
-                ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
                 : shipment.status === "ASSAY_VERIFIED"
-                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                : "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                : "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/30"
             }`}
           >
             {shipment.status === "QUARANTINED"
@@ -106,13 +106,13 @@ export function ShipmentSection({
 
       {/* Expanded Ingot Bar Matrix */}
       {isOpen && (
-        <div className="p-5 bg-obsidian-deep/50">
+        <div className="p-5 bg-surface-elevated/40">
           <div className="flex items-center justify-between mb-3 text-xs font-mono">
-            <span className="text-platinum/70 uppercase text-[10px] tracking-wider font-medium">
+            <span className="text-muted-foreground uppercase text-[10px] tracking-wider font-medium">
               Ingot Bars in Lot ({shipment.ingots.length} Loaded on Receiving Tray)
             </span>
-            <span className="text-emerald-400 text-[10px] flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center gap-1 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               Mettler High-Throughput Cell Active
             </span>
           </div>

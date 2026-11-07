@@ -72,7 +72,7 @@ export function ScrapItemCard({
           <div className="flex items-center space-x-1.5">
             <Flame
               className={`w-3.5 h-3.5 ${
-                isSelected ? "text-gold" : "text-amber-400"
+                isSelected ? "text-gold" : "text-amber-700 dark:text-amber-400"
               }`}
             />
             <span
