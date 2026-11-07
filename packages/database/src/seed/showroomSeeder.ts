@@ -360,9 +360,13 @@ export async function seedShowroomDatabase(): Promise<void> {
   // eslint-disable-next-line no-console
   console.log("[7/10] Seeding Physical Storage Hierarchy (Vaults, Lockers, Compartments)...");
   const storeInv11 = "0192e300-0001-7000-8000-000000000001";
+  const storeVault01 = "0192e300-0001-7000-8000-000000000002";
+  const storeShow02 = "0192e300-0001-7000-8000-000000000003";
+
   const vaults = [
     {
       id: "0192e350-0001-7000-8000-000000000001",
+      storeId: storeInv11,
       code: "VLT-01",
       name: "Vault 01: Primary Bullion & Diamond Safe",
       type: "MAIN_VAULT",
@@ -370,6 +374,7 @@ export async function seedShowroomDatabase(): Promise<void> {
     },
     {
       id: "0192e350-0001-7000-8000-000000000002",
+      storeId: storeInv11,
       code: "VLT-02",
       name: "Vault 02: Retail Strongroom (High Turnaround POS Staging)",
       type: "SHOWROOM_SAFE",
@@ -377,9 +382,26 @@ export async function seedShowroomDatabase(): Promise<void> {
     },
     {
       id: "0192e350-0001-7000-8000-000000000003",
+      storeId: storeInv11,
       code: "VLT-03",
       name: "Vault 03: Analytical QC Lab & Assay Isolation Safe",
       type: "INTAKE_HOLDING",
+      accessLevel: "STORE_MANAGER",
+    },
+    {
+      id: "0192e350-0001-7000-8000-000000000011",
+      storeId: storeVault01,
+      code: "VLT-HUB-01",
+      name: "Central Treasury Bullion Reserve Strongroom",
+      type: "MAIN_VAULT",
+      accessLevel: "STORE_MANAGER",
+    },
+    {
+      id: "0192e350-0001-7000-8000-000000000021",
+      storeId: storeShow02,
+      code: "VLT-UPT-01",
+      name: "Uptown Strongroom Safe",
+      type: "SHOWROOM_SAFE",
       accessLevel: "STORE_MANAGER",
     },
   ];
@@ -389,7 +411,7 @@ export async function seedShowroomDatabase(): Promise<void> {
       `INSERT INTO vaults (id, store_id, code, name, vault_type, access_level_required, is_active, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, true, NOW(), NOW())
        ON CONFLICT (store_id, code) DO NOTHING`,
-      [v.id, storeInv11, v.code, v.name, v.type, v.accessLevel],
+      [v.id, v.storeId, v.code, v.name, v.type, v.accessLevel],
     );
   }
 
@@ -397,6 +419,7 @@ export async function seedShowroomDatabase(): Promise<void> {
     {
       id: "0192e350-0002-7000-8000-000000000001",
       vaultId: "0192e350-0001-7000-8000-000000000001",
+      storeId: storeInv11,
       code: "LCK-02",
       name: "Locker 02: High-Jewellery Trays",
       lockerNumber: "SAFE-B04",
@@ -405,6 +428,7 @@ export async function seedShowroomDatabase(): Promise<void> {
     {
       id: "0192e350-0002-7000-8000-000000000002",
       vaultId: "0192e350-0001-7000-8000-000000000001",
+      storeId: storeInv11,
       code: "LCK-01",
       name: "Locker 01: Bullion Bars & Cast Ingots",
       lockerNumber: "SAFE-A01",
@@ -413,6 +437,7 @@ export async function seedShowroomDatabase(): Promise<void> {
     {
       id: "0192e350-0002-7000-8000-000000000004",
       vaultId: "0192e350-0001-7000-8000-000000000002",
+      storeId: storeInv11,
       code: "LCK-04",
       name: "Locker 04: Counter A Showroom Trays",
       lockerNumber: "SAFE-D01",
@@ -421,10 +446,29 @@ export async function seedShowroomDatabase(): Promise<void> {
     {
       id: "0192e350-0002-7000-8000-000000000005",
       vaultId: "0192e350-0001-7000-8000-000000000003",
+      storeId: storeInv11,
       code: "LCK-05",
       name: "Locker 05: Inbound Quarantine Bay",
       lockerNumber: "QUAR-01",
       capacityRating: "Assay Quarantined",
+    },
+    {
+      id: "0192e350-0002-7000-8000-000000000011",
+      vaultId: "0192e350-0001-7000-8000-000000000011",
+      storeId: storeVault01,
+      code: "LCK-HUB-01",
+      name: "Bullion Ingot Staging Rack",
+      lockerNumber: "RACK-01",
+      capacityRating: "Grade VII High-Security Rack",
+    },
+    {
+      id: "0192e350-0002-7000-8000-000000000021",
+      vaultId: "0192e350-0001-7000-8000-000000000021",
+      storeId: storeShow02,
+      code: "LCK-UPT-01",
+      name: "Diamond Salon Showcase Safe",
+      lockerNumber: "SAFE-U01",
+      capacityRating: "Showroom Vault Quick-Lock",
     },
   ];
 
@@ -433,7 +477,7 @@ export async function seedShowroomDatabase(): Promise<void> {
       `INSERT INTO lockers (id, vault_id, store_id, code, name, locker_number, capacity_rating, is_active, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, true, NOW(), NOW())
        ON CONFLICT (vault_id, code) DO NOTHING`,
-      [l.id, l.vaultId, storeInv11, l.code, l.name, l.lockerNumber, l.capacityRating],
+      [l.id, l.vaultId, l.storeId, l.code, l.name, l.lockerNumber, l.capacityRating],
     );
   }
 
@@ -517,11 +561,34 @@ export async function seedShowroomDatabase(): Promise<void> {
     {
       id: "0192e350-0003-7000-8000-000000000030",
       lockerId: "0192e350-0002-7000-8000-000000000005",
+      storeId: storeInv11,
       code: "COMP-05-Q1",
       name: "Ingot Intake Inspection Holding",
       compartmentNumber: "Q1",
       maxWeight: 10000,
       maxItems: 15,
+    },
+    // Under LCK-HUB-01 (Treasury Ingot Staging Rack)
+    {
+      id: "0192e350-0003-7000-8000-000000000050",
+      lockerId: "0192e350-0002-7000-8000-000000000011",
+      storeId: storeVault01,
+      code: "COMP-HUB-01",
+      name: "Valcambi Good Delivery Cast Bars",
+      compartmentNumber: "T1",
+      maxWeight: 50000,
+      maxItems: 50,
+    },
+    // Under LCK-UPT-01 (Uptown Diamond Showcase)
+    {
+      id: "0192e350-0003-7000-8000-000000000060",
+      lockerId: "0192e350-0002-7000-8000-000000000021",
+      storeId: storeShow02,
+      code: "COMP-UPT-01",
+      name: "High-Carat Solitaires Showcase",
+      compartmentNumber: "U1",
+      maxWeight: 5000,
+      maxItems: 30,
     },
   ];
 
@@ -533,7 +600,7 @@ export async function seedShowroomDatabase(): Promise<void> {
       [
         comp.id,
         comp.lockerId,
-        storeInv11,
+        comp.storeId || storeInv11,
         comp.code,
         comp.name,
         comp.compartmentNumber,
@@ -931,6 +998,46 @@ export async function seedShowroomDatabase(): Promise<void> {
       gross: 28.6,
       net: 27.56,
     },
+    {
+      id: "0192e300-0052-7000-8000-000000000004",
+      skuId: "0192e300-0031-7000-8000-000000000003",
+      line: 4,
+      supplierCode: "VAL-KAD-042",
+      gross: 88.5,
+      net: 86.2,
+    },
+    {
+      id: "0192e300-0052-7000-8000-000000000011",
+      skuId: "0192e300-0031-7000-8000-000000000004",
+      line: 5,
+      supplierCode: "VAL-BAR-01",
+      gross: 1000.042,
+      net: 1000.042,
+    },
+    {
+      id: "0192e300-0052-7000-8000-000000000012",
+      skuId: "0192e300-0031-7000-8000-000000000004",
+      line: 6,
+      supplierCode: "VAL-BAR-02",
+      gross: 1000.038,
+      net: 1000.038,
+    },
+    {
+      id: "0192e300-0052-7000-8000-000000000021",
+      skuId: "0192e300-0031-7000-8000-000000000001",
+      line: 7,
+      supplierCode: "VAL-SOL-082",
+      gross: 6.84,
+      net: 6.438,
+    },
+    {
+      id: "0192e300-0052-7000-8000-000000000022",
+      skuId: "0192e300-0031-7000-8000-000000000002",
+      line: 8,
+      supplierCode: "VAL-CHK-014",
+      gross: 54.2,
+      net: 46.85,
+    },
   ];
 
   for (const si of shipmentItems) {
@@ -975,6 +1082,46 @@ export async function seedShowroomDatabase(): Promise<void> {
       net: 27.56,
       stoneCarat: 5.2,
     },
+    {
+      id: "0192e300-0054-7000-8000-000000000004",
+      shipmentItemId: "0192e300-0052-7000-8000-000000000004",
+      seq: 4,
+      gross: 88.5,
+      net: 86.2,
+      stoneCarat: 0.0,
+    },
+    {
+      id: "0192e300-0054-7000-8000-000000000011",
+      shipmentItemId: "0192e300-0052-7000-8000-000000000011",
+      seq: 5,
+      gross: 1000.042,
+      net: 1000.042,
+      stoneCarat: 0.0,
+    },
+    {
+      id: "0192e300-0054-7000-8000-000000000012",
+      shipmentItemId: "0192e300-0052-7000-8000-000000000012",
+      seq: 6,
+      gross: 1000.038,
+      net: 1000.038,
+      stoneCarat: 0.0,
+    },
+    {
+      id: "0192e300-0054-7000-8000-000000000021",
+      shipmentItemId: "0192e300-0052-7000-8000-000000000021",
+      seq: 7,
+      gross: 6.84,
+      net: 6.438,
+      stoneCarat: 2.01,
+    },
+    {
+      id: "0192e300-0054-7000-8000-000000000022",
+      shipmentItemId: "0192e300-0052-7000-8000-000000000022",
+      seq: 8,
+      gross: 54.2,
+      net: 46.85,
+      stoneCarat: 6.5,
+    },
   ];
 
   for (const qci of qcItems) {
@@ -997,10 +1144,13 @@ export async function seedShowroomDatabase(): Promise<void> {
   }
 
   const inventoryPieces = [
+    // INV-11: Downtown Showroom Floor Pieces
     {
       id: "0192e300-0060-7000-8000-000000000001",
+      storeId: storeInv11,
       skuId: "0192e300-0031-7000-8000-000000000001",
       qcItemId: "0192e300-0054-7000-8000-000000000001",
+      purityId: purity18kId,
       serial: "JC-SOL-2026-081",
       name: "18K Oval Solitaire Diamond Ring (1.52ct F-VVS1)",
       gross: 5.42,
@@ -1011,8 +1161,10 @@ export async function seedShowroomDatabase(): Promise<void> {
     },
     {
       id: "0192e300-0060-7000-8000-000000000002",
+      storeId: storeInv11,
       skuId: "0192e300-0031-7000-8000-000000000002",
       qcItemId: "0192e300-0054-7000-8000-000000000002",
+      purityId: purity18kId,
       serial: "JC-CHK-2026-015",
       name: "18K Rose Gold Waterfall Cascading Necklace (18.5ct)",
       gross: 68.3,
@@ -1023,8 +1175,10 @@ export async function seedShowroomDatabase(): Promise<void> {
     },
     {
       id: "0192e300-0060-7000-8000-000000000003",
+      storeId: storeInv11,
       skuId: "0192e300-0031-7000-8000-000000000003",
       qcItemId: "0192e300-0054-7000-8000-000000000003",
+      purityId: purity18kId,
       serial: "JC-KAD-2026-005",
       name: "18K White Gold Micro-Prong Tennis Bangle (5.20ct)",
       gross: 28.6,
@@ -1032,6 +1186,78 @@ export async function seedShowroomDatabase(): Promise<void> {
       price: 625000.0,
       compartmentId: "0192e350-0003-7000-8000-000000000004",
       epc: "EPC-E280-1160-7714",
+    },
+    {
+      id: "0192e300-0060-7000-8000-000000000004",
+      storeId: storeInv11,
+      skuId: "0192e300-0031-7000-8000-000000000003",
+      qcItemId: "0192e300-0054-7000-8000-000000000004",
+      purityId: purity18kId,
+      serial: "JC-BAN-2026-042",
+      name: "22K Temple Filigree Peacock Kada Pair",
+      gross: 88.5,
+      net: 86.2,
+      price: 715000.0,
+      compartmentId: "0192e350-0003-7000-8000-000000000004",
+      epc: "EPC-E280-1160-7715",
+    },
+    // VAULT-01: Central Treasury Vault Hub Bullion
+    {
+      id: "0192e300-0060-7000-8000-000000000011",
+      storeId: storeVault01,
+      skuId: "0192e300-0031-7000-8000-000000000004",
+      qcItemId: "0192e300-0054-7000-8000-000000000011",
+      purityId: purity24kId,
+      serial: "VAL-BAR-01",
+      name: "999.9 Fine Gold Cast Ingot (1000g LBMA Good Delivery)",
+      gross: 1000.042,
+      net: 1000.042,
+      price: 7450312.0,
+      compartmentId: "0192e350-0003-7000-8000-000000000050",
+      epc: "EPC-VAL-BAR-01-UHF",
+    },
+    {
+      id: "0192e300-0060-7000-8000-000000000012",
+      storeId: storeVault01,
+      skuId: "0192e300-0031-7000-8000-000000000004",
+      qcItemId: "0192e300-0054-7000-8000-000000000012",
+      purityId: purity24kId,
+      serial: "VAL-BAR-02",
+      name: "999.9 Fine Gold Cast Ingot (1000g LBMA Good Delivery)",
+      gross: 1000.038,
+      net: 1000.038,
+      price: 7450283.0,
+      compartmentId: "0192e350-0003-7000-8000-000000000050",
+      epc: "EPC-VAL-BAR-02-UHF",
+    },
+    // SHOW-02: Uptown Luxury Boutique Pieces
+    {
+      id: "0192e300-0060-7000-8000-000000000021",
+      storeId: storeShow02,
+      skuId: "0192e300-0031-7000-8000-000000000001",
+      qcItemId: "0192e300-0054-7000-8000-000000000021",
+      purityId: purity18kId,
+      serial: "JC-SOL-2026-082",
+      name: "18K Yellow Gold Cushion Halo Ring (2.01ct D-VVS2)",
+      gross: 6.84,
+      net: 6.438,
+      price: 890000.0,
+      compartmentId: "0192e350-0003-7000-8000-000000000060",
+      epc: "EPC-E280-1160-9942",
+    },
+    {
+      id: "0192e300-0060-7000-8000-000000000022",
+      storeId: storeShow02,
+      skuId: "0192e300-0031-7000-8000-000000000002",
+      qcItemId: "0192e300-0054-7000-8000-000000000022",
+      purityId: purity18kId,
+      serial: "JC-CHK-2026-014",
+      name: "22K Antique Heritage Jadau Polki Choker",
+      gross: 54.2,
+      net: 46.85,
+      price: 1250000.0,
+      compartmentId: "0192e350-0003-7000-8000-000000000060",
+      epc: "EPC-E280-1160-8814",
     },
   ];
 
@@ -1043,20 +1269,20 @@ export async function seedShowroomDatabase(): Promise<void> {
       [
         piece.id,
         orgId,
-        storeInv11,
+        piece.storeId,
         piece.skuId,
         piece.qcItemId,
         piece.serial,
         piece.name,
         piece.gross,
         piece.net,
-        purity18kId,
+        piece.purityId,
         piece.compartmentId,
         piece.price,
       ],
     );
 
-    const tagId = `0192e300-0070-7000-8000-00000000000${piece.id.slice(-1)}`;
+    const tagId = `0192e300-0070-7000-8000-${piece.id.slice(-12)}`;
     await pool.query(
       `INSERT INTO rfid_tags (id, organization_id, epc, status, frequency_band, created_at, updated_at)
        VALUES ($1, $2, $3, 'ACTIVE', 'UHF_860_960_MHZ', NOW(), NOW())
@@ -1069,6 +1295,158 @@ export async function seedShowroomDatabase(): Promise<void> {
        VALUES (gen_random_uuid(), $1, $2, $3, 'ACTIVE', $4, NOW(), NOW())
        ON CONFLICT DO NOTHING`,
       [orgId, piece.id, tagId, adminId],
+    );
+  }
+
+  // 12. Seed Inter-Store Armored Transit Orders & Dual-Custody Manifests
+  // eslint-disable-next-line no-console
+  console.log("[12/13] Seeding Inter-Store Armored Transit Orders & Dual-Custody Manifests...");
+  const transferOrders = [
+    {
+      id: "0192e300-0090-7000-8000-000000000001",
+      orderNumber: "TR-2026-8801",
+      sourceStoreId: storeVault01,
+      destinationStoreId: storeInv11,
+      status: "IN_TRANSIT",
+      priority: "HIGH",
+      notes: "Armored bullion replenishment consignment via Brinks Van #BR-09",
+      manifest: {
+        id: "0192e300-0091-7000-8000-000000000001",
+        manifestNumber: "MNF-2026-0881",
+        carrierName: "Brinks India Armored Logistics",
+        trackingNumber: "BR-LX-94022",
+        sealNumber: "TS-8821",
+      },
+    },
+    {
+      id: "0192e300-0090-7000-8000-000000000002",
+      orderNumber: "TR-2026-8802",
+      sourceStoreId: storeVault01,
+      destinationStoreId: storeShow02,
+      status: "COMPLETED",
+      priority: "NORMAL",
+      notes: "High-value Solitaire and Polki boutique consignment to Bandra Pavilion",
+      manifest: {
+        id: "0192e300-0091-7000-8000-000000000002",
+        manifestNumber: "MNF-2026-0882",
+        carrierName: "SecureCorp Vault Transit Escort",
+        trackingNumber: "SC-CH-22198",
+        sealNumber: "TS-8825",
+      },
+    },
+  ];
+
+  for (const t of transferOrders) {
+    await pool.query(
+      `INSERT INTO transfer_orders (id, organization_id, order_number, source_store_id, destination_store_id, status, priority, requested_by_user_id, approved_by_user_id, notes, approved_at, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW(), NOW())
+       ON CONFLICT (organization_id, order_number) DO NOTHING`,
+      [
+        t.id,
+        orgId,
+        t.orderNumber,
+        t.sourceStoreId,
+        t.destinationStoreId,
+        t.status,
+        t.priority,
+        adminId,
+        "0192e300-0002-7000-8000-000000000002", // Vikram M.
+        t.notes,
+      ],
+    );
+
+    await pool.query(
+      `INSERT INTO transfer_manifests (id, organization_id, manifest_number, transfer_order_id, dispatcher_user_id, witness_user_id, carrier_name, tracking_number, status, notes, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'DISPATCHED', $9, NOW())
+       ON CONFLICT (organization_id, manifest_number) DO NOTHING`,
+      [
+        t.manifest.id,
+        orgId,
+        t.manifest.manifestNumber,
+        t.id,
+        adminId,
+        "0192e300-0002-7000-8000-000000000002",
+        t.manifest.carrierName,
+        t.manifest.trackingNumber,
+        t.notes,
+      ],
+    );
+
+    await pool.query(
+      `INSERT INTO security_seals (id, organization_id, transfer_manifest_id, seal_number, seal_type, status, created_at)
+       VALUES (gen_random_uuid(), $1, $2, $3, 'SECURITY_BAG', 'ATTACHED', NOW())
+       ON CONFLICT DO NOTHING`,
+      [orgId, t.manifest.id, t.manifest.sealNumber],
+    );
+  }
+
+  // 13. Seed Tamper-Evident Merkle Audit Trail Records (INV-09, FEAT-GOV-02)
+  // eslint-disable-next-line no-console
+  console.log("[13/13] Seeding Cryptographic Merkle Audit Trail Records...");
+  const auditEvents = [
+    {
+      id: "0192e300-0095-7000-8000-000000000001",
+      storeId: storeVault01,
+      action: "PROCUREMENT_GRN_ACCEPTED",
+      resourceType: "procurement_grns",
+      resourceId: "0192e300-0050-7000-8000-000000000001",
+      reason: "Valcambi LBMA 3000g Good Delivery Bar Inward Accepted",
+      payload: { supplier: "Valcambi Suisse", barsCount: 3, declaredWeight: 3000.0, seal: "TS-8821" },
+    },
+    {
+      id: "0192e300-0095-7000-8000-000000000002",
+      storeId: storeInv11,
+      action: "METALLURGICAL_ASSAY_PASSED",
+      resourceType: "quality_checks",
+      resourceId: "0192e300-0053-7000-8000-000000000001",
+      reason: "XRF Spectrometry certified 99.98% Au fine purity",
+      payload: { instrument: "Thermo Niton XL5 Plus", auPurity: 99.98, iso17025Calibrated: true },
+    },
+    {
+      id: "0192e300-0095-7000-8000-000000000003",
+      storeId: storeInv11,
+      action: "PIECE_GENESIS_BIRTHED",
+      resourceType: "inventory_items",
+      resourceId: "0192e300-0060-7000-8000-000000000001",
+      reason: "Piece JC-SOL-2026-081 registered in lineage master ledger",
+      payload: { serial: "JC-SOL-2026-081", grossWeight: 5.42, giaCert: "GIA-2210894511" },
+    },
+    {
+      id: "0192e300-0095-7000-8000-000000000004",
+      storeId: storeInv11,
+      action: "UHF_RFID_TAG_COMMISSIONED",
+      resourceType: "rfid_tags",
+      resourceId: "0192e300-0070-7000-8000-000000000001",
+      reason: "EPC Gen2 Tag EPC-E280-1160-9941 encoded and thermal printed",
+      payload: { epc: "EPC-E280-1160-9941", reader: "Impinj Speedway R420", port: 1 },
+    },
+    {
+      id: "0192e300-0095-7000-8000-000000000005",
+      storeId: storeInv11,
+      action: "DUAL_CONTROL_QUORUM_UNLATCHED",
+      resourceType: "stock_approvals",
+      resourceId: "0192e300-0060-7000-8000-000000000001",
+      reason: "SmartCard Key 1 and Key 2 dual-sign authorized release to salon floor",
+      payload: { signatoryKey1: "Rachel R. (Store Manager)", signatoryKey2: "Vikram M. (Compliance Officer)" },
+    },
+  ];
+
+  for (const a of auditEvents) {
+    await pool.query(
+      `INSERT INTO audit_events (id, organization_id, store_id, actor_user_id, actor_ip_address, action, resource_type, resource_id, payload_after_json, reason, occurred_at, created_at)
+       VALUES ($1, $2, $3, $4, '127.0.0.1', $5, $6, $7, $8, $9, NOW(), NOW())
+       ON CONFLICT (id) DO NOTHING`,
+      [
+        a.id,
+        orgId,
+        a.storeId,
+        adminId,
+        a.action,
+        a.resourceType,
+        a.resourceId,
+        JSON.stringify(a.payload),
+        a.reason,
+      ],
     );
   }
 
