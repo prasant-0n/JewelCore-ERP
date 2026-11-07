@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AppShell } from "../../components/common/AppShell";
+import { JewelCoreLogo } from "../../components/common/JewelCoreLogo";
 import {
   ConsignmentItemCard,
   ConsignmentItemData,
@@ -267,12 +268,15 @@ export default function TransfersTransitPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground">
-              <span>JewelCore ERP</span>
+              <span className="flex items-center gap-1.5 font-medium text-foreground">
+                <JewelCoreLogo size="xs" variant="mark" />
+                JewelCore ERP
+              </span>
               <span>/</span>
-              <span>Logistics & Fleet Custody</span>
+              <span>Logistics &amp; Fleet Custody</span>
               <span>/</span>
               <span className="text-gold font-semibold">
-                Inter-Branch Transfers & Armored Transit
+                Inter-Branch Transfers &amp; Armored Transit
               </span>
             </div>
             <h1 className="text-xl font-bold text-foreground tracking-tight mt-1 flex items-center space-x-3">

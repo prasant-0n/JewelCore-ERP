@@ -115,4 +115,21 @@ test.describe("Theme Toggle, Privacy Mode & QuickLock Terminal", () => {
       page.locator("text=Identity Switched to Vikram M."),
     ).toBeVisible();
   });
+
+  test("renders official JewelCore Atelier brand logo in top header and favicon link", async ({
+    page,
+  }) => {
+    // Check header logo mark and text
+    const headerLogo = page.locator('header a[title*="Control Tower"]');
+    await expect(headerLogo).toBeVisible();
+    await expect(headerLogo.locator("text=JEWELCORE")).toBeVisible();
+    await expect(headerLogo.locator("text=ATELIER ERP")).toBeVisible();
+    await expect(
+      headerLogo.locator('svg[aria-label="JewelCore Atelier Logo Mark"]'),
+    ).toBeVisible();
+
+    // Check favicon in document head
+    const faviconLink = page.locator('link[rel="icon"][href*="icon.svg"]');
+    await expect(faviconLink).toHaveCount(1);
+  });
 });

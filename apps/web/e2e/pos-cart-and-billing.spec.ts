@@ -78,4 +78,28 @@ test.describe("POS Showroom Cashier & Billing Workstation", () => {
       ).toBeVisible();
     }
   });
+
+  test("authorizes sale and renders official Tax Invoice & Atelier Authenticity Certificate with JewelCore logo", async ({
+    page,
+  }) => {
+    const authorizeBtn = page.getByRole("button", { name: "Authorize Sale" });
+    await expect(authorizeBtn).toBeVisible();
+    await authorizeBtn.click();
+
+    // Verify Tax Invoice Modal with official JewelCore Logo appears
+    const invoiceModal = page.locator("text=TAX INVOICE / IRN");
+    await expect(invoiceModal).toBeVisible({ timeout: 5000 });
+    await expect(
+      page.locator("text=JewelCore Luxury Atelier Group").first(),
+    ).toBeVisible();
+    await expect(
+      page.locator('svg[aria-label="JewelCore Atelier Logo Mark"]').first(),
+    ).toBeVisible();
+
+    // Close invoice modal
+    const closeBtn = page.getByRole("button", { name: "Close & Complete" });
+    await expect(closeBtn).toBeVisible();
+    await closeBtn.click();
+    await expect(invoiceModal).not.toBeVisible();
+  });
 });

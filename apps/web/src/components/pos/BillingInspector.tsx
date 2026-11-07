@@ -10,7 +10,17 @@ import {
   X,
   BadgePercent,
   Wallet,
+  ShieldCheck,
+  FileText,
 } from "lucide-react";
+import { JewelCoreLogo } from "../common/JewelCoreLogo";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   Card,
   CardHeader,
@@ -53,6 +63,7 @@ export function BillingInspector({
   >("RTGS");
   const [isProcessing, setIsProcessing] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   // Financial calculations
   const totalGrossWeight = cartPieces.reduce(
@@ -88,11 +99,12 @@ export function BillingInspector({
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
+      setShowInvoiceModal(true);
       toast.success("Payment Authorized & Invoice Settled", {
         description: `₹${finalInvoiceTotal.toLocaleString("en-IN")} received via ${tenderMethod}. Tax invoice IRN generated.`,
       });
       onAuthorizePayment?.();
-    }, 1000);
+    }, 600);
   };
 
   const handleDiscountToggle = () => {
@@ -248,6 +260,139 @@ export function BillingInspector({
           Authorize Sale
         </Button>
       </CardFooter>
+
+      {/* Official Tax Invoice & Atelier Authenticity Certificate Modal */}
+      <Dialog open={showInvoiceModal} onOpenChange={setShowInvoiceModal}>
+        <DialogContent className="max-w-lg bg-surface border-surface-border p-6 shadow-2xl">
+          <DialogHeader className="border-b border-surface-border pb-4">
+            <div className="flex items-center justify-between">
+              <JewelCoreLogo size="md" variant="full" />
+              <div className="text-right font-mono text-[10px] text-muted-foreground">
+                <p className="font-semibold text-foreground">
+                  TAX INVOICE / IRN
+                </p>
+                <p>INV-2026-90412</p>
+              </div>
+            </div>
+            <DialogDescription className="text-left text-[11px] text-muted-foreground pt-2">
+              JewelCore Luxury Atelier Group • Flagship Salon, Colaba Causeway •
+              GSTIN: 27AABCU9603R1ZM
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3.5 text-xs py-2">
+            {/* Customer & Settlement Metadata */}
+            <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-surface-elevated/70 border border-surface-border font-mono text-[11px]">
+              <div>
+                <span className="text-muted-foreground block text-[10px] uppercase">
+                  Client Context
+                </span>
+                <span className="font-semibold text-foreground">
+                  {clientName}
+                </span>
+                <p className="text-muted-foreground text-[10px]">
+                  {clientVipNumber} • PAN: {panNumber}
+                </p>
+              </div>
+              <div className="text-right">
+                <span className="text-muted-foreground block text-[10px] uppercase">
+                  Payment Tender
+                </span>
+                <span className="font-semibold text-gold">
+                  {tenderMethod} Authorized
+                </span>
+                <p className="text-status-emerald text-[10px] flex items-center justify-end gap-1">
+                  <ShieldCheck className="w-3 h-3" /> PMLA / BIS Hallmarked
+                </p>
+              </div>
+            </div>
+
+            {/* Line Items Decomposition */}
+            <div className="border border-surface-border rounded-lg overflow-hidden">
+              <div className="bg-surface-elevated px-3 py-1.5 text-[10px] font-mono text-muted-foreground uppercase flex justify-between">
+                <span>Description / Item Spec</span>
+                <span>Gross Metal</span>
+                <span>Total Amount</span>
+              </div>
+              <div className="divide-y divide-surface-border text-[11px]">
+                {cartPieces.map((p) => (
+                  <div
+                    key={p.id}
+                    className="p-3 flex justify-between items-center"
+                  >
+                    <div>
+                      <p className="font-medium text-foreground">
+                        {p.itemName}
+                      </p>
+                      <p className="text-[10px] font-mono text-muted-foreground">
+                        {p.metalPurity} • Gross: {p.grossWeightGrams}g • Net:{" "}
+                        {p.netGoldGrams}g
+                      </p>
+                    </div>
+                    <div className="font-mono text-right">
+                      <p className="text-muted-foreground text-[10px]">
+                        ₹{p.metalValueInr.toLocaleString("en-IN")}
+                      </p>
+                    </div>
+                    <div className="font-mono font-semibold text-foreground text-right">
+                      ₹{p.totalPriceInr.toLocaleString("en-IN")}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tax Computation Summary */}
+            <div className="space-y-1.5 p-3 rounded-lg bg-surface-elevated/50 font-mono text-xs">
+              <div className="flex justify-between text-muted-foreground">
+                <span>Taxable Subtotal:</span>
+                <span>₹{taxableSubtotal.toLocaleString("en-IN")}</span>
+              </div>
+              {oldGoldCreditInr > 0 && (
+                <div className="flex justify-between text-status-emerald">
+                  <span>Old Gold Buyback Credit:</span>
+                  <span>-₹{oldGoldCreditInr.toLocaleString("en-IN")}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-muted-foreground text-[11px]">
+                <span>CGST (1.5%) + SGST (1.5%):</span>
+                <span>
+                  ₹{(cgstAmount + sgstAmount).toLocaleString("en-IN")}
+                </span>
+              </div>
+              <div className="flex justify-between text-foreground font-bold text-sm pt-1.5 border-t border-surface-border">
+                <span>Net Total Settled:</span>
+                <span className="text-gold">
+                  ₹{finalInvoiceTotal.toLocaleString("en-IN")}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-surface-border">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                toast.success("Sending to Thermal Receipt Printer", {
+                  description:
+                    "ESC/POS print stream dispatched to Salon-1 Star Micronics printer.",
+                });
+              }}
+            >
+              <Printer className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
+              Print Invoice
+            </Button>
+            <Button
+              variant="gold"
+              size="sm"
+              onClick={() => setShowInvoiceModal(false)}
+            >
+              Close &amp; Complete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

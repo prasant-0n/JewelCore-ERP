@@ -3836,6 +3836,11 @@ export function getOpenApiDocumentation(): Record<string, any> {
       version: "1.0.0",
       description:
         "Enterprise Luxury Jewellery Manufacturing, Procurement, Physical Storage & Inventory Custody Platform API.",
+      "x-logo": {
+        url: "/logo.svg",
+        backgroundColor: "#0C0D0E",
+        altText: "JewelCore Atelier ERP",
+      },
       contact: {
         name: "JewelCore Engineering Team",
         url: "https://jewelcore.com",

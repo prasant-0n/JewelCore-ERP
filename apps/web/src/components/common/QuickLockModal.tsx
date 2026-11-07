@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Lock, ShieldAlert } from "lucide-react";
+import { JewelCoreLogo } from "./JewelCoreLogo";
 import {
   Dialog,
   DialogContent,
@@ -50,8 +51,11 @@ export function QuickLockModal({ isOpen, onUnlock }: QuickLockModalProps) {
   return (
     <Dialog open={isOpen}>
       <DialogContent className="max-w-xs sm:max-w-sm flex flex-col items-center text-center p-6 border-surface-border bg-surface">
-        <div className="w-12 h-12 rounded-full bg-gold/10 border border-gold/40 flex items-center justify-center text-gold mb-1">
-          <Lock className="w-6 h-6" />
+        <div className="relative mb-2">
+          <JewelCoreLogo size="lg" variant="badge" />
+          <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-gold/20 border border-gold/60 flex items-center justify-center text-gold backdrop-blur-sm shadow-md">
+            <Lock className="w-3 h-3" />
+          </div>
         </div>
 
         <DialogHeader className="items-center text-center pb-0 border-none">

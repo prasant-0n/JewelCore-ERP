@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { JewelCoreLogo } from "./JewelCoreLogo";
 import {
   LayoutDashboard,
   Boxes,
@@ -120,7 +121,7 @@ export function Sidebar() {
       <div className="p-3 border-t border-surface-border bg-surface">
         <div className="px-3 py-2 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between text-[10px] font-mono text-muted-foreground">
           <div className="flex items-center space-x-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
+            <JewelCoreLogo size="xs" variant="mark" />
             <span className="text-foreground">Terminal: SHW-01</span>
           </div>
           <span className="text-muted-foreground">v0.10</span>

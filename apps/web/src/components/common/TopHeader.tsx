@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Diamond,
   Search,
@@ -15,6 +16,7 @@ import {
 import { api } from "../../lib/api";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
+import { JewelCoreLogo } from "./JewelCoreLogo";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -106,19 +108,13 @@ export function TopHeader({
     <header className="h-14 bg-surface border-b border-surface-border px-6 flex items-center justify-between z-40 flex-shrink-0">
       {/* Left: Brand & Store Context Selector */}
       <div className="flex items-center space-x-6">
-        <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/30 flex items-center justify-center text-gold">
-            <Diamond className="w-4 h-4 fill-gold/20" />
-          </div>
-          <div>
-            <span className="text-sm font-semibold tracking-wider text-foreground uppercase">
-              JEWELCORE
-            </span>
-            <span className="block text-[10px] text-muted-foreground tracking-widest font-mono uppercase opacity-70 -mt-0.5">
-              ATELIER ERP
-            </span>
-          </div>
-        </div>
+        <Link
+          href="/"
+          className="flex items-center group transition-transform active:scale-95"
+          title="JewelCore Atelier ERP Control Tower"
+        >
+          <JewelCoreLogo size="sm" variant="badge" showText />
+        </Link>
 
         <div className="h-5 w-px bg-surface-border" />
 

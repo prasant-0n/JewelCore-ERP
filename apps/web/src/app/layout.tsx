@@ -4,9 +4,36 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  ),
   title: "JewelCore ERP — Next-Gen Jewellery Enterprise Management",
   description:
-    "Enterprise ERP for precious jewellery manufacturing, quality control, inventory, and retail.",
+    "Enterprise ERP for precious jewellery manufacturing, analytical quality control, inventory custody, and retail.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  openGraph: {
+    title: "JewelCore ERP — Next-Gen Jewellery Enterprise Management",
+    description:
+      "Enterprise ERP for precious jewellery manufacturing, analytical quality control, inventory custody, and retail.",
+    images: [
+      {
+        url: "/icon-512.png",
+        width: 512,
+        height: 512,
+        alt: "JewelCore Luxury Atelier Group",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AppShell } from "../components/common/AppShell";
+import { JewelCoreLogo } from "../components/common/JewelCoreLogo";
 import {
   PieceInspectorDrawer,
   PieceDetail,
@@ -210,18 +211,24 @@ export default function HomePage() {
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
         {/* Top Header / Greeting Bar */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-4">
-          <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-              <span>Flagship Mumbai (INV-11)</span>
-              <span>•</span>
-              <span className="text-status-emerald flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-status-emerald animate-pulse" />
-                Shift Morning-A Active
-              </span>
+          <div className="flex items-center space-x-3.5">
+            <JewelCoreLogo size="md" variant="badge" />
+            <div>
+              <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
+                <span>Flagship Mumbai (INV-11)</span>
+                <span>•</span>
+                <span className="text-status-emerald flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-emerald animate-pulse" />
+                  Shift Morning-A Active
+                </span>
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <span>Executive Control Tower</span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-gold/10 border border-gold/30 text-gold uppercase tracking-wider font-semibold">
+                  Atelier Master
+                </span>
+              </h1>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Executive Control Tower
-            </h1>
           </div>
 
           <div className="flex items-center space-x-3">
