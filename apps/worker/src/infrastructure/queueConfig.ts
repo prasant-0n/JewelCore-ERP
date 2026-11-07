@@ -7,6 +7,10 @@ export const QUEUE_NAMES = {
   DOMAIN_EVENTS: "jewelcore:events:domain",
   DEAD_LETTER: "jewelcore:events:dlq",
   RFID_JOBS: "jewelcore:rfid:jobs",
+  VAULT_RECONCILIATION: "jewelcore:vault:reconciliation",
+  MERKLE_BATCHING: "jewelcore:governance:merkle",
+  ZPL_PRINT_SPOOLER: "jewelcore:print:zpl",
+  BULLION_FEED_INGESTION: "jewelcore:market:bullion",
 } as const;
 
 export type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];
