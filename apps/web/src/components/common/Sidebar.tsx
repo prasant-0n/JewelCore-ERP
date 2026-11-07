@@ -17,6 +17,7 @@ import {
   Truck,
   ArrowRightLeft,
   Crown,
+  Landmark,
 } from "lucide-react";
 
 interface NavSection {
@@ -63,6 +64,12 @@ const NAV_SECTIONS: NavSection[] = [
     title: "PRIVATE CLIENTELING",
     items: [
       { name: "VIP Client Portal", href: "/portal", icon: Crown },
+    ],
+  },
+  {
+    title: "FINANCE & STATUTORY",
+    items: [
+      { name: "Accounting & GST", href: "/accounting", icon: Landmark },
     ],
   },
 ];
