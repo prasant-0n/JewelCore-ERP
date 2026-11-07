@@ -5,6 +5,7 @@ import { Flame, Scale, CheckCircle2, FlaskConical, Gem } from "lucide-react";
 
 export interface ScrapPieceData {
   id: string;
+  buybackOrderId?: string;
   itemCode: string;
   customerName?: string;
   customerPan?: string;

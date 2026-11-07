@@ -82,4 +82,50 @@ test.describe("Master-Detail Workstation Inspectors", () => {
       inspector.locator("text=GIA-2210894511").first(),
     ).toBeVisible();
   });
+
+  test("Returns & Refining: opens Old Gold Buyback modal, logs scrap item, and authorizes payout", async ({
+    page,
+  }) => {
+    await page.goto("/returns");
+
+    await expect(page.locator("h1")).toContainText(
+      /Returns, Buyback Valuation & Scrap Refining Workflow/i,
+    );
+
+    // Open Old Gold Buyback intake modal
+    const logBuybackBtn = page.getByRole("button", {
+      name: /Log Old Gold Buyback/i,
+    });
+    await expect(logBuybackBtn).toBeVisible();
+    await logBuybackBtn.click();
+
+    // Verify modal header
+    await expect(
+      page.locator("text=Intake Old Gold Buyback & Scrap").first(),
+    ).toBeVisible();
+
+    // Submit buyback modal
+    const submitBtn = page.getByRole("button", {
+      name: "Issue Exchange Voucher",
+    });
+    await expect(submitBtn).toBeVisible();
+    await submitBtn.click();
+
+    // Check toast
+    await expect(
+      page.locator("text=Old Gold Buyback Recorded").first(),
+    ).toBeVisible({ timeout: 5000 });
+
+    // Click Disburse Payout button in SmeltInspector
+    const payoutBtn = page.getByRole("button", {
+      name: "Disburse Payout",
+    });
+    await expect(payoutBtn).toBeVisible();
+    await payoutBtn.click();
+
+    // Check payout toast
+    await expect(
+      page.locator("text=Buyback Payout").first(),
+    ).toBeVisible({ timeout: 5000 });
+  });
 });
