@@ -87,6 +87,21 @@ export async function createConciergeAppointment(
   const assignedManager =
     input.assignedManagerName || "Rachel R., Senior Private Client Director";
 
+  const isUuid =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      input.customerId,
+    );
+  let targetCustomerId = input.customerId;
+  if (!isUuid) {
+    const custRes = await db.query(
+      `SELECT id FROM customers WHERE customer_code = $1 LIMIT 1`,
+      [input.customerId],
+    );
+    if (custRes.rows[0]) {
+      targetCustomerId = custRes.rows[0].id;
+    }
+  }
+
   const res = await db.query<ConciergeAppointmentRow>(
     `INSERT INTO concierge_appointments (
       id,
@@ -108,7 +123,7 @@ export async function createConciergeAppointment(
     [
       id,
       input.organizationId,
-      input.customerId,
+      targetCustomerId,
       input.serviceType,
       input.appointmentDate,
       input.salonLocation,
@@ -132,11 +147,28 @@ export async function listConciergeAppointmentsByCustomer(
   client?: Queryable,
 ): Promise<ConciergeAppointmentRecord[]> {
   const db = client ?? getPool();
+  const isUuid =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      customerId,
+    );
+  let targetId = customerId;
+  if (!isUuid) {
+    const custRes = await db.query(
+      `SELECT id FROM customers WHERE customer_code = $1 LIMIT 1`,
+      [customerId],
+    );
+    if (custRes.rows[0]) {
+      targetId = custRes.rows[0].id;
+    } else {
+      return [];
+    }
+  }
+
   const res = await db.query<ConciergeAppointmentRow>(
     `SELECT * FROM concierge_appointments
      WHERE customer_id = $1
      ORDER BY appointment_date DESC`,
-    [customerId],
+    [targetId],
   );
   return res.rows.map(mapRowToConciergeAppointment);
 }

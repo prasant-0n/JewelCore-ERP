@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jewelcore
+  labels:
+    app.kubernetes.io/name: jewelcore-erp
+    app.kubernetes.io/part-of: jewelcore-atelier
+    environment: production

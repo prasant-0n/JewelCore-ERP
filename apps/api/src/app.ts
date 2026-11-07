@@ -3,6 +3,7 @@ import cors from "cors";
 import { correlationIdMiddleware } from "./common/correlationId.js";
 import { createHttpLogger, logger } from "./common/logger.js";
 import { errorHandler, notFoundHandler } from "./common/errorHandler.js";
+import { metricsMiddleware, metricsHandler } from "./modules/telemetry/metricsService.js";
 import { createAuthRouter } from "./modules/auth/authRoutes.js";
 import { createIamRouter } from "./modules/iam/iamRoutes.js";
 import { createStorageRouter } from "./modules/storage/storageRoutes.js";
@@ -32,9 +33,15 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
   // 2. Structured HTTP Logger (Pino)
   app.use(createHttpLogger());
 
+  // 2b. Prometheus Metrics Middleware (Latency & Request Counts)
+  app.use(metricsMiddleware);
+
   // 3. Security & Body Parsing Middleware
   app.use(cors());
   app.use(express.json({ limit: "50mb" }));
+
+  // 3b. Prometheus Metrics Scrape Endpoint
+  app.get("/metrics", metricsHandler);
 
   // 4. Base Health Check
   app.get("/health", (_req: Request, res: Response) => {

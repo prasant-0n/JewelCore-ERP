@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jewelcore-ingress
+  namespace: jewelcore
+  labels:
+    app.kubernetes.io/name: jewelcore-erp
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "jewelcore-api"
+spec:
+  tls:
+    - hosts:
+        - erp.jewelcore.internal
+      secretName: jewelcore-tls-secret
+  rules:
+    - host: erp.jewelcore.internal
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: jewelcore-api
+                port:
+                  number: 4000
+          - path: /metrics
+            pathType: Exact
+            backend:
+              service:
+                name: jewelcore-api
+                port:
+                  number: 4000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jewelcore-web
+                port:
+                  number: 3000

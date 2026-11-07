@@ -1,0 +1,144 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "JewelCore Showroom Fleet & API Gateway SLA",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "reqps"
+        }
+      },
+      "gridPos": { "h": 7, "w": 8, "x": 0, "y": 1 },
+      "id": 2,
+      "title": "Showroom Floor Transaction Throughput (TPS)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(jewelcore_http_requests_total[1m])) by (status_code)",
+          "legendFormat": "HTTP {{status_code}}"
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.1 },
+              { "color": "red", "value": 0.5 }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 7, "w": 8, "x": 8, "y": 1 },
+      "id": 3,
+      "title": "API Latency p95 / p99 (SLA < 100ms)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(jewelcore_http_request_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p95 Latency"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(jewelcore_http_request_duration_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p99 Latency"
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "gold" },
+          "unit": "currencyINR"
+        }
+      },
+      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 1 },
+      "id": 4,
+      "title": "Live MCX Au 24K Spot Fix",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "jewelcore_bullion_spot_price_inr{metal=\"GOLD\",purity=\"24K\"}",
+          "legendFormat": "₹/gram"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 8 },
+      "id": 5,
+      "title": "Hardware Telemetry Mesh: Gravimetric Balances & RFID",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 9 },
+      "id": 6,
+      "title": "Impinj Speedway 360° RFID Vitrine Sweeps / sec",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(jewelcore_rfid_sweeps_total[1m]))",
+          "legendFormat": "RFID Sweeps / sec"
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 9 },
+      "id": 7,
+      "title": "Mettler Toledo Scale Balance Synchronizations",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(jewelcore_scale_synced_total[1m]))",
+          "legendFormat": "Scale Syncs / sec"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["jewelcore", "atelier", "erp", "luxury"],
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "title": "JewelCore Atelier ERP - Executive Operations & SLA Control Tower",
+  "uid": "jewelcore-ops-tower"
+}

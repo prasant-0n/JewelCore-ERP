@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jewelcore-worker
+  namespace: jewelcore
+  labels:
+    app: jewelcore-worker
+    app.kubernetes.io/name: jewelcore-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jewelcore-worker
+  template:
+    metadata:
+      labels:
+        app: jewelcore-worker
+    spec:
+      containers:
+        - name: worker
+          image: jewelcore-worker:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: jewelcore-config
+            - secretRef:
+                name: jewelcore-secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi

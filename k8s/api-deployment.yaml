@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jewelcore-api
+  namespace: jewelcore
+  labels:
+    app.kubernetes.io/name: jewelcore-api
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "4000"
+    prometheus.io/path: "/metrics"
+spec:
+  ports:
+    - port: 4000
+      targetPort: 4000
+      name: http
+  selector:
+    app: jewelcore-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jewelcore-api
+  namespace: jewelcore
+  labels:
+    app: jewelcore-api
+    app.kubernetes.io/name: jewelcore-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jewelcore-api
+  template:
+    metadata:
+      labels:
+        app: jewelcore-api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "4000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: api
+          image: jewelcore-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: jewelcore-config
+            - secretRef:
+                name: jewelcore-secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1.5Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: jewelcore-api-hpa
+  namespace: jewelcore
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: jewelcore-api
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jewelcore-config
+  namespace: jewelcore
+  labels:
+    app.kubernetes.io/name: jewelcore-erp
+data:
+  NODE_ENV: "production"
+  PORT: "4000"
+  WEB_PORT: "3000"
+  DATABASE_HOST: "jewelcore-postgres"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "jewelcore_db"
+  DATABASE_SSL: "false"
+  REDIS_URL: "redis://jewelcore-redis:6379"
+  NEXT_PUBLIC_API_URL: "https://erp.jewelcore.internal/api/v1"
+  NEXT_PUBLIC_WS_URL: "wss://erp.jewelcore.internal/telemetry"
+  LOG_LEVEL: "info"
