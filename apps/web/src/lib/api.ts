@@ -156,6 +156,45 @@ class ApiClient {
   ): Promise<T> {
     return this.request<T>(endpoint, { method: "DELETE", headers });
   }
+
+  public async downloadFile(
+    endpoint: string,
+    fallbackFilename: string,
+    options: RequestInit = {},
+  ): Promise<void> {
+    const url = endpoint.startsWith("http")
+      ? endpoint
+      : `${API_BASE_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+
+    const headers: Record<string, string> = {
+      "x-store-id": this.getStoreId(),
+      ...((options.headers as Record<string, string>) || {}),
+    };
+
+    const token = this.getToken();
+    if (token && !headers["Authorization"]) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to download file: HTTP ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = fallbackFilename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(downloadUrl);
+  }
 }
 
 export const api = new ApiClient();

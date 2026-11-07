@@ -22,6 +22,7 @@ import {
   UserCheck,
   CheckCircle2,
   Lock,
+  Download,
 } from "lucide-react";
 import { api } from "../../lib/api";
 
@@ -93,7 +94,27 @@ export function AuditTrailModal({ isOpen, onClose }: AuditTrailModalProps) {
   const [events, setEvents] = useState<AuditEventEntry[]>(FALLBACK_AUDIT_EVENTS);
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isExportingDossier, setIsExportingDossier] = useState(false);
   const [filterQuery, setFilterQuery] = useState("");
+
+  const handleExportDossierPdf = async () => {
+    try {
+      setIsExportingDossier(true);
+      await api.downloadFile(
+        "/certificates/compliance/dossier/pdf",
+        `compliance-dossier-${new Date().toISOString().slice(0, 10)}.pdf`,
+      );
+      toast.success("Compliance Dossier PDF Exported", {
+        description: "Cryptographically verified Merkle audit trail dossier downloaded.",
+      });
+    } catch (err) {
+      toast.error("Export Failed", {
+        description: err instanceof Error ? err.message : "PDF rendering error",
+      });
+    } finally {
+      setIsExportingDossier(false);
+    }
+  };
 
   const fetchLiveAuditEvents = async () => {
     setIsLoading(true);
@@ -249,7 +270,17 @@ export function AuditTrailModal({ isOpen, onClose }: AuditTrailModalProps) {
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex items-center justify-between sm:justify-between w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportDossierPdf}
+            disabled={isExportingDossier}
+            className="text-xs border-gold/40 text-gold hover:bg-gold/10"
+          >
+            <Download className="w-3.5 h-3.5 mr-1.5" />
+            {isExportingDossier ? "Exporting Dossier..." : "Export Compliance Dossier PDF"}
+          </Button>
           <Button variant="secondary" onClick={onClose}>
             Close
           </Button>

@@ -17,6 +17,7 @@ import {
   cancelSalesInvoiceHandler,
   finalizeSaleAndReleaseHandler,
 } from "./salesInvoiceController.js";
+import { getTaxInvoicePdfHandler } from "../certificates/certificateController.js";
 import {
   recordSalesPaymentHandler,
   getSalesPaymentByIdHandler,
@@ -90,6 +91,11 @@ export function createSalesRouter(): Router {
     "/invoices/:id",
     requirePermission("sales:invoice:view"),
     getSalesInvoiceByIdHandler,
+  );
+  router.get(
+    "/invoices/:id/pdf",
+    requirePermission("sales:invoice:view"),
+    getTaxInvoicePdfHandler,
   );
   router.post(
     "/invoices/:id/cancel",

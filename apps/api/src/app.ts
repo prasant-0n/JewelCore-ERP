@@ -18,6 +18,7 @@ import { createPricingRouter } from "./modules/pricing/pricingRoutes.js";
 import { createSalesRouter } from "./modules/sales/salesRoutes.js";
 import { createTransfersRouter } from "./modules/transfers/transferRoutes.js";
 import { createTelemetryRouter } from "./modules/telemetry/telemetryRoutes.js";
+import { createCertificatesRouter } from "./modules/certificates/certificateRoutes.js";
 import { createDocsRouter } from "./docs/docsRoutes.js";
 
 export function createApp(configureRoutes?: (app: Express) => void): Express {
@@ -97,7 +98,10 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
   // 18. Hardware Telemetry & Real-Time IoT Streaming (FEAT-HW-01)
   app.use("/api/v1/telemetry", createTelemetryRouter());
 
-  // 19. Interactive OpenAPI / Swagger Documentation
+  // 19. Luxury Authenticity Certificates & Compliance PDF Export Engine
+  app.use("/api/v1/certificates", createCertificatesRouter());
+
+  // 20. Interactive OpenAPI / Swagger Documentation
   app.use(createDocsRouter());
 
   // Custom route injection (useful for test harnesses and integration mocks)

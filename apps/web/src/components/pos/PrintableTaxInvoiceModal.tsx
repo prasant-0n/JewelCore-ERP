@@ -29,6 +29,7 @@ import {
   EscPosInvoiceData,
 } from "../../lib/printing/escposFormatter";
 import { toast } from "sonner";
+import { api } from "../../lib/api";
 
 interface PrintableTaxInvoiceModalProps {
   isOpen: boolean;
@@ -168,6 +169,69 @@ export function PrintableTaxInvoiceModal({
     toast.success("ESC/POS Binary Stream Downloaded", {
       description: "Raw ESC/POS byte commands ready for Star/Epson printer raw socket.",
     });
+  };
+
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  const handleDownloadServerPdfInvoice = async () => {
+    try {
+      setIsDownloadingPdf(true);
+      await api.downloadFile(
+        "/certificates/invoice/preview-pdf",
+        `invoice-${invoiceNumber.replace(/\//g, "-")}.pdf`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            invoiceNumber,
+            customerName: clientName,
+            panNumber,
+            tenderMethod,
+            oldGoldCreditInr,
+            taxableSubtotal,
+            cgstAmount,
+            sgstAmount,
+            totalAmountInr: finalInvoiceTotal,
+            items: cartPieces.map((p) => ({
+              serialNumber: p.serialNumber,
+              itemName: p.itemName,
+              hsnCode: p.category.includes("Bullion") ? "71081200" : "71131930",
+              grossWeightGrams: p.grossWeightGrams,
+              netWeightGrams: p.netGoldGrams,
+              metalValueInr: p.metalValueInr,
+              gemstoneValueInr: p.diamondValueInr,
+              makingChargeInr: p.makingChargeInr,
+              taxableAmountInr: p.totalPriceInr,
+            })),
+          }),
+        },
+      );
+      toast.success("GST Tax Invoice PDF Generated", {
+        description: "Official statutory vector PDF invoice downloaded successfully.",
+      });
+    } catch (err) {
+      toast.error("Failed to generate Tax Invoice PDF", {
+        description: err instanceof Error ? err.message : "PDF rendering error",
+      });
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
+
+  const handleDownloadServerPdfCertificate = async (serialNumber: string) => {
+    try {
+      await api.downloadFile(
+        `/certificates/piece/${encodeURIComponent(serialNumber)}/pdf`,
+        `certificate-${serialNumber}.pdf`,
+      );
+      toast.success("VIP Atelier Certificate Downloaded", {
+        description: `Official Authenticity Certificate for ${serialNumber} downloaded.`,
+      });
+    } catch (err) {
+      toast.error("Failed to generate Certificate PDF", {
+        description: err instanceof Error ? err.message : "PDF rendering error",
+      });
+    }
   };
 
   // Convert cartPieces into tags format
@@ -500,8 +564,31 @@ export function PrintableTaxInvoiceModal({
 
           {/* Modal Footer Controls */}
           <div className="flex items-center justify-between pt-4 border-t border-surface-border">
-            <div className="flex items-center space-x-2">
-              <Button variant="gold" size="sm" onClick={handlePrintA4} className="text-xs">
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                variant="gold"
+                size="sm"
+                onClick={handleDownloadServerPdfInvoice}
+                disabled={isDownloadingPdf}
+                className="text-xs"
+              >
+                <Download className="w-3.5 h-3.5 mr-1.5" />
+                {isDownloadingPdf ? "Generating PDF..." : "Export GST Invoice PDF"}
+              </Button>
+              {cartPieces.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    handleDownloadServerPdfCertificate(cartPieces[0].serialNumber)
+                  }
+                  className="text-xs border-gold/40 text-gold hover:bg-gold/10"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
+                  VIP Certificate PDF ({cartPieces[0].serialNumber})
+                </Button>
+              )}
+              <Button variant="secondary" size="sm" onClick={handlePrintA4} className="text-xs">
                 <Printer className="w-3.5 h-3.5 mr-1.5" />
                 Print A4 Tax Invoice
               </Button>
