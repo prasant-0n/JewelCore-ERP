@@ -4,6 +4,7 @@ import {
   loginSchema,
   changePasswordSchema,
   createIamAuditEventSchema,
+  registerPasskeySchema,
   UnauthorizedError,
   NotFoundError,
 } from "@jewelcore/shared";
@@ -17,6 +18,9 @@ import {
   revokeOtherUserSessions,
   getIamAuditEvents,
   recordIamAuditEvent,
+  getUserPasskeys,
+  registerUserPasskey,
+  revokeUserPasskey,
 } from "./authService.js";
 import {
   verifyJwt,
@@ -419,5 +423,97 @@ export async function recordIamAuditEventHandler(
     next(err);
   }
 }
+
+export async function listPasskeysHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError(
+        "Authorization header with Bearer token is required",
+      );
+    }
+    const token = authHeader.substring(7);
+    const claims = await verifyJwt(token);
+
+    const passkeys = getUserPasskeys(claims.userId);
+
+    res.status(200).json({
+      data: passkeys,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function registerPasskeyHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError(
+        "Authorization header with Bearer token is required",
+      );
+    }
+    const token = authHeader.substring(7);
+    const claims = await verifyJwt(token);
+
+    const validated = registerPasskeySchema.parse(req.body);
+    const passkey = registerUserPasskey(claims.userId, validated);
+
+    res.status(201).json({
+      data: passkey,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function revokePasskeyHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError(
+        "Authorization header with Bearer token is required",
+      );
+    }
+    const token = authHeader.substring(7);
+    const claims = await verifyJwt(token);
+
+    const rawId = req.params.id;
+    const passkeyId = Array.isArray(rawId) ? rawId[0] : rawId;
+    if (!passkeyId) {
+      throw new NotFoundError("Passkey", "unknown");
+    }
+
+    const revoked = revokeUserPasskey(claims.userId, passkeyId);
+    if (!revoked) {
+      throw new NotFoundError("Passkey", passkeyId);
+    }
+
+    res.status(200).json({
+      data: {
+        message: "FIDO2 hardware passkey revoked successfully",
+        revokedId: passkeyId,
+      },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 
 

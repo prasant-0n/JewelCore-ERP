@@ -402,5 +402,76 @@ describe("IAM Authentication & User Endpoints (FEAT-IAM-02)", () => {
         expect(checkRes.body.data[0].action).toBe("AUTH_PIN_UNLOCKED");
       });
     });
+
+    describe("FIDO2 / WebAuthn Biometric & Hardware Passkeys (FEAT-IAM-03)", () => {
+      let accessToken: string;
+
+      beforeAll(async () => {
+        const loginRes = await request(app).post("/api/v1/auth/login").send({
+          email: "auth_user1@jewelcore.local",
+          password: "BrandNewSecurePassword@2026",
+        });
+        accessToken = loginRes.body.data.accessToken;
+      });
+
+      it("rejects unauthenticated requests to passkey endpoints", async () => {
+        const res = await request(app).get("/api/v1/auth/passkeys");
+        expect(res.status).toBe(401);
+      });
+
+      it("lists registered hardware and biometric passkeys", async () => {
+        const res = await request(app)
+          .get("/api/v1/auth/passkeys")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body.data).toBeDefined();
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.data.length).toBeGreaterThanOrEqual(1);
+
+        const key = res.body.data[0];
+        expect(key).toHaveProperty("id");
+        expect(key).toHaveProperty("name");
+        expect(key).toHaveProperty("credentialId");
+        expect(key).toHaveProperty("transports");
+      });
+
+      it("registers a new FIDO2 hardware passkey and records in audit trail", async () => {
+        const payload = {
+          name: "Vault Backup Key 03",
+          credentialId: "fido2_cred_0192e3009944aabb",
+          publicKey: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE77...",
+          transports: ["usb"],
+          aaguid: "cbfe4eaf-3530-4966-86e1-118817da7793",
+        };
+
+        const res = await request(app)
+          .post("/api/v1/auth/passkeys")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(payload);
+
+        expect(res.status).toBe(201);
+        expect(res.body.data.name).toBe("Vault Backup Key 03");
+        expect(res.body.data.credentialId).toBe(payload.credentialId);
+
+        // Verify passkey count increased
+        const listRes = await request(app)
+          .get("/api/v1/auth/passkeys")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        const found = listRes.body.data.find(
+          (k: any) => k.id === res.body.data.id,
+        );
+        expect(found).toBeDefined();
+
+        // Revoke the passkey
+        const revokeRes = await request(app)
+          .delete(`/api/v1/auth/passkeys/${res.body.data.id}`)
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(revokeRes.status).toBe(200);
+        expect(revokeRes.body.data.message).toContain("revoked successfully");
+      });
+    });
   });
 });

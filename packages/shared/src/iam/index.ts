@@ -324,6 +324,9 @@ export const IamAuditAction = {
   AUTH_SESSIONS_REVOKE_ALL: "AUTH_SESSIONS_REVOKE_ALL",
   AUTH_DELEGATION_GRANTED: "AUTH_DELEGATION_GRANTED",
   AUTH_DELEGATION_RELINQUISHED: "AUTH_DELEGATION_RELINQUISHED",
+  AUTH_PASSKEY_REGISTERED: "AUTH_PASSKEY_REGISTERED",
+  AUTH_PASSKEY_REVOKED: "AUTH_PASSKEY_REVOKED",
+  AUTH_PASSKEY_VERIFIED: "AUTH_PASSKEY_VERIFIED",
 } as const;
 
 export type IamAuditAction = (typeof IamAuditAction)[keyof typeof IamAuditAction];
@@ -373,4 +376,32 @@ export const createIamAuditEventSchema = z.object({
 });
 
 export type CreateIamAuditEventInput = z.infer<typeof createIamAuditEventSchema>;
+
+/**
+ * FIDO2 / WebAuthn Biometric & Hardware Passkey Types
+ */
+export interface PasskeyRecord {
+  id: string;
+  userId: string;
+  name: string;
+  credentialId: string;
+  publicKey: string;
+  transports: Array<"usb" | "nfc" | "ble" | "internal">;
+  aaguid: string;
+  createdAt: string;
+  lastUsedAt: string | null;
+}
+
+export const registerPasskeySchema = z.object({
+  name: z.string().min(1, "Passkey name is required").max(60),
+  credentialId: z.string().min(1, "Credential ID is required"),
+  publicKey: z.string().min(1, "Public key is required"),
+  transports: z
+    .array(z.enum(["usb", "nfc", "ble", "internal"]))
+    .default(["usb"]),
+  aaguid: z.string().default("00000000-0000-0000-0000-000000000000"),
+});
+
+export type RegisterPasskeyInput = z.infer<typeof registerPasskeySchema>;
+
 

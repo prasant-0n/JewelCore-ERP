@@ -5,6 +5,8 @@ import {
   type UserPublic,
   type AuthTokens,
   type IamAuditEvent,
+  type PasskeyRecord,
+  type RegisterPasskeyInput,
   IamAuditCategory,
   IamAuditSeverity,
   ConflictError,
@@ -475,4 +477,114 @@ export function recordIamAuditEvent(event: {
   forensicIamAuditEvents.unshift(newEvent);
   return newEvent;
 }
+
+/**
+ * FIDO2 / WebAuthn Hardware Passkey Storage & Management
+ */
+const userPasskeys = new Map<string, PasskeyRecord[]>();
+
+export function getUserPasskeys(userId: string): PasskeyRecord[] {
+  let passkeys = userPasskeys.get(userId);
+  if (!passkeys) {
+    passkeys = [
+      {
+        id: `passkey_${userId}_yubi`,
+        userId,
+        name: "YubiKey 5 NFC (Vault Custody Key)",
+        credentialId: "yubi_cred_0192e3008f3a9e2b1c4d",
+        publicKey: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9f2837bc90ef14ab",
+        transports: ["usb", "nfc"],
+        aaguid: "cbfe4eaf-3530-4966-86e1-118817da7793",
+        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        lastUsedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: `passkey_${userId}_touchid`,
+        userId,
+        name: "Apple TouchID (Atelier Main Terminal)",
+        credentialId: "touchid_cred_0192e3009a12fe4c5b6a",
+        publicKey: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE8a1456de10cb99fd",
+        transports: ["internal"],
+        aaguid: "adce0002-35bc-c60a-648b-0b25f1f05503",
+        createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+        lastUsedAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+      },
+    ];
+    userPasskeys.set(userId, passkeys);
+  }
+  return passkeys;
+}
+
+export function registerUserPasskey(
+  userId: string,
+  input: RegisterPasskeyInput,
+): PasskeyRecord {
+  const passkeys = getUserPasskeys(userId);
+  const newPasskey: PasskeyRecord = {
+    id: `passkey_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    userId,
+    name: input.name,
+    credentialId: input.credentialId,
+    publicKey: input.publicKey,
+    transports: input.transports,
+    aaguid: input.aaguid,
+    createdAt: new Date().toISOString(),
+    lastUsedAt: new Date().toISOString(),
+  };
+
+  passkeys.push(newPasskey);
+  userPasskeys.set(userId, passkeys);
+
+  recordIamAuditEvent({
+    action: "AUTH_PASSKEY_REGISTERED",
+    category: IamAuditCategory.CREDENTIAL_SECURITY,
+    severity: IamAuditSeverity.NOTICE,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: userId,
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: `Enrolled new FIDO2 hardware passkey '${input.name}' (Transports: ${input.transports.join(", ")})`,
+    metadata: {
+      passkeyId: newPasskey.id,
+      name: newPasskey.name,
+      transports: newPasskey.transports,
+      aaguid: newPasskey.aaguid,
+    },
+  });
+
+  return newPasskey;
+}
+
+export function revokeUserPasskey(userId: string, passkeyId: string): boolean {
+  const passkeys = getUserPasskeys(userId);
+  const index = passkeys.findIndex((p) => p.id === passkeyId);
+  if (index === -1) return false;
+
+  const [revoked] = passkeys.splice(index, 1);
+  userPasskeys.set(userId, passkeys);
+
+  if (revoked) {
+    recordIamAuditEvent({
+      action: "AUTH_PASSKEY_REVOKED",
+      category: IamAuditCategory.CREDENTIAL_SECURITY,
+      severity: IamAuditSeverity.WARNING,
+      stationId: "MAIN-SHOWROOM-DESK-01",
+      ipAddress: "192.168.1.102 (Showroom LAN)",
+      actorUserId: userId,
+      actorName: "Rachel R.",
+      actorEmail: "rachel@jewelcore.internal",
+      actorRole: "STORE_MANAGER",
+      details: `Revoked FIDO2 hardware passkey '${revoked.name}'`,
+      metadata: {
+        revokedPasskeyId: revoked.id,
+        name: revoked.name,
+      },
+    });
+  }
+
+  return true;
+}
+
 

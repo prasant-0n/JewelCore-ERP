@@ -25,6 +25,7 @@ import {
   Smartphone,
   MonitorSmartphone,
   KeyRound,
+  Fingerprint,
   Zap,
 } from "lucide-react";
 import {
@@ -47,6 +48,7 @@ import { WorkstationSessionsModal } from "../auth/WorkstationSessionsModal";
 import { ChangePasswordModal } from "../auth/ChangePasswordModal";
 import { DelegatedAuthorityModal } from "../auth/DelegatedAuthorityModal";
 import { IamAuditLogModal } from "../auth/IamAuditLogModal";
+import { WebAuthnModal } from "../auth/WebAuthnModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -124,6 +126,7 @@ export function TopHeader({
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [isDelegationModalOpen, setIsDelegationModalOpen] = useState(false);
   const [isIamAuditOpen, setIsIamAuditOpen] = useState(false);
+  const [isWebAuthnOpen, setIsWebAuthnOpen] = useState(false);
 
   // Active authenticated operator profile
   const activeUser = user || {
@@ -890,6 +893,26 @@ export function TopHeader({
                   </button>
                 </div>
 
+                {/* Biometric & Hardware Passkeys (FIDO2) Action */}
+                <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      setIsWebAuthnOpen(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Fingerprint className="w-3.5 h-3.5 text-gold shrink-0" />
+                      <span>Biometric Passkeys</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-gold/10 text-gold border border-gold/30 font-semibold">
+                      FIDO2
+                    </span>
+                  </button>
+                </div>
+
                 {/* Sign Out Action */}
                 <div className="pt-1.5 px-2">
                   <button
@@ -1003,6 +1026,12 @@ export function TopHeader({
       <IamAuditLogModal
         isOpen={isIamAuditOpen}
         onClose={() => setIsIamAuditOpen(false)}
+      />
+
+      {/* Biometric & Hardware Passkeys (FIDO2) Modal */}
+      <WebAuthnModal
+        isOpen={isWebAuthnOpen}
+        onClose={() => setIsWebAuthnOpen(false)}
       />
     </>
   );
