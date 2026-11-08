@@ -7,6 +7,9 @@ import {
   meHandler,
   myStoresHandler,
   personaTokenHandler,
+  listSessionsHandler,
+  revokeSessionHandler,
+  revokeOtherSessionsHandler,
 } from "./authController.js";
 
 export function createAuthRouter(): Router {
@@ -19,6 +22,9 @@ export function createAuthRouter(): Router {
   router.post("/persona-token", personaTokenHandler);
   router.get("/me", meHandler);
   router.get("/me/stores", myStoresHandler);
+  router.get("/sessions", listSessionsHandler);
+  router.delete("/sessions/:id", revokeSessionHandler);
+  router.post("/sessions/revoke-others", revokeOtherSessionsHandler);
 
   return router;
 }

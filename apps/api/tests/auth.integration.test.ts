@@ -204,5 +204,61 @@ describe("IAM Authentication & User Endpoints (FEAT-IAM-02)", () => {
         expect(res.body.code).toBe("ERR_UNAUTHORIZED");
       });
     });
+
+    describe("Workstation Sessions & Remote Revocation", () => {
+      it("lists active workstation sessions for the authenticated user", async () => {
+        const res = await request(app)
+          .get("/api/v1/auth/sessions")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.data.length).toBeGreaterThanOrEqual(1);
+
+        const currentSession = res.body.data.find((s: any) => s.isCurrent);
+        expect(currentSession).toBeDefined();
+        expect(currentSession.stationId).toBe("STATION-DESK-01");
+      });
+
+      it("revokes an individual remote workstation session by ID", async () => {
+        const listRes = await request(app)
+          .get("/api/v1/auth/sessions")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        const remoteSession = listRes.body.data.find((s: any) => !s.isCurrent);
+        expect(remoteSession).toBeDefined();
+
+        const revokeRes = await request(app)
+          .delete(`/api/v1/auth/sessions/${remoteSession.id}`)
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(revokeRes.status).toBe(200);
+        expect(revokeRes.body.data.revokedId).toBe(remoteSession.id);
+
+        // Verify session is no longer in active list
+        const updatedList = await request(app)
+          .get("/api/v1/auth/sessions")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(updatedList.body.data.some((s: any) => s.id === remoteSession.id)).toBe(false);
+      });
+
+      it("revokes all other remote workstation sessions in a single operation", async () => {
+        const revokeOthersRes = await request(app)
+          .post("/api/v1/auth/sessions/revoke-others")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(revokeOthersRes.status).toBe(200);
+        expect(typeof revokeOthersRes.body.data.revokedCount).toBe("number");
+
+        // After revoke-others, only current workstation remains
+        const listRes = await request(app)
+          .get("/api/v1/auth/sessions")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(listRes.body.data.length).toBe(1);
+        expect(listRes.body.data[0].isCurrent).toBe(true);
+      });
+    });
   });
 });

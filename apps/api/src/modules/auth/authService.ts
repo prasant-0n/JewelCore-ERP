@@ -129,3 +129,96 @@ export async function getCurrentUserService(
   }
   return toUserPublic(user);
 }
+
+export interface WorkstationSession {
+  id: string;
+  userId: string;
+  stationId: string;
+  storeCode: string;
+  storeName: string;
+  deviceType: "desktop" | "tablet" | "pos_terminal";
+  browser: string;
+  ipAddress: string;
+  isCurrent: boolean;
+  createdAt: string;
+  lastActiveAt: string;
+  status: "ACTIVE" | "REVOKED";
+}
+
+const userSessions = new Map<string, WorkstationSession[]>();
+
+export function getActiveUserSessions(userId: string): WorkstationSession[] {
+  let sessions = userSessions.get(userId);
+  if (!sessions) {
+    // Seed initial active showroom sessions for this operator
+    sessions = [
+      {
+        id: `sess_${userId}_current`,
+        userId,
+        stationId: "STATION-DESK-01",
+        storeCode: "HQ-MUM-01",
+        storeName: "Flagship Mumbai Atelier",
+        deviceType: "desktop",
+        browser: "Chrome 131 on Linux / Atelier Terminal",
+        ipAddress: "192.168.1.102 (Showroom LAN)",
+        isCurrent: true,
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        lastActiveAt: new Date().toISOString(),
+        status: "ACTIVE",
+      },
+      {
+        id: `sess_${userId}_pos`,
+        userId,
+        stationId: "POS-TERMINAL-02",
+        storeCode: "HQ-MUM-01",
+        storeName: "Flagship Mumbai Atelier",
+        deviceType: "pos_terminal",
+        browser: "JewelCore Native POS Stand (Win11)",
+        ipAddress: "192.168.1.105 (Showroom LAN)",
+        isCurrent: false,
+        createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+        lastActiveAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+        status: "ACTIVE",
+      },
+      {
+        id: `sess_${userId}_ipad`,
+        userId,
+        stationId: "SALON-IPAD-01",
+        storeCode: "HQ-MUM-01",
+        storeName: "Flagship Mumbai Atelier",
+        deviceType: "tablet",
+        browser: "Safari 18 on iPad Pro 12.9 (VIP Salon)",
+        ipAddress: "192.168.1.140 (Showroom Wi-Fi)",
+        isCurrent: false,
+        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        lastActiveAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+        status: "ACTIVE",
+      },
+    ];
+    userSessions.set(userId, sessions);
+  }
+  return sessions.filter((s) => s.status === "ACTIVE");
+}
+
+export function revokeUserSession(userId: string, sessionId: string): boolean {
+  const sessions = getActiveUserSessions(userId);
+  const session = sessions.find((s) => s.id === sessionId);
+  if (!session) return false;
+  session.status = "REVOKED";
+  return true;
+}
+
+export function revokeOtherUserSessions(
+  userId: string,
+  currentSessionId: string,
+): number {
+  const sessions = getActiveUserSessions(userId);
+  let revokedCount = 0;
+  for (const s of sessions) {
+    if (s.id !== currentSessionId && !s.isCurrent) {
+      s.status = "REVOKED";
+      revokedCount++;
+    }
+  }
+  return revokedCount;
+}

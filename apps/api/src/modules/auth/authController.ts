@@ -3,11 +3,15 @@ import {
   registerUserSchema,
   loginSchema,
   UnauthorizedError,
+  NotFoundError,
 } from "@jewelcore/shared";
 import {
   registerUserService,
   loginService,
   getCurrentUserService,
+  getActiveUserSessions,
+  revokeUserSession,
+  revokeOtherUserSessions,
 } from "./authService.js";
 import {
   verifyJwt,
@@ -208,6 +212,96 @@ export async function personaTokenHandler(
         accessToken,
         refreshToken,
         user: toUserPublic(user),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function listSessionsHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError(
+        "Authorization header with Bearer token is required",
+      );
+    }
+    const token = authHeader.substring(7);
+    const claims = await verifyJwt(token);
+    const sessions = getActiveUserSessions(claims.userId);
+
+    res.status(200).json({
+      data: sessions,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function revokeSessionHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError(
+        "Authorization header with Bearer token is required",
+      );
+    }
+    const token = authHeader.substring(7);
+    const claims = await verifyJwt(token);
+    const sessionId = req.params.id;
+
+    const revoked = revokeUserSession(claims.userId, sessionId);
+    if (!revoked) {
+      throw new NotFoundError("Session", sessionId);
+    }
+
+    res.status(200).json({
+      data: {
+        message: "Workstation session revoked successfully",
+        revokedId: sessionId,
+      },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function revokeOtherSessionsHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError(
+        "Authorization header with Bearer token is required",
+      );
+    }
+    const token = authHeader.substring(7);
+    const claims = await verifyJwt(token);
+
+    const revokedCount = revokeOtherUserSessions(
+      claims.userId,
+      `sess_${claims.userId}_current`,
+    );
+
+    res.status(200).json({
+      data: {
+        message: "All other workstation sessions terminated successfully",
+        revokedCount,
       },
       timestamp: new Date().toISOString(),
     });

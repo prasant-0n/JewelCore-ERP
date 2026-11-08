@@ -22,6 +22,7 @@ import {
   X,
   LogOut,
   Smartphone,
+  MonitorSmartphone,
 } from "lucide-react";
 import {
   Sheet,
@@ -39,6 +40,7 @@ import { useAuth } from "../../context/AuthContext";
 import { JewelCoreLogo } from "./JewelCoreLogo";
 import { CameraScannerModal } from "./CameraScannerModal";
 import { TwoFactorModal } from "../auth/TwoFactorModal";
+import { WorkstationSessionsModal } from "../auth/WorkstationSessionsModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -112,6 +114,7 @@ export function TopHeader({
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isMfaModalOpen, setIsMfaModalOpen] = useState(false);
+  const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false);
 
   // Active authenticated operator profile
   const activeUser = user || {
@@ -759,6 +762,26 @@ export function TopHeader({
                   </div>
                 </div>
 
+                {/* Workstation Sessions & Devices Action */}
+                <div className="pt-1.5 px-2 border-b border-surface-border pb-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      setIsSessionsModalOpen(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <MonitorSmartphone className="w-3.5 h-3.5 text-gold shrink-0" />
+                      <span>Connected Workstations</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-gold/10 text-gold border border-gold/30 font-semibold">
+                      3 Active
+                    </span>
+                  </button>
+                </div>
+
                 {/* Two-Factor Authentication Action */}
                 <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
                   <button
@@ -868,6 +891,12 @@ export function TopHeader({
       <TwoFactorModal
         isOpen={isMfaModalOpen}
         onClose={() => setIsMfaModalOpen(false)}
+      />
+
+      {/* Connected Workstations & Remote Revocation Modal */}
+      <WorkstationSessionsModal
+        isOpen={isSessionsModalOpen}
+        onClose={() => setIsSessionsModalOpen(false)}
       />
     </>
   );
