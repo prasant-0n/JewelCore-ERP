@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
   Diamond,
@@ -20,6 +20,7 @@ import {
   Shield,
   Camera,
   Menu,
+  X,
 } from "lucide-react";
 import {
   Sheet,
@@ -108,12 +109,63 @@ export function TopHeader({
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
+  const desktopSearchInputRef = useRef<HTMLInputElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
   const handleScanPiece = (barcode: string) => {
     if (typeof window !== "undefined") {
       window.dispatchEvent(
         new CustomEvent("jewelcore:piece-scanned", { detail: { barcode } }),
       );
     }
+  };
+
+  useEffect(() => {
+    if (isSearchExpanded) {
+      const timer = setTimeout(() => {
+        mobileSearchInputRef.current?.focus();
+      }, 60);
+      return () => clearTimeout(timer);
+    }
+  }, [isSearchExpanded]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        if (window.innerWidth >= 1024) {
+          desktopSearchInputRef.current?.focus();
+        } else {
+          setIsSearchExpanded((prev) => !prev);
+        }
+      } else if (e.key === "Escape") {
+        setIsSearchExpanded(false);
+        setIsStoreOpen(false);
+        setIsMeshOpen(false);
+        setIsBullionMenuOpen(false);
+        setIsPersonaOpen(false);
+        desktopSearchInputRef.current?.blur();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    const query = searchQuery.trim();
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("jewelcore:piece-scanned", { detail: { barcode: query } }),
+      );
+    }
+    toast.info(`Omnisearch: ${query}`, {
+      description: "Query broadcast across active inventory and POS station.",
+    });
+    setIsSearchExpanded(false);
   };
 
   React.useEffect(() => {
@@ -160,488 +212,591 @@ export function TopHeader({
   };
 
   return (
-    <header className="h-14 bg-surface border-b border-surface-border px-3 sm:px-6 flex items-center justify-between z-40 flex-shrink-0">
-      {/* Left: Mobile Nav Drawer, Brand & Store Context Selector */}
-      <div className="flex items-center space-x-2 sm:space-x-6">
-        {/* Mobile / Tablet Hamburger Drawer */}
-        <div className="lg:hidden">
-          <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
-            <SheetTrigger asChild>
-              <button
-                type="button"
-                className="p-1.5 -ml-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-elevated transition-colors"
-                aria-label="Open workstation navigation"
-              >
-                <Menu className="w-5 h-5 text-foreground" />
-              </button>
-            </SheetTrigger>
-            <SheetContent
-              side="left"
-              className="w-72 p-0 flex flex-col justify-between bg-surface border-r border-surface-border text-foreground"
-            >
-              <div>
-                <SheetHeader className="p-4 border-b border-surface-border text-left">
-                  <JewelCoreLogo size="sm" variant="badge" showText />
-                  <SheetTitle className="sr-only">JewelCore Workstation Navigation</SheetTitle>
-                  <p className="text-[11px] font-mono text-muted-foreground tracking-wide mt-1">
-                    Atelier Operational Workstations
-                  </p>
-                </SheetHeader>
-                <SidebarNavList onItemClick={() => setIsMobileNavOpen(false)} />
-              </div>
-              <div className="p-3 border-t border-surface-border bg-surface">
-                <div className="px-3 py-2 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between text-[10px] font-mono text-muted-foreground">
-                  <span className="text-foreground">Terminal: MOB-01</span>
-                  <span className="text-gold font-bold">ONLINE</span>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
+    <>
+      {/* Click-away backdrop overlay for dropdowns and mobile search */}
+      {(isStoreOpen || isMeshOpen || isBullionMenuOpen || isPersonaOpen || isSearchExpanded) && (
+        <div
+          className="fixed inset-0 z-30 bg-black/25 backdrop-blur-[1px] transition-opacity"
+          onClick={() => {
+            setIsStoreOpen(false);
+            setIsMeshOpen(false);
+            setIsBullionMenuOpen(false);
+            setIsPersonaOpen(false);
+            setIsSearchExpanded(false);
+          }}
+          aria-hidden="true"
+        />
+      )}
 
-        <Link
-          href="/"
-          className="flex items-center group transition-transform active:scale-95"
-          title="JewelCore Atelier ERP Control Tower"
-        >
-          <JewelCoreLogo size="sm" variant="badge" showText />
-        </Link>
-
-        <div className="h-5 w-px bg-surface-border hidden sm:block" />
-
-        {/* Multi-Store Dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => setIsStoreOpen(!isStoreOpen)}
-            className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-md bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs"
-            title="Switch Active Store & Multi-Tenant Inventory Context"
-          >
-            <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse shrink-0" />
-            <span className="text-foreground font-medium hidden sm:inline truncate max-w-[120px]">
-              {currentStore.name}
-            </span>
-            <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-gold font-bold shrink-0">
-              {currentStore.code}
-            </span>
-            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-          </button>
-
-          {isStoreOpen && (
-            <div className="absolute top-full left-0 mt-1.5 w-72 bg-surface border border-surface-border rounded-lg shadow-2xl py-1 z-50">
-              <div className="px-3 py-1.5 text-[10px] uppercase font-mono text-muted-foreground border-b border-surface-border flex items-center justify-between">
-                <span>Branch Store &amp; Vault Hubs</span>
-                <span className="text-gold font-bold">3 Online</span>
-              </div>
-              {stores.map((s) => (
+      <header className="h-14 bg-surface border-b border-surface-border px-3 sm:px-4 lg:px-5 xl:px-6 flex items-center justify-between z-40 flex-shrink-0 relative">
+        {/* Left: Mobile Nav Drawer, Brand & Store Context Selector */}
+        <div className="flex items-center space-x-1.5 sm:space-x-2 lg:space-x-3 shrink-0">
+          {/* Mobile / Tablet Hamburger Drawer */}
+          <div className="lg:hidden">
+            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+              <SheetTrigger asChild>
                 <button
-                  key={s.id}
-                  onClick={() => handleSelectStore(s)}
-                  className={`w-full px-3 py-2 text-left text-xs flex items-center justify-between hover:bg-surface-elevated transition-colors ${
-                    s.id === currentStore.id
-                      ? "text-gold font-medium bg-gold/10"
-                      : "text-foreground"
-                  }`}
+                  type="button"
+                  className="p-1.5 -ml-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-elevated transition-colors"
+                  aria-label="Open workstation navigation"
                 >
-                  <div className="flex items-center space-x-2.5">
-                    <Store
-                      className={`w-4 h-4 ${
-                        s.id === currentStore.id ? "text-gold" : "opacity-60"
-                      }`}
-                    />
-                    <div>
-                      <div className="font-medium text-foreground">{s.name}</div>
-                      <div className="text-[10px] text-muted-foreground font-mono">
-                        {s.city}
+                  <Menu className="w-5 h-5 text-foreground" />
+                </button>
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="w-72 p-0 flex flex-col justify-between bg-surface border-r border-surface-border text-foreground"
+              >
+                <div>
+                  <SheetHeader className="p-4 border-b border-surface-border text-left">
+                    <JewelCoreLogo size="sm" variant="badge" showText />
+                    <SheetTitle className="sr-only">JewelCore Workstation Navigation</SheetTitle>
+                    <p className="text-[11px] font-mono text-muted-foreground tracking-wide mt-1">
+                      Atelier Operational Workstations
+                    </p>
+                  </SheetHeader>
+                  <SidebarNavList onItemClick={() => setIsMobileNavOpen(false)} />
+                </div>
+                <div className="p-3 border-t border-surface-border bg-surface">
+                  <div className="px-3 py-2 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between text-[10px] font-mono text-muted-foreground">
+                    <span className="text-foreground">Terminal: MOB-01</span>
+                    <span className="text-gold font-bold">ONLINE</span>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          <Link
+            href="/"
+            className="flex items-center group transition-transform active:scale-95 shrink-0"
+            title="JewelCore Atelier ERP Control Tower"
+          >
+            <JewelCoreLogo size="sm" variant="badge" showText />
+          </Link>
+
+          <div className="h-5 w-px bg-surface-border hidden lg:block shrink-0" />
+
+          {/* Multi-Store Dropdown */}
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setIsStoreOpen(!isStoreOpen)}
+              className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-2.5 py-1.5 rounded-md bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs"
+              title="Switch Active Store & Multi-Tenant Inventory Context"
+              aria-label="Switch Active Store"
+            >
+              <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse shrink-0" />
+              <span className="text-foreground font-medium hidden xl:inline truncate max-w-[130px]">
+                {currentStore.name}
+              </span>
+              <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-gold font-bold shrink-0">
+                {currentStore.code}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+            </button>
+
+            {isStoreOpen && (
+              <div className="absolute top-full left-0 mt-1.5 w-72 max-w-[calc(100vw-1.5rem)] bg-surface border border-surface-border rounded-lg shadow-2xl py-1 z-50">
+                <div className="px-3 py-1.5 text-[10px] uppercase font-mono text-muted-foreground border-b border-surface-border flex items-center justify-between">
+                  <span>Branch Store &amp; Vault Hubs</span>
+                  <span className="text-gold font-bold">3 Online</span>
+                </div>
+                {stores.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => handleSelectStore(s)}
+                    className={`w-full px-3 py-2 text-left text-xs flex items-center justify-between hover:bg-surface-elevated transition-colors ${
+                      s.id === currentStore.id
+                        ? "text-gold font-medium bg-gold/10"
+                        : "text-foreground"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <Store
+                        className={`w-4 h-4 ${
+                          s.id === currentStore.id ? "text-gold" : "opacity-60"
+                        }`}
+                      />
+                      <div>
+                        <div className="font-medium text-foreground">{s.name}</div>
+                        <div className="text-[10px] text-muted-foreground font-mono">
+                          {s.city}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface-elevated border border-surface-border text-muted-foreground block">
-                      {s.code}
-                    </span>
-                    <span className="text-[8px] font-mono text-muted-foreground/80 mt-0.5 block">
-                      {s.type}
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Center: Command Search Bar */}
-      <div className="hidden xl:flex items-center w-72 2xl:w-80">
-        <div className="relative w-full">
-          <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Search pieces, RFID tags, customers... (⌘K)"
-            className="w-full h-8 pl-9 pr-12 text-xs bg-surface-elevated border border-surface-border rounded-md text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-gold/40 transition-colors"
-          />
-          <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] font-mono px-1.5 py-0.5 rounded bg-surface border border-surface-border text-muted-foreground">
-            ⌘K
-          </kbd>
-        </div>
-      </div>
-
-      {/* Right: Hardware Mesh, Bullion Ticker, Theme Toggle, & Profile */}
-      <div className="flex items-center space-x-2.5 sm:space-x-3.5">
-        {/* Mobile / Floor Camera Barcode Scanner Button */}
-        <button
-          onClick={() => setIsScannerOpen(true)}
-          className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/40 transition-all text-xs font-mono shrink-0"
-          title="Scan Jewellery Barcode / QR with Camera"
-        >
-          <Camera className="w-3.5 h-3.5 text-gold shrink-0" />
-          <span className="hidden sm:inline text-foreground font-medium text-[11px]">
-            Scan Tag
-          </span>
-        </button>
-
-        {/* Hardware Mesh Telemetry Button & Popover */}
-        <div className="relative">
-          <button
-            onClick={() => setIsMeshOpen(!isMeshOpen)}
-            className="hidden xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs font-mono shrink-0"
-            title="Inspect Live Hardware Telemetry Mesh & Serial Instruments"
-          >
-            <Radio className="w-3.5 h-3.5 text-gold" />
-            <span className="text-foreground font-medium text-[11px]">Mesh</span>
-            <span className="px-1.5 py-0.2 text-[9px] font-bold rounded bg-surface border border-surface-border text-status-emerald">
-              4 Nodes
-            </span>
-          </button>
-
-          {isMeshOpen && (
-            <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-surface border border-surface-border rounded-lg shadow-2xl p-3 z-50 space-y-3">
-              {/* Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-surface-border text-xs">
-                <div className="flex items-center space-x-1.5">
-                  <Activity className="w-4 h-4 text-status-emerald animate-pulse" />
-                  <span className="font-semibold text-foreground">Hardware Telemetry Mesh</span>
-                </div>
-                <span className="text-[10px] font-mono uppercase text-status-emerald bg-status-emerald/10 px-2 py-0.5 rounded border border-status-emerald/20 font-bold">
-                  {transport.toUpperCase()} LIVE
-                </span>
-              </div>
-
-              {/* 4 Connected Instrument Nodes */}
-              <div className="space-y-2 text-xs">
-                {/* Node 1: Mettler Toledo Balance */}
-                <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center space-x-1.5 text-foreground font-medium">
-                      <Scale className="w-3.5 h-3.5 text-gold" />
-                      <span>Mettler Toledo XP205</span>
-                    </div>
-                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
-                      Live: <span className="text-gold font-bold">{scaleData.weightGrams.toFixed(4)} g</span> • 0.0001g Verified
-                    </div>
-                  </div>
-                  <button
-                    onClick={async () => {
-                      await tareScale();
-                      toast.success("Scale Calibrated", { description: "Zero-point balance tared to 0.0000g baseline." });
-                    }}
-                    className="px-2 py-1 text-[10px] font-mono rounded bg-surface border border-surface-border hover:bg-gold/10 hover:text-gold transition-colors font-medium"
-                  >
-                    Tare Scale
-                  </button>
-                </div>
-
-                {/* Node 2: Impinj Speedway RFID */}
-                <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center space-x-1.5 text-foreground font-medium">
-                      <Radio className="w-3.5 h-3.5 text-status-indigo" />
-                      <span>Impinj Speedway R420</span>
-                    </div>
-                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
-                      4 Ports • 865.7 MHz ETSI • Active
-                    </div>
-                  </div>
-                  <button
-                    onClick={async () => {
-                      await triggerRfidSweep();
-                      toast.success("360° Antenna Sweep Completed", { description: "4-port circular sweep completed across active tray." });
-                    }}
-                    className="px-2 py-1 text-[10px] font-mono rounded bg-surface border border-surface-border hover:bg-gold/10 hover:text-gold transition-colors font-medium"
-                  >
-                    Sweep
-                  </button>
-                </div>
-
-                {/* Node 3: MCX Bullion Feed */}
-                <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center space-x-1.5 text-foreground font-medium">
-                      <Cpu className="w-3.5 h-3.5 text-status-amber" />
-                      <span>Bullion Market Ticker</span>
-                    </div>
-                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
-                      MCX / LBMA Parity • Real-Time Stream
-                    </div>
-                  </div>
-                  <span className="text-gold font-mono font-bold text-[11px]">
-                    ₹{bullionData.spotInrPerGram.toLocaleString()}/g
-                  </span>
-                </div>
-
-                {/* Node 4: Cryptographic HSM Quorum */}
-                <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center space-x-1.5 text-foreground font-medium">
-                      <Shield className="w-3.5 h-3.5 text-status-emerald" />
-                      <span>Dual-Sign HSM Quorum</span>
-                    </div>
-                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
-                      Key 1: Armed • Key 2: Standby
-                    </div>
-                  </div>
-                  <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-emerald/10 text-status-emerald border border-status-emerald/20 font-bold">
-                    Armed
-                  </span>
-                </div>
-              </div>
-
-              {/* Footer Sync Button */}
-              <button
-                onClick={async () => {
-                  await syncAllScales();
-                  toast.success("Synchronizing Vault Scales", { description: "All 8 Mettler Toledo digital scales re-synchronized across mesh." });
-                  setIsMeshOpen(false);
-                }}
-                className="w-full py-1.5 text-xs font-mono font-semibold rounded bg-gold text-black hover:bg-gold-light transition-all flex items-center justify-center space-x-1.5"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Sync All Vault Scales</span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Sleek Bullion Ticker with Live Telemetry Pulse & Exchange Menu */}
-        <div className="relative">
-          <button
-            onClick={() => setIsBullionMenuOpen(!isBullionMenuOpen)}
-            className="hidden xl:flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/40 text-xs font-mono transition-all"
-            title="Inspect Live MCX/LBMA Spot Ticker & Trigger Exchange Ingestion"
-          >
-            <span className="relative flex h-2 w-2 mr-0.5">
-              <span
-                className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                  isConnected ? "bg-status-emerald" : "bg-gold"
-                }`}
-              />
-              <span
-                className={`relative inline-flex rounded-full h-2 w-2 ${
-                  isConnected ? "bg-status-emerald" : "bg-gold"
-                }`}
-              />
-            </span>
-            <span className="px-1 py-0.2 rounded bg-surface border border-surface-border text-[9px] text-muted-foreground uppercase font-bold">
-              {bullionData.exchange?.includes("LBMA") ? "LBMA" : "MCX"}
-            </span>
-            <span className="text-gold font-semibold">Au 24K</span>
-            <span className="text-foreground tabular-nums">
-              ₹
-              {bullionData.spotInrPerGram.toLocaleString(undefined, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2,
-              })}
-              /g
-            </span>
-            <span
-              className={`text-[10px] font-medium ${
-                bullionData.changePercent.startsWith("-")
-                  ? "text-status-rose"
-                  : "text-status-emerald"
-              }`}
-            >
-              {bullionData.changePercent.startsWith("-") ? "▼" : "▲"}{" "}
-              {bullionData.changePercent}
-            </span>
-          </button>
-
-          {isBullionMenuOpen && (
-            <div className="absolute top-full right-0 mt-2 w-80 bg-surface border border-surface-border rounded-lg shadow-2xl p-3 z-50 space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-surface-border text-xs">
-                <div className="flex items-center space-x-1.5">
-                  <Activity className="w-4 h-4 text-gold animate-pulse" />
-                  <span className="font-semibold text-foreground">
-                    Live Commodity Exchange Feed
-                  </span>
-                </div>
-                <span className="text-[9px] font-mono uppercase bg-gold/10 text-gold px-2 py-0.5 rounded border border-gold/20 font-bold">
-                  MCX • REAL-TIME
-                </span>
-              </div>
-
-              {/* Converted Rates Breakdown */}
-              <div className="space-y-1.5 text-xs font-mono">
-                <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
-                  <span className="text-muted-foreground">Au 24K Pure (999.9)</span>
-                  <span className="text-gold font-bold">
-                    ₹{bullionData.spotInrPerGram.toLocaleString()}/g
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
-                  <span className="text-muted-foreground">Au 22K Hallmark (916)</span>
-                  <span className="text-foreground font-semibold">
-                    ₹
-                    {(
-                      bullionData.standardGold22k ??
-                      Math.round(bullionData.spotInrPerGram * 0.9166 * 100) / 100
-                    ).toLocaleString()}
-                    /g
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
-                  <span className="text-muted-foreground">Au 18K Artisan (750)</span>
-                  <span className="text-foreground font-semibold">
-                    ₹
-                    {(
-                      bullionData.artisanGold18k ??
-                      Math.round(bullionData.spotInrPerGram * 0.75 * 100) / 100
-                    ).toLocaleString()}
-                    /g
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
-                  <span className="text-muted-foreground">Ag 999.0 Silver Bar</span>
-                  <span className="text-foreground font-semibold">
-                    ₹{bullionData.silverInrPerKg.toLocaleString()}/kg
-                  </span>
-                </div>
-              </div>
-
-              {/* Macro Factors */}
-              <div className="text-[10px] text-muted-foreground font-mono border-t border-surface-border pt-2 flex items-center justify-between">
-                <span>Customs Tariff: 6.0%</span>
-                <span>FX: 84.45 INR/USD</span>
-              </div>
-
-              {/* Manual Ingestion Sync Trigger */}
-              <button
-                onClick={async () => {
-                  try {
-                    const result = await syncExchangeFeed({ sourceExchange: "MCX" });
-                    const pureGold = result?.pureGold24k ?? bullionData.spotInrPerGram;
-                    toast.success("MCX Bullion Spot Synchronized", {
-                      description: `24K Spot: ₹${pureGold}/g • Live WebSocket broadcast sent to all salon terminals.`,
-                    });
-                    setIsBullionMenuOpen(false);
-                  } catch {
-                    toast.error("Failed to sync exchange rates");
-                  }
-                }}
-                className="w-full py-1.5 text-xs font-mono font-semibold rounded bg-gold text-black hover:bg-gold-light transition-all flex items-center justify-center space-x-1.5"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Sync MCX Live Spot Now</span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Theme Toggle Button (Light / Dark) */}
-        <ThemeToggle />
-
-        {/* Cost Privacy Toggle */}
-        <button
-          onClick={onTogglePrivacy}
-          title={
-            privacyMode
-              ? "Disable Customer Privacy Mode"
-              : "Enable Customer Privacy Mode (Mask Costs)"
-          }
-          className={`p-1.5 rounded-md border transition-colors ${
-            privacyMode
-              ? "bg-gold/10 border-gold/40 text-gold"
-              : "bg-surface-elevated border-surface-border text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          {privacyMode ? (
-            <EyeOff className="w-4 h-4" />
-          ) : (
-            <Eye className="w-4 h-4" />
-          )}
-        </button>
-
-        {/* Quick Lock Padlock */}
-        <button
-          onClick={onLockClick}
-          title="Quick Lock Terminal (Showroom PIN)"
-          className="p-1.5 rounded-md bg-surface-elevated border border-surface-border text-muted-foreground hover:text-gold hover:border-gold/30 transition-colors"
-        >
-          <Lock className="w-4 h-4" />
-        </button>
-
-        {/* Notifications */}
-        <button className="relative p-1.5 rounded-md bg-surface-elevated border border-surface-border text-muted-foreground hover:text-foreground transition-colors">
-          <Bell className="w-4 h-4" />
-          <span className="w-1.5 h-1.5 rounded-full bg-gold absolute top-1 right-1" />
-        </button>
-
-        <div className="h-4 w-px bg-surface-border" />
-
-        {/* User Persona & Role Selector */}
-        <div className="relative">
-          <button
-            onClick={() => setIsPersonaOpen(!isPersonaOpen)}
-            className="flex items-center space-x-2.5 p-1 -mr-1 rounded-md hover:bg-surface-elevated transition-colors text-left focus:outline-none"
-            title="Switch User Identity & Governance Role"
-          >
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-[11px] font-bold text-obsidian">
-              {selectedPersona.initials}
-            </div>
-            <div className="hidden sm:block">
-              <span className="block text-xs font-medium text-foreground leading-tight">
-                {selectedPersona.name}
-              </span>
-              <span className="block text-[10px] text-muted-foreground font-mono">
-                {selectedPersona.role}
-              </span>
-            </div>
-            <ChevronDown className="w-3 h-3 text-muted-foreground hidden sm:block" />
-          </button>
-
-          {isPersonaOpen && (
-            <div className="absolute top-full right-0 mt-1.5 w-64 bg-surface border border-surface-border rounded-lg shadow-2xl py-1 z-50">
-              <div className="px-3 py-1.5 text-[10px] uppercase font-mono text-muted-foreground border-b border-surface-border">
-                Switch Operational Persona
-              </div>
-              {PERSONAS.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => handleSelectPersona(p)}
-                  className={`w-full px-3 py-2 text-left text-xs flex items-center justify-between hover:bg-surface-elevated transition-colors ${
-                    p.id === selectedPersona.id
-                      ? "text-gold font-medium bg-gold/5"
-                      : "text-foreground"
-                  }`}
-                >
-                  <div className="flex items-center space-x-2.5">
-                    <div className="w-6 h-6 rounded-full bg-surface-elevated border border-surface-border flex items-center justify-center text-[10px] font-bold font-mono text-gold">
-                      {p.initials}
-                    </div>
-                    <div>
-                      <span className="block font-medium">{p.name}</span>
-                      <span className="block text-[10px] text-muted-foreground font-mono">
-                        {p.role}
+                    <div className="text-right">
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface-elevated border border-surface-border text-muted-foreground block">
+                        {s.code}
+                      </span>
+                      <span className="text-[8px] font-mono text-muted-foreground/80 mt-0.5 block">
+                        {s.type}
                       </span>
                     </div>
-                  </div>
-                  {p.id === selectedPersona.id && (
-                    <UserCheck className="w-3.5 h-3.5 text-gold" />
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+
+        {/* Center: Command Search Bar (Laptop & Desktop) */}
+        <form
+          onSubmit={handleSearchSubmit}
+          className="hidden xl:flex items-center xl:w-52 2xl:w-80 mx-2"
+        >
+          <div className="relative w-full group">
+            <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2 group-focus-within:text-gold transition-colors" />
+            <input
+              ref={desktopSearchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search pieces, RFID... (⌘K)"
+              className="w-full h-8 pl-8 pr-11 text-xs bg-surface-elevated border border-surface-border rounded-md text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all"
+            />
+            <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-mono px-1 py-0.5 rounded bg-surface border border-surface-border text-muted-foreground">
+              ⌘K
+            </kbd>
+          </div>
+        </form>
+
+        {/* Right: Hardware Mesh, Bullion Ticker, Theme Toggle, & Profile */}
+        <div className="flex items-center space-x-1 sm:space-x-1.5 lg:space-x-2 xl:space-x-2.5 shrink-0">
+          {/* Tablet & Mobile Command Search Trigger (< xl) */}
+          <button
+            onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+            className="xl:hidden p-1.5 rounded-md bg-surface-elevated border border-surface-border text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            title="Search pieces, RFID tags, customers... (⌘K)"
+            aria-label="Toggle command search bar"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+
+          {/* Mobile / Floor Camera Barcode Scanner Button */}
+          <button
+            onClick={() => setIsScannerOpen(true)}
+            className="flex items-center space-x-1.5 px-2 sm:px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/40 transition-all text-xs font-mono shrink-0"
+            title="Scan Jewellery Barcode / QR with Camera"
+            aria-label="Scan Tag with Camera"
+          >
+            <Camera className="w-3.5 h-3.5 text-gold shrink-0" />
+            <span className="hidden xl:inline text-foreground font-medium text-[11px]">
+              Scan Tag
+            </span>
+          </button>
+
+          {/* Hardware Mesh Telemetry Button & Popover */}
+          <div className="relative">
+            <button
+              onClick={() => setIsMeshOpen(!isMeshOpen)}
+              className="hidden lg:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs font-mono shrink-0"
+              title="Inspect Live Hardware Telemetry Mesh & Serial Instruments"
+            >
+              <Radio className="w-3.5 h-3.5 text-gold shrink-0" />
+              <span className="hidden xl:inline text-foreground font-medium text-[11px]">Mesh</span>
+              <span className="px-1.5 py-0.2 text-[9px] font-bold rounded bg-surface border border-surface-border text-status-emerald shrink-0">
+                4<span className="hidden xl:inline"> Nodes</span>
+              </span>
+            </button>
+
+            {isMeshOpen && (
+              <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 max-w-[calc(100vw-1.5rem)] bg-surface border border-surface-border rounded-lg shadow-2xl p-3 z-50 space-y-3">
+                {/* Header */}
+                <div className="flex items-center justify-between pb-2 border-b border-surface-border text-xs">
+                  <div className="flex items-center space-x-1.5">
+                    <Activity className="w-4 h-4 text-status-emerald animate-pulse" />
+                    <span className="font-semibold text-foreground">Hardware Telemetry Mesh</span>
+                  </div>
+                  <span className="text-[10px] font-mono uppercase text-status-emerald bg-status-emerald/10 px-2 py-0.5 rounded border border-status-emerald/20 font-bold">
+                    {transport.toUpperCase()} LIVE
+                  </span>
+                </div>
+
+                {/* 4 Connected Instrument Nodes */}
+                <div className="space-y-2 text-xs">
+                  {/* Node 1: Mettler Toledo Balance */}
+                  <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center space-x-1.5 text-foreground font-medium">
+                        <Scale className="w-3.5 h-3.5 text-gold" />
+                        <span>Mettler Toledo XP205</span>
+                      </div>
+                      <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                        Live: <span className="text-gold font-bold">{scaleData.weightGrams.toFixed(4)} g</span> • 0.0001g Verified
+                      </div>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        await tareScale();
+                        toast.success("Scale Calibrated", { description: "Zero-point balance tared to 0.0000g baseline." });
+                      }}
+                      className="px-2 py-1 text-[10px] font-mono rounded bg-surface border border-surface-border hover:bg-gold/10 hover:text-gold transition-colors font-medium"
+                    >
+                      Tare Scale
+                    </button>
+                  </div>
+
+                  {/* Node 2: Impinj Speedway RFID */}
+                  <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center space-x-1.5 text-foreground font-medium">
+                        <Radio className="w-3.5 h-3.5 text-status-indigo" />
+                        <span>Impinj Speedway R420</span>
+                      </div>
+                      <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                        4 Ports • 865.7 MHz ETSI • Active
+                      </div>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        await triggerRfidSweep();
+                        toast.success("360° Antenna Sweep Completed", { description: "4-port circular sweep completed across active tray." });
+                      }}
+                      className="px-2 py-1 text-[10px] font-mono rounded bg-surface border border-surface-border hover:bg-gold/10 hover:text-gold transition-colors font-medium"
+                    >
+                      Sweep
+                    </button>
+                  </div>
+
+                  {/* Node 3: MCX Bullion Feed */}
+                  <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center space-x-1.5 text-foreground font-medium">
+                        <Cpu className="w-3.5 h-3.5 text-status-amber" />
+                        <span>Bullion Market Ticker</span>
+                      </div>
+                      <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                        MCX / LBMA Parity • Real-Time Stream
+                      </div>
+                    </div>
+                    <span className="text-gold font-mono font-bold text-[11px]">
+                      ₹{bullionData.spotInrPerGram.toLocaleString()}/g
+                    </span>
+                  </div>
+
+                  {/* Node 4: Cryptographic HSM Quorum */}
+                  <div className="p-2.5 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center space-x-1.5 text-foreground font-medium">
+                        <Shield className="w-3.5 h-3.5 text-status-emerald" />
+                        <span>Dual-Sign HSM Quorum</span>
+                      </div>
+                      <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                        Key 1: Armed • Key 2: Standby
+                      </div>
+                    </div>
+                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-emerald/10 text-status-emerald border border-status-emerald/20 font-bold">
+                      Armed
+                    </span>
+                  </div>
+                </div>
+
+                {/* Footer Sync Button */}
+                <button
+                  onClick={async () => {
+                    await syncAllScales();
+                    toast.success("Synchronizing Vault Scales", { description: "All 8 Mettler Toledo digital scales re-synchronized across mesh." });
+                    setIsMeshOpen(false);
+                  }}
+                  className="w-full py-1.5 text-xs font-mono font-semibold rounded bg-gold text-black hover:bg-gold-light transition-all flex items-center justify-center space-x-1.5"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Sync All Vault Scales</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Sleek Bullion Ticker with Live Telemetry Pulse & Exchange Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setIsBullionMenuOpen(!isBullionMenuOpen)}
+              className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/40 text-xs font-mono transition-all shrink-0"
+              title="Inspect Live MCX/LBMA Spot Ticker & Trigger Exchange Ingestion"
+            >
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span
+                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                    isConnected ? "bg-status-emerald" : "bg-gold"
+                  }`}
+                />
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    isConnected ? "bg-status-emerald" : "bg-gold"
+                  }`}
+                />
+              </span>
+              <span className="hidden xl:inline px-1 py-0.2 rounded bg-surface border border-surface-border text-[9px] text-muted-foreground uppercase font-bold shrink-0">
+                {bullionData.exchange?.includes("LBMA") ? "LBMA" : "MCX"}
+              </span>
+              <span className="text-gold font-semibold text-[11px] sm:text-xs shrink-0">
+                Au 24K
+              </span>
+              <span className="text-foreground tabular-nums text-[11px] sm:text-xs shrink-0">
+                ₹
+                {bullionData.spotInrPerGram.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
+                /g
+              </span>
+              <span
+                className={`hidden xl:inline text-[10px] font-medium shrink-0 ${
+                  bullionData.changePercent.startsWith("-")
+                    ? "text-status-rose"
+                    : "text-status-emerald"
+                }`}
+              >
+                {bullionData.changePercent.startsWith("-") ? "▼" : "▲"}{" "}
+                {bullionData.changePercent}
+              </span>
+            </button>
+
+            {isBullionMenuOpen && (
+              <div className="absolute top-full right-0 mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-surface border border-surface-border rounded-lg shadow-2xl p-3 z-50 space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-surface-border text-xs">
+                  <div className="flex items-center space-x-1.5">
+                    <Activity className="w-4 h-4 text-gold animate-pulse" />
+                    <span className="font-semibold text-foreground">
+                      Live Commodity Exchange Feed
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-mono uppercase bg-gold/10 text-gold px-2 py-0.5 rounded border border-gold/20 font-bold">
+                    MCX • REAL-TIME
+                  </span>
+                </div>
+
+                {/* Converted Rates Breakdown */}
+                <div className="space-y-1.5 text-xs font-mono">
+                  <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
+                    <span className="text-muted-foreground">Au 24K Pure (999.9)</span>
+                    <span className="text-gold font-bold">
+                      ₹{bullionData.spotInrPerGram.toLocaleString()}/g
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
+                    <span className="text-muted-foreground">Au 22K Hallmark (916)</span>
+                    <span className="text-foreground font-semibold">
+                      ₹
+                      {(
+                        bullionData.standardGold22k ??
+                        Math.round(bullionData.spotInrPerGram * 0.9166 * 100) / 100
+                      ).toLocaleString()}
+                      /g
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
+                    <span className="text-muted-foreground">Au 18K Artisan (750)</span>
+                    <span className="text-foreground font-semibold">
+                      ₹
+                      {(
+                        bullionData.artisanGold18k ??
+                        Math.round(bullionData.spotInrPerGram * 0.75 * 100) / 100
+                      ).toLocaleString()}
+                      /g
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-1.5 rounded bg-surface-elevated">
+                    <span className="text-muted-foreground">Ag 999.0 Silver Bar</span>
+                    <span className="text-foreground font-semibold">
+                      ₹{bullionData.silverInrPerKg.toLocaleString()}/kg
+                    </span>
+                  </div>
+                </div>
+
+                {/* Macro Factors */}
+                <div className="text-[10px] text-muted-foreground font-mono border-t border-surface-border pt-2 flex items-center justify-between">
+                  <span>Customs Tariff: 6.0%</span>
+                  <span>FX: 84.45 INR/USD</span>
+                </div>
+
+                {/* Manual Ingestion Sync Trigger */}
+                <button
+                  onClick={async () => {
+                    try {
+                      const result = await syncExchangeFeed({ sourceExchange: "MCX" });
+                      const pureGold = result?.pureGold24k ?? bullionData.spotInrPerGram;
+                      toast.success("MCX Bullion Spot Synchronized", {
+                        description: `24K Spot: ₹${pureGold}/g • Live WebSocket broadcast sent to all salon terminals.`,
+                      });
+                      setIsBullionMenuOpen(false);
+                    } catch {
+                      toast.error("Failed to sync exchange rates");
+                    }
+                  }}
+                  className="w-full py-1.5 text-xs font-mono font-semibold rounded bg-gold text-black hover:bg-gold-light transition-all flex items-center justify-center space-x-1.5"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Sync MCX Live Spot Now</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Theme Toggle Button (Light / Dark) */}
+          <ThemeToggle />
+
+          {/* Cost Privacy Toggle */}
+          <button
+            onClick={onTogglePrivacy}
+            title={
+              privacyMode
+                ? "Disable Customer Privacy Mode"
+                : "Enable Customer Privacy Mode (Mask Costs)"
+            }
+            aria-label={privacyMode ? "Disable Customer Privacy Mode" : "Enable Customer Privacy Mode"}
+            className={`p-1.5 rounded-md border transition-colors shrink-0 ${
+              privacyMode
+                ? "bg-gold/10 border-gold/40 text-gold"
+                : "bg-surface-elevated border-surface-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {privacyMode ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
+
+          {/* Quick Lock Padlock */}
+          <button
+            onClick={onLockClick}
+            title="Quick Lock Terminal (Showroom PIN)"
+            aria-label="Quick Lock Terminal"
+            className="p-1.5 rounded-md bg-surface-elevated border border-surface-border text-muted-foreground hover:text-gold hover:border-gold/30 transition-colors shrink-0"
+          >
+            <Lock className="w-4 h-4" />
+          </button>
+
+          {/* Notifications */}
+          <button
+            className="relative p-1.5 rounded-md bg-surface-elevated border border-surface-border text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            aria-label="View notifications"
+            title="System & Security Notifications"
+          >
+            <Bell className="w-4 h-4" />
+            <span className="w-1.5 h-1.5 rounded-full bg-gold absolute top-1 right-1" />
+          </button>
+
+          <div className="h-4 w-px bg-surface-border hidden xl:block shrink-0" />
+
+          {/* User Persona & Role Selector */}
+          <div className="relative">
+            <button
+              onClick={() => setIsPersonaOpen(!isPersonaOpen)}
+              className="flex items-center space-x-1.5 sm:space-x-2 p-1 -mr-1 rounded-md hover:bg-surface-elevated transition-colors text-left focus:outline-none shrink-0"
+              title="Switch User Identity & Governance Role"
+              aria-label="Switch User Identity & Governance Role"
+            >
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-[11px] font-bold text-obsidian shrink-0">
+                {selectedPersona.initials}
+              </div>
+              <div className="hidden xl:block max-w-[120px]">
+                <span className="block text-xs font-medium text-foreground leading-tight truncate">
+                  {selectedPersona.name}
+                </span>
+                <span className="block text-[10px] text-muted-foreground font-mono truncate">
+                  {selectedPersona.role}
+                </span>
+              </div>
+              <ChevronDown className="w-3 h-3 text-muted-foreground hidden xl:block shrink-0" />
+            </button>
+
+            {isPersonaOpen && (
+              <div className="absolute top-full right-0 mt-1.5 w-64 max-w-[calc(100vw-1.5rem)] bg-surface border border-surface-border rounded-lg shadow-2xl py-1 z-50">
+                <div className="px-3 py-1.5 text-[10px] uppercase font-mono text-muted-foreground border-b border-surface-border">
+                  Switch Operational Persona
+                </div>
+                {PERSONAS.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => handleSelectPersona(p)}
+                    className={`w-full px-3 py-2 text-left text-xs flex items-center justify-between hover:bg-surface-elevated transition-colors ${
+                      p.id === selectedPersona.id
+                        ? "text-gold font-medium bg-gold/5"
+                        : "text-foreground"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-6 h-6 rounded-full bg-surface-elevated border border-surface-border flex items-center justify-center text-[10px] font-bold font-mono text-gold">
+                        {p.initials}
+                      </div>
+                      <div>
+                        <span className="block font-medium">{p.name}</span>
+                        <span className="block text-[10px] text-muted-foreground font-mono">
+                          {p.role}
+                        </span>
+                      </div>
+                    </div>
+                    {p.id === selectedPersona.id && (
+                      <UserCheck className="w-3.5 h-3.5 text-gold" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile & Tablet Dropdown Command Search Bar Overlay */}
+        {isSearchExpanded && (
+          <div className="absolute top-14 left-0 right-0 bg-surface/98 backdrop-blur-md border-b border-surface-border p-3 shadow-2xl z-50 animate-in slide-in-from-top-2 duration-150">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="max-w-2xl mx-auto flex items-center gap-2"
+            >
+              <div className="relative flex-1 group">
+                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 group-focus-within:text-gold transition-colors" />
+                <input
+                  ref={mobileSearchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search pieces, RFID tags, invoices, clients... (Esc to close)"
+                  className="w-full h-9 pl-9 pr-4 text-xs bg-surface-elevated border border-surface-border focus:border-gold/50 rounded-lg text-foreground placeholder:text-muted-foreground/60 focus:outline-none transition-colors"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSearchExpanded(false)}
+                className="p-2 rounded-lg bg-surface-elevated border border-surface-border text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                aria-label="Close search overlay"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </form>
+            {/* Quick filter shortcut tags */}
+            <div className="max-w-2xl mx-auto mt-2 flex items-center gap-1.5 flex-wrap text-[10px] font-mono text-muted-foreground">
+              <span className="text-muted-foreground/70">Quick Ingestion:</span>
+              {["JC-SOL-2026-081", "Au 24K Bar", "RFID Tray 04", "VIP Sanctuary", "GST Invoices"].map(
+                (tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery(tag);
+                      if (typeof window !== "undefined") {
+                        window.dispatchEvent(
+                          new CustomEvent("jewelcore:piece-scanned", {
+                            detail: { barcode: tag },
+                          }),
+                        );
+                      }
+                      toast.info(`Omnisearch: ${tag}`, {
+                        description: "Filter broadcast dispatched.",
+                      });
+                      setIsSearchExpanded(false);
+                    }}
+                    className="px-2 py-0.5 rounded bg-surface-elevated border border-surface-border hover:border-gold/30 hover:text-gold transition-colors"
+                  >
+                    {tag}
+                  </button>
+                ),
+              )}
+            </div>
+          </div>
+        )}
+      </header>
 
       {/* Showroom Camera Barcode / QR Scanner Modal */}
       <CameraScannerModal
@@ -649,6 +804,6 @@ export function TopHeader({
         onClose={() => setIsScannerOpen(false)}
         onScan={handleScanPiece}
       />
-    </header>
+    </>
   );
 }
