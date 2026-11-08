@@ -12,6 +12,16 @@ import { api, DEFAULT_STORE_ID, ApiProblemError } from "@/lib/api";
 import { BRANCH_STORES, type BranchStore } from "@/hooks/useStoreContext";
 import { toast } from "sonner";
 
+export interface DelegatedAuthority {
+  originalRole: string;
+  elevatedRole: string;
+  delegatedBy: string;
+  reason: string;
+  grantedAt: string;
+  expiresAt: string;
+  durationMinutes: number;
+}
+
 export interface AuthUser {
   id: string;
   organizationId: string;
@@ -21,6 +31,7 @@ export interface AuthUser {
   phone?: string;
   role?: string;
   initials?: string;
+  delegation?: DelegatedAuthority | null;
 }
 
 export interface AuthContextType {
@@ -40,6 +51,10 @@ export interface AuthContextType {
   hasPermission: (permissionCode: string) => boolean;
   hasRole: (roleCode: string) => boolean;
   setUserDirectly: (user: AuthUser, token?: string) => void;
+  grantDelegation: (
+    delegation: Omit<DelegatedAuthority, "grantedAt" | "expiresAt">,
+  ) => void;
+  relinquishDelegation: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -366,20 +381,86 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const relinquishDelegation = useCallback(() => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const updated: AuthUser = {
+        ...prev,
+        delegation: null,
+      };
+      if (typeof window !== "undefined") {
+        localStorage.setItem("jewelcore_user", JSON.stringify(updated));
+      }
+      return updated;
+    });
+    toast.info("Delegated Authority Relinquished", {
+      description: "Workstation clearance restored to baseline role.",
+    });
+  }, []);
+
+  const grantDelegation = useCallback(
+    (delegation: Omit<DelegatedAuthority, "grantedAt" | "expiresAt">) => {
+      setUser((prev) => {
+        if (!prev) return null;
+        const grantedAt = new Date().toISOString();
+        const expiresAt = new Date(
+          Date.now() + delegation.durationMinutes * 60 * 1000,
+        ).toISOString();
+
+        const updated: AuthUser = {
+          ...prev,
+          delegation: {
+            ...delegation,
+            grantedAt,
+            expiresAt,
+          },
+        };
+        if (typeof window !== "undefined") {
+          localStorage.setItem("jewelcore_user", JSON.stringify(updated));
+        }
+        return updated;
+      });
+      toast.success("Delegated Authority Activated", {
+        description: `Temporarily elevated to ${delegation.elevatedRole} for ${delegation.durationMinutes} minutes.`,
+      });
+    },
+    [],
+  );
+
+  // Monitor delegation expiration
+  useEffect(() => {
+    if (!user?.delegation) return;
+
+    const checkInterval = setInterval(() => {
+      if (new Date(user.delegation!.expiresAt) <= new Date()) {
+        relinquishDelegation();
+      }
+    }, 5000);
+
+    return () => clearInterval(checkInterval);
+  }, [user?.delegation, relinquishDelegation]);
+
   const hasRole = useCallback(
     (roleCode: string): boolean => {
       if (!user?.role) return false;
-      return user.role.toLowerCase().includes(roleCode.toLowerCase());
+      const effectiveRole = user.delegation
+        ? `${user.role} ${user.delegation.elevatedRole}`
+        : user.role;
+      return effectiveRole.toLowerCase().includes(roleCode.toLowerCase());
     },
     [user],
   );
 
   const hasPermission = useCallback(
     (permissionCode: string): boolean => {
+      const effectiveRole = user?.delegation
+        ? `${user?.role || ""} ${user?.delegation.elevatedRole}`
+        : user?.role || "";
+
       if (
-        user?.role?.includes("Manager") ||
-        user?.role?.includes("Administrator") ||
-        user?.role?.includes("Director")
+        effectiveRole.includes("Manager") ||
+        effectiveRole.includes("Administrator") ||
+        effectiveRole.includes("Director")
       ) {
         return true;
       }
@@ -404,6 +485,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         hasPermission,
         hasRole,
         setUserDirectly,
+        grantDelegation,
+        relinquishDelegation,
       }}
     >
       {children}

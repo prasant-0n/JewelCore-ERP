@@ -1,4 +1,4 @@
-import { type AuthUser } from "@/context/AuthContext";
+import { type AuthUser, type DelegatedAuthority } from "@/context/AuthContext";
 
 export interface RoutePolicy {
   route: string;
@@ -117,9 +117,16 @@ export const ROUTE_POLICIES: Record<string, RoutePolicy> = {
  * e.g. "Showroom POS Cashier" -> ["CASHIER", "SALES"]
  * e.g. "Senior QC Gemologist" -> ["GEMOLOGIST", "STAFF"]
  */
-export function getUserRoleTokens(role?: string): string[] {
-  if (!role) return [];
-  const r = role.toUpperCase();
+export function getUserRoleTokens(
+  role?: string,
+  delegation?: DelegatedAuthority | null,
+): string[] {
+  let effectiveRole = role || "";
+  if (delegation && new Date(delegation.expiresAt) > new Date()) {
+    effectiveRole = `${effectiveRole} ${delegation.elevatedRole}`;
+  }
+  if (!effectiveRole) return [];
+  const r = effectiveRole.toUpperCase();
   const tokens: string[] = [];
 
   if (r.includes("ADMIN")) tokens.push("ADMIN");
@@ -171,7 +178,7 @@ export function checkRouteAccess(
   }
 
   // System Administrators always bypass role restrictions
-  const userTokens = getUserRoleTokens(user.role);
+  const userTokens = getUserRoleTokens(user.role, user.delegation);
   if (userTokens.includes("ADMIN")) {
     return { allowed: true, policy };
   }

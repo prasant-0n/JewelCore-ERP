@@ -24,6 +24,7 @@ import {
   Smartphone,
   MonitorSmartphone,
   KeyRound,
+  Zap,
 } from "lucide-react";
 import {
   Sheet,
@@ -43,6 +44,7 @@ import { CameraScannerModal } from "./CameraScannerModal";
 import { TwoFactorModal } from "../auth/TwoFactorModal";
 import { WorkstationSessionsModal } from "../auth/WorkstationSessionsModal";
 import { ChangePasswordModal } from "../auth/ChangePasswordModal";
+import { DelegatedAuthorityModal } from "../auth/DelegatedAuthorityModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -118,6 +120,7 @@ export function TopHeader({
   const [isMfaModalOpen, setIsMfaModalOpen] = useState(false);
   const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isDelegationModalOpen, setIsDelegationModalOpen] = useState(false);
 
   // Active authenticated operator profile
   const activeUser = user || {
@@ -348,6 +351,19 @@ export function TopHeader({
               </div>
             )}
           </div>
+
+          {/* Active Delegation Pill */}
+          {user?.delegation && new Date(user.delegation.expiresAt) > new Date() && (
+            <button
+              type="button"
+              onClick={() => setIsDelegationModalOpen(true)}
+              className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/50 text-amber-500 hover:bg-amber-500/25 transition-all text-xs font-mono font-bold shrink-0 animate-pulse"
+              title={`Acting as ${user.delegation.elevatedRole}. Click to manage delegation.`}
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span>ELEVATED: {user.delegation.elevatedRole}</span>
+            </button>
+          )}
         </div>
 
         {/* Center: Command Search Bar (Laptop & Desktop) */}
@@ -765,6 +781,32 @@ export function TopHeader({
                   </div>
                 </div>
 
+                {/* Delegated Authority Action */}
+                <div className="pt-1.5 px-2 border-b border-surface-border pb-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      setIsDelegationModalOpen(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                      <span>Delegated Authority</span>
+                    </div>
+                    {user?.delegation && new Date(user.delegation.expiresAt) > new Date() ? (
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-amber-500/20 text-amber-500 border border-amber-500/40 font-bold">
+                        Elevated
+                      </span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-muted-foreground">
+                        Escalate
+                      </span>
+                    )}
+                  </button>
+                </div>
+
                 {/* Rotate Workstation Passkey Action */}
                 <div className="pt-1.5 px-2 border-b border-surface-border pb-1">
                   <button
@@ -926,6 +968,12 @@ export function TopHeader({
       <ChangePasswordModal
         isOpen={isChangePasswordOpen}
         onClose={() => setIsChangePasswordOpen(false)}
+      />
+
+      {/* Delegated Authority & Time-Bound Elevation Modal */}
+      <DelegatedAuthorityModal
+        isOpen={isDelegationModalOpen}
+        onClose={() => setIsDelegationModalOpen(false)}
       />
     </>
   );
