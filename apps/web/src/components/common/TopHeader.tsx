@@ -23,6 +23,7 @@ import {
   LogOut,
   Smartphone,
   MonitorSmartphone,
+  KeyRound,
 } from "lucide-react";
 import {
   Sheet,
@@ -41,6 +42,7 @@ import { JewelCoreLogo } from "./JewelCoreLogo";
 import { CameraScannerModal } from "./CameraScannerModal";
 import { TwoFactorModal } from "../auth/TwoFactorModal";
 import { WorkstationSessionsModal } from "../auth/WorkstationSessionsModal";
+import { ChangePasswordModal } from "../auth/ChangePasswordModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -115,6 +117,7 @@ export function TopHeader({
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isMfaModalOpen, setIsMfaModalOpen] = useState(false);
   const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   // Active authenticated operator profile
   const activeUser = user || {
@@ -762,6 +765,26 @@ export function TopHeader({
                   </div>
                 </div>
 
+                {/* Rotate Workstation Passkey Action */}
+                <div className="pt-1.5 px-2 border-b border-surface-border pb-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      setIsChangePasswordOpen(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <KeyRound className="w-3.5 h-3.5 text-gold shrink-0" />
+                      <span>Rotate Passkey</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-muted-foreground">
+                      NIST SP 800-63B
+                    </span>
+                  </button>
+                </div>
+
                 {/* Workstation Sessions & Devices Action */}
                 <div className="pt-1.5 px-2 border-b border-surface-border pb-1">
                   <button
@@ -897,6 +920,12 @@ export function TopHeader({
       <WorkstationSessionsModal
         isOpen={isSessionsModalOpen}
         onClose={() => setIsSessionsModalOpen(false)}
+      />
+
+      {/* Rotate Workstation Passkey Modal */}
+      <ChangePasswordModal
+        isOpen={isChangePasswordOpen}
+        onClose={() => setIsChangePasswordOpen(false)}
       />
     </>
   );

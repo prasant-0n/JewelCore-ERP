@@ -1,6 +1,7 @@
 import {
   type RegisterUserInput,
   type LoginInput,
+  type ChangePasswordInput,
   type UserPublic,
   type AuthTokens,
   ConflictError,
@@ -14,6 +15,7 @@ import {
   getUserByEmail,
   getOrganizationById,
   updateLastLogin,
+  updateUserPassword,
   registerFailedLoginAttempt,
   toUserPublic,
 } from "@jewelcore/database";
@@ -128,6 +130,39 @@ export async function getCurrentUserService(
     throw new NotFoundError("User", userId);
   }
   return toUserPublic(user);
+}
+
+export async function changePasswordService(
+  userId: string,
+  input: ChangePasswordInput,
+): Promise<{ message: string; changedAt: string }> {
+  const user = await getUserById(userId);
+  if (!user || !user.isActive) {
+    throw new NotFoundError("User", userId);
+  }
+
+  // 1. Verify current password with Argon2id
+  const isMatch = await verifyPassword(user.passwordHash, input.currentPassword);
+  if (!isMatch) {
+    throw new UnauthorizedError(
+      "Current password does not match system records",
+      "ERR_INVALID_CURRENT_PASSWORD",
+    );
+  }
+
+  // 2. Hash new password using Argon2id
+  const newPasswordHash = await hashPassword(input.newPassword);
+
+  // 3. Update in database
+  await updateUserPassword(userId, newPasswordHash);
+
+  // 4. Invalidate all other remote sessions for this user
+  revokeOtherUserSessions(userId, `sess_${userId}_current`);
+
+  return {
+    message: "Credentials rotated successfully. Remote sessions have been invalidated.",
+    changedAt: new Date().toISOString(),
+  };
 }
 
 export interface WorkstationSession {

@@ -151,6 +151,26 @@ export async function updateLastLogin(
   );
 }
 
+export async function updateUserPassword(
+  id: string,
+  newPasswordHash: string,
+  clientOverride?: Queryable,
+): Promise<void> {
+  const executor = clientOverride ?? getPool();
+
+  await executor.query(
+    `
+    UPDATE users
+    SET password_hash = $2,
+        failed_login_attempts = 0,
+        locked_until = NULL,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = $1;
+    `,
+    [id, newPasswordHash],
+  );
+}
+
 export async function registerFailedLoginAttempt(
   id: string,
   maxAttempts: number = 5,

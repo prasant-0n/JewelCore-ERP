@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import {
   registerUserSchema,
   loginSchema,
+  changePasswordSchema,
   UnauthorizedError,
   NotFoundError,
 } from "@jewelcore/shared";
@@ -9,6 +10,7 @@ import {
   registerUserService,
   loginService,
   getCurrentUserService,
+  changePasswordService,
   getActiveUserSessions,
   revokeUserSession,
   revokeOtherUserSessions,
@@ -303,6 +305,33 @@ export async function revokeOtherSessionsHandler(
         message: "All other workstation sessions terminated successfully",
         revokedCount,
       },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function changePasswordHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError(
+        "Authorization header with Bearer token is required",
+      );
+    }
+    const token = authHeader.substring(7);
+    const claims = await verifyJwt(token);
+
+    const validated = changePasswordSchema.parse(req.body);
+    const result = await changePasswordService(claims.userId, validated);
+
+    res.status(200).json({
+      data: result,
       timestamp: new Date().toISOString(),
     });
   } catch (err) {

@@ -260,5 +260,72 @@ describe("IAM Authentication & User Endpoints (FEAT-IAM-02)", () => {
         expect(listRes.body.data[0].isCurrent).toBe(true);
       });
     });
+
+    describe("POST /api/v1/auth/change-password (NIST SP 800-63B Credential Rotation)", () => {
+      it("rejects rotation when current password is invalid", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/change-password")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            currentPassword: "WrongCurrentPassword123",
+            newPassword: "BrandNewSecurePassword@2026",
+            confirmPassword: "BrandNewSecurePassword@2026",
+          });
+
+        expect(res.status).toBe(401);
+        expect(res.body.code).toBe("ERR_INVALID_CURRENT_PASSWORD");
+      });
+
+      it("rejects rotation when new password does not meet NIST 12-char complexity", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/change-password")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            currentPassword: "SuperSecretPassword123",
+            newPassword: "Short1!",
+            confirmPassword: "Short1!",
+          });
+
+        expect(res.status).toBe(400);
+        expect(res.body.code).toBe("ERR_VALIDATION");
+      });
+
+      it("rejects rotation when new password is identical to current password", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/change-password")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            currentPassword: "SuperSecretPassword123",
+            newPassword: "SuperSecretPassword123",
+            confirmPassword: "SuperSecretPassword123",
+          });
+
+        expect(res.status).toBe(400);
+        expect(res.body.code).toBe("ERR_VALIDATION");
+      });
+
+      it("successfully rotates password with valid Argon2id hash update", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/change-password")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            currentPassword: "SuperSecretPassword123",
+            newPassword: "BrandNewSecurePassword@2026",
+            confirmPassword: "BrandNewSecurePassword@2026",
+          });
+
+        expect(res.status).toBe(200);
+        expect(res.body.data.message).toContain("Credentials rotated successfully");
+
+        // Verify login works with new password
+        const loginRes = await request(app).post("/api/v1/auth/login").send({
+          email: "auth_user1@jewelcore.local",
+          password: "BrandNewSecurePassword@2026",
+        });
+
+        expect(loginRes.status).toBe(200);
+        expect(loginRes.body.data.accessToken).toBeDefined();
+      });
+    });
   });
 });

@@ -10,6 +10,7 @@ import {
   listSessionsHandler,
   revokeSessionHandler,
   revokeOtherSessionsHandler,
+  changePasswordHandler,
 } from "./authController.js";
 
 export function createAuthRouter(): Router {
@@ -19,6 +20,7 @@ export function createAuthRouter(): Router {
   router.post("/login", loginHandler);
   router.post("/refresh", refreshHandler);
   router.post("/logout", logoutHandler);
+  router.post("/change-password", changePasswordHandler);
   router.post("/persona-token", personaTokenHandler);
   router.get("/me", meHandler);
   router.get("/me/stores", myStoresHandler);
