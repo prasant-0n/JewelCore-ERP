@@ -117,4 +117,58 @@ test.describe("Corporate Staff Authentication & Session Governance (Option A)", 
     await page.waitForURL("**/login", { timeout: 10000 });
     expect(page.url()).toContain("/login");
   });
+
+  test("exclusive user session: logging in as Vikram M. strictly displays only Vikram M. in TopHeader profile and no multi-persona switcher", async ({
+    page,
+  }) => {
+    await page.goto("/login");
+
+    // Click Vikram staff quick-fill chip
+    const vikramChip = page.locator("button:has-text('Vikram M.')");
+    await vikramChip.click();
+
+    // Verify fields populated
+    const emailInput = page.locator('input[id="email"]');
+    await expect(emailInput).toHaveValue("vikram.m@jewelcore.internal");
+
+    // Fill password and submit
+    const passwordInput = page.locator('input[id="password"]');
+    await passwordInput.fill("JewelCore@2026");
+
+    const submitBtn = page.locator('button[type="submit"]');
+    await submitBtn.click();
+
+    // Redirected to workspace
+    await page.waitForURL("**/", { timeout: 10000 });
+    expect(page.url()).not.toContain("/login");
+
+    // TopHeader should show Vikram M. exclusively
+    const activeHeaderUser = page.locator(
+      'button[title*="Switch User Identity"]',
+    );
+    await expect(activeHeaderUser).toBeVisible();
+    await expect(activeHeaderUser.locator("text=Vikram M.")).toBeVisible();
+    await expect(activeHeaderUser.locator("text=Compliance Director")).toBeVisible();
+
+    // Click operator profile dropdown
+    await activeHeaderUser.click();
+
+    // Verify Active Operator Profile shows only Vikram M.
+    await expect(page.locator("text=Active Operator Profile")).toBeVisible();
+    await expect(page.getByText("Authenticated", { exact: true })).toBeVisible();
+    await expect(page.locator("text=vikram.m@jewelcore.internal")).toBeVisible();
+
+    // Strictly ensure no multi-persona switcher is present
+    await expect(page.locator("text=Switch Operational Persona")).toHaveCount(0);
+    await expect(page.locator("text=Rachel R.")).toHaveCount(0);
+    await expect(page.locator("text=Devika S.")).toHaveCount(0);
+    await expect(page.locator("text=Arjun K.")).toHaveCount(0);
+
+    // Sign out cleanly
+    const signOutBtn = page.locator("text=Sign Out of Workstation");
+    await expect(signOutBtn).toBeVisible();
+    await signOutBtn.click();
+    await page.waitForURL("**/login", { timeout: 10000 });
+    expect(page.url()).toContain("/login");
+  });
 });

@@ -85,35 +85,28 @@ test.describe("Theme Toggle, Privacy Mode & QuickLock Terminal", () => {
     expect(finalTitle).toContain("Enable Customer Privacy Mode");
   });
 
-  test("switches operational persona and governance roles in top header", async ({
+  test("displays authenticated operator profile and session details in top header", async ({
     page,
   }) => {
-    // Locate the persona button in top header
+    // Locate the user profile button in top header
     const personaBtn = page.locator('button[title*="Switch User Identity"]');
     await expect(personaBtn).toBeVisible({ timeout: 10000 });
     await personaBtn.click();
 
-    // Verify persona dropdown is visible
-    await expect(page.locator("text=Switch Operational Persona")).toBeVisible();
+    // Verify user profile dropdown is visible with authenticated operator details
+    await expect(page.locator("text=Active Operator Profile")).toBeVisible();
+    await expect(page.getByText("Authenticated", { exact: true })).toBeVisible();
 
-    // Switch to Vikram M. (Compliance Director)
-    const vikramOption = page.locator("text=Vikram M.").first();
-    await expect(vikramOption).toBeVisible();
-    await vikramOption.click();
+    // Verify current user details (default hydrated staff: Rachel R.)
+    await expect(page.locator("text=Rachel R.").first()).toBeVisible();
+    await expect(page.locator("text=rachel.r@jewelcore.internal")).toBeVisible();
+    await expect(page.locator("text=Full Atelier PBAC")).toBeVisible();
 
-    // Verify persona button reflects Vikram M.
-    const activeHeaderUser = page.locator(
-      'button[title*="Switch User Identity"]',
-    );
-    await expect(activeHeaderUser.locator("text=Vikram M.")).toBeVisible();
-    await expect(
-      activeHeaderUser.locator("text=Compliance Director"),
-    ).toBeVisible();
+    // Verify multi-user persona switcher is NOT present (only logged-in user is displayed)
+    await expect(page.locator("text=Switch Operational Persona")).toHaveCount(0);
 
-    // Toast notification should appear
-    await expect(
-      page.locator("text=Identity Switched to Vikram M."),
-    ).toBeVisible();
+    // Verify Sign Out button is visible
+    await expect(page.locator("text=Sign Out of Workstation")).toBeVisible();
   });
 
   test("renders official JewelCore Atelier brand logo in top header and favicon link", async ({

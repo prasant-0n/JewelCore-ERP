@@ -11,7 +11,6 @@ import {
   ChevronDown,
   Bell,
   Store,
-  UserCheck,
   Radio,
   Scale,
   Cpu,
@@ -103,14 +102,33 @@ export function TopHeader({
     syncExchangeFeed,
   } = useHardwareTelemetry();
   const { currentStore, stores, switchStore } = useStoreContext();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isMeshOpen, setIsMeshOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isBullionMenuOpen, setIsBullionMenuOpen] = useState(false);
-  const [selectedPersona, setSelectedPersona] = useState(PERSONAS[0]);
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  // Active authenticated operator profile
+  const activeUser = user || {
+    id: "0192e300-0002-7000-8000-000000000001",
+    organizationId: "0192e300-0001-7000-8000-000000000001",
+    email: "rachel.r@jewelcore.internal",
+    firstName: "Rachel",
+    lastName: "R.",
+    role: "Store Branch Manager",
+    initials: "RR",
+  };
+
+  const activeUserName =
+    `${activeUser.firstName || ""} ${activeUser.lastName || ""}`.trim() ||
+    activeUser.email;
+  const activeUserInitials =
+    activeUser.initials ||
+    `${activeUser.firstName?.[0] || ""}${activeUser.lastName?.[0] || ""}`.toUpperCase() ||
+    "OP";
+  const activeUserRole = activeUser.role || "Operational Staff";
 
   const desktopSearchInputRef = useRef<HTMLInputElement>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
@@ -172,46 +190,27 @@ export function TopHeader({
   };
 
   React.useEffect(() => {
-    const syncPersonaToken = async () => {
-      try {
-        const res = await api.post<{ data: { accessToken: string } }>(
-          "/auth/persona-token",
-          { email: selectedPersona.email },
-        );
-        if (res.data?.accessToken) {
-          api.setToken(res.data.accessToken);
+    const syncToken = async () => {
+      if (!api.getToken()) {
+        try {
+          const res = await api.post<{ data: { accessToken: string } }>(
+            "/auth/persona-token",
+            { email: activeUser.email },
+          );
+          if (res.data?.accessToken) {
+            api.setToken(res.data.accessToken);
+          }
+        } catch {
+          api.setToken("mock-jwt-store-manager");
         }
-      } catch {
-        api.setToken(selectedPersona.token);
       }
     };
-    void syncPersonaToken();
-  }, [selectedPersona]);
+    void syncToken();
+  }, [activeUser.email]);
 
   const handleSelectStore = (store: BranchStore) => {
     switchStore(store);
     setIsStoreOpen(false);
-  };
-
-  const handleSelectPersona = async (p: (typeof PERSONAS)[0]) => {
-    setSelectedPersona(p);
-    setIsPersonaOpen(false);
-    try {
-      const res = await api.post<{ data: { accessToken: string } }>(
-        "/auth/persona-token",
-        { email: p.email },
-      );
-      if (res.data?.accessToken) {
-        api.setToken(res.data.accessToken);
-      } else {
-        api.setToken(p.token);
-      }
-    } catch {
-      api.setToken(p.token);
-    }
-    toast.success(`Identity Switched to ${p.name}`, {
-      description: `Active Role: ${p.role} • ${p.permission}`,
-    });
   };
 
   return (
@@ -683,70 +682,91 @@ export function TopHeader({
 
           <div className="h-4 w-px bg-surface-border hidden xl:block shrink-0" />
 
-          {/* User Persona & Role Selector */}
+          {/* Active Workstation Operator Profile */}
           <div className="relative">
             <button
               onClick={() => setIsPersonaOpen(!isPersonaOpen)}
               className="flex items-center space-x-1.5 sm:space-x-2 p-1 -mr-1 rounded-md hover:bg-surface-elevated transition-colors text-left focus:outline-none shrink-0"
-              title="Switch User Identity & Governance Role"
-              aria-label="Switch User Identity & Governance Role"
+              title="Switch User Identity & Active Operator Profile"
+              aria-label="Active Operator Profile"
             >
               <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-[11px] font-bold text-obsidian shrink-0">
-                {selectedPersona.initials}
+                {activeUserInitials}
               </div>
               <div className="hidden xl:block max-w-[120px]">
                 <span className="block text-xs font-medium text-foreground leading-tight truncate">
-                  {selectedPersona.name}
+                  {activeUserName}
                 </span>
                 <span className="block text-[10px] text-muted-foreground font-mono truncate">
-                  {selectedPersona.role}
+                  {activeUserRole}
                 </span>
               </div>
               <ChevronDown className="w-3 h-3 text-muted-foreground hidden xl:block shrink-0" />
             </button>
 
             {isPersonaOpen && (
-              <div className="absolute top-full right-0 mt-1.5 w-64 max-w-[calc(100vw-1.5rem)] bg-surface border border-surface-border rounded-lg shadow-2xl py-1 z-50">
-                <div className="px-3 py-1.5 text-[10px] uppercase font-mono text-muted-foreground border-b border-surface-border">
-                  Switch Operational Persona
-                </div>
-                {PERSONAS.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => handleSelectPersona(p)}
-                    className={`w-full px-3 py-2 text-left text-xs flex items-center justify-between hover:bg-surface-elevated transition-colors ${
-                      p.id === selectedPersona.id
-                        ? "text-gold font-medium bg-gold/5"
-                        : "text-foreground"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <div className="w-6 h-6 rounded-full bg-surface-elevated border border-surface-border flex items-center justify-center text-[10px] font-bold font-mono text-gold">
-                        {p.initials}
-                      </div>
-                      <div>
-                        <span className="block font-medium">{p.name}</span>
-                        <span className="block text-[10px] text-muted-foreground font-mono">
-                          {p.role}
-                        </span>
-                      </div>
+              <div className="absolute top-full right-0 mt-1.5 w-72 max-w-[calc(100vw-1.5rem)] bg-surface border border-surface-border rounded-lg shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
+                {/* Active Operator Card Header */}
+                <div className="px-3.5 pb-2.5 border-b border-surface-border">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground">
+                      Active Operator Profile
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-status-emerald animate-pulse" />
+                      Authenticated
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-xs font-bold text-obsidian shrink-0 shadow-sm">
+                      {activeUserInitials}
                     </div>
-                    {p.id === selectedPersona.id && (
-                      <UserCheck className="w-3.5 h-3.5 text-gold" />
-                    )}
-                  </button>
-                ))}
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-xs font-semibold text-foreground truncate">
+                        {activeUserName}
+                      </span>
+                      <span className="block text-[11px] text-gold font-mono truncate">
+                        {activeUserRole}
+                      </span>
+                      <span className="block text-[10px] text-muted-foreground truncate">
+                        {activeUser.email}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
-                <div className="border-t border-surface-border mt-1 pt-1">
+                {/* Session & Workstation Details */}
+                <div className="px-3.5 py-2.5 text-[11px] space-y-1.5 font-mono border-b border-surface-border bg-surface-elevated/40">
+                  <div className="flex items-center justify-between text-muted-foreground">
+                    <span className="text-[10px] uppercase tracking-wider">Station Branch:</span>
+                    <span className="text-foreground font-medium truncate max-w-[150px] text-right">
+                      {currentStore.code} ({currentStore.name})
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-muted-foreground">
+                    <span className="text-[10px] uppercase tracking-wider">Access Scope:</span>
+                    <span className="text-foreground font-medium">Full Atelier PBAC</span>
+                  </div>
+                  <div className="flex items-center justify-between text-muted-foreground">
+                    <span className="text-[10px] uppercase tracking-wider">Cryptography:</span>
+                    <span className="text-status-emerald font-medium flex items-center gap-1">
+                      <Shield className="w-3 h-3 text-status-emerald" />
+                      Argon2id Verified
+                    </span>
+                  </div>
+                </div>
+
+                {/* Sign Out Action */}
+                <div className="pt-1.5 px-2">
                   <button
                     onClick={() => {
                       setIsPersonaOpen(false);
                       logout();
                     }}
-                    className="w-full px-3 py-2 text-left text-xs flex items-center space-x-2.5 text-status-rose hover:bg-status-rose/10 transition-colors"
+                    className="w-full px-3 py-2 text-left text-xs flex items-center space-x-2.5 text-status-rose hover:bg-status-rose/10 rounded-md transition-colors font-medium group"
                   >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span className="font-medium">Sign Out of Workstation</span>
+                    <LogOut className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                    <span>Sign Out of Workstation</span>
                   </button>
                 </div>
               </div>
