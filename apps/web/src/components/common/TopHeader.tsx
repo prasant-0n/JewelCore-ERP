@@ -21,6 +21,7 @@ import {
   Menu,
   X,
   LogOut,
+  Smartphone,
 } from "lucide-react";
 import {
   Sheet,
@@ -37,6 +38,7 @@ import { useStoreContext, BRANCH_STORES, BranchStore } from "../../hooks/useStor
 import { useAuth } from "../../context/AuthContext";
 import { JewelCoreLogo } from "./JewelCoreLogo";
 import { CameraScannerModal } from "./CameraScannerModal";
+import { TwoFactorModal } from "../auth/TwoFactorModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -109,6 +111,7 @@ export function TopHeader({
   const [isBullionMenuOpen, setIsBullionMenuOpen] = useState(false);
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isMfaModalOpen, setIsMfaModalOpen] = useState(false);
 
   // Active authenticated operator profile
   const activeUser = user || {
@@ -756,6 +759,26 @@ export function TopHeader({
                   </div>
                 </div>
 
+                {/* Two-Factor Authentication Action */}
+                <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      setIsMfaModalOpen(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Smartphone className="w-3.5 h-3.5 text-gold shrink-0" />
+                      <span>Two-Factor Authentication</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-emerald/10 text-status-emerald border border-status-emerald/30 font-semibold">
+                      TOTP
+                    </span>
+                  </button>
+                </div>
+
                 {/* Sign Out Action */}
                 <div className="pt-1.5 px-2">
                   <button
@@ -839,6 +862,12 @@ export function TopHeader({
         isOpen={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
         onScan={handleScanPiece}
+      />
+
+      {/* Two-Factor Authentication TOTP Security Modal */}
+      <TwoFactorModal
+        isOpen={isMfaModalOpen}
+        onClose={() => setIsMfaModalOpen(false)}
       />
     </>
   );
