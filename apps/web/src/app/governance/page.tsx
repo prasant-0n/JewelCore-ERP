@@ -350,7 +350,7 @@ export default function GovernanceApprovalPage() {
                 Dual-Custody Audit &amp; Governance Approval Center
               </span>
             </div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight mt-1 flex items-center space-x-3">
+            <h1 className="text-2xl font-serif font-bold text-foreground tracking-tight mt-1 flex items-center space-x-3">
               <span>Multi-Signatory Quorum & Cryptographic Merkle Ledger</span>
               <Badge variant="emerald" dot>
                 HSM Key Card & Dual Biometrics Synced • Zero Failures

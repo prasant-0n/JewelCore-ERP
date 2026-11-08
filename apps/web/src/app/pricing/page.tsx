@@ -429,7 +429,7 @@ export default function PricingMasterPage() {
                 MCX Gold Spot ₹{liveGoldRate.toLocaleString("en-IN", { minimumFractionDigits: 1 })}/g • Reuters IBJA Feed Live
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
               Bullion Fixing, Dynamic Making Charges &amp; Margin Rules
             </h1>
           </div>

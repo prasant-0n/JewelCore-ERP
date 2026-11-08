@@ -288,7 +288,7 @@ export default function AccountingLedgerPage() {
                 FY 2026-27 Books Online • Balanced
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
               General Ledger, Chart of Accounts &amp; GST Returns
             </h1>
           </div>

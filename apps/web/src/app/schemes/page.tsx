@@ -472,7 +472,7 @@ export default function SavingsSchemePage() {
                 <Coins className="h-5 w-5" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                <h1 className="text-2xl font-serif font-bold tracking-tight text-white flex items-center gap-2">
                   Gold Savings Scheme (SIP) & VIP Loyalty
                   <Badge variant="outline" className="text-amber-400 border-amber-500/30 bg-amber-500/10 text-xs">
                     Swarna Nidhi 11+1
@@ -498,10 +498,10 @@ export default function SavingsSchemePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-card/50 border-border/40 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Active Plan Subscribers</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active Plan Subscribers</span>
               <Crown className="h-4 w-4 text-amber-400" />
             </div>
-            <div className="mt-2 text-2xl font-bold text-white tracking-tight">
+            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
               {activeSubs.length} <span className="text-sm text-muted-foreground font-normal">Patrons</span>
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -511,10 +511,10 @@ export default function SavingsSchemePage() {
 
           <Card className="bg-card/50 border-border/40 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Monthly Recurring Deposit Inflow</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Monthly Recurring Deposit Inflow</span>
               <CreditCard className="h-4 w-4 text-blue-400" />
             </div>
-            <div className="mt-2 text-2xl font-bold text-white tracking-tight">
+            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
               ₹ {(monthlyRecurringInflow / 100000).toFixed(2)} <span className="text-sm text-blue-400 font-normal">Lakh / Mo</span>
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -524,10 +524,10 @@ export default function SavingsSchemePage() {
 
           <Card className="bg-card/50 border-border/40 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Customer Gold Reserve Locked</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Customer Gold Reserve Locked</span>
               <Sparkles className="h-4 w-4 text-amber-400" />
             </div>
-            <div className="mt-2 text-2xl font-bold text-white tracking-tight">
+            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
               {totalGoldReserveLockedGrams.toFixed(3)} <span className="text-sm text-amber-400 font-normal">g Au</span>
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-emerald-400">
@@ -537,10 +537,10 @@ export default function SavingsSchemePage() {
 
           <Card className="bg-card/50 border-border/40 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Matured Ready for Redemption</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Matured Ready for Redemption</span>
               <Gift className="h-4 w-4 text-purple-400" />
             </div>
-            <div className="mt-2 text-2xl font-bold text-white tracking-tight">
+            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
               {maturedSubs.length} <span className="text-sm text-purple-400 font-normal">(₹ {(maturedTotalValueInr / 100000).toFixed(2)} L)</span>
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">

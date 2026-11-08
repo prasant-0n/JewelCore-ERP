@@ -187,7 +187,7 @@ export function StorageDirectoryView({
               Live RFID Mesh Sync
             </Badge>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
             Interactive Vault &amp; Storage Directory Visualizer
           </h1>
         </div>

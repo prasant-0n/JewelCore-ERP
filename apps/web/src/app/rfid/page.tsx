@@ -342,7 +342,7 @@ export default function RfidKioskPage() {
                 Impinj Speedway R420 UHF • 4-Antenna Matrix Active
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
               Real-Time RFID Showroom &amp; Bulk Vault Scan Kiosk
             </h1>
           </div>

@@ -535,7 +535,7 @@ export default function ManufacturingPage() {
                 <Hammer className="h-5 w-5" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                <h1 className="text-2xl font-serif font-bold tracking-tight text-white flex items-center gap-2">
                   Atelier Manufacturing & Karigar Work Orders
                   <Badge variant="outline" className="text-amber-400 border-amber-500/30 bg-amber-500/10 text-xs">
                     Karkhana Floor
@@ -561,10 +561,10 @@ export default function ManufacturingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-card/50 border-border/40 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Pure Bullion In Custody</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pure Bullion In Custody</span>
               <Coins className="h-4 w-4 text-amber-400" />
             </div>
-            <div className="mt-2 text-2xl font-bold text-white tracking-tight">
+            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
               {totalPureGoldInCustody.toFixed(3)} <span className="text-sm text-amber-400 font-normal">g 24K</span>
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -574,10 +574,10 @@ export default function ManufacturingPage() {
 
           <Card className="bg-card/50 border-border/40 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Active Artisan Job Cards</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active Artisan Job Cards</span>
               <Hammer className="h-4 w-4 text-blue-400" />
             </div>
-            <div className="mt-2 text-2xl font-bold text-white tracking-tight">
+            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
               {activeJobsCount} <span className="text-sm text-muted-foreground font-normal">Active Orders</span>
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -587,10 +587,10 @@ export default function ManufacturingPage() {
 
           <Card className="bg-card/50 border-border/40 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Atelier Metal Wastage Rate</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Atelier Metal Wastage Rate</span>
               <Flame className="h-4 w-4 text-rose-400" />
             </div>
-            <div className="mt-2 text-2xl font-bold text-white tracking-tight">
+            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
               {avgLossPct}% <span className="text-sm text-emerald-400 font-normal">(SLA ≤ 1.20%)</span>
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-emerald-400">
@@ -600,10 +600,10 @@ export default function ManufacturingPage() {
 
           <Card className="bg-card/50 border-border/40 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Making Charges Allocated</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Making Charges Allocated</span>
               <Sparkles className="h-4 w-4 text-purple-400" />
             </div>
-            <div className="mt-2 text-2xl font-bold text-white tracking-tight">
+            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
               ₹ {totalLaborSpent.toLocaleString("en-IN")}
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">

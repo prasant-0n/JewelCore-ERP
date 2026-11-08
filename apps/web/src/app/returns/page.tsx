@@ -306,7 +306,7 @@ export default function ReturnsRefiningPage() {
                 Induction Furnace Active • Niton XRF Verified
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
               Returns, Buyback Valuation &amp; Scrap Refining Workflow
             </h1>
           </div>

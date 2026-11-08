@@ -380,7 +380,7 @@ export default function PosTerminalPage() {
                 Terminal POS-01 Online • Tax Invoice Compliant
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
               Point of Sale (POS) Showroom Terminal &amp; Clienteling
             </h1>
           </div>

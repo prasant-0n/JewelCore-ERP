@@ -258,12 +258,12 @@ export function JewelCoreLogo({
       {shouldRenderText && (
         <div className="flex flex-col select-none">
           <span
-            className={`font-semibold tracking-[0.16em] uppercase text-foreground leading-tight ${textMain}`}
+            className={`font-serif font-bold tracking-[0.2em] uppercase text-foreground leading-tight ${textMain}`}
           >
             JEWELCORE
           </span>
           <span
-            className={`font-mono uppercase tracking-[0.22em] text-muted-foreground opacity-80 leading-none ${textSub}`}
+            className={`font-mono uppercase tracking-[0.24em] text-gold/90 font-semibold leading-none ${textSub}`}
           >
             ATELIER ERP
           </span>

@@ -279,7 +279,7 @@ export default function TransfersTransitPage() {
                 Inter-Branch Transfers &amp; Armored Transit
               </span>
             </div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight mt-1 flex items-center space-x-3">
+            <h1 className="text-2xl font-serif font-bold text-foreground tracking-tight mt-1 flex items-center space-x-3">
               <span>Armored Fleet Tracking & Dual-Custody Manifests</span>
               <Badge variant="emerald" dot>
                 Brinks Van #MH-01-BX-9021 • GPS / Gate Locked • 12ms

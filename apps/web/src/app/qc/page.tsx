@@ -229,7 +229,7 @@ export default function QcPage() {
                 Thermo Niton XRF Spectrometer COM4 Live • Calibrated
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
               Analytical QC &amp; Metallurgical Assay Directory
             </h1>
           </div>

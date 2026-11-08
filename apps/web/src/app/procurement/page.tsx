@@ -249,7 +249,7 @@ export default function ProcurementPage() {
                 Mettler Toledo RS-232 Scale Sync • 0.001g Calibrated
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
               Inward Procurement &amp; Ingot Intake Directory
             </h1>
           </div>

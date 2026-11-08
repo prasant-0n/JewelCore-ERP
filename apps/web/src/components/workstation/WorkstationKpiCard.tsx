@@ -33,7 +33,7 @@ export function WorkstationKpiCard({
     >
       <CardContent className="p-3.5 sm:p-4">
         <div className="flex items-center justify-between gap-2 mb-2">
-          <span className="text-xs font-medium text-muted-foreground truncate">
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider truncate">
             {item.title}
           </span>
           {item.icon && (
@@ -59,7 +59,7 @@ export function WorkstationKpiCard({
         </div>
 
         {item.subValue && (
-          <p className="text-[11px] text-muted-foreground mt-1 truncate font-mono">
+          <p className="text-[11px] text-muted-foreground mt-1 truncate font-mono tabular-nums">
             {item.subValue}
           </p>
         )}

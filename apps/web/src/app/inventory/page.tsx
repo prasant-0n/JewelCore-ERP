@@ -300,7 +300,7 @@ export default function InventoryMasterPage() {
                 UHF RFID Mesh Active • 99.98% Synced
               </Badge>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
               Serialized Inventory &amp; Provenance Directory
             </h1>
           </div>

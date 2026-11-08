@@ -417,7 +417,7 @@ export default function HomePage() {
                   Shift Morning-A Active
                 </span>
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+              <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground flex items-center gap-2">
                 <span>Executive Control Tower</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-gold/10 border border-gold/30 text-gold uppercase tracking-wider font-semibold">
                   Atelier Master

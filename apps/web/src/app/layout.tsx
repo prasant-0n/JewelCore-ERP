@@ -1,8 +1,29 @@
 import type { Metadata } from "next";
+import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaRegister } from "@/components/common/PwaRegister";
+
+const fontSans = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const fontSerif = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -49,8 +70,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="bg-background text-foreground min-h-screen antialiased selection:bg-gold/30 selection:text-gold-light">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable}`}
+    >
+      <body className="bg-background text-foreground min-h-screen antialiased selection:bg-gold/30 selection:text-gold-light font-sans">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
