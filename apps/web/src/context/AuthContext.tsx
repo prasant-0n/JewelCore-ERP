@@ -396,6 +396,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     toast.info("Delegated Authority Relinquished", {
       description: "Workstation clearance restored to baseline role.",
     });
+
+    void api
+      .post("/auth/audit-log", {
+        action: "AUTH_DELEGATION_RELINQUISHED",
+        category: "PRIVILEGE_ELEVATION",
+        severity: "INFO",
+        stationId: "MAIN-SHOWROOM-DESK-01",
+        details: "Delegated authority relinquished; restored baseline operator role",
+      })
+      .catch(() => {});
   }, []);
 
   const grantDelegation = useCallback(
@@ -423,6 +433,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.success("Delegated Authority Activated", {
         description: `Temporarily elevated to ${delegation.elevatedRole} for ${delegation.durationMinutes} minutes.`,
       });
+
+      void api
+        .post("/auth/audit-log", {
+          action: "AUTH_DELEGATION_GRANTED",
+          category: "PRIVILEGE_ELEVATION",
+          severity: "WARNING",
+          stationId: "MAIN-SHOWROOM-DESK-01",
+          details: `Privilege elevation to ${delegation.elevatedRole} granted (Duration: ${delegation.durationMinutes}m, Co-signed by ${delegation.delegatedBy})`,
+          metadata: {
+            elevatedRole: delegation.elevatedRole,
+            durationMinutes: delegation.durationMinutes,
+            delegatedBy: delegation.delegatedBy,
+          },
+        })
+        .catch(() => {});
     },
     [],
   );

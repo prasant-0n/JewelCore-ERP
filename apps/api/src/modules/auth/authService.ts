@@ -4,6 +4,9 @@ import {
   type ChangePasswordInput,
   type UserPublic,
   type AuthTokens,
+  type IamAuditEvent,
+  IamAuditCategory,
+  IamAuditSeverity,
   ConflictError,
   NotFoundError,
   UnauthorizedError,
@@ -104,6 +107,19 @@ export async function loginService(input: LoginInput): Promise<AuthTokens> {
   // Successful authentication: update last login and reset counters
   await updateLastLogin(user.id);
 
+  recordIamAuditEvent({
+    action: "AUTH_LOGIN_SUCCESS",
+    category: IamAuditCategory.AUTHENTICATION,
+    severity: IamAuditSeverity.INFO,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: user.id,
+    actorName: `${user.firstName} ${user.lastName}`,
+    actorEmail: user.email,
+    actorRole: "STORE_OPERATOR",
+    details: `Argon2id primary authentication successful for ${user.email}`,
+  });
+
   const accessToken = await signAccessToken({
     userId: user.id,
     orgId: user.organizationId,
@@ -158,6 +174,19 @@ export async function changePasswordService(
 
   // 4. Invalidate all other remote sessions for this user
   revokeOtherUserSessions(userId, `sess_${userId}_current`);
+
+  recordIamAuditEvent({
+    action: "AUTH_PASSWORD_ROTATED",
+    category: IamAuditCategory.CREDENTIAL_SECURITY,
+    severity: IamAuditSeverity.NOTICE,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: user.id,
+    actorName: `${user.firstName} ${user.lastName}`,
+    actorEmail: user.email,
+    actorRole: "STORE_OPERATOR",
+    details: "NIST SP 800-63B password rotation verified; other remote sessions revoked",
+  });
 
   return {
     message: "Credentials rotated successfully. Remote sessions have been invalidated.",
@@ -240,6 +269,20 @@ export function revokeUserSession(userId: string, sessionId: string): boolean {
   const session = sessions.find((s) => s.id === sessionId);
   if (!session) return false;
   session.status = "REVOKED";
+
+  recordIamAuditEvent({
+    action: "AUTH_SESSION_REVOKED",
+    category: IamAuditCategory.WORKSTATION_ACCESS,
+    severity: IamAuditSeverity.WARNING,
+    stationId: session.stationId,
+    ipAddress: session.ipAddress,
+    actorUserId: userId,
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: `Remote workstation session ${session.stationId} terminated via Operator Workstation Panel`,
+  });
+
   return true;
 }
 
@@ -255,5 +298,181 @@ export function revokeOtherUserSessions(
       revokedCount++;
     }
   }
+
+  if (revokedCount > 0) {
+    recordIamAuditEvent({
+      action: "AUTH_SESSIONS_REVOKE_ALL",
+      category: IamAuditCategory.WORKSTATION_ACCESS,
+      severity: IamAuditSeverity.WARNING,
+      stationId: "MAIN-SHOWROOM-DESK-01",
+      ipAddress: "192.168.1.102 (Showroom LAN)",
+      actorUserId: userId,
+      actorName: "Rachel R.",
+      actorEmail: "rachel@jewelcore.internal",
+      actorRole: "STORE_MANAGER",
+      details: `Revoked all other (${revokedCount}) remote workstation sessions`,
+    });
+  }
+
   return revokedCount;
 }
+
+/**
+ * In-memory Forensic IAM Security Audit Stream
+ */
+const forensicIamAuditEvents: IamAuditEvent[] = [
+  {
+    id: "iam_evt_01",
+    timestamp: new Date(Date.now() - 120 * 60 * 1000).toISOString(),
+    action: "AUTH_LOGIN_SUCCESS",
+    category: IamAuditCategory.AUTHENTICATION,
+    severity: IamAuditSeverity.INFO,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: "0192e300-0002-7000-8000-000000000001",
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: "Argon2id primary password authenticated successfully on Main Showroom Desk",
+  },
+  {
+    id: "iam_evt_02",
+    timestamp: new Date(Date.now() - 118 * 60 * 1000).toISOString(),
+    action: "AUTH_MFA_CHALLENGE_VERIFIED",
+    category: IamAuditCategory.AUTHENTICATION,
+    severity: IamAuditSeverity.NOTICE,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: "0192e300-0002-7000-8000-000000000001",
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: "RFC 6238 TOTP hardware authenticator token verified",
+  },
+  {
+    id: "iam_evt_03",
+    timestamp: new Date(Date.now() - 75 * 60 * 1000).toISOString(),
+    action: "AUTH_INACTIVITY_LOCKED",
+    category: IamAuditCategory.WORKSTATION_ACCESS,
+    severity: IamAuditSeverity.NOTICE,
+    stationId: "POS-TERMINAL-02",
+    ipAddress: "192.168.1.105 (Showroom LAN)",
+    actorUserId: "0192e300-0002-7000-8000-000000000001",
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: "Workstation auto-locked after 300s of inactivity on showroom counter",
+  },
+  {
+    id: "iam_evt_04",
+    timestamp: new Date(Date.now() - 68 * 60 * 1000).toISOString(),
+    action: "AUTH_PIN_UNLOCKED",
+    category: IamAuditCategory.WORKSTATION_ACCESS,
+    severity: IamAuditSeverity.INFO,
+    stationId: "POS-TERMINAL-02",
+    ipAddress: "192.168.1.105 (Showroom LAN)",
+    actorUserId: "0192e300-0002-7000-8000-000000000001",
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: "Workstation session resumed via 4-digit showroom PIN entry",
+  },
+  {
+    id: "iam_evt_05",
+    timestamp: new Date(Date.now() - 42 * 60 * 1000).toISOString(),
+    action: "AUTH_DELEGATION_GRANTED",
+    category: IamAuditCategory.PRIVILEGE_ELEVATION,
+    severity: IamAuditSeverity.WARNING,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: "0192e300-0002-7000-8000-000000000001",
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: "Time-bound privilege elevation to Acting Store Manager co-signed by Supervisor Vikram M. (Duration: 2h)",
+  },
+  {
+    id: "iam_evt_06",
+    timestamp: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+    action: "AUTH_PASSWORD_ROTATED",
+    category: IamAuditCategory.CREDENTIAL_SECURITY,
+    severity: IamAuditSeverity.NOTICE,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: "0192e300-0002-7000-8000-000000000001",
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: "NIST SP 800-63B password rotation verified (Military Grade entropy); remote sessions invalidated",
+  },
+  {
+    id: "iam_evt_07",
+    timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+    action: "AUTH_SESSION_REVOKED",
+    category: IamAuditCategory.WORKSTATION_ACCESS,
+    severity: IamAuditSeverity.WARNING,
+    stationId: "SALON-IPAD-01",
+    ipAddress: "192.168.1.140 (Showroom Wi-Fi)",
+    actorUserId: "0192e300-0002-7000-8000-000000000001",
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: "Remote salon iPad session terminated via Workstation Sessions Manager",
+  },
+];
+
+export function getIamAuditEvents(filters?: {
+  category?: string;
+  severity?: string;
+  stationId?: string;
+  limit?: number;
+}): IamAuditEvent[] {
+  let list = [...forensicIamAuditEvents];
+  if (filters?.category && filters.category !== "ALL") {
+    list = list.filter((e) => e.category === filters.category);
+  }
+  if (filters?.severity && filters.severity !== "ALL") {
+    list = list.filter((e) => e.severity === filters.severity);
+  }
+  if (filters?.stationId) {
+    list = list.filter((e) => e.stationId.toLowerCase().includes(filters.stationId!.toLowerCase()));
+  }
+  // Sort descending by timestamp
+  list.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const limit = filters?.limit ?? 50;
+  return list.slice(0, limit);
+}
+
+export function recordIamAuditEvent(event: {
+  action: string;
+  category?: IamAuditCategory;
+  severity?: IamAuditSeverity;
+  stationId?: string;
+  ipAddress?: string;
+  actorUserId?: string;
+  actorName?: string;
+  actorEmail?: string;
+  actorRole?: string;
+  details: string;
+  metadata?: Record<string, unknown>;
+}): IamAuditEvent {
+  const newEvent: IamAuditEvent = {
+    id: `iam_evt_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    timestamp: new Date().toISOString(),
+    action: event.action,
+    category: event.category ?? IamAuditCategory.AUTHENTICATION,
+    severity: event.severity ?? IamAuditSeverity.INFO,
+    stationId: event.stationId ?? "MAIN-SHOWROOM-DESK-01",
+    ipAddress: event.ipAddress ?? "192.168.1.102 (Showroom LAN)",
+    actorUserId: event.actorUserId ?? "0192e300-0002-7000-8000-000000000001",
+    actorName: event.actorName ?? "Rachel R.",
+    actorEmail: event.actorEmail ?? "rachel@jewelcore.internal",
+    actorRole: event.actorRole ?? "STORE_MANAGER",
+    details: event.details,
+    metadata: event.metadata,
+  };
+
+  forensicIamAuditEvents.unshift(newEvent);
+  return newEvent;
+}
+

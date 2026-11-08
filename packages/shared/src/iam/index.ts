@@ -306,3 +306,71 @@ export const assignMembershipRoleSchema = z.object({
 export type AssignMembershipRoleInput = z.infer<
   typeof assignMembershipRoleSchema
 >;
+
+/**
+ * IAM Forensic Audit Trail Action Types & Categories
+ */
+export const IamAuditAction = {
+  AUTH_LOGIN_SUCCESS: "AUTH_LOGIN_SUCCESS",
+  AUTH_LOGIN_FAILED: "AUTH_LOGIN_FAILED",
+  AUTH_LOGOUT: "AUTH_LOGOUT",
+  AUTH_MFA_CHALLENGE_VERIFIED: "AUTH_MFA_CHALLENGE_VERIFIED",
+  AUTH_MFA_RECOVERY_USED: "AUTH_MFA_RECOVERY_USED",
+  AUTH_INACTIVITY_LOCKED: "AUTH_INACTIVITY_LOCKED",
+  AUTH_PIN_UNLOCKED: "AUTH_PIN_UNLOCKED",
+  AUTH_PIN_FAILED: "AUTH_PIN_FAILED",
+  AUTH_PASSWORD_ROTATED: "AUTH_PASSWORD_ROTATED",
+  AUTH_SESSION_REVOKED: "AUTH_SESSION_REVOKED",
+  AUTH_SESSIONS_REVOKE_ALL: "AUTH_SESSIONS_REVOKE_ALL",
+  AUTH_DELEGATION_GRANTED: "AUTH_DELEGATION_GRANTED",
+  AUTH_DELEGATION_RELINQUISHED: "AUTH_DELEGATION_RELINQUISHED",
+} as const;
+
+export type IamAuditAction = (typeof IamAuditAction)[keyof typeof IamAuditAction];
+
+export const IamAuditCategory = {
+  AUTHENTICATION: "AUTHENTICATION",
+  CREDENTIAL_SECURITY: "CREDENTIAL_SECURITY",
+  WORKSTATION_ACCESS: "WORKSTATION_ACCESS",
+  PRIVILEGE_ELEVATION: "PRIVILEGE_ELEVATION",
+} as const;
+
+export type IamAuditCategory = (typeof IamAuditCategory)[keyof typeof IamAuditCategory];
+
+export const IamAuditSeverity = {
+  INFO: "INFO",
+  NOTICE: "NOTICE",
+  WARNING: "WARNING",
+  CRITICAL: "CRITICAL",
+} as const;
+
+export type IamAuditSeverity = (typeof IamAuditSeverity)[keyof typeof IamAuditSeverity];
+
+export interface IamAuditEvent {
+  id: string;
+  timestamp: string;
+  action: string;
+  category: IamAuditCategory;
+  severity: IamAuditSeverity;
+  stationId: string;
+  ipAddress: string;
+  actorUserId: string;
+  actorName: string;
+  actorEmail: string;
+  actorRole: string;
+  details: string;
+  metadata?: Record<string, unknown>;
+}
+
+export const createIamAuditEventSchema = z.object({
+  action: z.string().min(1, "Action cannot be empty"),
+  category: z.nativeEnum(IamAuditCategory).default(IamAuditCategory.AUTHENTICATION),
+  severity: z.nativeEnum(IamAuditSeverity).default(IamAuditSeverity.INFO),
+  stationId: z.string().default("MAIN-SHOWROOM-DESK-01"),
+  ipAddress: z.string().optional(),
+  details: z.string().min(1, "Details cannot be empty"),
+  metadata: z.record(z.unknown()).optional(),
+});
+
+export type CreateIamAuditEventInput = z.infer<typeof createIamAuditEventSchema>;
+

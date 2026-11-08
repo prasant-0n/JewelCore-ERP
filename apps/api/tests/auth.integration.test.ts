@@ -327,5 +327,80 @@ describe("IAM Authentication & User Endpoints (FEAT-IAM-02)", () => {
         expect(loginRes.body.data.accessToken).toBeDefined();
       });
     });
+
+    describe("GET & POST /api/v1/auth/audit-log (Forensic IAM Security Feed)", () => {
+      let accessToken: string;
+
+      beforeAll(async () => {
+        const loginRes = await request(app).post("/api/v1/auth/login").send({
+          email: "auth_user1@jewelcore.local",
+          password: "BrandNewSecurePassword@2026",
+        });
+        accessToken = loginRes.body.data.accessToken;
+      });
+
+      it("rejects unauthenticated requests to forensic audit log", async () => {
+        const res = await request(app).get("/api/v1/auth/audit-log");
+        expect(res.status).toBe(401);
+      });
+
+      it("returns forensic IAM audit log stream with categorized events", async () => {
+        const res = await request(app)
+          .get("/api/v1/auth/audit-log")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body.data).toBeDefined();
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.data.length).toBeGreaterThanOrEqual(1);
+
+        const firstEvent = res.body.data[0];
+        expect(firstEvent).toHaveProperty("id");
+        expect(firstEvent).toHaveProperty("action");
+        expect(firstEvent).toHaveProperty("category");
+        expect(firstEvent).toHaveProperty("severity");
+        expect(firstEvent).toHaveProperty("stationId");
+        expect(firstEvent).toHaveProperty("details");
+      });
+
+      it("supports filtering audit stream by category and severity", async () => {
+        const res = await request(app)
+          .get("/api/v1/auth/audit-log?category=AUTHENTICATION&severity=INFO")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(res.status).toBe(200);
+        for (const evt of res.body.data) {
+          expect(evt.category).toBe("AUTHENTICATION");
+          expect(evt.severity).toBe("INFO");
+        }
+      });
+
+      it("records a client-side terminal security event into the forensic stream", async () => {
+        const payload = {
+          action: "AUTH_PIN_UNLOCKED",
+          category: "WORKSTATION_ACCESS",
+          severity: "INFO",
+          stationId: "POS-TERMINAL-02",
+          details: "Showroom associate unlocked counter terminal via 4-digit PIN",
+        };
+
+        const res = await request(app)
+          .post("/api/v1/auth/audit-log")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(payload);
+
+        expect(res.status).toBe(201);
+        expect(res.body.data.action).toBe("AUTH_PIN_UNLOCKED");
+        expect(res.body.data.stationId).toBe("POS-TERMINAL-02");
+        expect(res.body.data.details).toBe(payload.details);
+
+        // Verify it shows up at the top of the audit log stream
+        const checkRes = await request(app)
+          .get("/api/v1/auth/audit-log")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(checkRes.body.data[0].action).toBe("AUTH_PIN_UNLOCKED");
+      });
+    });
   });
 });

@@ -11,6 +11,8 @@ import {
   revokeSessionHandler,
   revokeOtherSessionsHandler,
   changePasswordHandler,
+  listIamAuditEventsHandler,
+  recordIamAuditEventHandler,
 } from "./authController.js";
 
 export function createAuthRouter(): Router {
@@ -27,6 +29,8 @@ export function createAuthRouter(): Router {
   router.get("/sessions", listSessionsHandler);
   router.delete("/sessions/:id", revokeSessionHandler);
   router.post("/sessions/revoke-others", revokeOtherSessionsHandler);
+  router.get("/audit-log", listIamAuditEventsHandler);
+  router.post("/audit-log", recordIamAuditEventHandler);
 
   return router;
 }

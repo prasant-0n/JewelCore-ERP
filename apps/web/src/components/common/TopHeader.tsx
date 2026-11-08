@@ -17,6 +17,7 @@ import {
   Activity,
   RefreshCw,
   Shield,
+  ShieldAlert,
   Camera,
   Menu,
   X,
@@ -45,6 +46,7 @@ import { TwoFactorModal } from "../auth/TwoFactorModal";
 import { WorkstationSessionsModal } from "../auth/WorkstationSessionsModal";
 import { ChangePasswordModal } from "../auth/ChangePasswordModal";
 import { DelegatedAuthorityModal } from "../auth/DelegatedAuthorityModal";
+import { IamAuditLogModal } from "../auth/IamAuditLogModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -121,6 +123,7 @@ export function TopHeader({
   const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [isDelegationModalOpen, setIsDelegationModalOpen] = useState(false);
+  const [isIamAuditOpen, setIsIamAuditOpen] = useState(false);
 
   // Active authenticated operator profile
   const activeUser = user || {
@@ -867,6 +870,26 @@ export function TopHeader({
                   </button>
                 </div>
 
+                {/* Forensic IAM Security Audit Stream Action */}
+                <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      setIsIamAuditOpen(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <ShieldAlert className="w-3.5 h-3.5 text-gold shrink-0" />
+                      <span>Forensic IAM Audit Stream</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-emerald/10 text-status-emerald border border-status-emerald/30 font-semibold">
+                      Live
+                    </span>
+                  </button>
+                </div>
+
                 {/* Sign Out Action */}
                 <div className="pt-1.5 px-2">
                   <button
@@ -974,6 +997,12 @@ export function TopHeader({
       <DelegatedAuthorityModal
         isOpen={isDelegationModalOpen}
         onClose={() => setIsDelegationModalOpen(false)}
+      />
+
+      {/* Forensic IAM Security Audit Stream Modal */}
+      <IamAuditLogModal
+        isOpen={isIamAuditOpen}
+        onClose={() => setIsIamAuditOpen(false)}
       />
     </>
   );

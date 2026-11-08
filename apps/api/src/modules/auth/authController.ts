@@ -3,6 +3,7 @@ import {
   registerUserSchema,
   loginSchema,
   changePasswordSchema,
+  createIamAuditEventSchema,
   UnauthorizedError,
   NotFoundError,
 } from "@jewelcore/shared";
@@ -14,6 +15,8 @@ import {
   getActiveUserSessions,
   revokeUserSession,
   revokeOtherUserSessions,
+  getIamAuditEvents,
+  recordIamAuditEvent,
 } from "./authService.js";
 import {
   verifyJwt,
@@ -261,7 +264,11 @@ export async function revokeSessionHandler(
     }
     const token = authHeader.substring(7);
     const claims = await verifyJwt(token);
-    const sessionId = req.params.id;
+    const rawId = req.params.id;
+    const sessionId = Array.isArray(rawId) ? rawId[0] : rawId;
+    if (!sessionId) {
+      throw new NotFoundError("Session", "unknown");
+    }
 
     const revoked = revokeUserSession(claims.userId, sessionId);
     if (!revoked) {
@@ -338,4 +345,79 @@ export async function changePasswordHandler(
     next(err);
   }
 }
+
+export async function listIamAuditEventsHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError(
+        "Authorization header with Bearer token is required",
+      );
+    }
+    const token = authHeader.substring(7);
+    await verifyJwt(token);
+
+    const category = req.query.category as string | undefined;
+    const severity = req.query.severity as string | undefined;
+    const stationId = req.query.stationId as string | undefined;
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
+
+    const events = getIamAuditEvents({ category, severity, stationId, limit });
+
+    res.status(200).json({
+      data: events,
+      total: events.length,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function recordIamAuditEventHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let actorUserId = "0192e300-0002-7000-8000-000000000001";
+    let actorEmail = "rachel@jewelcore.internal";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        actorUserId = claims.userId;
+        actorEmail = claims.email;
+      } catch {
+        // Fallback to defaults
+      }
+    }
+
+    const validated = createIamAuditEventSchema.parse(req.body);
+    const clientIp =
+      (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+      req.ip ||
+      "192.168.1.102 (Showroom LAN)";
+
+    const event = recordIamAuditEvent({
+      ...validated,
+      ipAddress: validated.ipAddress || clientIp,
+      actorUserId,
+      actorEmail,
+    });
+
+    res.status(201).json({
+      data: event,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 
