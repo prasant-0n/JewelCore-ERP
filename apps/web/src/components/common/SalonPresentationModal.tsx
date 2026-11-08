@@ -187,16 +187,16 @@ export function SalonPresentationModal({
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-muted-foreground">Gross Measured Weight:</span>
-                <span className="font-semibold text-foreground font-mono">{piece.grossWeightGrams.toFixed(4)} g</span>
+                <span className="font-semibold text-foreground font-mono tabular-nums">{piece.grossWeightGrams.toFixed(4)} g</span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-muted-foreground">Net Fine Metal Weight:</span>
-                <span className="font-semibold text-foreground font-mono">{piece.netGoldGrams.toFixed(4)} g</span>
+                <span className="font-semibold text-foreground font-mono tabular-nums">{piece.netGoldGrams.toFixed(4)} g</span>
               </div>
               {piece.diamondCarat && (
                 <div className="flex justify-between items-center text-xs">
                   <span className="text-muted-foreground">Certified Diamond Carat:</span>
-                  <span className="font-semibold text-gold font-mono">{piece.diamondCarat} ct</span>
+                  <span className="font-semibold text-gold font-mono tabular-nums">{piece.diamondCarat} ct</span>
                 </div>
               )}
               {piece.diamondSpecs && (

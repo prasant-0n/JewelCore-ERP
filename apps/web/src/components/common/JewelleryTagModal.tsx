@@ -175,7 +175,7 @@ export function JewelleryTagModal({
               <div className="w-[210px] h-full flex flex-col justify-between pl-2 border-l border-dashed border-stone-300">
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-[12px] font-black text-amber-900">
+                    <span className="text-xs font-black text-amber-900">
                       {activeTag.metalPurity}
                     </span>
                     <div className="text-[9px] font-mono font-semibold text-neutral-800 space-x-1 mt-0.5">

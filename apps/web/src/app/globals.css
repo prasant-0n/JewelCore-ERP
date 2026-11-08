@@ -123,6 +123,31 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     transition: background-color 0.2s ease, color 0.2s ease;
   }
+
+  h1 {
+    font-family: var(--font-serif), 'Playfair Display', Georgia, Cambria, serif;
+    letter-spacing: -0.015em;
+  }
+
+  h2 {
+    font-family: var(--font-serif), 'Playfair Display', Georgia, Cambria, serif;
+    letter-spacing: -0.012em;
+  }
+
+  h3, h4, h5, h6 {
+    font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.011em;
+  }
+
+  code, kbd, samp, pre {
+    font-family: var(--font-mono), 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+
+  input, textarea, select, button {
+    font-family: inherit;
+  }
 }
 
 /* Custom minimal scrollbar */
