@@ -7,6 +7,10 @@ import {
   type IamAuditEvent,
   type PasskeyRecord,
   type RegisterPasskeyInput,
+  type WorkstationNetworkProfile,
+  type AuthorizedSubnet,
+  type SimulateNetworkIpInput,
+  NetworkPerimeterStatus,
   IamAuditCategory,
   IamAuditSeverity,
   ConflictError,
@@ -586,5 +590,127 @@ export function revokeUserPasskey(userId: string, passkeyId: string): boolean {
 
   return true;
 }
+
+/**
+ * Showroom LAN Geofencing & Subnet CIDR Enforcement (Milestone 6)
+ */
+const AUTHORIZED_SHOWROOM_SUBNETS: AuthorizedSubnet[] = [
+  {
+    id: "subnet_mum_floor",
+    name: "Flagship Showroom Floor (Ethernet LAN)",
+    cidr: "192.168.1.0/24",
+    location: "Mumbai Flagship Atelier - Ground Floor",
+    trustLevel: "PERIMETER_SECURED",
+  },
+  {
+    id: "subnet_mum_salon",
+    name: "VIP Salon High-Security Wi-Fi (WPA3-Enterprise)",
+    cidr: "192.168.2.0/24",
+    location: "Mumbai Flagship Atelier - VIP Sanctuary",
+    trustLevel: "PERIMETER_SECURED",
+  },
+  {
+    id: "subnet_vault_hub",
+    name: "Central Vault Facility SD-WAN Enclave",
+    cidr: "10.10.0.0/16",
+    location: "Central Vault Facility Hub",
+    trustLevel: "PERIMETER_SECURED",
+  },
+  {
+    id: "subnet_loopback",
+    name: "Local Atelier Station Loopback",
+    cidr: "127.0.0.1/32",
+    location: "Workstation Internal Bus",
+    trustLevel: "PERIMETER_SECURED",
+  },
+];
+
+const userSimulatedIps = new Map<string, string>();
+
+export function getWorkstationNetworkProfile(
+  userId: string,
+  incomingIp?: string,
+): WorkstationNetworkProfile {
+  const currentIp =
+    userSimulatedIps.get(userId) ||
+    incomingIp ||
+    "192.168.1.102";
+
+  const isTrusted =
+    currentIp.startsWith("192.168.1.") ||
+    currentIp.startsWith("192.168.2.") ||
+    currentIp.startsWith("10.10.") ||
+    currentIp.startsWith("127.") ||
+    currentIp === "::1" ||
+    currentIp === "localhost";
+
+  let subnetCidr = "Public Internet / WAN (Untrusted Subnet)";
+  if (currentIp.startsWith("192.168.1.")) {
+    subnetCidr = "192.168.1.0/24 (Showroom Floor LAN)";
+  } else if (currentIp.startsWith("192.168.2.")) {
+    subnetCidr = "192.168.2.0/24 (VIP Salon Wi-Fi)";
+  } else if (currentIp.startsWith("10.10.")) {
+    subnetCidr = "10.10.0.0/16 (Central Vault Hub)";
+  } else if (currentIp.startsWith("127.") || currentIp === "::1") {
+    subnetCidr = "127.0.0.1/32 (Station Loopback)";
+  }
+
+  return {
+    ipAddress: currentIp,
+    subnetCidr,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    isTrustedSubnet: isTrusted,
+    perimeterStatus: isTrusted
+      ? NetworkPerimeterStatus.SECURED
+      : NetworkPerimeterStatus.UNTRUSTED,
+    storeCode: "HQ-MUM-01",
+    storeName: "Flagship Mumbai Atelier",
+    hardwareFingerprint: "HW-UUID-0192e300-8841-A42B-MUM01",
+    evaluatedAt: new Date().toISOString(),
+    authorizedSubnets: AUTHORIZED_SHOWROOM_SUBNETS,
+  };
+}
+
+export function simulateWorkstationNetworkIp(
+  userId: string,
+  input: SimulateNetworkIpInput,
+): WorkstationNetworkProfile {
+  userSimulatedIps.set(userId, input.ipAddress);
+
+  const profile = getWorkstationNetworkProfile(userId, input.ipAddress);
+
+  if (profile.isTrustedSubnet) {
+    recordIamAuditEvent({
+      action: "AUTH_NETWORK_PERIMETER_EVALUATED",
+      category: IamAuditCategory.WORKSTATION_ACCESS,
+      severity: IamAuditSeverity.INFO,
+      stationId: input.stationId,
+      ipAddress: input.ipAddress,
+      actorUserId: userId,
+      actorName: "Rachel R.",
+      actorEmail: "rachel@jewelcore.internal",
+      actorRole: "STORE_MANAGER",
+      details: `Workstation IP verified inside Showroom LAN perimeter (${input.ipAddress})`,
+      metadata: { subnet: profile.subnetCidr, status: profile.perimeterStatus },
+    });
+  } else {
+    recordIamAuditEvent({
+      action: "AUTH_NETWORK_PERIMETER_RESTRICTED",
+      category: IamAuditCategory.WORKSTATION_ACCESS,
+      severity: IamAuditSeverity.WARNING,
+      stationId: input.stationId,
+      ipAddress: input.ipAddress,
+      actorUserId: userId,
+      actorName: "Rachel R.",
+      actorEmail: "rachel@jewelcore.internal",
+      actorRole: "STORE_MANAGER",
+      details: `Workstation IP evaluated outside physical atelier perimeter (${input.ipAddress}); high-assurance actions restricted`,
+      metadata: { subnet: profile.subnetCidr, status: profile.perimeterStatus },
+    });
+  }
+
+  return profile;
+}
+
 
 

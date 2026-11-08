@@ -5,6 +5,7 @@ import {
   changePasswordSchema,
   createIamAuditEventSchema,
   registerPasskeySchema,
+  simulateNetworkIpSchema,
   UnauthorizedError,
   NotFoundError,
 } from "@jewelcore/shared";
@@ -21,6 +22,8 @@ import {
   getUserPasskeys,
   registerUserPasskey,
   revokeUserPasskey,
+  getWorkstationNetworkProfile,
+  simulateWorkstationNetworkIp,
 } from "./authService.js";
 import {
   verifyJwt,
@@ -514,6 +517,68 @@ export async function revokePasskeyHandler(
     next(err);
   }
 }
+
+export async function getNetworkPerimeterHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        userId = claims.userId;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const clientIp =
+      (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+      req.ip ||
+      "192.168.1.102";
+
+    const profile = getWorkstationNetworkProfile(userId, clientIp);
+
+    res.status(200).json({
+      data: profile,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function simulateNetworkIpHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedError(
+        "Authorization header with Bearer token is required",
+      );
+    }
+    const token = authHeader.substring(7);
+    const claims = await verifyJwt(token);
+
+    const validated = simulateNetworkIpSchema.parse(req.body);
+    const profile = simulateWorkstationNetworkIp(claims.userId, validated);
+
+    res.status(200).json({
+      data: profile,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 
 
 

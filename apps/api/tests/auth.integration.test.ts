@@ -473,5 +473,58 @@ describe("IAM Authentication & User Endpoints (FEAT-IAM-02)", () => {
         expect(revokeRes.body.data.message).toContain("revoked successfully");
       });
     });
+
+    describe("Showroom LAN Geofencing & Subnet CIDR Enforcement (Milestone 6)", () => {
+      let accessToken: string;
+
+      beforeAll(async () => {
+        const loginRes = await request(app).post("/api/v1/auth/login").send({
+          email: "auth_user1@jewelcore.local",
+          password: "BrandNewSecurePassword@2026",
+        });
+        accessToken = loginRes.body.data.accessToken;
+      });
+
+      it("evaluates workstation network perimeter and verifies trusted showroom LAN", async () => {
+        const res = await request(app)
+          .get("/api/v1/auth/network-perimeter")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body.data).toBeDefined();
+        expect(res.body.data.stationId).toBe("MAIN-SHOWROOM-DESK-01");
+        expect(res.body.data.authorizedSubnets).toHaveLength(4);
+        expect(res.body.data.perimeterStatus).toBe("SECURED");
+        expect(res.body.data.isTrustedSubnet).toBe(true);
+      });
+
+      it("simulates switching to an untrusted external WAN IP and restricts perimeter", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/network-perimeter/simulate")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            ipAddress: "203.0.113.45",
+            stationId: "MAIN-SHOWROOM-DESK-01",
+          });
+
+        expect(res.status).toBe(200);
+        expect(res.body.data.ipAddress).toBe("203.0.113.45");
+        expect(res.body.data.isTrustedSubnet).toBe(false);
+        expect(res.body.data.perimeterStatus).toBe("UNTRUSTED");
+
+        // Verify restoration back to showroom LAN
+        const restoreRes = await request(app)
+          .post("/api/v1/auth/network-perimeter/simulate")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            ipAddress: "192.168.1.102",
+            stationId: "MAIN-SHOWROOM-DESK-01",
+          });
+
+        expect(restoreRes.status).toBe(200);
+        expect(restoreRes.body.data.isTrustedSubnet).toBe(true);
+        expect(restoreRes.body.data.perimeterStatus).toBe("SECURED");
+      });
+    });
   });
 });

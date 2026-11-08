@@ -16,6 +16,8 @@ import {
   listPasskeysHandler,
   registerPasskeyHandler,
   revokePasskeyHandler,
+  getNetworkPerimeterHandler,
+  simulateNetworkIpHandler,
 } from "./authController.js";
 
 export function createAuthRouter(): Router {
@@ -37,6 +39,8 @@ export function createAuthRouter(): Router {
   router.get("/passkeys", listPasskeysHandler);
   router.post("/passkeys", registerPasskeyHandler);
   router.delete("/passkeys/:id", revokePasskeyHandler);
+  router.get("/network-perimeter", getNetworkPerimeterHandler);
+  router.post("/network-perimeter/simulate", simulateNetworkIpHandler);
 
   return router;
 }

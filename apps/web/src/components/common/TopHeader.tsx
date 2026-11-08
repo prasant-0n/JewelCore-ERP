@@ -26,6 +26,7 @@ import {
   MonitorSmartphone,
   KeyRound,
   Fingerprint,
+  Wifi,
   Zap,
 } from "lucide-react";
 import {
@@ -49,6 +50,7 @@ import { ChangePasswordModal } from "../auth/ChangePasswordModal";
 import { DelegatedAuthorityModal } from "../auth/DelegatedAuthorityModal";
 import { IamAuditLogModal } from "../auth/IamAuditLogModal";
 import { WebAuthnModal } from "../auth/WebAuthnModal";
+import { NetworkPerimeterModal } from "../auth/NetworkPerimeterModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -127,6 +129,8 @@ export function TopHeader({
   const [isDelegationModalOpen, setIsDelegationModalOpen] = useState(false);
   const [isIamAuditOpen, setIsIamAuditOpen] = useState(false);
   const [isWebAuthnOpen, setIsWebAuthnOpen] = useState(false);
+  const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
+  const [isLanSecured, setIsLanSecured] = useState(true);
 
   // Active authenticated operator profile
   const activeUser = user || {
@@ -691,6 +695,27 @@ export function TopHeader({
             )}
           </button>
 
+          {/* Ambient Showroom LAN Perimeter Badge */}
+          <button
+            type="button"
+            onClick={() => setIsNetworkModalOpen(true)}
+            title={`Showroom LAN Perimeter: ${isLanSecured ? "Secured (192.168.1.102)" : "Off-Premises WAN"}`}
+            aria-label="Network Perimeter Status"
+            className={`hidden md:flex items-center space-x-1.5 px-2 py-1 rounded-md text-[10px] font-mono border transition-colors shrink-0 ${
+              isLanSecured
+                ? "bg-status-emerald/10 text-status-emerald border-status-emerald/30 hover:bg-status-emerald/20"
+                : "bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20"
+            }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isLanSecured ? "bg-status-emerald animate-pulse" : "bg-amber-400"
+              }`}
+            />
+            <Wifi className="w-3 h-3" />
+            <span className="font-semibold">{isLanSecured ? "LAN SECURED" : "OFF-PREMISES"}</span>
+          </button>
+
           {/* Quick Lock Padlock */}
           <button
             onClick={onLockClick}
@@ -913,6 +938,32 @@ export function TopHeader({
                   </button>
                 </div>
 
+                {/* Showroom LAN Geofencing & Subnet Enclave Action */}
+                <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      setIsNetworkModalOpen(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Wifi className="w-3.5 h-3.5 text-gold shrink-0" />
+                      <span>Network Geofence</span>
+                    </div>
+                    <span
+                      className={`px-1.5 py-0.5 text-[9px] font-mono rounded font-semibold border ${
+                        isLanSecured
+                          ? "bg-status-emerald/10 text-status-emerald border-status-emerald/30"
+                          : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                      }`}
+                    >
+                      {isLanSecured ? "LAN 192.168.1.x" : "Off-Premises"}
+                    </span>
+                  </button>
+                </div>
+
                 {/* Sign Out Action */}
                 <div className="pt-1.5 px-2">
                   <button
@@ -1032,6 +1083,13 @@ export function TopHeader({
       <WebAuthnModal
         isOpen={isWebAuthnOpen}
         onClose={() => setIsWebAuthnOpen(false)}
+      />
+
+      {/* Showroom LAN Geofencing & Subnet Enclave Modal */}
+      <NetworkPerimeterModal
+        isOpen={isNetworkModalOpen}
+        onClose={() => setIsNetworkModalOpen(false)}
+        onProfileUpdate={(p) => setIsLanSecured(p.isTrustedSubnet)}
       />
     </>
   );

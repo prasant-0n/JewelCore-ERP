@@ -327,6 +327,8 @@ export const IamAuditAction = {
   AUTH_PASSKEY_REGISTERED: "AUTH_PASSKEY_REGISTERED",
   AUTH_PASSKEY_REVOKED: "AUTH_PASSKEY_REVOKED",
   AUTH_PASSKEY_VERIFIED: "AUTH_PASSKEY_VERIFIED",
+  AUTH_NETWORK_PERIMETER_EVALUATED: "AUTH_NETWORK_PERIMETER_EVALUATED",
+  AUTH_NETWORK_PERIMETER_RESTRICTED: "AUTH_NETWORK_PERIMETER_RESTRICTED",
 } as const;
 
 export type IamAuditAction = (typeof IamAuditAction)[keyof typeof IamAuditAction];
@@ -403,5 +405,46 @@ export const registerPasskeySchema = z.object({
 });
 
 export type RegisterPasskeyInput = z.infer<typeof registerPasskeySchema>;
+
+/**
+ * Showroom Workstation Network Perimeter & Geofence (Milestone 6)
+ */
+export const NetworkPerimeterStatus = {
+  SECURED: "SECURED",
+  RESTRICTED: "RESTRICTED",
+  UNTRUSTED: "UNTRUSTED",
+} as const;
+
+export type NetworkPerimeterStatus =
+  (typeof NetworkPerimeterStatus)[keyof typeof NetworkPerimeterStatus];
+
+export interface AuthorizedSubnet {
+  id: string;
+  name: string;
+  cidr: string;
+  location: string;
+  trustLevel: "PERIMETER_SECURED" | "RESTRICTED";
+}
+
+export interface WorkstationNetworkProfile {
+  ipAddress: string;
+  subnetCidr: string;
+  stationId: string;
+  isTrustedSubnet: boolean;
+  perimeterStatus: NetworkPerimeterStatus;
+  storeCode: string;
+  storeName: string;
+  hardwareFingerprint: string;
+  evaluatedAt: string;
+  authorizedSubnets: AuthorizedSubnet[];
+}
+
+export const simulateNetworkIpSchema = z.object({
+  ipAddress: z.string().min(1, "IP address is required"),
+  stationId: z.string().default("MAIN-SHOWROOM-DESK-01"),
+});
+
+export type SimulateNetworkIpInput = z.infer<typeof simulateNetworkIpSchema>;
+
 
 
