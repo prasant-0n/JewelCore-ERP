@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { TopHeader } from "./TopHeader";
 import { Sidebar } from "./Sidebar";
 import { QuickLockModal } from "./QuickLockModal";
+import { RouteGuard } from "../auth/RouteGuard";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isLocked, setIsLocked] = useState(false);
@@ -20,7 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-y-auto bg-obsidian-deep p-4 sm:p-6">
-          {children}
+          <RouteGuard>{children}</RouteGuard>
         </main>
       </div>
 

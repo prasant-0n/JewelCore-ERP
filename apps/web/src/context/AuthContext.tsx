@@ -75,8 +75,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const storedToken = localStorage.getItem("jewelcore_token");
       const storedUser = localStorage.getItem("jewelcore_user");
+      const isLoggedOut = localStorage.getItem("jewelcore_logged_out");
 
-      if (storedToken && storedUser) {
+      if (isLoggedOut === "true") {
+        setUser(null);
+        setToken(null);
+        api.setToken(null);
+      } else if (storedToken && storedUser) {
         try {
           const parsedUser = JSON.parse(storedUser) as AuthUser;
           setUser(parsedUser);
@@ -175,6 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(authUser);
 
       if (typeof window !== "undefined") {
+        localStorage.removeItem("jewelcore_logged_out");
         localStorage.setItem("jewelcore_token", accessToken);
         localStorage.setItem("jewelcore_user", JSON.stringify(authUser));
       }
@@ -187,7 +193,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: `Authenticated to ${currentStore.name} as ${authUser.role}.`,
       });
 
-      router.push("/");
+      let targetUrl = "/";
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect");
+        if (redirect && redirect.startsWith("/")) {
+          targetUrl = redirect;
+        }
+      }
+
+      router.push(targetUrl);
     } catch (err) {
       if (err instanceof ApiProblemError) {
         throw err;
@@ -251,6 +266,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(authUser);
 
       if (typeof window !== "undefined") {
+        localStorage.removeItem("jewelcore_logged_out");
         localStorage.setItem("jewelcore_token", accessToken);
         localStorage.setItem("jewelcore_user", JSON.stringify(authUser));
       }
@@ -263,7 +279,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: `Authenticated to ${currentStore.name} as ${authUser.role}.`,
       });
 
-      router.push("/");
+      let targetUrl = "/";
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect");
+        if (redirect && redirect.startsWith("/")) {
+          targetUrl = redirect;
+        }
+      }
+
+      router.push(targetUrl);
     } finally {
       setIsLoading(false);
     }
@@ -278,6 +303,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== "undefined") {
       localStorage.removeItem("jewelcore_token");
       localStorage.removeItem("jewelcore_user");
+      localStorage.setItem("jewelcore_logged_out", "true");
     }
 
     // Call API logout endpoint in background
@@ -294,6 +320,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const setUserDirectly = useCallback((newUser: AuthUser, newToken?: string) => {
     setUser(newUser);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("jewelcore_logged_out");
+    }
     if (newToken) {
       setToken(newToken);
       api.setToken(newToken);

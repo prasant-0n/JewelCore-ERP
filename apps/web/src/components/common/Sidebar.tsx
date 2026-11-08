@@ -23,7 +23,10 @@ import {
   Coins,
   PanelLeftClose,
   PanelLeftOpen,
+  Lock,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { checkRouteAccess } from "@/lib/pbac";
 
 interface NavSection {
   title: string;
@@ -89,6 +92,7 @@ export function SidebarNavList({
   isCollapsed?: boolean;
 }) {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   return (
     <div
@@ -110,6 +114,8 @@ export function SidebarNavList({
             {section.items.map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
+              const access = checkRouteAccess(item.href, user);
+              const isRestricted = !access.allowed;
 
               return (
                 <Link
@@ -118,7 +124,9 @@ export function SidebarNavList({
                   onClick={onItemClick}
                   title={
                     isCollapsed
-                      ? `${item.name}${item.badge !== undefined ? ` (${item.badge})` : ""}`
+                      ? `${item.name}${isRestricted ? " (PBAC Restricted)" : item.badge !== undefined ? ` (${item.badge})` : ""}`
+                      : isRestricted
+                      ? access.reason
                       : undefined
                   }
                   className={cn(
@@ -130,6 +138,8 @@ export function SidebarNavList({
                       ? isCollapsed
                         ? "bg-surface-elevated text-gold shadow-sm ring-1 ring-gold/40"
                         : "bg-surface-elevated text-gold border-l-2 border-gold font-semibold shadow-sm"
+                      : isRestricted
+                      ? "text-muted-foreground/70 hover:text-foreground hover:bg-surface-elevated/40"
                       : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated/60",
                   )}
                 >
@@ -142,16 +152,36 @@ export function SidebarNavList({
                     <Icon
                       className={cn(
                         "w-4 h-4 shrink-0",
-                        isActive ? "text-gold" : "text-muted-foreground",
+                        isActive
+                          ? "text-gold"
+                          : isRestricted
+                          ? "text-muted-foreground/50"
+                          : "text-muted-foreground",
                       )}
                     />
-                    {!isCollapsed && <span>{item.name}</span>}
-                    {isCollapsed && item.badge !== undefined && (
+                    {!isCollapsed && (
+                      <span className={cn(isRestricted && "text-muted-foreground/80")}>
+                        {item.name}
+                      </span>
+                    )}
+                    {isCollapsed && isRestricted && (
+                      <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-status-amber/80" />
+                    )}
+                    {isCollapsed && !isRestricted && item.badge !== undefined && (
                       <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-gold" />
                     )}
                   </div>
 
-                  {!isCollapsed && item.badge !== undefined && (
+                  {!isCollapsed && isRestricted && (
+                    <span
+                      className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium shrink-0 bg-surface border border-surface-border/60 text-muted-foreground/70 flex items-center gap-1"
+                    >
+                      <Lock className="w-2.5 h-2.5 text-muted-foreground/50" />
+                      <span>Locked</span>
+                    </span>
+                  )}
+
+                  {!isCollapsed && !isRestricted && item.badge !== undefined && (
                     <span
                       className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-semibold shrink-0 ${
                         isActive
