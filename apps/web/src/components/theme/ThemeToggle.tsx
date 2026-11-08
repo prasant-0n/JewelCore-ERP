@@ -30,7 +30,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
     <button
       onClick={toggleTheme}
       type="button"
-      className={`relative inline-flex items-center justify-center w-9 h-9 rounded-lg border border-surface-border bg-surface hover:bg-surface-elevated text-muted-foreground hover:text-foreground transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold/50 ${className}`}
+      className={`relative inline-flex items-center justify-center shrink-0 w-9 h-9 rounded-lg border border-surface-border bg-surface hover:bg-surface-elevated text-muted-foreground hover:text-foreground transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gold/50 ${className}`}
       title={
         isDark
           ? "Switch to Ivory Atelier (Light Mode)"

@@ -54,9 +54,9 @@ export function MetrologyGauge({
               <span className="text-foreground">{secondaryValue}</span>
             </span>
           )}
-          <span className="font-mono font-semibold tabular-nums text-foreground">
+          <span className="font-mono font-semibold tabular-nums text-foreground whitespace-nowrap">
             {currentValue.toFixed(decimals)}{" "}
-            <span className="text-[10px] text-muted-foreground uppercase">
+            <span className="text-[10px] text-muted-foreground font-mono font-normal">
               {unit}
             </span>
           </span>

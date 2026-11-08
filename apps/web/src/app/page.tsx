@@ -693,28 +693,28 @@ export default function HomePage() {
                       onClick={() => setSelectedPiece(item)}
                       className="cursor-pointer group"
                     >
-                      <TableCell className="font-mono text-gold group-hover:text-gold-light font-medium">
+                      <TableCell className="font-mono text-gold group-hover:text-gold-light font-medium whitespace-nowrap">
                         {item.serialNumber}
                       </TableCell>
-                      <TableCell className="font-medium text-foreground max-w-[220px] truncate">
+                      <TableCell className="font-medium text-foreground max-w-[220px] truncate" title={item.itemName}>
                         {item.itemName}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-muted-foreground whitespace-nowrap">
                         {item.metalPurity}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
                         <TabularWeight
                           grams={item.grossWeightGrams}
                           decimals={3}
                         />
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-xs truncate max-w-[160px]">
+                      <TableCell className="text-muted-foreground text-xs truncate max-w-[160px] whitespace-nowrap" title={item.custodyLocation}>
                         {item.custodyLocation}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <StatusBadge status={item.custodyState} size="sm" />
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
                         <Button
                           variant="ghost"
                           size="icon-sm"

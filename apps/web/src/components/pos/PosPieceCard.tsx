@@ -63,28 +63,32 @@ export function PosPieceCard({
       )}
 
       {/* Top Header: Serial & Status Badge */}
-      <div className="flex items-start justify-between gap-1">
-        <div>
-          <div className="flex items-center space-x-1.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1 pr-1.5">
+          <div className="flex items-center space-x-1.5 min-w-0">
             <ShoppingBag
-              className={`w-3.5 h-3.5 ${
+              className={`w-3.5 h-3.5 shrink-0 ${
                 isSelected ? "text-gold" : "text-muted-foreground"
               }`}
             />
             <span
-              className={`font-mono text-xs font-bold transition-colors ${
+              className={`font-mono text-xs font-bold transition-colors truncate ${
                 isSelected
                   ? "text-gold"
                   : "text-foreground group-hover:text-gold"
               }`}
+              title={piece.serialNumber}
             >
               {piece.serialNumber}
             </span>
           </div>
-          <div className="text-[11px] text-muted-foreground font-medium truncate max-w-[190px] mt-0.5">
+          <div
+            className="text-[11px] text-muted-foreground font-medium truncate mt-0.5"
+            title={piece.itemName}
+          >
             {piece.itemName}
           </div>
-          <div className="text-[10px] font-mono text-muted-foreground mt-0.5">
+          <div className="text-[10px] font-mono text-muted-foreground mt-0.5 truncate">
             Hallmark: {piece.hallmarkId}
           </div>
         </div>

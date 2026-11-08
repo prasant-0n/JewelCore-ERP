@@ -78,62 +78,69 @@ const NAV_SECTIONS: NavSection[] = [
   },
 ];
 
-export function Sidebar() {
+export function SidebarNavList({ onItemClick }: { onItemClick?: () => void }) {
   const pathname = usePathname();
 
   return (
+    <div className="py-4 px-3 space-y-6 overflow-y-auto">
+      {NAV_SECTIONS.map((section) => (
+        <div key={section.title} className="space-y-1">
+          <div className="px-3 text-[10px] font-mono tracking-widest text-muted-foreground/90 uppercase font-semibold">
+            {section.title}
+          </div>
+          <div className="space-y-0.5 pt-1">
+            {section.items.map((item) => {
+              const isActive = pathname === item.href;
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onItemClick}
+                  className={`flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-all ${
+                    isActive
+                      ? "bg-surface-elevated text-gold border-l-2 border-gold font-semibold shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated/60"
+                  }`}
+                >
+                  <div className="flex items-center space-x-2.5">
+                    <Icon
+                      className={`w-4 h-4 ${
+                        isActive ? "text-gold" : "text-muted-foreground"
+                      }`}
+                    />
+                    <span>{item.name}</span>
+                  </div>
+
+                  {item.badge !== undefined && (
+                    <span
+                      className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-semibold ${
+                        isActive
+                          ? "bg-gold/20 text-gold"
+                          : "bg-surface border border-surface-border text-muted-foreground"
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function Sidebar() {
+  return (
     <aside
       data-testid="sidebar-nav"
-      className="w-60 bg-surface border-r border-surface-border flex flex-col justify-between h-[calc(100vh-3.5rem)] flex-shrink-0"
+      className="hidden md:flex w-60 bg-surface border-r border-surface-border flex-col justify-between h-[calc(100vh-3.5rem)] flex-shrink-0"
     >
-      <div className="py-4 px-3 space-y-6 overflow-y-auto">
-        {NAV_SECTIONS.map((section) => (
-          <div key={section.title} className="space-y-1">
-            <div className="px-3 text-[10px] font-mono tracking-wider text-muted-foreground uppercase font-semibold">
-              {section.title}
-            </div>
-            <div className="space-y-0.5 pt-1">
-              {section.items.map((item) => {
-                const isActive = pathname === item.href;
-                const Icon = item.icon;
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-all ${
-                      isActive
-                        ? "bg-surface-elevated text-gold border-l-2 border-gold font-semibold shadow-sm"
-                        : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated/60"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <Icon
-                        className={`w-4 h-4 ${
-                          isActive ? "text-gold" : "text-muted-foreground"
-                        }`}
-                      />
-                      <span>{item.name}</span>
-                    </div>
-
-                    {item.badge !== undefined && (
-                      <span
-                        className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-semibold ${
-                          isActive
-                            ? "bg-gold/20 text-gold"
-                            : "bg-surface border border-surface-border text-muted-foreground"
-                        }`}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
+      <SidebarNavList />
 
       {/* Terminal Health Footer */}
       <div className="p-3 border-t border-surface-border bg-surface">

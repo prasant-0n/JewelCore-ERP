@@ -19,7 +19,16 @@ import {
   RefreshCw,
   Shield,
   Camera,
+  Menu,
 } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
+import { SidebarNavList } from "./Sidebar";
 import { api } from "../../lib/api";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
@@ -97,6 +106,7 @@ export function TopHeader({
   const [isBullionMenuOpen, setIsBullionMenuOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState(PERSONAS[0]);
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const handleScanPiece = (barcode: string) => {
     if (typeof window !== "undefined") {
@@ -150,9 +160,45 @@ export function TopHeader({
   };
 
   return (
-    <header className="h-14 bg-surface border-b border-surface-border px-6 flex items-center justify-between z-40 flex-shrink-0">
-      {/* Left: Brand & Store Context Selector */}
-      <div className="flex items-center space-x-6">
+    <header className="h-14 bg-surface border-b border-surface-border px-3 sm:px-6 flex items-center justify-between z-40 flex-shrink-0">
+      {/* Left: Mobile Nav Drawer, Brand & Store Context Selector */}
+      <div className="flex items-center space-x-2 sm:space-x-6">
+        {/* Mobile Hamburger Drawer */}
+        <div className="md:hidden">
+          <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                className="p-1.5 -ml-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-elevated transition-colors"
+                aria-label="Open workstation navigation"
+              >
+                <Menu className="w-5 h-5 text-foreground" />
+              </button>
+            </SheetTrigger>
+            <SheetContent
+              side="left"
+              className="w-72 p-0 flex flex-col justify-between bg-surface border-r border-surface-border text-foreground"
+            >
+              <div>
+                <SheetHeader className="p-4 border-b border-surface-border text-left">
+                  <JewelCoreLogo size="sm" variant="badge" showText />
+                  <SheetTitle className="sr-only">JewelCore Workstation Navigation</SheetTitle>
+                  <p className="text-[11px] font-mono text-muted-foreground tracking-wide mt-1">
+                    Atelier Operational Workstations
+                  </p>
+                </SheetHeader>
+                <SidebarNavList onItemClick={() => setIsMobileNavOpen(false)} />
+              </div>
+              <div className="p-3 border-t border-surface-border bg-surface">
+                <div className="px-3 py-2 rounded-md bg-surface-elevated border border-surface-border flex items-center justify-between text-[10px] font-mono text-muted-foreground">
+                  <span className="text-foreground">Terminal: MOB-01</span>
+                  <span className="text-gold font-bold">ONLINE</span>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+
         <Link
           href="/"
           className="flex items-center group transition-transform active:scale-95"
@@ -161,23 +207,23 @@ export function TopHeader({
           <JewelCoreLogo size="sm" variant="badge" showText />
         </Link>
 
-        <div className="h-5 w-px bg-surface-border" />
+        <div className="h-5 w-px bg-surface-border hidden sm:block" />
 
         {/* Multi-Store Dropdown */}
         <div className="relative">
           <button
             onClick={() => setIsStoreOpen(!isStoreOpen)}
-            className="flex items-center space-x-2 px-3 py-1.5 rounded-md bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs"
+            className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-md bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs"
             title="Switch Active Store & Multi-Tenant Inventory Context"
           >
-            <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse" />
-            <span className="text-foreground font-medium">
+            <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse shrink-0" />
+            <span className="text-foreground font-medium hidden sm:inline truncate max-w-[120px]">
               {currentStore.name}
             </span>
-            <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-gold font-bold">
+            <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-gold font-bold shrink-0">
               {currentStore.code}
             </span>
-            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
           </button>
 
           {isStoreOpen && (

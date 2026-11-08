@@ -67,23 +67,24 @@ export function CompartmentCard({
       )}
 
       {/* Top Header Row: Code & Status */}
-      <div className="flex items-center justify-between gap-1">
-        <div className="flex items-center space-x-1.5 truncate">
+      <div className="flex items-center justify-between gap-1.5">
+        <div className="flex items-center space-x-1.5 min-w-0 pr-1">
           <span
             className={`font-mono text-xs font-semibold truncate transition-colors ${
               isSelected ? "text-gold" : "text-foreground group-hover:text-gold"
             }`}
+            title={code}
           >
             {code}
           </span>
           {compartmentNumber && (
-            <span className="text-[10px] text-muted-foreground font-mono">
+            <span className="text-[10px] text-muted-foreground font-mono shrink-0">
               #{compartmentNumber}
             </span>
           )}
         </div>
 
-        <Badge variant={badgeVariant} size="sm">
+        <Badge variant={badgeVariant} size="sm" className="shrink-0 text-[10px]">
           {statusLabel}
         </Badge>
       </div>

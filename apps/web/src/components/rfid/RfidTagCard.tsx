@@ -61,11 +61,11 @@ export function RfidTagCard({
       )}
 
       {/* Top Header: EPC Tag & Presence Badge */}
-      <div className="flex items-start justify-between gap-1">
-        <div>
-          <div className="flex items-center space-x-1.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1 pr-1.5">
+          <div className="flex items-center space-x-1.5 min-w-0">
             <Radio
-              className={`w-3.5 h-3.5 ${
+              className={`w-3.5 h-3.5 shrink-0 ${
                 isMissing
                   ? "text-rose-600 dark:text-rose-400"
                   : isSelected
@@ -74,21 +74,25 @@ export function RfidTagCard({
               }`}
             />
             <span
-              className={`font-mono text-xs font-bold transition-colors ${
+              className={`font-mono text-xs font-bold transition-colors truncate ${
                 isSelected
                   ? "text-gold"
                   : isMissing
                     ? "text-rose-700 dark:text-rose-300"
                     : "text-foreground group-hover:text-gold"
               }`}
+              title={item.epcTag}
             >
               {item.epcTag}
             </span>
           </div>
-          <div className="text-[11px] text-muted-foreground font-medium truncate max-w-[190px] mt-1">
+          <div
+            className="text-[11px] text-muted-foreground font-medium truncate mt-1"
+            title={item.itemName}
+          >
             {item.itemName}
           </div>
-          <div className="text-[10px] font-mono text-muted-foreground mt-0.5">
+          <div className="text-[10px] font-mono text-muted-foreground mt-0.5 truncate">
             SKU: {item.serialNumber}
           </div>
         </div>

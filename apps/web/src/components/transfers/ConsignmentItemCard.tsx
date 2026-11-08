@@ -56,30 +56,34 @@ export function ConsignmentItemCard({
       )}
 
       {/* Top Header: Code & Seal Status */}
-      <div className="flex items-start justify-between gap-1">
-        <div>
-          <div className="flex items-center space-x-1.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1 pr-1.5">
+          <div className="flex items-center space-x-1.5 min-w-0">
             <Lock
-              className={`w-3.5 h-3.5 ${
+              className={`w-3.5 h-3.5 shrink-0 ${
                 isSelected
                   ? "text-gold"
                   : "text-emerald-700 dark:text-emerald-400"
               }`}
             />
             <span
-              className={`font-mono text-xs font-bold transition-colors ${
+              className={`font-mono text-xs font-bold transition-colors truncate ${
                 isSelected
                   ? "text-gold"
                   : "text-foreground group-hover:text-gold"
               }`}
+              title={item.itemCode}
             >
               {item.itemCode}
             </span>
           </div>
-          <div className="text-[11px] text-muted-foreground font-medium truncate max-w-[190px] mt-0.5">
+          <div
+            className="text-[11px] text-muted-foreground font-medium truncate mt-0.5"
+            title={item.trayDescription}
+          >
             {item.trayDescription}
           </div>
-          <div className="text-[10px] font-mono text-muted-foreground mt-0.5">
+          <div className="text-[10px] font-mono text-muted-foreground mt-0.5 truncate">
             Seal: {item.electronicSealId}
           </div>
         </div>

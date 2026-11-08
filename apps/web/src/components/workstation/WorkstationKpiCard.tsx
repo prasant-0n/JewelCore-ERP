@@ -24,6 +24,10 @@ export function WorkstationKpiCard({
   item,
   className,
 }: WorkstationKpiCardProps) {
+  const valueStr = String(item.value);
+  const isLongValue = valueStr.length > 11;
+  const isVeryLongValue = valueStr.length > 16;
+
   return (
     <Card
       className={cn(
@@ -33,7 +37,10 @@ export function WorkstationKpiCard({
     >
       <CardContent className="p-3.5 sm:p-4">
         <div className="flex items-center justify-between gap-2 mb-2">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider truncate">
+          <span
+            className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider truncate"
+            title={item.title}
+          >
             {item.title}
           </span>
           {item.icon && (
@@ -43,15 +50,25 @@ export function WorkstationKpiCard({
           )}
         </div>
 
-        <div className="flex items-baseline justify-between gap-2">
-          <div className="font-mono text-xl sm:text-2xl font-bold tracking-tight text-foreground tabular-nums truncate">
+        <div className="flex flex-wrap items-baseline justify-between gap-1.5">
+          <div
+            className={cn(
+              "font-mono font-bold tracking-tight text-foreground tabular-nums min-w-0",
+              isVeryLongValue
+                ? "text-sm sm:text-base lg:text-lg"
+                : isLongValue
+                  ? "text-base sm:text-lg lg:text-xl"
+                  : "text-xl sm:text-2xl",
+            )}
+            title={valueStr}
+          >
             {item.value}
           </div>
           {item.badge && (
             <Badge
               variant={item.badge.variant || "secondary"}
               size="sm"
-              className="shrink-0"
+              className="shrink-0 text-[10px]"
             >
               {item.badge.text}
             </Badge>
@@ -59,7 +76,10 @@ export function WorkstationKpiCard({
         </div>
 
         {item.subValue && (
-          <p className="text-[11px] text-muted-foreground mt-1 truncate font-mono tabular-nums">
+          <p
+            className="text-[11px] text-muted-foreground mt-1 truncate font-mono tabular-nums"
+            title={item.subValue}
+          >
             {item.subValue}
           </p>
         )}

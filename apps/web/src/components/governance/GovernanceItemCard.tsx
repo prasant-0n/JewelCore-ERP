@@ -49,11 +49,11 @@ export function GovernanceItemCard({
       )}
 
       {/* Top Header: Request Code & Status Badge */}
-      <div className="flex items-start justify-between gap-1">
-        <div>
-          <div className="flex items-center space-x-1.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1 pr-1.5">
+          <div className="flex items-center space-x-1.5 min-w-0">
             <KeyRound
-              className={`w-3.5 h-3.5 ${
+              className={`w-3.5 h-3.5 shrink-0 ${
                 isSelected
                   ? "text-gold"
                   : isPending
@@ -62,19 +62,23 @@ export function GovernanceItemCard({
               }`}
             />
             <span
-              className={`font-mono text-xs font-bold transition-colors ${
+              className={`font-mono text-xs font-bold transition-colors truncate ${
                 isSelected
                   ? "text-gold"
                   : "text-foreground group-hover:text-gold"
               }`}
+              title={item.requestCode}
             >
               {item.requestCode}
             </span>
           </div>
-          <div className="text-[11px] text-muted-foreground font-medium truncate max-w-[190px] mt-0.5">
+          <div
+            className="text-[11px] text-muted-foreground font-medium truncate mt-0.5"
+            title={item.actionTitle}
+          >
             {item.actionTitle}
           </div>
-          <div className="text-[10px] font-mono text-muted-foreground mt-0.5">
+          <div className="text-[10px] font-mono text-muted-foreground mt-0.5 truncate">
             Safe: {item.targetVaultLocation}
           </div>
         </div>
@@ -91,7 +95,7 @@ export function GovernanceItemCard({
           {isPending ? (
             <>
               <Clock className="w-2.5 h-2.5" />
-              <span>AWAITING 2ND KEY</span>
+              <span>2ND KEY PENDING</span>
             </>
           ) : (
             <>

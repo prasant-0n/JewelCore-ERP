@@ -56,25 +56,29 @@ export function AlloyPricingCard({
       )}
 
       {/* Top Header: Alloy Name & Status Badge */}
-      <div className="flex items-start justify-between gap-1">
-        <div>
-          <div className="flex items-center space-x-1.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1 pr-1.5">
+          <div className="flex items-center space-x-1.5 min-w-0">
             <Scale
-              className={`w-3.5 h-3.5 ${
+              className={`w-3.5 h-3.5 shrink-0 ${
                 isSelected ? "text-gold" : "text-muted-foreground"
               }`}
             />
             <span
-              className={`font-mono text-xs font-bold transition-colors ${
+              className={`font-mono text-xs font-bold transition-colors truncate ${
                 isSelected
                   ? "text-gold"
                   : "text-foreground group-hover:text-gold"
               }`}
+              title={alloy.alloyName}
             >
               {alloy.alloyName}
             </span>
           </div>
-          <div className="text-[11px] text-muted-foreground font-medium truncate max-w-[190px] mt-0.5">
+          <div
+            className="text-[11px] text-muted-foreground font-medium truncate mt-0.5"
+            title={alloy.finenessPurity}
+          >
             {alloy.finenessPurity}
           </div>
         </div>
@@ -89,7 +93,7 @@ export function AlloyPricingCard({
           {isLocked ? (
             <>
               <CheckCircle2 className="w-2.5 h-2.5" />
-              <span>LIVE FIX LOCKED</span>
+              <span>LOCKED</span>
             </>
           ) : (
             <>

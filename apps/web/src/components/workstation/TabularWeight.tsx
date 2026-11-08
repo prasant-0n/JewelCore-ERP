@@ -38,7 +38,7 @@ export function TabularWeight({
       )}
     >
       <span>{formatted}</span>
-      <span className="text-[10px] text-muted-foreground font-normal uppercase">
+      <span className="text-[10px] text-muted-foreground font-sans font-normal lowercase">
         {unit}
       </span>
       {highlightDelta && delta !== undefined && (
