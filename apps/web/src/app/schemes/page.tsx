@@ -743,7 +743,7 @@ export default function SavingsSchemePage() {
 
         {/* TAB 2: SCHEME CATALOG */}
         {activeTab === "catalog" && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {schemes.map((s) => (
               <Card key={s.id} className="bg-card/40 border-border/40 p-5 space-y-4 flex flex-col justify-between">
                 <div className="space-y-3">
@@ -799,7 +799,7 @@ export default function SavingsSchemePage() {
         {/* TAB 3: VIP LOYALTY & PRIVILEGES */}
         {activeTab === "loyalty" && (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {DEFAULT_LOYALTY.map((v) => (
                 <Card key={v.customerId} className="bg-card/40 border-border/40 p-5 space-y-3">
                   <div className="flex items-start justify-between">

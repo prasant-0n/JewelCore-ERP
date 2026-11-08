@@ -336,9 +336,9 @@ export default function GovernanceApprovalPage() {
     <AppShell>
       <div className="space-y-6">
         {/* Top Subheader: Breadcrumbs, Telemetry & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
               <span className="flex items-center gap-1.5 font-medium text-foreground">
                 <JewelCoreLogo size="xs" variant="mark" />
                 JewelCore ERP
@@ -350,7 +350,7 @@ export default function GovernanceApprovalPage() {
                 Dual-Custody Audit &amp; Governance Approval Center
               </span>
             </div>
-            <h1 className="text-2xl font-serif font-bold text-foreground tracking-tight mt-1 flex items-center space-x-3">
+            <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground tracking-tight mt-1 flex flex-wrap items-center gap-2 sm:gap-3">
               <span>Multi-Signatory Quorum & Cryptographic Merkle Ledger</span>
               <Badge variant="emerald" dot>
                 HSM Key Card & Dual Biometrics Synced • Zero Failures
@@ -358,7 +358,7 @@ export default function GovernanceApprovalPage() {
             </h1>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
             <Button
               variant="outline"
               size="sm"

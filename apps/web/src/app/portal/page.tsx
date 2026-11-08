@@ -528,7 +528,7 @@ export default function VipClientPortalPage() {
               <span className="text-gold font-medium">All assets BIS Hallmarked &amp; Metrologically Sealed</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {portfolio?.holdings.map((piece) => (
                 <Card
                   key={piece.id}

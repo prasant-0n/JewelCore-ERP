@@ -403,11 +403,11 @@ export default function HomePage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
         {/* Top Header / Greeting Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div className="flex items-center space-x-3.5">
             <JewelCoreLogo size="md" variant="badge" />
             <div>
-              <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
                 <span>
                   {currentStore.name} ({currentStore.code})
                 </span>
@@ -417,7 +417,7 @@ export default function HomePage() {
                   Shift Morning-A Active
                 </span>
               </div>
-              <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground flex flex-wrap items-center gap-2">
                 <span>Executive Control Tower</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-gold/10 border border-gold/30 text-gold uppercase tracking-wider font-semibold">
                   Atelier Master
@@ -426,7 +426,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
             <Button
               variant="secondary"
               size="sm"

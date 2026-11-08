@@ -265,9 +265,9 @@ export default function TransfersTransitPage() {
     <AppShell>
       <div className="space-y-6">
         {/* Top Subheader: Breadcrumbs, Telemetry & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
               <span className="flex items-center gap-1.5 font-medium text-foreground">
                 <JewelCoreLogo size="xs" variant="mark" />
                 JewelCore ERP
@@ -279,7 +279,7 @@ export default function TransfersTransitPage() {
                 Inter-Branch Transfers &amp; Armored Transit
               </span>
             </div>
-            <h1 className="text-2xl font-serif font-bold text-foreground tracking-tight mt-1 flex items-center space-x-3">
+            <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground tracking-tight mt-1 flex flex-wrap items-center gap-2 sm:gap-3">
               <span>Armored Fleet Tracking & Dual-Custody Manifests</span>
               <Badge variant="emerald" dot>
                 Brinks Van #MH-01-BX-9021 • GPS / Gate Locked • 12ms
@@ -287,7 +287,7 @@ export default function TransfersTransitPage() {
             </h1>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
             <Button
               variant="outline"
               size="sm"

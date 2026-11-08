@@ -276,24 +276,24 @@ export default function AccountingLedgerPage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-16">
         {/* Top Header & Breadcrumb Banner */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
               <span>Financial Governance</span>
               <span>&gt;</span>
               <span className="text-gold font-medium">
                 Double-Entry Accounting &amp; Statutory GST Ledger
               </span>
-              <Badge variant="emerald" dot className="ml-2">
+              <Badge variant="emerald" dot className="ml-1 sm:ml-2">
                 FY 2026-27 Books Online • Balanced
               </Badge>
             </div>
-            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
+            <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground">
               General Ledger, Chart of Accounts &amp; GST Returns
             </h1>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
             <Badge variant="secondary" className="font-mono text-xs">
               GSTIN: 27AABCU9603R1ZM
             </Badge>

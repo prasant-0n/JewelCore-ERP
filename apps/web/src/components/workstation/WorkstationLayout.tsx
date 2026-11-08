@@ -17,20 +17,23 @@ export function WorkstationLayout({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 lg:grid-cols-12 gap-6 items-start",
+        "grid grid-cols-1 xl:grid-cols-12 gap-5 2xl:gap-6 items-start",
         className,
       )}
     >
-      {/* 65% Main Work Area (Columns 1-8 of 12 = 66.7%) */}
-      <div data-testid="workstation-main" className="lg:col-span-8 space-y-6">
+      {/* Main Work Area: 100% on tablet/pad; 7 cols on laptop (58.3%), 8 cols on 2xl desktop (66.7%) */}
+      <div
+        data-testid="workstation-main"
+        className="xl:col-span-7 2xl:col-span-8 space-y-6 min-w-0"
+      >
         {children}
       </div>
 
-      {/* 35% Sticky Inspector Area (Columns 9-12 of 12 = 33.3%) */}
+      {/* Sticky Inspector Area: 100% on tablet/pad; 5 cols on laptop (41.7%), 4 cols on 2xl desktop (33.3%) */}
       <div
         data-testid="workstation-inspector"
         className={cn(
-          "lg:col-span-4 lg:sticky lg:top-20 space-y-4",
+          "xl:col-span-5 2xl:col-span-4 xl:sticky xl:top-20 space-y-4 min-w-0",
           inspectorClassName,
         )}
       >

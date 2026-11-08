@@ -163,8 +163,8 @@ export function TopHeader({
     <header className="h-14 bg-surface border-b border-surface-border px-3 sm:px-6 flex items-center justify-between z-40 flex-shrink-0">
       {/* Left: Mobile Nav Drawer, Brand & Store Context Selector */}
       <div className="flex items-center space-x-2 sm:space-x-6">
-        {/* Mobile Hamburger Drawer */}
-        <div className="md:hidden">
+        {/* Mobile / Tablet Hamburger Drawer */}
+        <div className="lg:hidden">
           <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
             <SheetTrigger asChild>
               <button
@@ -271,7 +271,7 @@ export function TopHeader({
       </div>
 
       {/* Center: Command Search Bar */}
-      <div className="hidden md:flex items-center w-80 lg:w-96">
+      <div className="hidden xl:flex items-center w-72 2xl:w-80">
         <div className="relative w-full">
           <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -286,14 +286,14 @@ export function TopHeader({
       </div>
 
       {/* Right: Hardware Mesh, Bullion Ticker, Theme Toggle, & Profile */}
-      <div className="flex items-center space-x-3 sm:space-x-4">
+      <div className="flex items-center space-x-2.5 sm:space-x-3.5">
         {/* Mobile / Floor Camera Barcode Scanner Button */}
         <button
           onClick={() => setIsScannerOpen(true)}
-          className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/40 transition-all text-xs font-mono"
+          className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/40 transition-all text-xs font-mono shrink-0"
           title="Scan Jewellery Barcode / QR with Camera"
         >
-          <Camera className="w-3.5 h-3.5 text-gold" />
+          <Camera className="w-3.5 h-3.5 text-gold shrink-0" />
           <span className="hidden sm:inline text-foreground font-medium text-[11px]">
             Scan Tag
           </span>
@@ -303,7 +303,7 @@ export function TopHeader({
         <div className="relative">
           <button
             onClick={() => setIsMeshOpen(!isMeshOpen)}
-            className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs font-mono"
+            className="hidden xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/30 transition-all text-xs font-mono shrink-0"
             title="Inspect Live Hardware Telemetry Mesh & Serial Instruments"
           >
             <Radio className="w-3.5 h-3.5 text-gold" />

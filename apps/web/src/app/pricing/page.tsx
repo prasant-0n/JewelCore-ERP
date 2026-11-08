@@ -417,24 +417,24 @@ export default function PricingMasterPage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
         {/* Top Subheader: Breadcrumbs, Market Telemetry & Actions */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-border pb-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
               <span>Flagship Mumbai (INV-11)</span>
               <span>&gt;</span>
               <span className="text-gold font-medium">
                 Bullion Fixing & Dynamic Pricing Engine
               </span>
-              <Badge variant="emerald" dot className="ml-2">
+              <Badge variant="emerald" dot className="ml-1 sm:ml-2">
                 MCX Gold Spot ₹{liveGoldRate.toLocaleString("en-IN", { minimumFractionDigits: 1 })}/g • Reuters IBJA Feed Live
               </Badge>
             </div>
-            <h1 className="text-2xl font-serif font-bold tracking-tight text-foreground">
+            <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground">
               Bullion Fixing, Dynamic Making Charges &amp; Margin Rules
             </h1>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
             <Button
               variant="outline"
               size="sm"

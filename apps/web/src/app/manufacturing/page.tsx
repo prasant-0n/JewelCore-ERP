@@ -937,7 +937,7 @@ export default function ManufacturingPage() {
 
         {/* TAB 4: BOM RECIPES */}
         {activeTab === "boms" && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {boms.map((bom) => (
               <Card key={bom.id} className="bg-card/40 border-border/40 p-5 space-y-3">
                 <div className="flex items-start justify-between">
