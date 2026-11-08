@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { JewelCoreLogo } from "@/components/common/JewelCoreLogo";
 import { BRANCH_STORES } from "@/hooks/useStoreContext";
@@ -25,6 +25,17 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [rememberTerminal, setRememberTerminal] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("session_expired") === "true") {
+        setErrorMessage(
+          "Your workstation session timed out. Please authenticate with your corporate credentials to resume.",
+        );
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

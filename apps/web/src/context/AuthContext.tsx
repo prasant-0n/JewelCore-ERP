@@ -105,6 +105,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  // Listen for silent token renewal or session expiry broadcasts from ApiClient
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleTokenRefreshed = (e: Event) => {
+      const customEvent = e as CustomEvent<{ token: string }>;
+      if (customEvent.detail?.token) {
+        setToken(customEvent.detail.token);
+      }
+    };
+
+    const handleSessionExpired = () => {
+      setUser(null);
+      setToken(null);
+      toast.error("Session Expired", {
+        description: "Your workstation session has timed out. Please sign in again.",
+      });
+      router.push("/login?session_expired=true");
+    };
+
+    window.addEventListener("jewelcore:token-refreshed", handleTokenRefreshed);
+    window.addEventListener("jewelcore:session-expired", handleSessionExpired);
+
+    return () => {
+      window.removeEventListener("jewelcore:token-refreshed", handleTokenRefreshed);
+      window.removeEventListener("jewelcore:session-expired", handleSessionExpired);
+    };
+  }, [router]);
+
   const switchStore = useCallback((storeOrId: BranchStore | string) => {
     const targetStore =
       typeof storeOrId === "string"
@@ -142,6 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await api.post<{
         data: {
           accessToken: string;
+          refreshToken?: string;
           user: {
             id: string;
             organizationId: string;
@@ -183,6 +213,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem("jewelcore_logged_out");
         localStorage.setItem("jewelcore_token", accessToken);
         localStorage.setItem("jewelcore_user", JSON.stringify(authUser));
+        api.setRefreshToken(res.data.refreshToken || "mock-jwt-refresh-token");
       }
 
       if (storeId) {
@@ -269,6 +300,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem("jewelcore_logged_out");
         localStorage.setItem("jewelcore_token", accessToken);
         localStorage.setItem("jewelcore_user", JSON.stringify(authUser));
+        api.setRefreshToken("mock-jwt-refresh-token");
       }
 
       if (storeId) {
@@ -296,6 +328,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(() => {
     api.setToken(null);
+    api.setRefreshToken(null);
     setToken(null);
     setUser(null);
     setPermissions([]);

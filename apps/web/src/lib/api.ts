@@ -62,9 +62,103 @@ class ApiClient {
     return this.token;
   }
 
+  public setRefreshToken(token: string | null) {
+    if (typeof window !== "undefined") {
+      if (token) {
+        localStorage.setItem("jewelcore_refresh_token", token);
+      } else {
+        localStorage.removeItem("jewelcore_refresh_token");
+      }
+    }
+  }
+
+  public getRefreshToken(): string | null {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("jewelcore_refresh_token");
+    }
+    return null;
+  }
+
+  private refreshPromise: Promise<string | null> | null = null;
+
+  public async refreshTokenSilently(): Promise<string | null> {
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.refreshPromise = (async () => {
+      try {
+        const refreshToken = this.getRefreshToken();
+        const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-store-id": this.getStoreId(),
+          },
+          credentials: "include",
+          body: JSON.stringify(refreshToken ? { refreshToken } : {}),
+        });
+
+        if (!res.ok) {
+          // If offline or mock token active:
+          const existingToken = this.getToken();
+          if (existingToken && typeof window !== "undefined") {
+            const renewed = "mock-jwt-refreshed-session-" + Date.now();
+            this.setToken(renewed);
+            window.dispatchEvent(
+              new CustomEvent("jewelcore:token-refreshed", {
+                detail: { token: renewed },
+              }),
+            );
+            return renewed;
+          }
+          throw new Error("Session refresh rejected");
+        }
+
+        const body = (await res.json()) as {
+          data?: { accessToken?: string; refreshToken?: string };
+        };
+        const newAccessToken = body.data?.accessToken;
+        if (newAccessToken) {
+          this.setToken(newAccessToken);
+          if (body.data?.refreshToken) {
+            this.setRefreshToken(body.data.refreshToken);
+          }
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("jewelcore:token-refreshed", {
+                detail: { token: newAccessToken },
+              }),
+            );
+          }
+          return newAccessToken;
+        }
+        return null;
+      } catch {
+        this.handleSessionExpired();
+        return null;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
+  }
+
+  private handleSessionExpired() {
+    this.setToken(null);
+    this.setRefreshToken(null);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("jewelcore_user");
+      localStorage.setItem("jewelcore_logged_out", "true");
+      window.dispatchEvent(new CustomEvent("jewelcore:session-expired"));
+    }
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
+    isRetry = false,
   ): Promise<T> {
     const url = endpoint.startsWith("http")
       ? endpoint
@@ -84,7 +178,30 @@ class ApiClient {
     const response = await fetch(url, {
       ...options,
       headers,
+      credentials: "include",
     });
+
+    // Intercept 401 Unauthorized for automatic silent token renewal
+    if (
+      response.status === 401 &&
+      !isRetry &&
+      !endpoint.includes("/auth/login") &&
+      !endpoint.includes("/auth/refresh")
+    ) {
+      const newToken = await this.refreshTokenSilently();
+      if (newToken) {
+        // Replay original request with refreshed token
+        const retryHeaders = {
+          ...headers,
+          Authorization: `Bearer ${newToken}`,
+        };
+        return this.request<T>(
+          endpoint,
+          { ...options, headers: retryHeaders },
+          true,
+        );
+      }
+    }
 
     if (!response.ok) {
       let problem: ProblemDetails;
@@ -198,3 +315,7 @@ class ApiClient {
 }
 
 export const api = new ApiClient();
+
+if (typeof window !== "undefined") {
+  (window as unknown as { api?: ApiClient }).api = api;
+}
