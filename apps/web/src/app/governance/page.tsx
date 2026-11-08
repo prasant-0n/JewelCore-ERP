@@ -14,6 +14,7 @@ import {
 import { GovernanceInspector } from "../../components/governance/GovernanceInspector";
 import { EmergencyOverrideModal } from "../../components/governance/EmergencyOverrideModal";
 import { AuditTrailModal } from "../../components/governance/AuditTrailModal";
+import { DualKeyQuorumModal } from "../../components/governance/DualKeyQuorumModal";
 import { api, DEFAULT_STORE_ID } from "../../lib/api";
 import {
   WorkstationKpiGrid,
@@ -158,6 +159,7 @@ export default function GovernanceApprovalPage() {
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isOverrideModalOpen, setIsOverrideModalOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [isQuorumModalOpen, setIsQuorumModalOpen] = useState(false);
   const [isDualSigningAll, setIsDualSigningAll] = useState(false);
 
   // Compute metrics
@@ -380,6 +382,16 @@ export default function GovernanceApprovalPage() {
             </Button>
 
             <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsQuorumModalOpen(true)}
+              className="border-gold/40 text-gold hover:bg-gold/10 font-mono text-xs"
+            >
+              <KeyRound className="w-3.5 h-3.5 mr-1 text-gold" />
+              <span>Dual-Key Quorum Signoff</span>
+            </Button>
+
+            <Button
               variant="gold"
               size="sm"
               onClick={handleDualSignBatchAll}
@@ -505,6 +517,29 @@ export default function GovernanceApprovalPage() {
         <AuditTrailModal
           isOpen={isAuditModalOpen}
           onClose={() => setIsAuditModalOpen(false)}
+        />
+
+        {/* Modal for Maker-Checker Dual-Key Quorum Authorization */}
+        <DualKeyQuorumModal
+          isOpen={isQuorumModalOpen}
+          onClose={() => setIsQuorumModalOpen(false)}
+          actionTitle="Safe 01 Bullion Withdrawal #GOV-2026-091"
+          valuationInr={36702500}
+          targetResource="Main Safe 01 • Compartment Ingot-Rack A"
+          onQuorumAuthorized={(checker) => {
+            setBatches((prev) =>
+              prev.map((b) => ({
+                ...b,
+                status: "FULLY_APPROVED" as const,
+                items: b.items.map((i) => ({
+                  ...i,
+                  status: "DUAL_SIGNED_RELEASED" as const,
+                  keyholder2Name: checker.checkerName,
+                  keyholder2Status: "SIGNED" as const,
+                })),
+              })),
+            );
+          }}
         />
       </div>
     </AppShell>

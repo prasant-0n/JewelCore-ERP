@@ -20,6 +20,7 @@ import { TabularCurrency } from "@/components/workstation/TabularCurrency";
 import { StatusBadge } from "@/components/workstation/StatusBadge";
 import { toast } from "sonner";
 import { api, DEFAULT_STORE_ID } from "../../lib/api";
+import { DualKeyQuorumModal } from "./DualKeyQuorumModal";
 
 interface GovernanceInspectorProps {
   item: GovernanceItemData | null;
@@ -38,6 +39,7 @@ export function GovernanceInspector({
 }: GovernanceInspectorProps) {
   const [isSigning, setIsSigning] = useState(false);
   const [merkleViewActive, setMerkleViewActive] = useState(false);
+  const [isQuorumModalOpen, setIsQuorumModalOpen] = useState(false);
 
   if (!item) {
     return (
@@ -381,7 +383,36 @@ export function GovernanceInspector({
                 : "Insert SmartCard & Dual-Sign Release (Key 2)"}
             </span>
           </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsQuorumModalOpen(true)}
+            disabled={keyholder2Status === "SIGNED"}
+            className="w-full text-xs font-mono border-gold/40 text-gold hover:bg-gold/10"
+          >
+            <KeyRound className="w-3.5 h-3.5 mr-1 text-gold" />
+            <span>Launch Dual-Key Quorum Dialog</span>
+          </Button>
         </div>
+
+        {/* Reusable Dual-Key Quorum Modal */}
+        <DualKeyQuorumModal
+          isOpen={isQuorumModalOpen}
+          onClose={() => setIsQuorumModalOpen(false)}
+          actionTitle={actionTitle}
+          valuationInr={valuationInr}
+          targetResource={targetVaultLocation}
+          makerName={keyholder1Name}
+          onQuorumAuthorized={(checker) => {
+            onAuthorizeKey2?.({
+              ...item,
+              keyholder2Name: checker.checkerName,
+              keyholder2Status: "SIGNED",
+              status: "DUAL_SIGNED_RELEASED",
+            });
+          }}
+        />
       </CardContent>
     </Card>
   );
