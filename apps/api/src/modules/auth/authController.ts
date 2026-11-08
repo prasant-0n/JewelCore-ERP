@@ -119,6 +119,68 @@ export async function myStoresHandler(
   }
 }
 
+export async function refreshHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    let refreshToken = req.body?.refreshToken;
+    if (!refreshToken && req.headers.cookie) {
+      const match = req.headers.cookie.match(/refreshToken=([^;]+)/);
+      if (match && match[1]) refreshToken = decodeURIComponent(match[1]);
+    }
+
+    if (!refreshToken) {
+      throw new UnauthorizedError(
+        "Refresh token is required",
+        "ERR_REFRESH_TOKEN_REQUIRED",
+      );
+    }
+
+    const claims = await verifyJwt(refreshToken);
+    const user = await getCurrentUserService(claims.userId);
+
+    const accessToken = await signAccessToken({
+      userId: user.id,
+      orgId: user.organizationId,
+      email: user.email,
+    });
+
+    res.status(200).json({
+      data: {
+        accessToken,
+        user,
+      },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function logoutHandler(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/api/v1/auth",
+    });
+
+    res.status(200).json({
+      data: { message: "Successfully logged out of workstation" },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function personaTokenHandler(
   req: Request,
   res: Response,

@@ -21,6 +21,7 @@ import {
   Camera,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import {
   Sheet,
@@ -34,6 +35,7 @@ import { api } from "../../lib/api";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
 import { useStoreContext, BRANCH_STORES, BranchStore } from "../../hooks/useStoreContext";
+import { useAuth } from "../../context/AuthContext";
 import { JewelCoreLogo } from "./JewelCoreLogo";
 import { CameraScannerModal } from "./CameraScannerModal";
 import { toast } from "sonner";
@@ -101,6 +103,7 @@ export function TopHeader({
     syncExchangeFeed,
   } = useHardwareTelemetry();
   const { currentStore, stores, switchStore } = useStoreContext();
+  const { logout } = useAuth();
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isMeshOpen, setIsMeshOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -733,6 +736,19 @@ export function TopHeader({
                     )}
                   </button>
                 ))}
+
+                <div className="border-t border-surface-border mt-1 pt-1">
+                  <button
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      logout();
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs flex items-center space-x-2.5 text-status-rose hover:bg-status-rose/10 transition-colors"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span className="font-medium">Sign Out of Workstation</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>

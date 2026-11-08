@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaRegister } from "@/components/common/PwaRegister";
 
@@ -82,9 +83,11 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange
         >
-          <PwaRegister />
-          {children}
-          <Toaster position="bottom-right" />
+          <AuthProvider>
+            <PwaRegister />
+            {children}
+            <Toaster position="bottom-right" />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

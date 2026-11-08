@@ -2,6 +2,8 @@ import { Router } from "express";
 import {
   registerHandler,
   loginHandler,
+  refreshHandler,
+  logoutHandler,
   meHandler,
   myStoresHandler,
   personaTokenHandler,
@@ -12,6 +14,8 @@ export function createAuthRouter(): Router {
 
   router.post("/register", registerHandler);
   router.post("/login", loginHandler);
+  router.post("/refresh", refreshHandler);
+  router.post("/logout", logoutHandler);
   router.post("/persona-token", personaTokenHandler);
   router.get("/me", meHandler);
   router.get("/me/stores", myStoresHandler);

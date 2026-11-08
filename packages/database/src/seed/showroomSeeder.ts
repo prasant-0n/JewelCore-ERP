@@ -94,8 +94,9 @@ export async function seedShowroomDatabase(): Promise<void> {
   // 3. Seed Showroom Operational Staff Personas & User Roles
   // eslint-disable-next-line no-console
   console.log("[3/6] Seeding Showroom Operational Personas & Credentials...");
+  // Seeded Argon2id hash for default password: JewelCore@2026
   const dummyHash =
-    "$argon2id$v=19$m=65536,t=3,p=4$dGVzdHNhbHQ$testpasswordhash";
+    "$argon2id$v=19$m=19456,t=2,p=1$boXwNYA3SipXVGifZ89rnA$DjAB+4iNmKdglnBDOUWafz4rOOYj61kjm/IvHIjGBi0";
   const users = [
     {
       id: "0192e300-0002-7000-8000-000000000001",
