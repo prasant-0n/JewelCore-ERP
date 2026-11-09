@@ -1,0 +1,68 @@
+name: "🐛 Bug Report"
+description: "Report a bug or unexpected behavior in JewelCore ERP"
+title: "[BUG]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve JewelCore ERP! Please provide as much context as possible.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      description: Which part of JewelCore ERP is exhibiting the issue?
+      options:
+        - "apps/web (Next.js 15 Frontend)"
+        - "apps/api (Express 5 REST API & Telemetry)"
+        - "apps/worker (BullMQ Background Jobs)"
+        - "packages/database (PostgreSQL Schema & Migrations)"
+        - "packages/shared (Zod Contracts & DTOs)"
+        - "Statutory Regulatory Engines (BIS / GST / E-Way)"
+        - "Hardware IoT Telemetry (Scale RS-232 / RFID)"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: "e.g. When performing Karigar job-work metal reconciliation, the shrinkage recovery calculation..."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Exact steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '/manufacturing'
+        2. Click on 'Karigar Job Order #...'
+        3. Enter gross finished weight
+        4. See unexpected error...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened instead?
+      placeholder: "e.g. The mass-balance equation should automatically credit recoverable scrap..."
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Information
+      description: Node version, OS, Docker version, browser, etc.
+      value: |
+        - OS: [e.g. Ubuntu 24.04, macOS Sonoma, Windows 11]
+        - Node Version: [e.g. v22.12.0]
+        - pnpm Version: [e.g. v9.15.0]
+        - Browser (for Web issues): [e.g. Chrome 130, Firefox 132]
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs or Error Output
+      description: Copy and paste any console logs or server stack traces.
+      render: shell

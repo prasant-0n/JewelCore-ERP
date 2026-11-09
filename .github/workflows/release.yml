@@ -10,12 +10,13 @@ permissions:
 
 jobs:
   release:
-    name: Build & Publish Release
+    name: 🚀 Build & Publish Release
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     services:
       postgres:
-        image: postgres:18-alpine
+        image: postgres:16-alpine
         env:
           POSTGRES_USER: jewelcore
           POSTGRES_PASSWORD: jewelcore_dev
@@ -29,6 +30,17 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6380:6379
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5434
@@ -36,6 +48,9 @@ jobs:
       POSTGRES_PASSWORD: jewelcore_dev
       POSTGRES_DB: jewelcore_erp
       DATABASE_URL: postgres://jewelcore:jewelcore_dev@localhost:5434/jewelcore_erp
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6380
+      REDIS_URL: redis://127.0.0.1:6380
       NODE_ENV: test
       JWT_SECRET: jewelcore-test-jwt-secret-key-32-chars-long!
       PORT: 4000
@@ -58,11 +73,16 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Monorepo
-        run: pnpm build
+      - name: Monorepo Typecheck
+        run: pnpm run typecheck
 
-      - name: Run Test Verification
-        run: pnpm test
+      - name: Monorepo Build
+        run: pnpm run build
+
+      - name: Database Schema Seeding & Vitest Verification
+        run: |
+          pnpm run db:seed
+          pnpm test
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

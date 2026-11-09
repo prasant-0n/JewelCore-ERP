@@ -1,0 +1,44 @@
+name: "🏛️ Statutory / Regulatory Update"
+description: "Report an update or change in BIS hallmarking, GST, E-Invoice, or Indian jewellery regulations"
+title: "[COMPLIANCE]: "
+labels: ["compliance", "statutory", "regulatory"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to flag government circulars, GST Council notifications, BIS standard revisions, or PMLA guideline adjustments.
+  - type: dropdown
+    id: authority
+    attributes:
+      label: Governing Regulatory Body
+      options:
+        - "Bureau of Indian Standards (BIS) / IS 1417"
+        - "GST Council / Central Board of Indirect Taxes (CBIC)"
+        - "National Informatics Centre (NIC) / E-Invoice & E-Way Bill"
+        - "Financial Intelligence Unit (FIU-IND) / PMLA 2002"
+        - "Income Tax Department (Section 269ST)"
+        - "Reserve Bank of India (RBI) / Bullion Guidelines"
+    validations:
+      required: true
+  - type: input
+    id: notification_ref
+    attributes:
+      label: Official Circular / Notification Reference
+      placeholder: "e.g. CBIC Notification No. 38/2026-Central Tax or BIS Circular CMD-3/1417"
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Regulatory Change Summary
+      description: What changed in the statutory mandate and how does it affect JewelCore ERP calculations?
+      placeholder: "e.g. Threshold for mandatory E-Way Bill intra-state movement revised from..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_action
+    attributes:
+      label: Required Code / Engine Modifications
+      description: Specific schemas, thresholds, or delivery challan layouts that must be updated.
+    validations:
+      required: true

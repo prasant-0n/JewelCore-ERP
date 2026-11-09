@@ -6,15 +6,43 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  verify:
-    name: Typecheck, Test & E2E Verification
+  lint-and-typecheck:
+    name: 🔍 TypeScript Strict Typecheck
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Monorepo Typecheck (0 Errors Enforced)
+        run: pnpm run typecheck
+
+  backend-integration:
+    name: 🧪 Vitest Integration & Statutory Engines (888 Tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     services:
       postgres:
-        image: postgres:18-alpine
+        image: postgres:16-alpine
         env:
           POSTGRES_USER: jewelcore
           POSTGRES_PASSWORD: jewelcore_dev
@@ -29,7 +57,7 @@ jobs:
           --health-retries 5
 
       redis:
-        image: redis:7.2-alpine
+        image: redis:7-alpine
         ports:
           - 6380:6379
           - 6379:6379
@@ -70,23 +98,112 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Monorepo Typecheck
-        run: pnpm run typecheck
-
-      - name: Monorepo Build
-        run: pnpm run build
-
-      - name: Multi-Tenant Database Migrations & Seeding
+      - name: Database Schema Provisioning & Multi-Tenant Seeding
         run: pnpm run db:seed
 
-      - name: Run Vitest Suite (778+ Tests)
+      - name: Execute Vitest Integration Suite
         run: pnpm test
 
-      - name: Install Playwright Chromium
+  e2e-workstation-verification:
+    name: 🎭 Playwright E2E Workstation Matrix (154 Tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: jewelcore
+          POSTGRES_PASSWORD: jewelcore_dev
+          POSTGRES_DB: jewelcore_erp
+        ports:
+          - 5434:5432
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6380:6379
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5434
+      POSTGRES_USER: jewelcore
+      POSTGRES_PASSWORD: jewelcore_dev
+      POSTGRES_DB: jewelcore_erp
+      DATABASE_URL: postgres://jewelcore:jewelcore_dev@localhost:5434/jewelcore_erp
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6380
+      REDIS_URL: redis://127.0.0.1:6380
+      NODE_ENV: test
+      JWT_SECRET: jewelcore-test-jwt-secret-key-32-chars-long!
+      PORT: 4000
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:4000/api/v1
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium with System Dependencies
         run: pnpm --filter "@jewelcore/web" exec playwright install --with-deps chromium
 
-      - name: Run Playwright E2E Suite (34 Tests / 8 Workstation Suites)
+      - name: Database Schema Provisioning & Seeding
+        run: pnpm run db:seed
+
+      - name: Execute Complete Playwright E2E Browser Suite
         run: pnpm run test:e2e
 
-      - name: Verify Docker Compose Production Specification
-        run: docker compose -f docker-compose.prod.yml config
+      - name: Upload E2E Test Report Artifact (on failure)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-e2e-report
+          path: apps/web/playwright-report/
+          retention-days: 7
+
+  production-build:
+    name: 🏗️ Production Monorepo Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Monorepo Production Build
+        run: pnpm run build

@@ -1,0 +1,44 @@
+name: "✨ Feature Request"
+description: "Suggest an idea or new workstation capability for JewelCore ERP"
+title: "[FEATURE]: "
+labels: ["enhancement", "feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We welcome proposals for new workstations, IoT hardware protocols, statutory modules, or UI improvements!
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a specific operational problem or jewellery business workflow?
+      placeholder: "e.g. In high-turnover bullion trading, reconciling physical LBMA spot deliveries requires..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution & Workstation Flow
+      description: Describe how the new feature should work from an operator's perspective.
+      placeholder: "e.g. Add a dedicated settlement screen in /pricing that calculates..."
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions or workarounds you have considered.
+  - type: dropdown
+    id: compliance_impact
+    attributes:
+      label: Regulatory / Compliance Impact
+      description: Does this feature involve statutory tax, BIS hallmarking, PMLA KYC, or audit logging?
+      options:
+        - "No statutory impact"
+        - "BIS Hallmarking & HUID (IS 1417:2016)"
+        - "GST E-Invoice / E-Way Bill (CGST Rules)"
+        - "Karigar Job-Work Reconciliation (Form ITC-04)"
+        - "PMLA / Cash Reporting Thresholds"
+        - "Zero-Trust IAM / Quorum Approval"
+    validations:
+      required: true

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: JewelCore Security Advisory
+    url: https://github.com/prasanta-on/JewelCore-ERP/security/advisories
+    about: Report security vulnerabilities responsibly under private disclosure
+  - name: System Architecture & Compliance Overview
+    url: https://github.com/prasanta-on/JewelCore-ERP/blob/main/ARCHITECTURE.md
+    about: Read full documentation on PBAC, BIS HUID, and Karigar ITC-04 engines

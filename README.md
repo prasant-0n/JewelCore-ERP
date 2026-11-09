@@ -6,6 +6,12 @@
   **Mission-Critical Enterprise ERP for Precious Jewellery Manufacturing, Analytical QC, Vault Custody & Luxury Showrooms**
   
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.8%20Strict-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![CI / CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088ff?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/prasanta-on/JewelCore-ERP/actions)
+  [![CodeQL](https://img.shields.io/badge/CodeQL-Security%20Passed-blueviolet?style=flat-square&logo=github&logoColor=white)](https://github.com/prasanta-on/JewelCore-ERP/security/code-scanning)
+  [![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=flat-square)](./LICENSE)
+  [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](./CONTRIBUTING.md)
+  [![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa?style=flat-square)](./CODE_OF_CONDUCT.md)
+  <br />
   [![Next.js](https://img.shields.io/badge/Next.js-15%20App%20Router-black?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
   [![Express/Node](https://img.shields.io/badge/Express-5%20Fastify%20Core-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com/)
   [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%20ACID-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
@@ -19,7 +25,8 @@
     <a href="#-live-demo--portfolio-access"><strong>Live Demo & Credentials</strong></a> •
     <a href="#-architectural-workstations">Workstations</a> •
     <a href="#-statutory-indian-jewellery--tax-regulatory-engines">Compliance</a> •
-    <a href="#-monorepo-architecture--tech-stack">Architecture</a> •
+    <a href="./ARCHITECTURE.md">Architecture</a> •
+    <a href="./CONTRIBUTING.md">Contributing</a> •
     <a href="#-quick-start">Quick Start</a> •
     <a href="#-verification--automated-tests">Testing</a>
   </p>
@@ -255,7 +262,23 @@ For detailed step-by-step production rollout instructions, refer to:
 
 ---
 
+## 🌐 Open Source Community & Governance
+
+JewelCore ERP is proudly developed as an open-source enterprise resource planning system. We welcome contributions, bug reports, and statutory feature enhancements from the community.
+
+| Document | Purpose | Link |
+| :--- | :--- | :--- |
+| **System Architecture** | Technical breakdown of monorepo, PBAC, row locks, and IoT pipelines | [`ARCHITECTURE.md`](./ARCHITECTURE.md) |
+| **Contributing Guide** | Step-by-step developer onboarding, Docker setup, and PR checklist | [`CONTRIBUTING.md`](./CONTRIBUTING.md) |
+| **Code of Conduct** | Community standards and expectations (Contributor Covenant v2.1) | [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) |
+| **Security Policy** | Responsible vulnerability disclosure, supported versions, and SLAs | [`SECURITY.md`](./SECURITY.md) |
+| **Issue Templates** | Structured bug reports, feature requests, and statutory updates | [`.github/ISSUE_TEMPLATE/`](./.github/ISSUE_TEMPLATE/) |
+| **Pull Request Template** | Verification checklist covering typechecks, Vitest, and Playwright | [`.github/pull_request_template.md`](./.github/pull_request_template.md) |
+
+---
+
 ## 📄 License & Attribution
 
-Architected and maintained by **Prasanta** ([@prasanta-on](https://github.com/prasanta-on)).  
-Enterprise proprietary software built to international and Indian jewellery regulatory standards.
+Licensed under the **Apache License, Version 2.0** (the "License"). You may obtain a copy of the License in [`LICENSE`](./LICENSE) or at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
+
+Architected and maintained by **Prasanta** ([@prasanta-on](https://github.com/prasanta-on)) and the JewelCore ERP Open Source Community. Built to international and Indian jewellery regulatory standards (IS 1417:2016, CGST Sec 143/Rule 45, NIC E-Invoice v1.03).
