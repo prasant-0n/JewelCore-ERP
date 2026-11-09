@@ -9,6 +9,116 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-11-09
+
+### Added
+
+- **Karigar (Artisan) Job-Work Metal Reconciliation & Statutory GST ITC-04 Engine (Rule 45 / Section 143)**:
+  - **Statutory Delivery Challans (Form GST ITC-04)**:
+    - Designed Zod schemas and validation pipeline in `packages/shared/src/manufacturing/itc04Schemas.ts` implementing CGST Rule 45 and Section 143 governing job-work movement of precious bullion and gemstones.
+    - Built `itc04Service.ts` supporting full delivery challan lifecycle states (`ISSUED`, `PARTIALLY_RETURNED`, `COMPLETED`, `CANCELLED`).
+    - Added statutory tax identifiers: Consignor/Consignee GSTIN, PAN, Challan Number sequence, and mandatory 1-year return period monitoring (`dueReturnDate`).
+  - **Mass Balance Metal Reconciliation**:
+    - Implemented fine-grain conservation equations: $\text{Issued Pure Metal} = \text{Gross Finished Items} + \text{Recoverable Scrap (Dust/Sweeps)} + \text{Unaccounted Loss}$ with 0.001g precision.
+    - Built automated Karigar tolerance checking against predefined contractual shrinkage allowances.
+  - **Bullion Spot Shrinkage Financial Recovery**:
+    - Automatic financial liability calculation for unaccounted metal losses exceeding contractual thresholds: $\text{Excess Loss (g)} \times \text{Live MCX/LBMA 24K Spot Rate (₹/g)}$.
+    - Seamless settlement workflows allowing instant debit against karigar ledger accounts or deduction from making charges.
+  - **Statutory GST ITC-04 Quarterly Reporting**:
+    - Implemented quarterly reporting summary queries generating Table 1 (inputs sent to job worker) and Table 2 (inputs received back from job worker) for statutory GST filing.
+  - **REST API Endpoints (`apps/api/src/modules/manufacturing`)**:
+    - `POST /api/v1/manufacturing/itc04/challan` (`manufacturing:write`) - Generate Form GST ITC-04 delivery challan.
+    - `POST /api/v1/manufacturing/itc04/return` (`manufacturing:write`) - Record goods return against challan.
+    - `POST /api/v1/manufacturing/karigar/settle-loss` (`manufacturing:write`) - Execute metal reconciliation and spot financial recovery.
+    - `GET /api/v1/manufacturing/itc04/summary` (`manufacturing:read`) - Generate quarterly GST ITC-04 tax summary.
+    - `GET /api/v1/manufacturing/itc04/challans` (`manufacturing:read`) - List and filter delivery challans by status and karigar.
+  - **Web Atelier UI Workstation (`apps/web`)**:
+    - Created `Itc04ChallanModal.tsx` for issuing statutory GST ITC-04 delivery challans.
+    - Created `KarigarSettlementModal.tsx` for gravimetric weight reconciliation, shrinkage calculation, and spot financial recovery.
+    - Created `Itc04ChallanRegistry.tsx` integrated as the 5th operational tab on `/manufacturing`.
+  - **Automated Verification**:
+    - 15/15 unit and integration tests passing in `apps/api/tests/manufacturing.integration.test.ts`.
+    - 6/6 browser E2E tests passing in `apps/web/e2e/manufacturing-jobwork-reconciliation.spec.ts`.
+
+## [0.12.0] - 2026-11-09
+
+### Added
+
+- **Bureau of Indian Standards (BIS) Hallmarking & 6-Character HUID Registry (IS 1417:2016)**:
+  - **Regulatory Purity Scales & Schema Validation**:
+    - Defined purity standards in `packages/shared/src/qc/huidSchemas.ts`: `999` (24K), `916` (22K), `750` (18K), `585` (14K).
+    - Implemented strict 6-character alphanumeric regex verification (`^[A-Z0-9]{6}$`) preventing ambiguous optical characters (0/O, 1/I).
+  - **Assaying & Hallmarking Centre (AHC) Attestation**:
+    - Built `huidService.ts` tracking AHC identification codes, BIS operating license numbers, laser inscription dates, and cryptographic assay certificates.
+    - Integrated direct verification bridge simulating queries against the central government BIS Care Portal.
+  - **Web QC Workstation Integration (`apps/web/src/components/qc`)**:
+    - Created `BisCertificateModal.tsx` for rendering and printing official BIS Hallmarking Certificates with laser inscription QR codes.
+    - Created `HuidRegistrationModal.tsx` for QC technicians to record and attest 6-character HUIDs during final purity assay.
+    - Created `BisHuidRegistryModal.tsx` providing an auditable search interface for all hallmarked inventory pieces.
+  - **Automated Verification**:
+    - 6/6 browser E2E tests passing in `apps/web/e2e/bis-hallmarking-huid.spec.ts`.
+
+## [0.11.0] - 2026-11-09
+
+### Added
+
+- **Statutory GST E-Invoice & E-Way Bill Engine (NIC Schema 1.03 / Rule 48(4) & 138)**:
+  - **National Informatics Centre (NIC) Schema 1.03 Compliance**:
+    - Engineered `eInvoiceService.ts` producing fully compliant JSON payloads for the government Invoice Registration Portal (IRP).
+    - Implemented deterministic 64-character SHA-256 Invoice Reference Number (IRN) generation algorithm: $\text{SHA-256}(\text{Supplier GSTIN} + \text{FinYear} + \text{DocType} + \text{DocNumber})$.
+  - **Signed Dynamic QR Codes**:
+    - Generated signed B2B and B2C QR codes containing digital signatures, IRN, date, and tax segregation for on-the-spot regulatory scanning.
+  - **12-Digit Statutory E-Way Bill (EWB) Engine**:
+    - Built automated E-Way Bill generator for intra-state and inter-state precious jewellery consignments exceeding the ₹50,000 / ₹100,000 statutory thresholds under Rule 138.
+    - Integrated transit distance calculation and validity duration computation based on transport mode and vehicle details.
+  - **POS Cashier Workstation Integration (`/pos`)**:
+    - Integrated E-Invoice and E-Way Bill preview drawers with one-click PDF tax invoice generation and IRN printout.
+    - Implemented statutory 24-hour cancellation protocol preventing modification of registered invoices.
+
+## [0.10.0] - 2026-11-09
+
+### Added
+
+- **Hardware Security Token Binding & Workstation Device Fingerprinting (NIST SP 800-63B AAL3)**:
+  - **Cryptographic Hardware Binding**:
+    - Enforced Authenticator Assurance Level 3 (AAL3) by binding physical hardware security keys (FIDO2 / YubiKey) to authorized physical showroom terminals.
+  - **Multi-Vector Workstation Fingerprinting**:
+    - Implemented high-entropy device fingerprint generator capturing WebGL canvas hashes, Web Audio context entropy, hardware concurrency, and network interfaces.
+  - **Hardware Security Binding Management UI**:
+    - Created `HardwareBindingModal.tsx` allowing Super Admins and Security Officers to bind, audit, or revoke physical workstation cryptographic credentials.
+    - Added automated anomaly detection rejecting authentication when a valid hardware token is presented from an unapproved device fingerprint.
+
+## [0.9.0] - 2026-11-08
+
+### Added
+
+- **Enterprise Zero Trust IAM & High-Assurance Workstation Security (Milestones 1–8)**:
+  - **Active Workstation Sessions & Remote Revocation (`Milestone 1`)**:
+    - Created `WorkstationSessionsModal.tsx` displaying real-time operator heartbeat streams, IP geolocation, browser agents, and remote kill-switch terminal termination.
+  - **NIST SP 800-63B Staff Credential Governance (`Milestone 2`)**:
+    - Built `ChangePasswordModal.tsx` with real-time `zxcvbn` password entropy scoring meter, dictionary attack mitigation, and 90-day password rotation policies.
+  - **Time-Bound Delegated Authority & Supervisor Quorum (`Milestone 3`)**:
+    - Built `DelegatedAuthorityModal.tsx` enabling temporary privilege escalation with dual-operator co-signature and automated expiration timers.
+  - **Forensic IAM Security Audit Stream (`Milestone 4`)**:
+    - Built `IamAuditStreamModal.tsx` providing real-time forensic event logging with multi-category filtering (`AUTH`, `ACCESS`, `POLICY`, `SECURITY`), operator search, and CSV export.
+  - **FIDO2 / WebAuthn Biometric & Hardware Passkeys (`Milestone 5`)**:
+    - Built `WebAuthnPasskeysModal.tsx` supporting Touch ID, Windows Hello, and YubiKey credential enrollment with WebAuthn cryptographic attestation.
+  - **Showroom LAN Geofencing & Subnet Perimeter (`Milestone 6`)**:
+    - Implemented CIDR whitelist validation restricting workstation login and API access exclusively to registered showroom local area networks.
+  - **High-Assurance Step-Up Verification (`Milestone 7`)**:
+    - Built `StepUpAuthModal.tsx` prompting biometric or TOTP re-authentication prior to authorizing high-risk transactions (vault overrides, bullion price updates).
+  - **Break-Glass Emergency Bypass Protocol (`Milestone 8`)**:
+    - Created `BreakGlassModal.tsx` compliant with NIST SP 800-53 and SOC 2 Type II for dual-custody emergency access during catastrophic infrastructure outages.
+  - **Armored Consignment Dual-Custody PBAC & Electronic Seals (`Milestone 9`)**:
+    - Implemented dual-custody dispatch and intake sign-offs with tamper-evident electronic seals for inter-branch armoured transit in `/transfers`.
+
+### Fixed
+
+- **Web SSR Hydration Warnings**:
+  - Suppressed hydration discrepancies on `<body>` caused by browser extension attribute injection (`cz-shortcut-listen="true"`) in `apps/web/src/app/layout.tsx`.
+- **Responsive Viewport Architecture**:
+  - Remediated layout shifts across tablet (768px), laptop (1024px), and 4K desktop displays across all 20 web workstation views.
+
 ## [0.8.0] - 2026-11-07
 
 ### Added
