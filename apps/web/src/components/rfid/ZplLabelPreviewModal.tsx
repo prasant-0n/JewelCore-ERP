@@ -170,14 +170,14 @@ export function ZplLabelPreviewModal({
 
             <div className="bg-neutral-900 border-2 border-dashed border-gold/40 rounded-xl p-4 flex items-center justify-center">
               {/* Dumbbell Tag Contour */}
-              <div className="w-full max-w-[500px] h-28 bg-[#fdfbf7] dark:bg-white text-black rounded-lg p-2.5 shadow-lg border border-neutral-300 flex items-center justify-between select-none relative overflow-hidden">
+              <div className="w-full max-w-[560px] h-36 bg-[#fdfbf7] dark:bg-white text-black rounded-lg p-3 shadow-lg border-2 border-neutral-300 flex items-center justify-between select-none relative overflow-hidden">
                 {/* Left Wing (Barcode & SKU) */}
-                <div className="w-[44%] h-full flex flex-col justify-between pr-2 border-r border-dashed border-neutral-300">
+                <div className="w-[45%] h-full flex flex-col justify-between pr-2.5 border-r border-dashed border-neutral-300">
                   <div>
-                    <div className="text-[8px] font-black tracking-widest uppercase text-neutral-900">
+                    <div className="text-[8.5px] font-black tracking-widest uppercase text-neutral-900">
                       JewelCore Atelier
                     </div>
-                    <div className="text-[10px] font-mono font-bold text-neutral-950 mt-0.5">
+                    <div className="text-[11px] font-mono font-bold text-neutral-950 mt-0.5">
                       {tagData.serialNumber}
                     </div>
                   </div>
@@ -186,60 +186,65 @@ export function ZplLabelPreviewModal({
                   <div className="my-auto py-0.5 flex items-center justify-center bg-white rounded-xs">
                     <BarcodeRenderer
                       value={tagData.serialNumber}
-                      height={20}
-                      width={1.0}
+                      height={24}
+                      width={1.1}
                       margin={1}
                       displayValue={false}
                     />
                   </div>
 
-                  <div className="text-[7.5px] font-mono text-neutral-600 truncate">
+                  <div className="text-[8px] font-mono text-neutral-700 font-semibold truncate">
                     SKU: {tagData.skuCode}
                   </div>
                 </div>
 
                 {/* Center Bridge (String Hole / Tail for Rings) */}
-                <div className="w-[12%] h-full flex flex-col items-center justify-center">
+                <div className="w-[10%] h-full flex flex-col items-center justify-center">
                   <div className="w-4 h-4 rounded-full border-2 border-neutral-300 bg-neutral-100 flex items-center justify-center">
                     <div className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
                   </div>
-                  <span className="text-[6.5px] font-mono text-neutral-400 mt-1 uppercase">Bridge</span>
+                  <span className="text-[6.5px] font-mono text-neutral-400 mt-1 uppercase font-bold">Bridge</span>
                 </div>
 
-                {/* Right Wing (Purity, Metrology, Hallmark & DataMatrix) */}
-                <div className="w-[44%] h-full flex flex-col justify-between pl-2">
-                  <div className="flex items-start justify-between">
+                {/* Right Wing (Purity, Metrology, Hallmark & Standard 2D QR Code) */}
+                <div className="w-[45%] h-full flex items-center justify-between pl-2.5 gap-2">
+                  <div className="flex-1 flex flex-col justify-between h-full py-0.5 min-w-0">
                     <div>
-                      <div className="text-[9px] font-bold text-neutral-900 leading-tight">
+                      <div className="text-[10px] font-bold text-neutral-900 leading-tight">
                         {tagData.metalPurity}
                       </div>
-                      <div className="text-[7.5px] font-mono text-neutral-700 mt-0.5">
-                        Gr: <span className="font-bold">{tagData.grossWeightGrams.toFixed(3)}g</span> • Nt: {tagData.netWeightGrams.toFixed(3)}g
+                      <div className="text-[8px] font-mono text-neutral-700 mt-0.5 font-medium">
+                        Gr: <span className="font-bold text-neutral-950">{tagData.grossWeightGrams.toFixed(3)}g</span> <br />
+                        Nt: {tagData.netWeightGrams.toFixed(3)}g
                       </div>
                       {tagData.diamondCarat ? (
-                        <div className="text-[7.5px] font-mono font-semibold text-neutral-900">
+                        <div className="text-[7.5px] font-mono font-semibold text-neutral-900 mt-0.5">
                           Dia: {tagData.diamondCarat.toFixed(2)}ct VVS1
                         </div>
                       ) : (
-                        <div className="text-[7px] font-mono text-neutral-600">Pure Bullion</div>
+                        <div className="text-[7.5px] font-mono text-neutral-600 mt-0.5">Pure Bullion</div>
                       )}
                     </div>
 
-                    {/* Industrial ISO/IEC 18004 QR Matrix */}
-                    <div className="shrink-0">
-                      <QrCodeRenderer
-                        value={`JEWELCORE:${tagData.serialNumber}:${tagData.hallmarkId}:${tagData.grossWeightGrams}g`}
-                        size={32}
-                        margin={0}
-                        errorCorrectionLevel="M"
-                      />
+                    <div className="flex items-center justify-between text-[7.5px] font-mono text-neutral-700 border-t border-neutral-200 pt-0.5 mt-0.5">
+                      <span>HUID: {tagData.hallmarkId}</span>
+                      <span className="font-bold text-neutral-950">
+                        ₹{tagData.retailPriceInr?.toLocaleString("en-IN")}
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[7px] font-mono text-neutral-600 border-t border-neutral-200 pt-0.5 mt-1">
-                    <span>HUID: {tagData.hallmarkId}</span>
-                    <span className="font-bold text-neutral-950">
-                      ₹{tagData.retailPriceInr?.toLocaleString("en-IN")}
+                  {/* Standard Industry Size 2D QR Code Matrix */}
+                  <div className="shrink-0 flex flex-col items-center justify-center bg-white p-0.5 rounded border border-neutral-300 shadow-2xs">
+                    <QrCodeRenderer
+                      value={`JEWELCORE:${tagData.serialNumber}:${tagData.hallmarkId}:${tagData.grossWeightGrams}g`}
+                      size={68}
+                      margin={1}
+                      errorCorrectionLevel="H"
+                      centerLogo="jewelcore"
+                    />
+                    <span className="text-[6.5px] font-mono text-neutral-500 font-bold uppercase mt-0.5">
+                      ISO 18004
                     </span>
                   </div>
                 </div>

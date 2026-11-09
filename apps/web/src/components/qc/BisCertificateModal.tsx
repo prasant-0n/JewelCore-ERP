@@ -174,7 +174,7 @@ export function BisCertificateModal({
                     record.bisCareQrUrl ||
                     `https://www.manakonline.in/MANAK/bisCare/viewHuidDetails?huid=${encodeURIComponent(record.huid)}`
                   }
-                  size={64}
+                  size={84}
                   margin={1}
                   errorCorrectionLevel="H"
                   centerLogo="bis"

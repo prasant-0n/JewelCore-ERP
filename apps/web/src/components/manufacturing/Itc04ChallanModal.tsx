@@ -226,7 +226,7 @@ export function Itc04ChallanModal({
               <div className="shrink-0">
                 <QrCodeRenderer
                   value={`GST-ITC04:${challan.challanNumber}:CONSIGNOR=${challan.consignorGstin}:ARTISAN=${challan.karigarCode}:GROSS=${challan.issuedGrossMetalGrams}g:SEAL=${challan.securitySealNumber}`}
-                  size={64}
+                  size={84}
                   margin={1}
                   errorCorrectionLevel="H"
                   centerLogo="gst"

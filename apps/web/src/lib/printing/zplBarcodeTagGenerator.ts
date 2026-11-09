@@ -16,48 +16,54 @@ export interface JewelleryTagData {
   hallmarkId?: string;
   retailPriceInr?: number;
   epcTag?: string;
+  symbology?: "QR_CODE" | "DATAMATRIX";
 }
 
 /**
- * Generates ZPL II code for a standard 50mm x 12mm jewellery dumbbell tag (203 DPI)
- * Label width: ~400 dots, Label height: ~120 dots
+ * Generates ZPL II code for a standard jewellery dumbbell / butterfly tag (203/300 DPI)
+ * Label width: ~420 dots, Label height: ~130 dots
  */
 export function generateZplJewelleryTag(tag: JewelleryTagData): string {
-  const dataMatrixPayload = `JC:${tag.serialNumber}:${tag.metalPurity}:${tag.grossWeightGrams.toFixed(3)}g:${tag.netWeightGrams.toFixed(3)}g:${tag.hallmarkId || "HALLMARKED"}`;
+  const payload = `JC:${tag.serialNumber}:${tag.metalPurity.replace(/\s+/g, "")}:${tag.grossWeightGrams.toFixed(3)}g:${tag.netWeightGrams.toFixed(3)}g:${tag.hallmarkId || "HALLMARKED"}`;
 
   let zpl = "^XA\n";
-  zpl += "^PW420\n"; // Print width
-  zpl += "^LL130\n"; // Label length
+  zpl += "^PW440\n"; // Print width
+  zpl += "^LL140\n"; // Label length
   zpl += "^LH0,0\n"; // Label home
 
   // Left Wing: Brand & Barcode
   zpl += "^FO15,10^A0N,18,18^FDJEWELCORE ATELIER^FS\n";
   zpl += `^FO15,30^A0N,16,16^FD${tag.serialNumber}^FS\n`;
-  zpl += `^FO15,48^BY1,2,30^BCN,30,N,N,N^FD${tag.serialNumber}^FS\n`;
-  zpl += `^FO15,82^A0N,14,14^FD${tag.skuCode}^FS\n`;
+  zpl += `^FO15,50^BY1,2,32^BCN,32,N,N,N^FD${tag.serialNumber}^FS\n`;
+  zpl += `^FO15,86^A0N,14,14^FD${tag.skuCode}^FS\n`;
 
   // Center / Tail Bridge (Blank for string wrap)
 
-  // Right Wing: Weight, Purity, Hallmark & DataMatrix
-  zpl += `^FO230,10^A0N,18,18^FB180,1,0,R^FD${tag.metalPurity}^FS\n`;
-  zpl += `^FO230,30^A0N,15,15^FB180,1,0,R^FDGr:${tag.grossWeightGrams.toFixed(3)}g Nt:${tag.netWeightGrams.toFixed(3)}g^FS\n`;
+  // Right Wing: Weight, Purity, Hallmark & Standard 2D QR / DataMatrix
+  zpl += `^FO230,10^A0N,18,18^FB140,1,0,L^FD${tag.metalPurity}^FS\n`;
+  zpl += `^FO230,30^A0N,15,15^FB140,1,0,L^FDGr:${tag.grossWeightGrams.toFixed(3)}g Nt:${tag.netWeightGrams.toFixed(3)}g^FS\n`;
 
   if (tag.diamondCarat && tag.diamondCarat > 0) {
-    zpl += `^FO230,48^A0N,14,14^FB180,1,0,R^FDDia:${tag.diamondCarat.toFixed(2)}ct^FS\n`;
+    zpl += `^FO230,48^A0N,14,14^FB140,1,0,L^FDDia:${tag.diamondCarat.toFixed(2)}ct^FS\n`;
   } else {
-    zpl += `^FO230,48^A0N,14,14^FB180,1,0,R^FD100% PURE BULLION^FS\n`;
+    zpl += `^FO230,48^A0N,14,14^FB140,1,0,L^FD100% BULLION^FS\n`;
   }
 
   if (tag.hallmarkId) {
-    zpl += `^FO230,64^A0N,13,13^FB180,1,0,R^FDHUID:${tag.hallmarkId}^FS\n`;
+    zpl += `^FO230,64^A0N,13,13^FB140,1,0,L^FDHUID:${tag.hallmarkId}^FS\n`;
   }
 
   if (tag.retailPriceInr) {
-    zpl += `^FO230,80^A0N,16,16^FB180,1,0,R^FDM.R.P: Rs ${tag.retailPriceInr.toLocaleString("en-IN")}^FS\n`;
+    zpl += `^FO230,82^A0N,16,16^FB140,1,0,L^FDM.R.P: Rs ${tag.retailPriceInr.toLocaleString("en-IN")}^FS\n`;
   }
 
-  // 2D DataMatrix Barcode in right-corner
-  zpl += `^FO360,35^BXN,3,200,,,,1^FD${dataMatrixPayload}^FS\n`;
+  // Right Wing 2D Matrix (Standard ISO/IEC 18004 QR Code or DataMatrix at 10-12mm physical size)
+  if (tag.symbology === "DATAMATRIX") {
+    zpl += `^FO340,18^BXN,4,200,,,,1^FD${payload}^FS\n`;
+  } else {
+    // Zebra Native QR Code (Model 2, Magnification 4, Error Correction Q for durability)
+    zpl += `^FO330,12^BQN,2,4,Q,7^FDQA,${payload}^FS\n`;
+  }
 
   zpl += "^XZ\n";
   return zpl;

@@ -139,7 +139,7 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
           <div className="shrink-0">
             <QrCodeRenderer
               value={`otpauth://totp/JewelCore%20Atelier:${encodeURIComponent(user?.email || "admin@jewelcore.internal")}?secret=${encodeURIComponent(DEFAULT_SECRET)}&issuer=JewelCore%20Atelier&algorithm=SHA1&digits=6&period=30`}
-              size={116}
+              size={132}
               centerLogo="lock"
               showToolbar={true}
               caption="RFC 6238 TOTP"
