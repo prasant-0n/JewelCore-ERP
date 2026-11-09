@@ -4,6 +4,7 @@ import {
   requirePermission,
 } from "../../common/authMiddleware.js";
 import { storeContextMiddleware } from "../../common/storeContextMiddleware.js";
+import { createRateLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   recordDailyMarketRateHandler,
   getLatestEffectiveRateHandler,
@@ -40,9 +41,17 @@ import {
 export function createPricingRouter(): Router {
   const router = Router();
 
+  // Rate limiter for public live bullion ticker endpoints (120 req/min per IP)
+  const bullionFeedLimiter = createRateLimiter({
+    keyPrefix: "bullion_feed",
+    limit: 120,
+    windowSeconds: 60,
+    message: "Bullion rate feed rate limit exceeded. Please throttle live polling interval.",
+  });
+
   // Public/Kiosk Live Bullion Feed Telemetry (unauthenticated for showroom floor displays & ticker widgets)
-  router.get("/feed/status", getBullionFeedStatusHandler);
-  router.get("/feed/history", getBullionFeedHistoryHandler);
+  router.get("/feed/status", bullionFeedLimiter, getBullionFeedStatusHandler);
+  router.get("/feed/history", bullionFeedLimiter, getBullionFeedHistoryHandler);
 
   // All subsequent pricing endpoints require authentication
   router.use(authenticate);

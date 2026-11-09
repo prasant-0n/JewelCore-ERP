@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createRateLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   registerHandler,
   loginHandler,
@@ -31,8 +32,17 @@ import {
 export function createAuthRouter(): Router {
   const router = Router();
 
+  // Rate limiter for authentication login endpoint to mitigate credential stuffing & brute-force attacks
+  const loginLimiter = createRateLimiter({
+    keyPrefix: "auth_login",
+    limit: 15, // 15 attempts per minute per IP
+    windowSeconds: 60,
+    message: "Too many login attempts from this network location. Please wait before retrying.",
+    skipInTests: true,
+  });
+
   router.post("/register", registerHandler);
-  router.post("/login", loginHandler);
+  router.post("/login", loginLimiter, loginHandler);
   router.post("/refresh", refreshHandler);
   router.post("/logout", logoutHandler);
   router.post("/change-password", changePasswordHandler);
