@@ -105,4 +105,77 @@ describe("Double-Entry Accounting & Statutory GST API (FEAT-ACC-01)", () => {
       expect(res.body.data.gstr3bSummary.outwardTaxLiabilityInr).toBeGreaterThanOrEqual(0);
     });
   });
+
+  describe("Statutory GST E-Invoice & E-Way Bill Engine (FEAT-ACC-02 / Milestone 11)", () => {
+    it("GET /api/v1/accounting/einvoice lists registered luxury B2B e-invoices", async () => {
+      const res = await request(app).get("/api/v1/accounting/einvoice");
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBeGreaterThanOrEqual(4);
+
+      const inv1 = res.body.data.find(
+        (i: any) => i.invoiceNumber === "INV-2026-B2B-001",
+      );
+      expect(inv1).toBeDefined();
+      expect(inv1.supplierGstin).toBe("27AABCU9603R1ZM");
+      expect(inv1.recipientLegalName).toContain("Zaveri");
+      expect(inv1.status).toBe("PENDING_IRN");
+    });
+
+    it("POST /api/v1/accounting/einvoice/generate-irn generates 64-char SHA-256 IRN and signed QR code", async () => {
+      const res = await request(app)
+        .post("/api/v1/accounting/einvoice/generate-irn")
+        .send({
+          invoiceId: "einv_0192e300_0001",
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.status).toBe("IRN_ACTIVE");
+      expect(res.body.data.irn).toBeDefined();
+      expect(res.body.data.irn).toHaveLength(64);
+      expect(res.body.data.ackNo).toBeDefined();
+      expect(res.body.data.signedQrCode).toContain("NIC-QR-2026");
+      expect(res.body.data.signedInvoicePayload).toContain("Irn");
+    });
+
+    it("POST /api/v1/accounting/einvoice/generate-ewb generates 12-digit E-Way Bill for high-value consignment", async () => {
+      const res = await request(app)
+        .post("/api/v1/accounting/einvoice/generate-ewb")
+        .send({
+          invoiceId: "einv_0192e300_0001",
+          transportMode: "ROAD_ARMORED",
+          transporterId: "BRINKS-SEC-IND",
+          transporterName: "Brinks India Armored Logistics Pvt Ltd",
+          vehicleNumber: "MH-01-AR-9901",
+          distanceKm: 285,
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.ewayBillNumber).toBeDefined();
+      expect(res.body.data.ewayBillNumber).toHaveLength(12);
+      expect(res.body.data.ewayBillStatus).toBe("ACTIVE_IN_TRANSIT");
+      expect(res.body.data.vehicleNumber).toBe("MH-01-AR-9901");
+      expect(res.body.data.distanceKm).toBe(285);
+    });
+
+    it("POST /api/v1/accounting/einvoice/cancel-irn cancels active IRN with statutory reason code", async () => {
+      const res = await request(app)
+        .post("/api/v1/accounting/einvoice/cancel-irn")
+        .send({
+          invoiceId: "einv_0192e300_0001",
+          cancellationReasonCode: "3",
+          remarks: "Client order cancelled prior to armored dispatch from Mumbai Atelier",
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.status).toBe("CANCELLED");
+      expect(res.body.data.cancellationReason).toContain("Order Cancelled");
+      expect(res.body.data.ewayBillStatus).toBe("CANCELLED");
+    });
+  });
 });

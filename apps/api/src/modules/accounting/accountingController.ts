@@ -7,6 +7,20 @@ import {
   getGstr1Summary,
 } from "@jewelcore/database";
 import { BadRequestError } from "@jewelcore/shared";
+import {
+  generateIrnSchema,
+  generateEWayBillSchema,
+  cancelEInvoiceSchema,
+  cancelEWayBillSchema,
+} from "@jewelcore/shared";
+import {
+  listEInvoices,
+  generateIrnService,
+  generateEWayBillService,
+  cancelEInvoiceService,
+  cancelEWayBillService,
+} from "./einvoiceService.js";
+import { verifyJwt } from "../auth/authUtils.js";
 
 const DEFAULT_ORG_ID = "0192e300-0000-7000-8000-000000000001";
 
@@ -149,6 +163,179 @@ export async function getGstrReturnsHandler(
           sgstPayableInr: netTaxPayableSgst,
         },
       },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Lists statutory e-invoices with search and filter.
+ */
+export async function listEInvoicesHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    const status = req.query.status as string | undefined;
+    const search = req.query.search as string | undefined;
+
+    const items = listEInvoices(orgId, { status, search });
+
+    res.status(200).json({
+      success: true,
+      data: items,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Generates official NIC 64-char SHA-256 IRN and cryptographically signed QR code.
+ */
+export async function generateIrnHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    let userName = "Rachel R.";
+
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const claims = await verifyJwt(authHeader.substring(7));
+        userId = claims.userId;
+        userName = (claims as any).name || userName;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const validated = generateIrnSchema.parse(req.body);
+    const invoice = generateIrnService(orgId, userId, validated, userName);
+
+    res.status(200).json({
+      success: true,
+      data: invoice,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Generates 12-digit E-Way Bill for high-value consignment transit.
+ */
+export async function generateEWayBillHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    let userName = "Rachel R.";
+
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const claims = await verifyJwt(authHeader.substring(7));
+        userId = claims.userId;
+        userName = (claims as any).name || userName;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const validated = generateEWayBillSchema.parse(req.body);
+    const invoice = generateEWayBillService(orgId, userId, validated, userName);
+
+    res.status(200).json({
+      success: true,
+      data: invoice,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Cancels active IRN with statutory reason code.
+ */
+export async function cancelEInvoiceHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    let userName = "Rachel R.";
+
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const claims = await verifyJwt(authHeader.substring(7));
+        userId = claims.userId;
+        userName = (claims as any).name || userName;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const validated = cancelEInvoiceSchema.parse(req.body);
+    const invoice = cancelEInvoiceService(orgId, userId, validated, userName);
+
+    res.status(200).json({
+      success: true,
+      data: invoice,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Cancels active E-Way Bill before transit commences.
+ */
+export async function cancelEWayBillHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    let userName = "Rachel R.";
+
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const claims = await verifyJwt(authHeader.substring(7));
+        userId = claims.userId;
+        userName = (claims as any).name || userName;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const validated = cancelEWayBillSchema.parse(req.body);
+    const invoice = cancelEWayBillService(orgId, userId, validated, userName);
+
+    res.status(200).json({
+      success: true,
+      data: invoice,
+      timestamp: new Date().toISOString(),
     });
   } catch (err) {
     next(err);

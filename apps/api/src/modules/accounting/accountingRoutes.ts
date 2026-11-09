@@ -5,6 +5,11 @@ import {
   listJournalEntriesHandler,
   postJournalEntryHandler,
   getGstrReturnsHandler,
+  listEInvoicesHandler,
+  generateIrnHandler,
+  generateEWayBillHandler,
+  cancelEInvoiceHandler,
+  cancelEWayBillHandler,
 } from "./accountingController.js";
 
 export function createAccountingRouter(): Router {
@@ -22,6 +27,13 @@ export function createAccountingRouter(): Router {
 
   // Statutory GST Returns (GSTR-1 & GSTR-3B)
   router.get("/gst-returns", getGstrReturnsHandler);
+
+  // Statutory GST E-Invoice & E-Way Bill (NIC Schema 1.03)
+  router.get("/einvoice", listEInvoicesHandler);
+  router.post("/einvoice/generate-irn", generateIrnHandler);
+  router.post("/einvoice/generate-ewb", generateEWayBillHandler);
+  router.post("/einvoice/cancel-irn", cancelEInvoiceHandler);
+  router.post("/einvoice/cancel-ewb", cancelEWayBillHandler);
 
   return router;
 }

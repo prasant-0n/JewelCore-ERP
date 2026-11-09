@@ -21,7 +21,9 @@ import {
   DollarSign,
   Coins,
   ChevronDown,
+  QrCode,
 } from "lucide-react";
+import { EInvoiceRegistry } from "../../components/accounting/EInvoiceRegistry";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -116,7 +118,7 @@ const DEFAULT_ACCOUNTS: AccountItem[] = [
 ];
 
 export default function AccountingLedgerPage() {
-  const [activeTab, setActiveTab] = useState<"JOURNAL" | "COA" | "GST">("JOURNAL");
+  const [activeTab, setActiveTab] = useState<"JOURNAL" | "COA" | "GST" | "EINVOICE">("JOURNAL");
   const [accounts, setAccounts] = useState<AccountItem[]>(DEFAULT_ACCOUNTS);
   const [journals, setJournals] = useState<JournalEntryItem[]>([]);
   const [gstData, setGstData] = useState<GstReturnsData | null>(null);
@@ -422,6 +424,18 @@ export default function AccountingLedgerPage() {
             <FileText className="w-4 h-4" />
             <span>Statutory GST Returns (GSTR-1 &amp; 3B)</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab("EINVOICE")}
+            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 ${
+              activeTab === "EINVOICE"
+                ? "border-gold text-gold font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <QrCode className="w-4 h-4" />
+            <span>Statutory E-Invoice &amp; E-Way Bill (NIC)</span>
+          </button>
         </div>
 
         {/* TAB 1: JOURNAL STREAM */}
@@ -725,6 +739,9 @@ export default function AccountingLedgerPage() {
             </Card>
           </div>
         )}
+
+        {/* TAB 4: STATUTORY E-INVOICE & E-WAY BILL ENGINE */}
+        {activeTab === "EINVOICE" && <EInvoiceRegistry />}
 
         {/* Modal: New Journal Voucher */}
         <Dialog open={isVoucherModalOpen} onOpenChange={setIsVoucherModalOpen}>

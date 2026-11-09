@@ -55,3 +55,4 @@ export * from "./rfid/index.js";
 export * from "./pricing/index.js";
 export * from "./sales/index.js";
 export * from "./transfers/index.js";
+export * from "./accounting/index.js";
