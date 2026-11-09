@@ -162,6 +162,46 @@ export const errorHandler: ErrorRequestHandler = (
     code = err.code || "ERR_DOMAIN";
     detail = err.message;
   }
+  // 3b. PostgreSQL Database Constraint & Parameter Format Errors
+  else if (
+    typeof err === "object" &&
+    err !== null &&
+    "code" in err &&
+    typeof (err as { code: unknown }).code === "string"
+  ) {
+    const pgCode = (err as { code: string }).code;
+    const pgDetail = (err as { detail?: string }).detail;
+    if (pgCode === "22P02") {
+      // Invalid input syntax for UUID, integer, or enum type
+      status = 400;
+      code = "ERR_INVALID_PARAMETER";
+      detail = "Invalid identifier format or syntax in request parameter.";
+    } else if (pgCode === "23505") {
+      // Unique constraint violation
+      status = 409;
+      code = "ERR_CONFLICT";
+      detail = pgDetail || "A resource with these unique identifiers already exists.";
+    } else if (pgCode === "23503") {
+      // Foreign key constraint violation
+      status = 400;
+      code = "ERR_FOREIGN_KEY_VIOLATION";
+      detail = pgDetail || "Referenced relation or entity does not exist.";
+    } else if (pgCode === "22003") {
+      // Numeric value out of range (overflow)
+      status = 400;
+      code = "ERR_NUMERIC_OVERFLOW";
+      detail = "Numeric value exceeds maximum allowable range.";
+    } else {
+      status = 500;
+      code = "ERR_DATABASE_ERROR";
+      detail =
+        process.env.NODE_ENV === "development"
+          ? err instanceof Error
+            ? err.message
+            : String(err)
+          : "An unexpected database operation error occurred.";
+    }
+  }
   // 4. Generic or Unknown Internal Errors
   else {
     status = 500;

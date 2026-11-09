@@ -120,12 +120,22 @@ export async function getVipPortfolioHandler(
     }
 
     const pool = getPool();
+    const orgId =
+      req.user?.orgId ??
+      req.storeContext?.organizationId ??
+      "0192e300-0000-7000-8000-000000000001";
 
-    // Look up customer safely distinguishing UUID vs customer_code
+    // Look up customer safely distinguishing UUID vs customer_code with strict organization boundary
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(customerId);
     const custRes = isUuid
-      ? await pool.query(`SELECT * FROM customers WHERE id = $1 LIMIT 1`, [customerId])
-      : await pool.query(`SELECT * FROM customers WHERE customer_code = $1 LIMIT 1`, [customerId]);
+      ? await pool.query(
+          `SELECT * FROM customers WHERE id = $1 AND organization_id = $2 LIMIT 1`,
+          [customerId, orgId],
+        )
+      : await pool.query(
+          `SELECT * FROM customers WHERE customer_code = $1 AND organization_id = $2 LIMIT 1`,
+          [customerId, orgId],
+        );
 
     let customer = custRes.rows[0];
     if (!customer) {
