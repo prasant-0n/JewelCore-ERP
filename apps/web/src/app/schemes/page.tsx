@@ -23,6 +23,12 @@ import {
   FileText,
   BadgePercent,
   Calendar,
+  Lock,
+  ArrowUpRight,
+  User,
+  Shield,
+  Layers,
+  Sparkle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -97,7 +103,8 @@ const DEFAULT_SCHEMES: SavingsScheme[] = [
     minInstallmentAmountInr: 5000,
     bonusContributionPct: 100,
     makingChargeDiscountPct: 75,
-    description: "Deposit for 11 months; JewelCore Atelier contributes the 12th month installment as a loyalty bonus upon redemption plus 75% off making charges.",
+    description:
+      "Deposit for 11 months; JewelCore Atelier contributes the 12th month installment as a loyalty bonus upon redemption plus 75% off making charges.",
   },
   {
     id: "scheme-02",
@@ -108,7 +115,8 @@ const DEFAULT_SCHEMES: SavingsScheme[] = [
     minInstallmentAmountInr: 10000,
     bonusContributionPct: 50,
     makingChargeDiscountPct: 100,
-    description: "Every monthly deposit locks pure 24K gold grams at live market spot rates, hedging against gold appreciation, with 100% making charge waiver on redemption.",
+    description:
+      "Every monthly deposit locks pure 24K gold grams at live market spot rates, hedging against gold appreciation, with 100% making charge waiver on redemption.",
   },
   {
     id: "scheme-03",
@@ -119,7 +127,8 @@ const DEFAULT_SCHEMES: SavingsScheme[] = [
     minInstallmentAmountInr: 25000,
     bonusContributionPct: 150,
     makingChargeDiscountPct: 100,
-    description: "High-value bridal trousseau plan offering a 1.5x month bonus contribution and bespoke salon atelier preview privileges.",
+    description:
+      "High-value bridal trousseau plan offering a 1.5x month bonus contribution and bespoke salon atelier preview privileges.",
   },
 ];
 
@@ -217,7 +226,7 @@ const DEFAULT_ACCOUNTS: CustomerSchemeAccount[] = [
     monthlyInstallmentInr: 20000,
     installmentsPaid: 11,
     totalDepositedInr: 220000,
-    accumulatedGoldGrams: 30.5500,
+    accumulatedGoldGrams: 30.55,
     bonusAmountInr: 10000,
     status: "REDEEMED",
     startDate: "2025-08-01",
@@ -273,7 +282,9 @@ const DEFAULT_LOYALTY: VipLoyalty[] = [
 ];
 
 export default function SavingsSchemePage() {
-  const [activeTab, setActiveTab] = useState<"subscriptions" | "catalog" | "loyalty" | "kyc">("subscriptions");
+  const [activeTab, setActiveTab] = useState<
+    "subscriptions" | "catalog" | "loyalty" | "kyc"
+  >("subscriptions");
   const [accounts, setAccounts] = useState<CustomerSchemeAccount[]>(DEFAULT_ACCOUNTS);
   const [schemes, setSchemes] = useState<SavingsScheme[]>(DEFAULT_SCHEMES);
   const [searchTerm, setSearchTerm] = useState("");
@@ -313,7 +324,9 @@ export default function SavingsSchemePage() {
         }
         if (accountsRes?.data && Array.isArray(accountsRes.data) && accountsRes.data.length > 0) {
           const apiAccountNums = new Set(accountsRes.data.map((a) => a.accountNumber));
-          const missingDefaults = DEFAULT_ACCOUNTS.filter((a) => !apiAccountNums.has(a.accountNumber));
+          const missingDefaults = DEFAULT_ACCOUNTS.filter(
+            (a) => !apiAccountNums.has(a.accountNumber),
+          );
           setAccounts([...accountsRes.data, ...missingDefaults]);
         }
       } catch {
@@ -326,9 +339,18 @@ export default function SavingsSchemePage() {
   // KPIs
   const activeSubs = accounts.filter((a) => a.status === "ACTIVE");
   const maturedSubs = accounts.filter((a) => a.status === "MATURED");
-  const monthlyRecurringInflow = activeSubs.reduce((sum, a) => sum + a.monthlyInstallmentInr, 0);
-  const totalGoldReserveLockedGrams = accounts.reduce((sum, a) => sum + a.accumulatedGoldGrams, 0);
-  const maturedTotalValueInr = maturedSubs.reduce((sum, a) => sum + a.totalDepositedInr + a.bonusAmountInr, 0);
+  const monthlyRecurringInflow = activeSubs.reduce(
+    (sum, a) => sum + a.monthlyInstallmentInr,
+    0,
+  );
+  const totalGoldReserveLockedGrams = accounts.reduce(
+    (sum, a) => sum + a.accumulatedGoldGrams,
+    0,
+  );
+  const maturedTotalValueInr = maturedSubs.reduce(
+    (sum, a) => sum + a.totalDepositedInr + a.bonusAmountInr,
+    0,
+  );
 
   // Filtered accounts
   const filteredAccounts = accounts.filter((a) => {
@@ -407,7 +429,9 @@ export default function SavingsSchemePage() {
     );
 
     setIsRedeemModalOpen(false);
-    toast.success(`Account ${selectedAccount.accountNumber} successfully redeemed for salon jewelry purchase.`);
+    toast.success(
+      `Account ${selectedAccount.accountNumber} successfully redeemed for salon jewelry purchase.`,
+    );
   };
 
   const handleEnrollNewPlan = async (e: React.FormEvent) => {
@@ -443,15 +467,18 @@ export default function SavingsSchemePage() {
     };
 
     try {
-      const res = await api.post<{ success: boolean; data: CustomerSchemeAccount }>("/schemes/accounts", {
-        schemeId: scheme.id,
-        customerId: newAcc.customerId,
-        monthlyInstallmentInr: monthlyInr,
-        nomineeName: newAcc.nomineeName,
-        nomineeRelationship: newAcc.nomineeRelationship,
-        kycStatus: "VERIFIED",
-        panNumber: newAcc.panNumber,
-      });
+      const res = await api.post<{ success: boolean; data: CustomerSchemeAccount }>(
+        "/schemes/accounts",
+        {
+          schemeId: scheme.id,
+          customerId: newAcc.customerId,
+          monthlyInstallmentInr: monthlyInr,
+          nomineeName: newAcc.nomineeName,
+          nomineeRelationship: newAcc.nomineeRelationship,
+          kycStatus: "VERIFIED",
+          panNumber: newAcc.panNumber,
+        },
+      );
       if (res?.data?.id) {
         newAcc.id = res.data.id;
         newAcc.accountNumber = res.data.accountNumber;
@@ -467,133 +494,167 @@ export default function SavingsSchemePage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
-        {/* Header Banner */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-border/40 pb-5">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <Coins className="h-5 w-5" />
+      <div className="space-y-6 max-w-[1600px] mx-auto pb-16">
+        {/* Header Luxury Banner */}
+        <div className="relative rounded-2xl bg-gradient-to-r from-surface-elevated/95 via-surface to-surface-card border border-gold/30 dark:border-gold/20 p-6 shadow-sm overflow-hidden backdrop-blur-md">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gold/15 via-transparent to-transparent pointer-events-none" />
+
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest font-semibold">
+                <Coins className="w-4 h-4 text-gold animate-pulse" />
+                <span>Bullion Treasury &amp; Wealth Accumulation Engine</span>
               </div>
-              <div>
-                <h1 className="text-2xl font-serif font-bold tracking-tight text-white flex items-center gap-2">
-                  Gold Savings Scheme (SIP) & VIP Loyalty
-                  <Badge variant="outline" className="text-amber-400 border-amber-500/30 bg-amber-500/10 text-xs">
-                    Swarna Nidhi 11+1
-                  </Badge>
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  Monthly Bullion Advance Accumulation, Weight-Locked SIP & Private Client Privileges
-                </p>
-              </div>
+              <h1 className="text-2xl sm:text-3xl font-serif font-black tracking-tight text-foreground flex flex-wrap items-center gap-3">
+                <span>Gold Savings Scheme (SIP) &amp; VIP Loyalty</span>
+                <Badge variant="gold" className="text-xs font-mono font-bold">
+                  Swarna Nidhi 11+1
+                </Badge>
+              </h1>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
+                Monthly Bullion Advance Accumulation, Weight-Locked SIP &amp; Private Client Privileges
+              </p>
             </div>
-          </div>
-          <div className="flex items-center gap-2.5">
-            <Button
-              onClick={() => setIsEnrollModalOpen(true)}
-              className="bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs h-9 gap-1.5 shadow-lg shadow-amber-500/20"
-            >
-              <Plus className="h-4 w-4" /> Enroll New Patron Plan
-            </Button>
+
+            <div className="flex items-center gap-3 shrink-0">
+              <Button
+                variant="gold"
+                onClick={() => setIsEnrollModalOpen(true)}
+                className="font-semibold text-xs h-9 gap-1.5 shadow-md hover:shadow-lg transition-all"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Enroll New Patron Plan</span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Operational KPI Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-card/50 border-border/40 p-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active Plan Subscribers</span>
-              <Crown className="h-4 w-4 text-amber-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Active Plan Subscribers
+              </span>
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <Crown className="h-4 w-4 text-gold" />
+              </div>
             </div>
-            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
-              {activeSubs.length} <span className="text-sm text-muted-foreground font-normal">Patrons</span>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {activeSubs.length}{" "}
+              <span className="text-xs text-muted-foreground font-sans font-normal">Patrons</span>
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <CheckCircle2 className="h-3 w-3 text-emerald-400" /> 100% KYC Verified & Nominee Recorded
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+              <span>100% KYC Verified &amp; Nominee Recorded</span>
             </div>
           </Card>
 
-          <Card className="bg-card/50 border-border/40 p-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Monthly Recurring Deposit Inflow</span>
-              <CreditCard className="h-4 w-4 text-blue-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Monthly Recurring Deposit Inflow
+              </span>
+              <div className="p-1.5 rounded-lg bg-status-indigo/10 text-status-indigo border border-status-indigo/20">
+                <CreditCard className="h-4 w-4 text-status-indigo" />
+              </div>
             </div>
-            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
-              ₹ {(monthlyRecurringInflow / 100000).toFixed(2)} <span className="text-sm text-blue-400 font-normal">Lakh / Mo</span>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              ₹ {(monthlyRecurringInflow / 100000).toFixed(2)}{" "}
+              <span className="text-xs text-status-indigo font-sans font-semibold">Lakh / Mo</span>
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Clock className="h-3 w-3 text-blue-400" /> Auto-debit & Salon counter receipts
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
+              <Clock className="h-3.5 w-3.5 shrink-0 text-status-indigo" />
+              <span>Auto-debit &amp; Salon counter receipts</span>
             </div>
           </Card>
 
-          <Card className="bg-card/50 border-border/40 p-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Customer Gold Reserve Locked</span>
-              <Sparkles className="h-4 w-4 text-amber-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Customer Gold Reserve Locked
+              </span>
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <Sparkles className="h-4 w-4 text-gold" />
+              </div>
             </div>
-            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
-              {totalGoldReserveLockedGrams.toFixed(3)} <span className="text-sm text-amber-400 font-normal">g Au</span>
+            <div className="mt-2 text-2xl font-mono font-bold text-gold tracking-tight tabular-nums">
+              {totalGoldReserveLockedGrams.toFixed(3)}{" "}
+              <span className="text-xs text-gold/80 font-sans font-semibold">g Au</span>
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-emerald-400">
-              <ShieldCheck className="h-3 w-3" /> Fully vaulted in Physical Bullion
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+              <span>Fully vaulted in Physical Bullion</span>
             </div>
           </Card>
 
-          <Card className="bg-card/50 border-border/40 p-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Matured Ready for Redemption</span>
-              <Gift className="h-4 w-4 text-purple-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Matured Ready for Redemption
+              </span>
+              <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                <Gift className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+              </div>
             </div>
-            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
-              {maturedSubs.length} <span className="text-sm text-purple-400 font-normal">(₹ {(maturedTotalValueInr / 100000).toFixed(2)} L)</span>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {maturedSubs.length}{" "}
+              <span className="text-xs text-purple-600 dark:text-purple-400 font-sans font-semibold">
+                (₹ {(maturedTotalValueInr / 100000).toFixed(2)} L)
+              </span>
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <BadgePercent className="h-3 w-3 text-purple-400" /> Ready for salon jewelry purchase
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
+              <BadgePercent className="h-3.5 w-3.5 shrink-0 text-purple-600 dark:text-purple-400" />
+              <span>Ready for salon jewelry purchase</span>
             </div>
           </Card>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-border/40 space-x-1">
+        {/* Tab Navigation Bar */}
+        <div className="flex border-b border-surface-border space-x-2 sm:space-x-6 overflow-x-auto text-xs sm:text-sm font-medium">
           <button
             onClick={() => setActiveTab("subscriptions")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "subscriptions"
-                ? "border-amber-400 text-amber-400"
-                : "border-transparent text-muted-foreground hover:text-white"
+                ? "border-gold text-gold font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Coins className="h-4 w-4" /> Active Subscriptions ({accounts.length})
+            <Coins className="h-4 w-4" />
+            <span>Active Subscriptions ({accounts.length})</span>
           </button>
           <button
             onClick={() => setActiveTab("catalog")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "catalog"
-                ? "border-amber-400 text-amber-400"
-                : "border-transparent text-muted-foreground hover:text-white"
+                ? "border-gold text-gold font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            <FileText className="h-4 w-4" /> Scheme Catalog ({schemes.length})
+            <FileText className="h-4 w-4" />
+            <span>Scheme Catalog ({schemes.length})</span>
           </button>
           <button
             onClick={() => setActiveTab("loyalty")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "loyalty"
-                ? "border-amber-400 text-amber-400"
-                : "border-transparent text-muted-foreground hover:text-white"
+                ? "border-gold text-gold font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Crown className="h-4 w-4" /> VIP Loyalty & Privileges
+            <Crown className="h-4 w-4" />
+            <span>VIP Loyalty &amp; Privileges ({DEFAULT_LOYALTY.length})</span>
           </button>
           <button
             onClick={() => setActiveTab("kyc")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "kyc"
-                ? "border-amber-400 text-amber-400"
-                : "border-transparent text-muted-foreground hover:text-white"
+                ? "border-gold text-gold font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            <ShieldCheck className="h-4 w-4" /> Statutory KYC & Nominee Audit
+            <ShieldCheck className="h-4 w-4" />
+            <span>Statutory KYC &amp; Nominee Audit</span>
           </button>
         </div>
 
@@ -601,22 +662,24 @@ export default function SavingsSchemePage() {
         {activeTab === "subscriptions" && (
           <div className="space-y-4">
             {/* Filter Bar */}
-            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-surface-card p-3 rounded-xl border border-surface-border">
               <div className="relative w-full sm:w-80">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search patron, account # or scheme..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 bg-card/60 border-border/40 h-9 text-xs"
+                  className="pl-9 bg-surface-elevated border-surface-border h-9 text-xs"
                 />
               </div>
               <div className="flex items-center gap-2 w-full sm:w-auto">
-                <span className="text-xs text-muted-foreground whitespace-nowrap">Filter Status:</span>
+                <span className="text-xs text-muted-foreground whitespace-nowrap font-mono">
+                  Filter Status:
+                </span>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="bg-card/80 border border-border/40 text-xs rounded-md px-3 py-1.5 text-white"
+                  className="bg-surface-elevated border border-surface-border text-xs rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-gold font-mono"
                 >
                   <option value="ALL">All Statuses</option>
                   <option value="ACTIVE">Active (In Accumulation)</option>
@@ -629,58 +692,89 @@ export default function SavingsSchemePage() {
             {/* Subscriptions Grid */}
             <div className="grid grid-cols-1 gap-4">
               {filteredAccounts.map((acc) => {
-                const progressPct = Math.min(100, Math.round((acc.installmentsPaid / acc.totalTenureMonths) * 100));
+                const progressPct = Math.min(
+                  100,
+                  Math.round((acc.installmentsPaid / acc.totalTenureMonths) * 100),
+                );
 
                 return (
-                  <Card key={acc.id} className="bg-card/40 border-border/40 p-5 hover:border-amber-500/30 transition-colors">
+                  <Card
+                    key={acc.id}
+                    className="bg-surface-card border-surface-border p-5 hover:border-gold/40 hover:shadow-md transition-all duration-200"
+                  >
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                       <div className="space-y-1.5">
-                        <div className="flex items-center gap-2.5">
-                          <span className="font-mono text-sm font-bold text-amber-400">{acc.accountNumber}</span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-mono text-sm font-bold text-gold">
+                            {acc.accountNumber}
+                          </span>
                           <Badge
-                            variant="outline"
-                            className={
+                            variant={
                               acc.status === "MATURED"
-                                ? "bg-purple-500/10 text-purple-400 border-purple-500/30 text-[10px]"
+                                ? "indigo"
                                 : acc.status === "REDEEMED"
-                                  ? "bg-zinc-800 text-zinc-400 border-zinc-700 text-[10px]"
-                                  : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 text-[10px]"
+                                  ? "secondary"
+                                  : "emerald"
                             }
+                            dot
+                            size="sm"
                           >
                             {acc.status}
                           </Badge>
-                          <Badge variant="outline" className="bg-zinc-800 text-zinc-300 border-zinc-700 text-[10px]">
-                            {acc.schemeType === "WEIGHT_BASED_LOCK" ? "Weight Locked 24K" : "Value 11+1 Bonus"}
+                          <Badge variant="outline" size="sm" className="font-mono">
+                            {acc.schemeType === "WEIGHT_BASED_LOCK"
+                              ? "Weight Locked 24K"
+                              : "Value 11+1 Bonus"}
                           </Badge>
                         </div>
-                        <h3 className="text-base font-semibold text-white flex items-center gap-2">
+                        <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                           {acc.customerName}
-                          <span className="text-xs font-normal text-muted-foreground">({acc.customerPhone})</span>
+                          <span className="text-xs font-normal text-muted-foreground font-mono">
+                            ({acc.customerPhone})
+                          </span>
                         </h3>
-                        <p className="text-xs text-amber-300/90 font-medium">{acc.schemeName}</p>
+                        <p className="text-xs text-gold/90 font-medium">{acc.schemeName}</p>
                       </div>
 
                       {/* Deposit & Gold Stats */}
-                      <div className="flex flex-wrap items-center gap-4 border-t lg:border-t-0 lg:border-l border-border/30 pt-3 lg:pt-0 lg:pl-5">
+                      <div className="flex flex-wrap items-center gap-4 border-t lg:border-t-0 lg:border-l border-surface-border/60 pt-3 lg:pt-0 lg:pl-5">
                         <div>
-                          <div className="text-xs text-muted-foreground">Total Deposited</div>
-                          <div className="text-sm font-bold text-white font-mono">₹ {acc.totalDepositedInr.toLocaleString("en-IN")}</div>
-                          <div className="text-[10px] text-zinc-400">₹ {acc.monthlyInstallmentInr.toLocaleString("en-IN")} / month</div>
+                          <div className="text-[11px] text-muted-foreground font-mono uppercase">
+                            Total Deposited
+                          </div>
+                          <div className="text-sm font-bold text-foreground font-mono">
+                            ₹ {acc.totalDepositedInr.toLocaleString("en-IN")}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground font-mono">
+                            ₹ {acc.monthlyInstallmentInr.toLocaleString("en-IN")} / month
+                          </div>
                         </div>
 
                         {acc.accumulatedGoldGrams > 0 && (
-                          <div className="pl-3 border-l border-border/20">
-                            <div className="text-xs text-muted-foreground">Locked Gold Reserve</div>
-                            <div className="text-sm font-bold text-amber-400 font-mono">{acc.accumulatedGoldGrams.toFixed(4)} g</div>
-                            <div className="text-[10px] text-zinc-400">Pure 24K Au</div>
+                          <div className="pl-3 border-l border-surface-border/60">
+                            <div className="text-[11px] text-muted-foreground font-mono uppercase">
+                              Locked Gold Reserve
+                            </div>
+                            <div className="text-sm font-bold text-gold font-mono">
+                              {acc.accumulatedGoldGrams.toFixed(4)} g
+                            </div>
+                            <div className="text-[10px] text-muted-foreground font-mono">
+                              Pure 24K Au
+                            </div>
                           </div>
                         )}
 
                         {acc.bonusAmountInr > 0 && (
-                          <div className="pl-3 border-l border-border/20">
-                            <div className="text-xs text-muted-foreground">Atelier Bonus Payout</div>
-                            <div className="text-sm font-bold text-emerald-400 font-mono">₹ {acc.bonusAmountInr.toLocaleString("en-IN")}</div>
-                            <div className="text-[10px] text-zinc-400">12th Month Grant</div>
+                          <div className="pl-3 border-l border-surface-border/60">
+                            <div className="text-[11px] text-muted-foreground font-mono uppercase">
+                              Atelier Bonus Payout
+                            </div>
+                            <div className="text-sm font-bold text-status-emerald font-mono">
+                              ₹ {acc.bonusAmountInr.toLocaleString("en-IN")}
+                            </div>
+                            <div className="text-[10px] text-muted-foreground font-mono">
+                              12th Month Grant
+                            </div>
                           </div>
                         )}
 
@@ -688,8 +782,9 @@ export default function SavingsSchemePage() {
                           {acc.status === "ACTIVE" && (
                             <Button
                               size="sm"
+                              variant="gold"
                               onClick={() => handleOpenPayModal(acc)}
-                              className="h-8 text-xs bg-amber-500 hover:bg-amber-600 text-black font-semibold gap-1"
+                              className="h-8 text-xs font-semibold gap-1 shadow-sm"
                             >
                               <CreditCard className="h-3.5 w-3.5" /> Pay Installment
                             </Button>
@@ -698,14 +793,14 @@ export default function SavingsSchemePage() {
                             <Button
                               size="sm"
                               onClick={() => handleOpenRedeemModal(acc)}
-                              className="h-8 text-xs bg-purple-500 hover:bg-purple-600 text-white font-semibold gap-1 shadow-lg shadow-purple-500/20"
+                              className="h-8 text-xs bg-purple-600 hover:bg-purple-700 text-white font-semibold gap-1 shadow-md shadow-purple-500/20"
                             >
                               <Gift className="h-3.5 w-3.5" /> Redeem for Jewelry
                             </Button>
                           )}
                           {acc.status === "REDEEMED" && (
-                            <Badge variant="outline" className="bg-zinc-800 text-zinc-400 border-zinc-700 gap-1 py-1">
-                              <CheckCircle2 className="h-3 w-3 text-emerald-400" /> Redeemed
+                            <Badge variant="secondary" className="gap-1 py-1">
+                              <CheckCircle2 className="h-3 w-3 text-status-emerald" /> Redeemed
                             </Badge>
                           )}
                         </div>
@@ -713,29 +808,34 @@ export default function SavingsSchemePage() {
                     </div>
 
                     {/* Progress Bar & Tenure Timeline */}
-                    <div className="mt-4 pt-4 border-t border-border/20 space-y-1.5">
+                    <div className="mt-4 pt-4 border-t border-surface-border/60 space-y-1.5">
                       <div className="flex justify-between text-xs">
                         <span className="text-muted-foreground">
-                          Installment Progress: <strong className="text-white">{acc.installmentsPaid} of {acc.totalTenureMonths} Months Paid</strong>
+                          Installment Progress:{" "}
+                          <strong className="text-foreground">
+                            {acc.installmentsPaid} of {acc.totalTenureMonths} Months Paid
+                          </strong>
                         </span>
-                        <span className="font-mono text-amber-400">{progressPct}% Complete</span>
+                        <span className="font-mono text-gold font-bold">{progressPct}% Complete</span>
                       </div>
-                      <div className="h-2 w-full bg-zinc-800 rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-surface-elevated rounded-full overflow-hidden border border-surface-border/60">
                         <div
                           className={`h-full transition-all rounded-full ${
                             acc.status === "MATURED"
                               ? "bg-purple-500"
                               : acc.status === "REDEEMED"
-                                ? "bg-zinc-600"
-                                : "bg-amber-400"
+                                ? "bg-muted-foreground"
+                                : "bg-gradient-to-r from-amber-500 to-gold"
                           }`}
                           style={{ width: `${progressPct}%` }}
                         />
                       </div>
-                      <div className="flex justify-between text-[11px] text-muted-foreground pt-0.5">
+                      <div className="flex flex-wrap justify-between text-[11px] text-muted-foreground font-mono pt-0.5 gap-2">
                         <span>Started: {acc.startDate}</span>
                         <span>Maturity: {acc.maturityDate}</span>
-                        <span>Nominee: {acc.nomineeName || "None"} ({acc.nomineeRelationship || "—"})</span>
+                        <span>
+                          Nominee: {acc.nomineeName || "None"} ({acc.nomineeRelationship || "—"})
+                        </span>
                       </div>
                     </div>
                   </Card>
@@ -749,38 +849,49 @@ export default function SavingsSchemePage() {
         {activeTab === "catalog" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {schemes.map((s) => (
-              <Card key={s.id} className="bg-card/40 border-border/40 p-5 space-y-4 flex flex-col justify-between">
+              <Card
+                key={s.id}
+                className="bg-surface-card border-surface-border p-5 space-y-4 flex flex-col justify-between hover:border-gold/40 hover:shadow-md transition-all duration-200"
+              >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="font-mono text-xs text-amber-400 font-bold">{s.code}</span>
-                      <h3 className="text-base font-bold text-white mt-1">{s.name}</h3>
+                      <span className="font-mono text-xs text-gold font-bold">{s.code}</span>
+                      <h3 className="text-base font-bold text-foreground mt-1">{s.name}</h3>
                     </div>
-                    <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30 text-[10px]">
+                    <Badge variant="gold" size="sm" className="font-mono">
                       {s.totalTenureMonths} MONTHS
                     </Badge>
                   </div>
 
-                  <p className="text-xs text-zinc-300 leading-relaxed">{s.description}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{s.description}</p>
 
-                  <div className="space-y-2 border-t border-border/20 pt-3 text-xs text-zinc-300">
+                  <div className="space-y-2 border-t border-surface-border/60 pt-3 text-xs font-mono">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Plan Mechanism:</span>
-                      <span className="font-semibold text-white">
-                        {s.schemeType === "WEIGHT_BASED_LOCK" ? "Spot Gold Grams Lock" : "Monthly Cash Advance"}
+                      <span className="font-semibold text-foreground">
+                        {s.schemeType === "WEIGHT_BASED_LOCK"
+                          ? "Spot Gold Grams Lock"
+                          : "Monthly Cash Advance"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Min Monthly Deposit:</span>
-                      <span className="font-mono font-bold text-amber-400">₹ {s.minInstallmentAmountInr.toLocaleString("en-IN")}</span>
+                      <span className="font-mono font-bold text-gold">
+                        ₹ {s.minInstallmentAmountInr.toLocaleString("en-IN")}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Atelier Bonus Contribution:</span>
-                      <span className="font-bold text-emerald-400">{s.bonusContributionPct}% of 1 Month</span>
+                      <span className="font-bold text-status-emerald">
+                        {s.bonusContributionPct}% of 1 Month
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Making Charge Privilege:</span>
-                      <span className="font-bold text-purple-400">{s.makingChargeDiscountPct}% Off on Redemption</span>
+                      <span className="font-bold text-purple-600 dark:text-purple-400">
+                        {s.makingChargeDiscountPct}% Off on Redemption
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -791,7 +902,8 @@ export default function SavingsSchemePage() {
                     setEnrollMonthlyInr(s.minInstallmentAmountInr.toString());
                     setIsEnrollModalOpen(true);
                   }}
-                  className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs h-9 gap-1.5"
+                  variant="gold"
+                  className="w-full font-semibold text-xs h-9 gap-1.5 shadow-sm"
                 >
                   <Plus className="h-4 w-4" /> Enroll Patron in This Plan
                 </Button>
@@ -803,48 +915,69 @@ export default function SavingsSchemePage() {
         {/* TAB 3: VIP LOYALTY & PRIVILEGES */}
         {activeTab === "loyalty" && (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {DEFAULT_LOYALTY.map((v) => (
-                <Card key={v.customerId} className="bg-card/40 border-border/40 p-5 space-y-3">
+                <Card
+                  key={v.customerId}
+                  className="bg-surface-card border-surface-border p-5 space-y-3.5 hover:border-gold/40 hover:shadow-md transition-all duration-200"
+                >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h4 className="text-sm font-bold text-white">{v.customerName}</h4>
-                      <div className="text-xs text-muted-foreground">Concierge: {v.personalConciergeAssigned}</div>
+                      <h4 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+                        <Crown className="w-4 h-4 text-gold shrink-0" />
+                        <span>{v.customerName}</span>
+                      </h4>
+                      <div className="text-xs text-muted-foreground mt-0.5">
+                        Concierge: {v.personalConciergeAssigned}
+                      </div>
                     </div>
                     <Badge
-                      variant="outline"
-                      className={
+                      variant={
                         v.tier === "ROYAL_PATRON"
-                          ? "bg-amber-500/10 text-amber-400 border-amber-500/30 text-xs font-bold"
+                          ? "gold"
                           : v.tier === "PLATINUM"
-                            ? "bg-purple-500/10 text-purple-400 border-purple-500/30 text-xs font-bold"
-                            : "bg-blue-500/10 text-blue-400 border-blue-500/30 text-xs font-bold"
+                            ? "indigo"
+                            : "secondary"
                       }
+                      size="sm"
+                      className="font-bold font-mono"
                     >
                       {v.tier.replace("_", " ")}
                     </Badge>
                   </div>
 
-                  <div className="text-xs space-y-1.5 border-t border-border/20 pt-2 text-zinc-300">
+                  <div className="text-xs space-y-2 border-t border-surface-border/60 pt-2.5 font-mono">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Reward Points:</span>
-                      <span className="font-mono font-bold text-amber-400">{v.rewardPointsBalance.toLocaleString()} pts</span>
+                      <span className="font-mono font-bold text-gold">
+                        {v.rewardPointsBalance.toLocaleString()} pts
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Lifetime Atelier Purchases:</span>
-                      <span className="font-mono font-bold text-white">₹ {v.lifetimePurchasesInr.toLocaleString("en-IN")}</span>
+                      <span className="font-mono font-bold text-foreground">
+                        ₹ {v.lifetimePurchasesInr.toLocaleString("en-IN")}
+                      </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Making Charge Waiver Privilege:</span>
-                      <span className="font-bold text-emerald-400">{v.makingChargePrivilegePct}% Permanent Discount</span>
+                      <span className="text-muted-foreground">Making Charge Waiver:</span>
+                      <span className="font-bold text-status-emerald">
+                        {v.makingChargePrivilegePct}% Permanent Discount
+                      </span>
                     </div>
                   </div>
 
-                  <div className="border-t border-border/20 pt-2 space-y-1">
-                    <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Patron Privileges:</span>
+                  <div className="border-t border-surface-border/60 pt-2.5 space-y-1.5">
+                    <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider font-mono block">
+                      Patron Privileges:
+                    </span>
                     {v.specialPrivileges.map((p, i) => (
-                      <div key={i} className="text-[11px] text-zinc-400 flex items-center gap-1.5">
-                        <Check className="h-3 w-3 text-amber-400" /> {p}
+                      <div
+                        key={i}
+                        className="text-xs text-foreground/90 flex items-center gap-1.5 font-sans"
+                      >
+                        <Check className="h-3.5 w-3.5 text-gold shrink-0" />
+                        <span>{p}</span>
                       </div>
                     ))}
                   </div>
@@ -856,17 +989,19 @@ export default function SavingsSchemePage() {
 
         {/* TAB 4: STATUTORY KYC & NOMINEE */}
         {activeTab === "kyc" && (
-          <Card className="bg-card/40 border-border/40 p-5">
-            <div className="mb-4">
-              <h3 className="text-base font-semibold text-white">Patron KYC Compliance & Nominee Governance Ledger</h3>
-              <p className="text-xs text-muted-foreground">
+          <Card className="bg-surface-card border-surface-border p-5 space-y-4">
+            <div>
+              <h3 className="text-base font-semibold text-foreground">
+                Patron KYC Compliance &amp; Nominee Governance Ledger
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Mandatory PMLA compliance and registered beneficiary details for high-value gold bullion schemes.
               </p>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-xl border border-surface-border">
               <table className="w-full text-left text-xs">
-                <thead className="border-b border-border/40 text-muted-foreground uppercase text-[10px] tracking-wider">
+                <thead className="bg-surface-elevated border-b border-surface-border text-muted-foreground uppercase text-[10px] tracking-wider font-mono">
                   <tr>
                     <th className="py-2.5 px-3">Account #</th>
                     <th className="py-2.5 px-3">Patron Name</th>
@@ -877,20 +1012,23 @@ export default function SavingsSchemePage() {
                     <th className="py-2.5 px-3">Nominee Phone</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/20 text-zinc-300">
+                <tbody className="divide-y divide-surface-border text-foreground font-mono">
                   {accounts.map((a) => (
-                    <tr key={a.id} className="hover:bg-muted/10 transition-colors">
-                      <td className="py-3 px-3 font-mono font-medium text-amber-400">{a.accountNumber}</td>
-                      <td className="py-3 px-3 font-medium text-white">{a.customerName}</td>
-                      <td className="py-3 px-3 font-mono text-zinc-300">{a.panNumber || "—"}</td>
+                    <tr
+                      key={a.id}
+                      className="hover:bg-surface-elevated/50 transition-colors"
+                    >
+                      <td className="py-3 px-3 font-bold text-gold">{a.accountNumber}</td>
+                      <td className="py-3 px-3 font-semibold font-sans">{a.customerName}</td>
+                      <td className="py-3 px-3 text-muted-foreground">{a.panNumber || "—"}</td>
                       <td className="py-3 px-3">
-                        <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 text-[10px]">
+                        <Badge variant="emerald" size="sm">
                           {a.kycStatus}
                         </Badge>
                       </td>
-                      <td className="py-3 px-3 text-white">{a.nomineeName || "—"}</td>
+                      <td className="py-3 px-3 font-sans">{a.nomineeName || "—"}</td>
                       <td className="py-3 px-3 text-muted-foreground">{a.nomineeRelationship || "—"}</td>
-                      <td className="py-3 px-3 font-mono text-zinc-400">{a.nomineePhone || "—"}</td>
+                      <td className="py-3 px-3 text-muted-foreground">{a.nomineePhone || "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -901,23 +1039,23 @@ export default function SavingsSchemePage() {
 
         {/* ENROLL NEW PLAN MODAL */}
         <Dialog open={isEnrollModalOpen} onOpenChange={setIsEnrollModalOpen}>
-          <DialogContent className="sm:max-w-[550px] bg-zinc-950 border-zinc-800 text-white">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-white">
-                <Coins className="h-5 w-5 text-amber-400" /> Enroll Patron in Gold Savings Scheme
+          <DialogContent className="sm:max-w-[550px] bg-surface-card border-surface-border text-foreground p-0 overflow-hidden shadow-2xl rounded-2xl">
+            <DialogHeader className="p-6 pb-4 border-b border-surface-border bg-surface-elevated/40">
+              <DialogTitle className="flex items-center gap-2 text-foreground font-serif text-lg font-bold">
+                <Coins className="h-5 w-5 text-gold" /> Enroll Patron in Gold Savings Scheme
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground">
                 Set up a monthly gold deposit advance plan with nominee registration and statutory PAN verification.
               </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleEnrollNewPlan} className="space-y-4 text-xs">
+            <form onSubmit={handleEnrollNewPlan} className="p-6 space-y-4 text-xs font-mono">
               <div className="space-y-1">
-                <label className="text-muted-foreground">Select Gold Savings Plan *</label>
+                <label className="text-muted-foreground text-[11px]">Select Gold Savings Plan *</label>
                 <select
                   value={enrollSchemeId}
                   onChange={(e) => setEnrollSchemeId(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-700 rounded-md p-2 text-white"
+                  className="w-full bg-surface-elevated border border-surface-border rounded-md p-2 text-foreground focus:outline-none focus:border-gold"
                   required
                 >
                   {schemes.map((s) => (
@@ -930,22 +1068,22 @@ export default function SavingsSchemePage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-muted-foreground">Patron Full Name *</label>
+                  <label className="text-muted-foreground text-[11px]">Patron Full Name *</label>
                   <Input
                     value={enrollCustomerName}
                     onChange={(e) => setEnrollCustomerName(e.target.value)}
                     placeholder="e.g. Mrs. Ananya Roy"
-                    className="bg-zinc-900 border-zinc-700 text-xs"
+                    className="bg-surface-elevated border-surface-border text-xs text-foreground font-sans"
                     required
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-muted-foreground">Mobile Phone *</label>
+                  <label className="text-muted-foreground text-[11px]">Mobile Phone *</label>
                   <Input
                     value={enrollCustomerPhone}
                     onChange={(e) => setEnrollCustomerPhone(e.target.value)}
                     placeholder="+91 98200 12345"
-                    className="bg-zinc-900 border-zinc-700 text-xs"
+                    className="bg-surface-elevated border-surface-border text-xs text-foreground"
                     required
                   />
                 </div>
@@ -953,46 +1091,50 @@ export default function SavingsSchemePage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-amber-400 font-semibold">Monthly Installment (₹) *</label>
+                  <label className="text-gold font-semibold text-[11px]">
+                    Monthly Installment (₹) *
+                  </label>
                   <Input
                     type="number"
                     value={enrollMonthlyInr}
                     onChange={(e) => setEnrollMonthlyInr(e.target.value)}
-                    className="bg-zinc-900 border-zinc-700 font-mono text-xs"
+                    className="bg-surface-elevated border-surface-border font-mono text-xs text-foreground"
                     required
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-zinc-300">Patron PAN Number *</label>
+                  <label className="text-muted-foreground text-[11px]">Patron PAN Number *</label>
                   <Input
                     value={enrollPanNumber}
                     onChange={(e) => setEnrollPanNumber(e.target.value)}
                     placeholder="ABCDE1234F"
-                    className="bg-zinc-900 border-zinc-700 font-mono text-xs uppercase"
+                    className="bg-surface-elevated border-surface-border font-mono text-xs uppercase text-foreground"
                     required
                   />
                 </div>
               </div>
 
-              <div className="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-3">
-                <span className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wider">Statutory Nominee Registration</span>
+              <div className="bg-surface-elevated/60 p-3.5 rounded-xl border border-surface-border space-y-3">
+                <span className="text-[11px] font-semibold text-foreground uppercase tracking-wider block">
+                  Statutory Nominee Registration
+                </span>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-muted-foreground">Nominee Full Name *</label>
+                    <label className="text-muted-foreground text-[11px]">Nominee Full Name *</label>
                     <Input
                       value={enrollNomineeName}
                       onChange={(e) => setEnrollNomineeName(e.target.value)}
                       placeholder="e.g. Rahul Roy"
-                      className="bg-zinc-900 border-zinc-700 text-xs"
+                      className="bg-surface-card border-surface-border text-xs text-foreground font-sans"
                       required
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-muted-foreground">Relationship *</label>
+                    <label className="text-muted-foreground text-[11px]">Relationship *</label>
                     <select
                       value={enrollNomineeRel}
                       onChange={(e) => setEnrollNomineeRel(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-700 rounded-md p-2 text-white text-xs"
+                      className="w-full bg-surface-card border border-surface-border rounded-md p-2 text-foreground text-xs focus:outline-none focus:border-gold"
                     >
                       <option value="SPOUSE">Spouse</option>
                       <option value="SON">Son</option>
@@ -1004,18 +1146,19 @@ export default function SavingsSchemePage() {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
+              <div className="flex justify-end gap-2 pt-2 border-t border-surface-border">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsEnrollModalOpen(false)}
-                  className="border-zinc-700 text-zinc-300 h-9 text-xs"
+                  className="border-surface-border text-muted-foreground hover:text-foreground h-9 text-xs"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-amber-500 hover:bg-amber-600 text-black font-semibold h-9 text-xs gap-1.5"
+                  variant="gold"
+                  className="font-semibold h-9 text-xs gap-1.5 shadow-sm"
                 >
                   <Check className="h-4 w-4" /> Finalize Enrollment
                 </Button>
@@ -1026,10 +1169,10 @@ export default function SavingsSchemePage() {
 
         {/* PAY MONTHLY INSTALLMENT MODAL */}
         <Dialog open={isPayModalOpen} onOpenChange={setIsPayModalOpen}>
-          <DialogContent className="sm:max-w-[450px] bg-zinc-950 border-zinc-800 text-white">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-white">
-                <CreditCard className="h-5 w-5 text-amber-400" /> Record Monthly Scheme Deposit
+          <DialogContent className="sm:max-w-[450px] bg-surface-card border-surface-border text-foreground p-0 overflow-hidden shadow-2xl rounded-2xl">
+            <DialogHeader className="p-6 pb-4 border-b border-surface-border bg-surface-elevated/40">
+              <DialogTitle className="flex items-center gap-2 text-foreground font-serif text-lg font-bold">
+                <CreditCard className="h-5 w-5 text-gold" /> Record Monthly Scheme Deposit
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground">
                 Process monthly deposit receipt and credit gold weight/cash ledger.
@@ -1037,43 +1180,52 @@ export default function SavingsSchemePage() {
             </DialogHeader>
 
             {selectedAccount && (
-              <form onSubmit={handlePayInstallment} className="space-y-4 text-xs">
-                <div className="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-1">
+              <form onSubmit={handlePayInstallment} className="p-6 space-y-4 text-xs font-mono">
+                <div className="bg-surface-elevated/60 p-3.5 rounded-xl border border-surface-border space-y-1.5">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Account Number:</span>
-                    <span className="font-mono text-amber-400 font-bold">{selectedAccount.accountNumber}</span>
+                    <span className="font-mono text-gold font-bold">
+                      {selectedAccount.accountNumber}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Patron:</span>
-                    <span className="text-white font-medium">{selectedAccount.customerName}</span>
+                    <span className="text-foreground font-semibold font-sans">
+                      {selectedAccount.customerName}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Next Installment Due:</span>
-                    <span className="font-mono text-white font-bold">Month #{selectedAccount.installmentsPaid + 1} of {selectedAccount.totalTenureMonths}</span>
+                    <span className="font-mono text-foreground font-bold">
+                      Month #{selectedAccount.installmentsPaid + 1} of{" "}
+                      {selectedAccount.totalTenureMonths}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Live 24K Spot Fix:</span>
-                    <span className="font-mono text-amber-400 font-bold">₹ {liveSpotRatePerGram.toLocaleString("en-IN")} / g</span>
+                    <span className="font-mono text-gold font-bold">
+                      ₹ {liveSpotRatePerGram.toLocaleString("en-IN")} / g
+                    </span>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-muted-foreground">Deposit Amount (₹) *</label>
+                  <label className="text-muted-foreground text-[11px]">Deposit Amount (₹) *</label>
                   <Input
                     type="number"
                     value={payAmountInr}
                     onChange={(e) => setPayAmountInr(e.target.value)}
-                    className="bg-zinc-900 border-zinc-700 font-mono text-xs"
+                    className="bg-surface-elevated border-surface-border font-mono text-xs text-foreground"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-muted-foreground">Payment Method *</label>
+                  <label className="text-muted-foreground text-[11px]">Payment Method *</label>
                   <select
                     value={payMethod}
                     onChange={(e) => setPayMethod(e.target.value)}
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded-md p-2 text-white"
+                    className="w-full bg-surface-elevated border border-surface-border rounded-md p-2 text-foreground focus:outline-none focus:border-gold"
                   >
                     <option value="UPI">UPI (QR Code / Dynamic Floor VPA)</option>
                     <option value="CARD">Credit / Debit Card (PineLabs Terminal)</option>
@@ -1084,28 +1236,29 @@ export default function SavingsSchemePage() {
 
                 {/* Real-time weight lock preview */}
                 {selectedAccount.schemeType === "WEIGHT_BASED_LOCK" && payAmountInr && (
-                  <div className="bg-zinc-900 p-2.5 rounded-md border border-zinc-800 flex justify-between items-center text-xs">
+                  <div className="bg-gold/10 p-2.5 rounded-lg border border-gold/20 flex justify-between items-center text-xs">
                     <span className="text-muted-foreground">24K Gold Credited at Spot:</span>
-                    <span className="font-mono font-bold text-amber-400">
+                    <span className="font-mono font-bold text-gold">
                       {((parseFloat(payAmountInr) || 0) / liveSpotRatePerGram).toFixed(4)} g Au
                     </span>
                   </div>
                 )}
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
+                <div className="flex justify-end gap-2 pt-2 border-t border-surface-border">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setIsPayModalOpen(false)}
-                    className="border-zinc-700 text-zinc-300 h-9 text-xs"
+                    className="border-surface-border text-muted-foreground hover:text-foreground h-9 text-xs"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-amber-500 hover:bg-amber-600 text-black font-semibold h-9 text-xs gap-1.5"
+                    variant="gold"
+                    className="font-semibold h-9 text-xs gap-1.5 shadow-sm"
                   >
-                    <Check className="h-4 w-4" /> Authorize & Print Receipt
+                    <Check className="h-4 w-4" /> Authorize &amp; Print Receipt
                   </Button>
                 </div>
               </form>
@@ -1115,10 +1268,10 @@ export default function SavingsSchemePage() {
 
         {/* REDEEM SCHEME MODAL */}
         <Dialog open={isRedeemModalOpen} onOpenChange={setIsRedeemModalOpen}>
-          <DialogContent className="sm:max-w-[450px] bg-zinc-950 border-zinc-800 text-white">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-white">
-                <Gift className="h-5 w-5 text-purple-400" /> Redeem Matured Gold Savings Plan
+          <DialogContent className="sm:max-w-[450px] bg-surface-card border-surface-border text-foreground p-0 overflow-hidden shadow-2xl rounded-2xl">
+            <DialogHeader className="p-6 pb-4 border-b border-surface-border bg-surface-elevated/40">
+              <DialogTitle className="flex items-center gap-2 text-foreground font-serif text-lg font-bold">
+                <Gift className="h-5 w-5 text-purple-600 dark:text-purple-400" /> Redeem Matured Gold Savings Plan
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground">
                 Apply accumulated deposits and atelier bonus grant towards a luxury salon jewelry invoice.
@@ -1126,59 +1279,75 @@ export default function SavingsSchemePage() {
             </DialogHeader>
 
             {selectedAccount && (
-              <div className="space-y-4 text-xs">
-                <div className="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-2">
+              <div className="p-6 space-y-4 text-xs font-mono">
+                <div className="bg-surface-elevated/60 p-3.5 rounded-xl border border-surface-border space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Account Number:</span>
-                    <span className="font-mono text-amber-400 font-bold">{selectedAccount.accountNumber}</span>
+                    <span className="font-mono text-gold font-bold">
+                      {selectedAccount.accountNumber}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Patron:</span>
-                    <span className="text-white font-medium">{selectedAccount.customerName}</span>
+                    <span className="text-foreground font-semibold font-sans">
+                      {selectedAccount.customerName}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Total Customer Deposits:</span>
-                    <span className="font-mono text-white font-bold">₹ {selectedAccount.totalDepositedInr.toLocaleString("en-IN")}</span>
+                    <span className="font-mono text-foreground font-bold">
+                      ₹ {selectedAccount.totalDepositedInr.toLocaleString("en-IN")}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Atelier 12th Month Bonus Contribution:</span>
-                    <span className="font-mono text-emerald-400 font-bold">₹ {selectedAccount.bonusAmountInr.toLocaleString("en-IN")}</span>
+                    <span className="font-mono text-status-emerald font-bold">
+                      ₹ {selectedAccount.bonusAmountInr.toLocaleString("en-IN")}
+                    </span>
                   </div>
-                  <div className="flex justify-between border-t border-zinc-800 pt-2 text-sm font-bold">
-                    <span className="text-white">Total Redemption Credit Voucher:</span>
-                    <span className="font-mono text-purple-400">
-                      ₹ {(selectedAccount.totalDepositedInr + selectedAccount.bonusAmountInr).toLocaleString("en-IN")}
+                  <div className="flex justify-between border-t border-surface-border pt-2 text-sm font-bold">
+                    <span className="text-foreground">Total Redemption Credit Voucher:</span>
+                    <span className="font-mono text-purple-600 dark:text-purple-400">
+                      ₹{" "}
+                      {(
+                        selectedAccount.totalDepositedInr + selectedAccount.bonusAmountInr
+                      ).toLocaleString("en-IN")}
                     </span>
                   </div>
                   {selectedAccount.accumulatedGoldGrams > 0 && (
                     <div className="flex justify-between text-xs pt-1">
                       <span className="text-muted-foreground">Or Fine Gold Weight Locked:</span>
-                      <span className="font-mono font-bold text-amber-400">{selectedAccount.accumulatedGoldGrams.toFixed(4)} g 24K</span>
+                      <span className="font-mono font-bold text-gold">
+                        {selectedAccount.accumulatedGoldGrams.toFixed(4)} g 24K
+                      </span>
                     </div>
                   )}
                 </div>
 
-                <div className="bg-zinc-900 p-2.5 rounded-md border border-zinc-800 text-xs text-zinc-300">
-                  <div className="flex items-center gap-1.5 text-purple-400 font-semibold mb-1">
-                    <BadgePercent className="h-4 w-4" /> Making Charge Discount: {selectedAccount.makingChargeDiscountPct}%
+                <div className="bg-purple-500/10 p-3 rounded-xl border border-purple-500/20 text-xs text-foreground/90 space-y-1">
+                  <div className="flex items-center gap-1.5 text-purple-600 dark:text-purple-400 font-semibold">
+                    <BadgePercent className="h-4 w-4 shrink-0" />
+                    <span>Making Charge Discount: {selectedAccount.makingChargeDiscountPct}%</span>
                   </div>
-                  <div>This voucher grants a {selectedAccount.makingChargeDiscountPct}% waiver on making charges for all gold and diamond jewellery selected at POS checkout.</div>
+                  <div className="text-[11px] text-muted-foreground font-sans leading-relaxed">
+                    This voucher grants a {selectedAccount.makingChargeDiscountPct}% waiver on making charges for all gold and diamond jewellery selected at POS checkout.
+                  </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
+                <div className="flex justify-end gap-2 pt-2 border-t border-surface-border">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setIsRedeemModalOpen(false)}
-                    className="border-zinc-700 text-zinc-300 h-9 text-xs"
+                    className="border-surface-border text-muted-foreground hover:text-foreground h-9 text-xs"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={handleRedeemScheme}
-                    className="bg-purple-500 hover:bg-purple-600 text-white font-semibold h-9 text-xs gap-1.5 shadow-lg shadow-purple-500/20"
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-semibold h-9 text-xs gap-1.5 shadow-md shadow-purple-500/20"
                   >
-                    <Check className="h-4 w-4" /> Confirm & Issue POS Voucher
+                    <Check className="h-4 w-4" /> Confirm &amp; Issue POS Voucher
                   </Button>
                 </div>
               </div>

@@ -84,13 +84,13 @@ export function SalonPresentationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl p-8 bg-gradient-to-b from-stone-950 via-obsidian-deep to-black border-gold/40 text-stone-100 shadow-2xl">
+      <DialogContent className="max-w-3xl p-6 sm:p-8 bg-surface-card border border-gold/40 text-foreground shadow-2xl rounded-2xl">
         {/* Salon Header with Atelier Brand */}
-        <div className="flex items-center justify-between border-b border-gold/20 pb-4">
+        <div className="flex items-center justify-between border-b border-surface-border pb-4">
           <div className="flex items-center space-x-3">
             <JewelCoreLogo size="md" variant="badge" />
             <div>
-              <span className="text-[10px] font-mono tracking-widest text-gold uppercase block">
+              <span className="text-[10px] font-mono tracking-widest text-gold uppercase block font-semibold">
                 PRIVATE CLIENT SALON • VIP PRESENTATION
               </span>
               <DialogTitle className="text-xl font-serif font-black tracking-wide text-foreground">
@@ -138,11 +138,13 @@ export function SalonPresentationModal({
             </div>
 
             {/* Studio Lighting Controls Bar */}
-            <div className="absolute bottom-4 flex items-center space-x-1.5 bg-black/60 backdrop-blur-md p-1 rounded-full border border-surface-border">
+            <div className="absolute bottom-4 flex items-center space-x-1.5 bg-black/70 backdrop-blur-md p-1 rounded-full border border-surface-border/50 shadow-lg">
               <button
                 onClick={() => setStudioLighting("ATELIER_WARM")}
                 className={`px-2.5 py-1 rounded-full text-[10px] font-mono transition-all ${
-                  studioLighting === "ATELIER_WARM" ? "bg-gold text-black font-bold" : "text-stone-400 hover:text-white"
+                  studioLighting === "ATELIER_WARM"
+                    ? "bg-gold text-obsidian font-bold shadow-sm"
+                    : "text-stone-300 hover:text-gold"
                 }`}
               >
                 Atelier Warm
@@ -150,14 +152,16 @@ export function SalonPresentationModal({
               <button
                 onClick={() => setStudioLighting("DAYLIGHT_5500K")}
                 className={`px-2.5 py-1 rounded-full text-[10px] font-mono transition-all ${
-                  studioLighting === "DAYLIGHT_5500K" ? "bg-blue-400 text-black font-bold" : "text-stone-400 hover:text-white"
+                  studioLighting === "DAYLIGHT_5500K"
+                    ? "bg-blue-400 text-obsidian font-bold shadow-sm"
+                    : "text-stone-300 hover:text-blue-400"
                 }`}
               >
                 Daylight 5500K
               </button>
               <button
                 onClick={handleRotateToggle}
-                className="p-1 rounded-full text-gold hover:text-white transition-colors"
+                className="p-1 rounded-full text-gold hover:text-gold-light transition-colors"
                 title="Rotate Piece"
               >
                 <RotateCw className="w-3.5 h-3.5" />

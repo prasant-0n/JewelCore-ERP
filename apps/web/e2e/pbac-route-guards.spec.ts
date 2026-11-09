@@ -55,7 +55,7 @@ test.describe("Atelier PBAC Route Protection & Workstation Governance (Step 1)",
     // Verify sidebar displays Locked badge on restricted stations
     const sidebar = page.locator("aside, div.overflow-y-auto");
     await expect(sidebar.locator("text=Stock Gate")).toBeVisible();
-    await expect(sidebar.locator("text=Locked").first()).toBeVisible();
+    await expect(sidebar.locator('[aria-label="Locked"]').first()).toBeVisible();
 
     // Navigate to /governance directly
     await page.goto("/governance");

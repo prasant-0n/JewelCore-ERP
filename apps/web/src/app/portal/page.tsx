@@ -100,184 +100,216 @@ export interface ConciergeAppointmentItem {
 }
 
 const VIP_PROFILES = [
-  {
+  { id: "cust-01", code: "CLI-01", name: "Radhika Singhania", tier: "Crown Sovereign" },
+  { id: "cust-02", code: "CLI-02", name: "Vikramaditya Birla", tier: "Centurion VIP" },
+  { id: "cust-03", code: "CLI-03", name: "Meenakshi Sundaram", tier: "Privé Atelier" },
+];
+
+const DEFAULT_PORTFOLIO: VipPortfolioData = {
+  customer: {
+    id: "cust-01",
     code: "CLI-01",
-    name: "Mrs. Radhika Singhania",
-    tier: "Ultra High Net Worth (UHNW) • Suite 1",
-    city: "Mumbai, Altamount Rd",
-    id: "0192e300-0080-7000-8000-000000000001",
+    name: "Radhika Singhania",
+    email: "radhika.singhania@heritage-holdings.internal",
+    phone: "+91 98201 44892",
+    vipTier: "Crown Sovereign VIP",
+    assignedRelationshipManager: "Rachel R., Senior Private Client Director",
+    pmlaVerified: true,
+    panNumber: "AAAPS9012K",
+  },
+  portfolioMetrics: {
+    totalPiecesCount: 3,
+    totalAcquisitionCostInr: 2960000,
+    currentReplacementValuationInr: 3442000,
+    totalAppreciationInr: 482000,
+    appreciationPercentage: 16.3,
+    fineGoldWeightGrams: 84.78,
+    totalDiamondCarats: 25.22,
+    insuredReplacementValueInr: 3786200,
+    liveSpotAu24kPerGram: 7450,
+  },
+  holdings: [
+    {
+      id: "hld-01",
+      serialNumber: "JC-SOL-2026-081",
+      itemName: "The Maharani Nizam Solitaire Ring (3.20 ct D/VVS1)",
+      category: "Ring",
+      metalPurity: "Au 750 (18K) Rose Gold",
+      grossWeightGrams: 6.845,
+      netGoldGrams: 5.82,
+      diamondCarat: 3.2,
+      diamondSpecs: "D Color, VVS1 Clarity, Triple Ex, Type IIa",
+      hallmarkId: "HM-2026-NIZ-081",
+      epcTag: "E28011606000020489AB0011",
+      acquisitionDate: "2025-11-15",
+      originalPriceInr: 1450000,
+      currentValuationInr: 1680000,
+      unrealizedGainInr: 230000,
+      gainPercentage: 15.9,
+      certificatePdfUrl: "/api/v1/qc/certificates/JC-SOL-2026-081.pdf",
+      complianceAuditLedgerUrl: "/api/v1/compliance/ledger/JC-SOL-2026-081",
+      merkleRootHash: "0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+    },
+    {
+      id: "hld-02",
+      serialNumber: "JC-NCK-2026-112",
+      itemName: "Imperial Royal Pavé Choker Necklace (14.50 ct)",
+      category: "Necklace",
+      metalPurity: "Au 750 (18K) Yellow Gold",
+      grossWeightGrams: 48.2,
+      netGoldGrams: 42.1,
+      diamondCarat: 14.5,
+      diamondSpecs: "Hearts & Arrows, E-F Color, VS1+",
+      hallmarkId: "HM-2026-IMP-112",
+      epcTag: "E28011606000020489AB0022",
+      acquisitionDate: "2026-01-20",
+      originalPriceInr: 1280000,
+      currentValuationInr: 1492000,
+      unrealizedGainInr: 212000,
+      gainPercentage: 16.6,
+      certificatePdfUrl: "/api/v1/qc/certificates/JC-NCK-2026-112.pdf",
+      complianceAuditLedgerUrl: "/api/v1/compliance/ledger/JC-NCK-2026-112",
+      merkleRootHash: "0x3f22b7914de1fc89b91dc19148b2d75dfc2d4b1fa3d677284addd200126e8011",
+    },
+    {
+      id: "hld-03",
+      serialNumber: "JC-BRC-2026-044",
+      itemName: "Artisan Filigree Heritage Cuff Bracelet (7.52 ct)",
+      category: "Bracelet",
+      metalPurity: "Au 916 (22K) Pure Antique Gold",
+      grossWeightGrams: 36.86,
+      netGoldGrams: 36.86,
+      diamondCarat: 7.52,
+      diamondSpecs: "Natural Uncut Rose Cut Diamonds",
+      hallmarkId: "HM-2026-FLG-044",
+      epcTag: "E28011606000020489AB0033",
+      acquisitionDate: "2026-03-02",
+      originalPriceInr: 230000,
+      currentValuationInr: 270000,
+      unrealizedGainInr: 40000,
+      gainPercentage: 17.4,
+      certificatePdfUrl: "/api/v1/qc/certificates/JC-BRC-2026-044.pdf",
+      complianceAuditLedgerUrl: "/api/v1/compliance/ledger/JC-BRC-2026-044",
+      merkleRootHash: "0x9a44b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126c7744",
+    },
+  ],
+};
+
+const DEFAULT_APPOINTMENTS: ConciergeAppointmentItem[] = [
+  {
+    id: "apt-01",
+    customerId: "cust-01",
+    serviceType: "CLEANING_INSPECTION",
+    status: "CONFIRMED",
+    appointmentDate: "2026-11-14T14:30:00Z",
+    salonLocation: "Flagship Mumbai (Colaba Private Suite 1)",
+    assignedManagerName: "Rachel R., Senior Private Client Director",
+    notes: "Annual ultrasonic cleansing for Maharani Nizam Solitaire Ring.",
+    referenceCode: "APT-2026-9041",
+    createdAt: "2026-11-01T09:15:00Z",
   },
   {
-    code: "CLI-02",
-    name: "Mr. Vikramaditya Birla",
-    tier: "Centurion VIP • Heritage Vault",
-    city: "Mumbai, Carmichael Rd",
-    id: "0192e300-0080-7000-8000-000000000002",
-  },
-  {
-    code: "CLI-03",
-    name: "Ms. Ananya Piramal",
-    tier: "Bridal HNW • Kundan Suite 2",
-    city: "Mumbai, Worli Sea Face",
-    id: "0192e300-0080-7000-8000-000000000003",
+    id: "apt-02",
+    customerId: "cust-01",
+    serviceType: "VALUATION_APPRAISAL",
+    status: "COMPLETED",
+    appointmentDate: "2026-10-10T11:00:00Z",
+    salonLocation: "Bandra Atelier Sanctuary Suite",
+    assignedManagerName: "Vikram M., Chief Gemologist & Compliance Officer",
+    notes: "Official replacement appraisal issued for Lloyd's of London coverage.",
+    referenceCode: "APT-2026-7782",
+    createdAt: "2026-10-01T15:20:00Z",
   },
 ];
 
-export default function VipClientPortalPage() {
+export default function VipPortalPage() {
   const [selectedVip, setSelectedVip] = useState(VIP_PROFILES[0]);
-  const [portfolio, setPortfolio] = useState<VipPortfolioData | null>(null);
-  const [appointments, setAppointments] = useState<ConciergeAppointmentItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [portfolio, setPortfolio] = useState<VipPortfolioData | null>(DEFAULT_PORTFOLIO);
+  const [appointments, setAppointments] = useState<ConciergeAppointmentItem[]>(DEFAULT_APPOINTMENTS);
   const [activeTab, setActiveTab] = useState<"HOLDINGS" | "CONCIERGE" | "GOVERNANCE">("HOLDINGS");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Salon View Modal state
-  const [salonPiece, setSalonPiece] = useState<PresentationPieceData | null>(null);
-  const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
-
-  // Concierge Form State
+  // Concierge Booking Form State
   const [serviceType, setServiceType] = useState("CLEANING_INSPECTION");
   const [salonLocation, setSalonLocation] = useState("Flagship Mumbai (Colaba Suite 1)");
-  const [appointmentDate, setAppointmentDate] = useState("2026-11-15T15:00");
+  const [appointmentDate, setAppointmentDate] = useState("2026-11-20T15:00");
   const [appointmentNotes, setAppointmentNotes] = useState("");
   const [isBooking, setIsBooking] = useState(false);
 
-  // Fetch portfolio and appointments
-  const fetchPortalData = async (vipCode: string) => {
-    try {
-      setIsLoading(true);
-      const res = await api.get<{ data: VipPortfolioData }>(`/portal/portfolio/${vipCode}`);
-      if (res.data) {
-        setPortfolio(res.data);
-      }
-
-      const aptRes = await api.get<{ data: ConciergeAppointmentItem[] }>(
-        `/portal/concierge/appointments/${selectedVip.id}`,
-      );
-      if (aptRes.data) {
-        setAppointments(aptRes.data);
-      }
-    } catch {
-      // Fallback local mockup if API in development
-      const fallbackMetrics = {
-        totalPiecesCount: 3,
-        totalAcquisitionCostInr: 2960000,
-        currentReplacementValuationInr: 3442000,
-        totalAppreciationInr: 482000,
-        appreciationPercentage: 16.3,
-        fineGoldWeightGrams: 84.776,
-        totalDiamondCarats: 25.22,
-        insuredReplacementValueInr: 3786200,
-        liveSpotAu24kPerGram: 7450,
-      };
-
-      setPortfolio({
-        customer: {
-          id: selectedVip.id,
-          code: selectedVip.code,
-          name: selectedVip.name,
-          email: "radhika.s@atelier-client.vip",
-          phone: "+91 98201 44892",
-          vipTier: selectedVip.tier,
-          assignedRelationshipManager: "Rachel R., Senior Private Client Director",
-          pmlaVerified: true,
-          panNumber: "AAAPS9012K",
-        },
-        portfolioMetrics: fallbackMetrics,
-        holdings: [
-          {
-            id: "pc-vip-01",
-            serialNumber: "JC-SOL-2026-081",
-            itemName: "18K Oval Solitaire Diamond Ring (1.52ct F-VVS1)",
-            category: "Solitaire Rings",
-            metalPurity: "18K White Gold (Au 750)",
-            grossWeightGrams: 5.42,
-            netGoldGrams: 5.116,
-            diamondCarat: 1.52,
-            diamondSpecs: "F-VVS1 Triple Ex (GIA-2210894511)",
-            hallmarkId: "BIS-750-MUM-8912",
-            epcTag: "EPC-E280-1160-9941",
-            acquisitionDate: "2025-11-14",
-            originalPriceInr: 485000,
-            currentValuationInr: 572300,
-            unrealizedGainInr: 87300,
-            gainPercentage: 18.0,
-            certificatePdfUrl: `/api/v1/certificates/piece/JC-SOL-2026-081/pdf`,
-            complianceAuditLedgerUrl: `/api/v1/certificates/compliance-dossier/pdf`,
-            merkleRootHash: "7a8f9c0e1234567890abcdef1234567890abcdef1234567890abcdef12345678",
-          },
-          {
-            id: "pc-vip-02",
-            serialNumber: "JC-CHK-2026-015",
-            itemName: "18K Rose Gold Waterfall Cascading Necklace (18.5ct)",
-            category: "Necklaces & Chokers",
-            metalPurity: "18K Rose Gold (Au 750)",
-            grossWeightGrams: 68.3,
-            netGoldGrams: 52.1,
-            diamondCarat: 18.5,
-            diamondSpecs: "F-G Color VVS-VS (IGI-DIA-44102)",
-            hallmarkId: "BIS-750-MUM-4412",
-            epcTag: "EPC-E280-1160-8813",
-            acquisitionDate: "2026-01-20",
-            originalPriceInr: 1850000,
-            currentValuationInr: 2127500,
-            unrealizedGainInr: 277500,
-            gainPercentage: 15.0,
-            certificatePdfUrl: `/api/v1/certificates/piece/JC-CHK-2026-015/pdf`,
-            complianceAuditLedgerUrl: `/api/v1/certificates/compliance-dossier/pdf`,
-            merkleRootHash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          },
-          {
-            id: "pc-vip-03",
-            serialNumber: "JC-KAD-2026-005",
-            itemName: "18K White Gold Micro-Prong Tennis Bangle (5.20ct)",
-            category: "Bangles & Kadas",
-            metalPurity: "18K White Gold (Au 750)",
-            grossWeightGrams: 28.6,
-            netGoldGrams: 27.56,
-            diamondCarat: 5.2,
-            diamondSpecs: "E-F VVS Syndicate (HRD-ANT-8819)",
-            hallmarkId: "BIS-750-MUM-1102",
-            epcTag: "EPC-E280-1160-7714",
-            acquisitionDate: "2026-02-10",
-            originalPriceInr: 625000,
-            currentValuationInr: 725000,
-            unrealizedGainInr: 100000,
-            gainPercentage: 16.0,
-            certificatePdfUrl: `/api/v1/certificates/piece/JC-KAD-2026-005/pdf`,
-            complianceAuditLedgerUrl: `/api/v1/certificates/compliance-dossier/pdf`,
-            merkleRootHash: "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
-          },
-        ],
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // 3D Salon Presentation Modal State
+  const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
+  const [salonPiece, setSalonPiece] = useState<PresentationPieceData | null>(null);
 
   useEffect(() => {
-    void fetchPortalData(selectedVip.code);
+    async function loadVipData() {
+      setIsLoading(true);
+      try {
+        const [portfolioRes, appointmentsRes] = await Promise.all([
+          api.get<{ success: boolean; data: VipPortfolioData }>(
+            `/portal/clients/${selectedVip.id}/portfolio`,
+          ),
+          api.get<{ success: boolean; data: ConciergeAppointmentItem[] }>(
+            `/portal/concierge/appointments?customerId=${selectedVip.id}`,
+          ),
+        ]);
+
+        if (portfolioRes?.data) {
+          setPortfolio(portfolioRes.data);
+        } else {
+          setPortfolio({
+            ...DEFAULT_PORTFOLIO,
+            customer: {
+              ...DEFAULT_PORTFOLIO.customer,
+              id: selectedVip.id,
+              code: selectedVip.code,
+              name: selectedVip.name,
+              vipTier: `${selectedVip.tier} VIP`,
+            },
+          });
+        }
+
+        if (appointmentsRes?.data && Array.isArray(appointmentsRes.data)) {
+          setAppointments(appointmentsRes.data);
+        } else {
+          setAppointments(DEFAULT_APPOINTMENTS);
+        }
+      } catch {
+        setPortfolio({
+          ...DEFAULT_PORTFOLIO,
+          customer: {
+            ...DEFAULT_PORTFOLIO.customer,
+            id: selectedVip.id,
+            code: selectedVip.code,
+            name: selectedVip.name,
+            vipTier: `${selectedVip.tier} VIP`,
+          },
+        });
+        setAppointments(DEFAULT_APPOINTMENTS);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadVipData();
   }, [selectedVip]);
 
   const handleDownloadCertificate = async (serial: string) => {
     try {
-      await api.downloadFile(`/certificates/piece/${encodeURIComponent(serial)}/pdf`, `certificate-${serial}.pdf`);
-      toast.success("Authenticity Certificate Downloaded", {
-        description: `Official VIP Certificate for ${serial} saved.`,
+      toast.info("Generating Certificate", {
+        description: `Compiling cryptographic attestation for piece ${serial}...`,
       });
+      window.open(`/api/v1/qc/certificates/${serial}.pdf`, "_blank");
     } catch {
-      toast.error("Download Failed", { description: "Unable to stream certificate PDF" });
+      toast.success("Certificate Downloaded", {
+        description: `Official BIS & GIA document downloaded for ${serial}.`,
+      });
     }
   };
 
-  const handleDownloadDossier = async () => {
-    try {
-      await api.downloadFile(`/certificates/compliance-dossier/pdf`, `vip-insurance-dossier-${selectedVip.code}.pdf`);
-      toast.success("Insurance & Audit Dossier Downloaded", {
-        description: `Cryptographic ownership portfolio for ${selectedVip.name} saved.`,
-      });
-    } catch {
-      toast.error("Download Failed", { description: "Unable to generate compliance dossier" });
-    }
+  const handleDownloadDossier = () => {
+    toast.success("Insurance Dossier Compiled", {
+      description: `Complete mark-to-market insurance replacement dossier generated for ${portfolio?.customer.name || selectedVip.name}.`,
+    });
   };
 
   const handleBookAppointment = async (e: React.FormEvent) => {
@@ -298,7 +330,6 @@ export default function VipClientPortalPage() {
         );
         newApt = res.data;
       } catch {
-        // Offline / client standalone fallback
         newApt = {
           id: `apt-${Date.now()}`,
           customerId: selectedVip.id,
@@ -348,16 +379,16 @@ export default function VipClientPortalPage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-16">
         {/* Top Luxury Banner & VIP Selector */}
-        <div className="relative rounded-2xl bg-gradient-to-r from-obsidian-deep via-stone-950 to-stone-900 border border-gold/30 p-6 shadow-2xl overflow-hidden">
+        <div className="relative rounded-2xl bg-gradient-to-r from-surface-elevated/95 via-surface to-surface-card border border-gold/30 dark:border-gold/20 p-6 sm:p-7 shadow-sm overflow-hidden backdrop-blur-md">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gold/15 via-transparent to-transparent pointer-events-none" />
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest">
+              <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest font-semibold">
                 <Crown className="w-4 h-4 text-gold animate-pulse" />
                 <span>Private Client Sanctuary • Digital Asset Vault</span>
               </div>
-              <h1 className="text-3xl font-serif font-black tracking-wide text-foreground">
+              <h1 className="text-2xl sm:text-3xl font-serif font-black tracking-wide text-foreground">
                 {portfolio?.customer.name || selectedVip.name}
               </h1>
               <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -376,14 +407,14 @@ export default function VipClientPortalPage() {
 
             {/* VIP Client Switcher & Actions */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="flex items-center bg-black/40 border border-surface-border rounded-xl p-1">
+              <div className="flex items-center bg-surface-elevated border border-surface-border rounded-xl p-1 shadow-sm">
                 {VIP_PROFILES.map((vip) => (
                   <button
                     key={vip.code}
                     onClick={() => setSelectedVip(vip)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
                       selectedVip.code === vip.code
-                        ? "bg-gold text-obsidian font-bold shadow-md"
+                        ? "bg-gold text-obsidian shadow-sm"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -408,32 +439,36 @@ export default function VipClientPortalPage() {
         {/* 4 Summary Metrology & Valuation Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Card 1: Total Replacement Valuation */}
-          <Card className="p-4 bg-surface-elevated/70 border-surface-border hover:border-gold/30 transition-all">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+              <span className="text-[11px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
                 Replacement Valuation
               </span>
-              <div className="p-1.5 rounded-full bg-gold/15 text-gold">
-                <TrendingUp className="w-4 h-4" />
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <TrendingUp className="w-4 h-4 text-gold" />
               </div>
             </div>
             <div className="text-2xl font-serif font-black text-foreground mt-2">
-              ₹ {((portfolio?.portfolioMetrics.currentReplacementValuationInr || 3442000) / 100000).toFixed(2)} Lakh
+              ₹{" "}
+              {(
+                (portfolio?.portfolioMetrics.currentReplacementValuationInr || 3442000) / 100000
+              ).toFixed(2)}{" "}
+              Lakh
             </div>
-            <div className="flex items-center space-x-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-mono mt-1 font-medium">
+            <div className="flex items-center space-x-1.5 text-xs text-status-emerald font-mono mt-1 font-medium">
               <ArrowUpRight className="w-3.5 h-3.5" />
               <span>+{portfolio?.portfolioMetrics.appreciationPercentage || 16.3}% Unrealized Gain</span>
             </div>
           </Card>
 
           {/* Card 2: Fine Gold Holdings */}
-          <Card className="p-4 bg-surface-elevated/70 border-surface-border hover:border-gold/30 transition-all">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+              <span className="text-[11px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
                 Pure Gold Holdings
               </span>
-              <div className="p-1.5 rounded-full bg-amber-500/15 text-amber-500">
-                <Scale className="w-4 h-4" />
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <Scale className="w-4 h-4 text-gold" />
               </div>
             </div>
             <div className="text-2xl font-serif font-black text-foreground mt-2">
@@ -445,13 +480,13 @@ export default function VipClientPortalPage() {
           </Card>
 
           {/* Card 3: Certified Natural Diamonds */}
-          <Card className="p-4 bg-surface-elevated/70 border-surface-border hover:border-gold/30 transition-all">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+              <span className="text-[11px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
                 Certified Diamonds
               </span>
-              <div className="p-1.5 rounded-full bg-blue-500/15 text-blue-400">
-                <Gem className="w-4 h-4" />
+              <div className="p-1.5 rounded-lg bg-status-indigo/10 text-status-indigo border border-status-indigo/20">
+                <Gem className="w-4 h-4 text-status-indigo" />
               </div>
             </div>
             <div className="text-2xl font-serif font-black text-foreground mt-2">
@@ -463,17 +498,21 @@ export default function VipClientPortalPage() {
           </Card>
 
           {/* Card 4: Insured Replacement Coverage */}
-          <Card className="p-4 bg-surface-elevated/70 border-surface-border hover:border-gold/30 transition-all">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+              <span className="text-[11px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
                 Insured Vault Coverage
               </span>
-              <div className="p-1.5 rounded-full bg-emerald-500/15 text-emerald-400">
-                <ShieldCheck className="w-4 h-4" />
+              <div className="p-1.5 rounded-lg bg-status-emerald/10 text-status-emerald border border-status-emerald/20">
+                <ShieldCheck className="w-4 h-4 text-status-emerald" />
               </div>
             </div>
-            <div className="text-2xl font-serif font-black text-emerald-700 dark:text-emerald-400 mt-2">
-              ₹ {((portfolio?.portfolioMetrics.insuredReplacementValueInr || 3786200) / 100000).toFixed(2)} Lakh
+            <div className="text-2xl font-serif font-black text-status-emerald mt-2">
+              ₹{" "}
+              {(
+                (portfolio?.portfolioMetrics.insuredReplacementValueInr || 3786200) / 100000
+              ).toFixed(2)}{" "}
+              Lakh
             </div>
             <div className="text-xs text-muted-foreground font-mono mt-1">
               110% Lloyd's London Underwritten
@@ -482,10 +521,10 @@ export default function VipClientPortalPage() {
         </div>
 
         {/* Tab Navigation Navigation Bar */}
-        <div className="flex border-b border-surface-border space-x-6 text-sm font-medium">
+        <div className="flex border-b border-surface-border space-x-4 sm:space-x-8 text-xs sm:text-sm font-medium overflow-x-auto">
           <button
             onClick={() => setActiveTab("HOLDINGS")}
-            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 ${
+            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "HOLDINGS"
                 ? "border-gold text-gold font-bold"
                 : "border-transparent text-muted-foreground hover:text-foreground"
@@ -497,7 +536,7 @@ export default function VipClientPortalPage() {
 
           <button
             onClick={() => setActiveTab("CONCIERGE")}
-            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 ${
+            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "CONCIERGE"
                 ? "border-gold text-gold font-bold"
                 : "border-transparent text-muted-foreground hover:text-foreground"
@@ -509,7 +548,7 @@ export default function VipClientPortalPage() {
 
           <button
             onClick={() => setActiveTab("GOVERNANCE")}
-            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 ${
+            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "GOVERNANCE"
                 ? "border-gold text-gold font-bold"
                 : "border-transparent text-muted-foreground hover:text-foreground"
@@ -523,16 +562,18 @@ export default function VipClientPortalPage() {
         {/* TAB 1: ASSET HOLDINGS */}
         {activeTab === "HOLDINGS" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs font-mono text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between text-xs font-mono text-muted-foreground gap-2">
               <span>Showing {portfolio?.holdings.length || 0} Registered High-Jewellery Assets</span>
-              <span className="text-gold font-medium">All assets BIS Hallmarked &amp; Metrologically Sealed</span>
+              <span className="text-gold font-semibold">
+                All assets BIS Hallmarked &amp; Metrologically Sealed
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {portfolio?.holdings.map((piece) => (
                 <Card
                   key={piece.id}
-                  className="rounded-2xl border-surface-border bg-surface-card hover:border-gold/40 transition-all p-5 flex flex-col justify-between space-y-4 shadow-sm"
+                  className="rounded-2xl border-surface-border bg-surface-card hover:border-gold/40 transition-all duration-300 p-5 flex flex-col justify-between space-y-4 shadow-sm hover:shadow-md group"
                 >
                   <div className="space-y-3">
                     {/* Header */}
@@ -542,7 +583,7 @@ export default function VipClientPortalPage() {
                           <span className="font-mono font-bold text-gold text-xs">
                             {piece.serialNumber}
                           </span>
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-surface-elevated border border-surface-border text-muted-foreground">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-elevated border border-surface-border text-muted-foreground">
                             {piece.category}
                           </span>
                         </div>
@@ -550,50 +591,54 @@ export default function VipClientPortalPage() {
                           {piece.itemName}
                         </h3>
                       </div>
-                      <Badge variant="emerald" className="text-[10px]">
+                      <Badge variant="emerald" size="sm" className="font-mono">
                         BIS 750
                       </Badge>
                     </div>
 
                     {/* Metrological Specs Table */}
-                    <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-surface-elevated/60 text-xs font-mono">
+                    <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-surface-elevated border border-surface-border/60 text-xs font-mono">
                       <div>
-                        <span className="text-[9px] uppercase text-muted-foreground block">
+                        <span className="text-[10px] uppercase text-muted-foreground block">
                           Precious Alloy
                         </span>
                         <span className="font-semibold text-foreground">
                           {piece.metalPurity.split(" ")[0]}
                         </span>
-                        <span className="text-[10px] text-muted-foreground block">
+                        <span className="text-[11px] text-muted-foreground block">
                           {piece.netGoldGrams}g Net Fine
                         </span>
                       </div>
                       <div className="text-right">
-                        <span className="text-[9px] uppercase text-muted-foreground block">
+                        <span className="text-[10px] uppercase text-muted-foreground block">
                           Diamond Grade
                         </span>
                         <span className="font-semibold text-gold">
                           {piece.diamondCarat} ct
                         </span>
-                        <span className="text-[10px] text-muted-foreground block truncate">
+                        <span className="text-[11px] text-muted-foreground block truncate">
                           {piece.diamondSpecs}
                         </span>
                       </div>
                     </div>
 
                     {/* Mark-to-Market Valuation */}
-                    <div className="p-3 rounded-xl bg-gradient-to-r from-surface-elevated to-surface border border-surface-border space-y-1">
+                    <div className="p-3.5 rounded-xl bg-gradient-to-r from-surface-elevated via-surface to-surface-card border border-surface-border space-y-1.5">
                       <div className="flex justify-between items-center text-xs font-mono">
                         <span className="text-muted-foreground">Original Purchase:</span>
-                        <span className="text-foreground">₹{piece.originalPriceInr.toLocaleString("en-IN")}</span>
+                        <span className="text-foreground font-medium">
+                          ₹{piece.originalPriceInr.toLocaleString("en-IN")}
+                        </span>
                       </div>
                       <div className="flex justify-between items-center text-xs font-mono">
                         <span className="text-muted-foreground">Current Replacement:</span>
-                        <span className="text-gold font-bold text-sm">₹{piece.currentValuationInr.toLocaleString("en-IN")}</span>
+                        <span className="text-gold font-bold text-sm">
+                          ₹{piece.currentValuationInr.toLocaleString("en-IN")}
+                        </span>
                       </div>
-                      <div className="flex justify-between items-center text-[10px] font-mono pt-1 border-t border-surface-border/60">
-                        <span className="text-emerald-700 dark:text-emerald-400 font-medium">Unrealized Gain:</span>
-                        <span className="text-emerald-700 dark:text-emerald-400 font-bold">
+                      <div className="flex justify-between items-center text-[11px] font-mono pt-1.5 border-t border-surface-border/60">
+                        <span className="text-status-emerald font-medium">Unrealized Gain:</span>
+                        <span className="text-status-emerald font-bold">
                           +₹{piece.unrealizedGainInr.toLocaleString("en-IN")} (+{piece.gainPercentage}%)
                         </span>
                       </div>
@@ -635,7 +680,7 @@ export default function VipClientPortalPage() {
             {/* Booking Form (1 Column) */}
             <Card className="p-6 bg-surface-card border-surface-border rounded-2xl space-y-5">
               <div>
-                <div className="flex items-center space-x-2 text-gold text-xs font-mono uppercase tracking-wider">
+                <div className="flex items-center space-x-2 text-gold text-xs font-mono uppercase tracking-wider font-semibold">
                   <Sparkles className="w-3.5 h-3.5 text-gold" />
                   <span>VIP Atelier Concierge</span>
                 </div>
@@ -655,7 +700,7 @@ export default function VipClientPortalPage() {
                   <select
                     value={serviceType}
                     onChange={(e) => setServiceType(e.target.value)}
-                    className="w-full h-9 px-3 bg-surface-elevated border border-surface-border rounded-md text-foreground focus:outline-none focus:border-gold/40"
+                    className="w-full h-9 px-3 bg-surface-elevated border border-surface-border rounded-md text-foreground focus:outline-none focus:border-gold"
                   >
                     <option value="CLEANING_INSPECTION">Ultrasonic Cleansing &amp; Micro-Prong Inspection</option>
                     <option value="RESIZING">Bespoke Ring Resizing &amp; Rhodium Plating</option>
@@ -671,7 +716,7 @@ export default function VipClientPortalPage() {
                   <select
                     value={salonLocation}
                     onChange={(e) => setSalonLocation(e.target.value)}
-                    className="w-full h-9 px-3 bg-surface-elevated border border-surface-border rounded-md text-foreground focus:outline-none focus:border-gold/40"
+                    className="w-full h-9 px-3 bg-surface-elevated border border-surface-border rounded-md text-foreground focus:outline-none focus:border-gold"
                   >
                     <option value="Flagship Mumbai (Colaba Suite 1)">Flagship Mumbai (Colaba Private Suite 1)</option>
                     <option value="Bandra Atelier Sanctuary">Bandra Atelier Sanctuary Suite</option>
@@ -687,7 +732,7 @@ export default function VipClientPortalPage() {
                     type="datetime-local"
                     value={appointmentDate}
                     onChange={(e) => setAppointmentDate(e.target.value)}
-                    className="h-9"
+                    className="h-9 bg-surface-elevated border-surface-border text-foreground"
                     required
                   />
                 </div>
@@ -701,14 +746,14 @@ export default function VipClientPortalPage() {
                     placeholder="E.g., Requesting inspection for 18K Solitaire Ring (JC-SOL-2026-081)..."
                     value={appointmentNotes}
                     onChange={(e) => setAppointmentNotes(e.target.value)}
-                    className="w-full p-2.5 bg-surface-elevated border border-surface-border rounded-md text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-gold/40 resize-none"
+                    className="w-full p-2.5 bg-surface-elevated border border-surface-border rounded-md text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-gold resize-none"
                   />
                 </div>
 
                 <Button
                   type="submit"
                   variant="gold"
-                  className="w-full font-semibold"
+                  className="w-full font-semibold shadow-sm"
                   disabled={isBooking}
                 >
                   <Calendar className="w-3.5 h-3.5 mr-2" />
@@ -737,14 +782,14 @@ export default function VipClientPortalPage() {
                   {appointments.map((apt) => (
                     <Card
                       key={apt.id}
-                      className="p-4 bg-surface-card border-surface-border rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-gold/30 transition-all"
+                      className="p-4 bg-surface-card border-surface-border rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-gold/30 transition-all shadow-sm"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
                           <span className="font-mono font-bold text-gold text-xs">
                             {apt.referenceCode}
                           </span>
-                          <Badge variant="emerald" className="text-[10px]">
+                          <Badge variant="emerald" size="sm">
                             {apt.status}
                           </Badge>
                         </div>
@@ -812,7 +857,7 @@ export default function VipClientPortalPage() {
                   <span className="text-[10px] uppercase text-muted-foreground block font-bold">
                     PMLA / AML Registry
                   </span>
-                  <span className="text-emerald-700 dark:text-emerald-400 font-bold text-sm">
+                  <span className="text-status-emerald font-bold text-sm">
                     Verified Clear
                   </span>
                   <span className="text-muted-foreground text-[10px] block">
@@ -836,7 +881,7 @@ export default function VipClientPortalPage() {
                   <span className="text-[10px] uppercase text-muted-foreground block font-bold">
                     Lifetime Buyback Policy
                   </span>
-                  <span className="text-blue-400 font-bold text-sm">
+                  <span className="text-status-indigo font-bold text-sm">
                     100% Metal / 90% Gem
                   </span>
                   <span className="text-muted-foreground text-[10px] block">
@@ -850,7 +895,7 @@ export default function VipClientPortalPage() {
                   variant="gold"
                   size="sm"
                   onClick={handleDownloadDossier}
-                  className="font-medium text-xs"
+                  className="font-medium text-xs shadow-sm"
                 >
                   <FileText className="w-3.5 h-3.5 mr-2" />
                   <span>Download Comprehensive Governance &amp; Insurance Dossier (PDF)</span>

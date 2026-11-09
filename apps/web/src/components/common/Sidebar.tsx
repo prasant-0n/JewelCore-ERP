@@ -174,10 +174,11 @@ export function SidebarNavList({
 
                   {!isCollapsed && isRestricted && (
                     <span
-                      className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium shrink-0 bg-surface border border-surface-border/60 text-muted-foreground/70 flex items-center gap-1"
+                      title="Access Restricted (PBAC Locked)"
+                      aria-label="Locked"
+                      className="p-1 rounded-md text-muted-foreground/60 hover:text-gold shrink-0 bg-surface border border-surface-border/60 flex items-center justify-center transition-colors shadow-sm"
                     >
-                      <Lock className="w-2.5 h-2.5 text-muted-foreground/50" />
-                      <span>Locked</span>
+                      <Lock className="w-3 h-3 text-gold/80" />
                     </span>
                   )}
 
