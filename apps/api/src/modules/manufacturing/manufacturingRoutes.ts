@@ -10,6 +10,11 @@ import {
   updateJobStageHandler,
   recordJobReturnHandler,
   completeJobOrderHandler,
+  listItc04ChallansHandler,
+  getItc04ChallanByIdHandler,
+  createItc04ChallanHandler,
+  settleKarigarLossHandler,
+  listKarigarSettlementsHandler,
 } from "./manufacturingController.js";
 
 export function createManufacturingRouter(): Router {
@@ -30,6 +35,13 @@ export function createManufacturingRouter(): Router {
   router.patch("/jobs/:id/stage", updateJobStageHandler);
   router.post("/jobs/:id/return", recordJobReturnHandler);
   router.post("/jobs/:id/complete", completeJobOrderHandler);
+
+  // Milestone 13: Form GST ITC-04 Statutory Delivery Challans & Karigar Loss Settlement
+  router.get("/challans", listItc04ChallansHandler);
+  router.post("/challans", createItc04ChallanHandler);
+  router.get("/challans/:id", getItc04ChallanByIdHandler);
+  router.post("/jobs/:id/settle-loss", settleKarigarLossHandler);
+  router.get("/settlements", listKarigarSettlementsHandler);
 
   return router;
 }

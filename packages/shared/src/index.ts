@@ -56,3 +56,4 @@ export * from "./pricing/index.js";
 export * from "./sales/index.js";
 export * from "./transfers/index.js";
 export * from "./accounting/index.js";
+export * from "./manufacturing/index.js";

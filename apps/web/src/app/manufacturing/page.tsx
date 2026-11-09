@@ -22,7 +22,10 @@ import {
   Check,
   RefreshCw,
   UserCheck,
+  FileText,
 } from "lucide-react";
+import { Itc04ChallanRegistry } from "../../components/manufacturing/Itc04ChallanRegistry";
+import { KarigarSettlementModal } from "../../components/manufacturing/KarigarSettlementModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -310,7 +313,7 @@ const CRAFTING_STAGES = [
 ];
 
 export default function ManufacturingPage() {
-  const [activeTab, setActiveTab] = useState<"jobs" | "reconciliation" | "karigars" | "boms">("jobs");
+  const [activeTab, setActiveTab] = useState<"jobs" | "reconciliation" | "karigars" | "boms" | "challans">("jobs");
   const [jobs, setJobs] = useState<ManufacturingJob[]>(DEFAULT_JOBS);
   const [karigars, setKarigars] = useState<Karigar[]>(DEFAULT_KARIGARS);
   const [boms, setBoms] = useState<BomRecipe[]>(DEFAULT_BOMS);
@@ -321,6 +324,7 @@ export default function ManufacturingPage() {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [selectedJobForReturn, setSelectedJobForReturn] = useState<ManufacturingJob | null>(null);
+  const [settleModalJob, setSettleModalJob] = useState<any | null>(null);
 
   // Issue modal fields
   const [issueKarigarId, setIssueKarigarId] = useState("");
@@ -660,6 +664,17 @@ export default function ManufacturingPage() {
           >
             <FileSpreadsheet className="h-4 w-4" /> BOM Design Recipes ({boms.length})
           </button>
+          <button
+            onClick={() => setActiveTab("challans")}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === "challans"
+                ? "border-amber-400 text-amber-400"
+                : "border-transparent text-muted-foreground hover:text-white"
+            }`}
+            data-testid="itc04-challans-tab-btn"
+          >
+            <FileText className="h-4 w-4" /> Form GST ITC-04 Challans
+          </button>
         </div>
 
         {/* TAB 1: ACTIVE JOB CARDS */}
@@ -837,6 +852,7 @@ export default function ManufacturingPage() {
                       <th className="py-2.5 px-3 text-right">Actual Loss %</th>
                       <th className="py-2.5 px-3 text-right">Allowed SLA</th>
                       <th className="py-2.5 px-3 text-center">Status</th>
+                      <th className="py-2.5 px-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/20 text-zinc-300">
@@ -879,6 +895,19 @@ export default function ManufacturingPage() {
                               <Badge variant="outline" className="bg-rose-500/10 text-rose-400 border-rose-500/30 text-[10px]">
                                 EXCESS LOSS
                               </Badge>
+                            )}
+                          </td>
+                          <td className="py-3 px-3 text-right">
+                            {hasReturned && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setSettleModalJob(job)}
+                                className="h-6 text-[10px] px-2 font-mono border-amber-400/40 text-amber-400 hover:bg-amber-400/10"
+                                data-testid={`settle-loss-btn-${job.jobNumber}`}
+                              >
+                                Settle Loss
+                              </Button>
                             )}
                           </td>
                         </tr>
@@ -995,6 +1024,11 @@ export default function ManufacturingPage() {
               </Card>
             ))}
           </div>
+        )}
+
+        {/* TAB 5: FORM GST ITC-04 STATUTORY DELIVERY CHALLANS */}
+        {activeTab === "challans" && (
+          <Itc04ChallanRegistry />
         )}
 
         {/* ISSUE JOB CARD MODAL */}
@@ -1291,6 +1325,26 @@ export default function ManufacturingPage() {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* KARIGAR LOSS SETTLEMENT MODAL */}
+        <KarigarSettlementModal
+          isOpen={Boolean(settleModalJob)}
+          onClose={() => setSettleModalJob(null)}
+          job={settleModalJob}
+          onSuccess={(settlement) => {
+            setJobs((prev) =>
+              prev.map((j) =>
+                j.jobNumber === settlement.jobNumber
+                  ? {
+                      ...j,
+                      lossStatus: settlement.lossStatus === "WITHIN_TOLERANCE" ? "WITHIN_TOLERANCE" : "EXCESS_LOSS",
+                      status: "COMPLETED",
+                    }
+                  : j,
+              ),
+            );
+          }}
+        />
       </div>
     </AppShell>
   );

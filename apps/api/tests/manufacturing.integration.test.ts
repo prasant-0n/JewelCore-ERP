@@ -155,4 +155,133 @@ describe("Atelier Manufacturing & Karigar Work Orders API (FEAT-MFG-01)", () => 
       expect(res.body.data.stage).toBe("COMPLETED");
     });
   });
+
+  describe("Milestone 13: Statutory Form GST ITC-04 Delivery Challans & Karigar Settlement", () => {
+    let createdChallanId: string;
+    let createdChallanNumber: string;
+
+    it("GET /api/v1/manufacturing/challans lists seeded statutory delivery challans", async () => {
+      const res = await request(app).get("/api/v1/manufacturing/challans");
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBeGreaterThanOrEqual(3);
+
+      const first = res.body.data[0];
+      expect(first).toHaveProperty("challanNumber");
+      expect(first).toHaveProperty("statutoryRule");
+      expect(first).toHaveProperty("consignorGstin");
+    });
+
+    it("POST /api/v1/manufacturing/challans issues new statutory delivery challan", async () => {
+      const res = await request(app)
+        .post("/api/v1/manufacturing/challans")
+        .send({
+          jobOrderId: createdJobId || "job-test-01",
+          jobNumber: "JOB-2026-4822",
+          karigarId: createdKarigarId || "krg-01",
+          karigarCode: "KRG-MUM-01",
+          karigarName: "Master Rameshwar Chitrakar",
+          karigarGstinOrPan: "RCHIT1122K",
+          karigarAddress: "Zaveri Bazaar Atelier Suite 402, Mumbai",
+          dispatchState: "Maharashtra (27)",
+          hsnCode: "7113",
+          itemDescription: "18K Solitaire Ring Mount for Micro-Pave Diamond Setting",
+          natureOfProcessing: "DIAMOND_MICRO_PAVE",
+          issuedPureGoldGrams: 14.5,
+          issuedAlloyGrams: 1.2,
+          issuedGrossMetalGrams: 15.7,
+          issuedDiamondCarats: 1.8,
+          issuedGemstoneCarats: 0,
+          declaredTaxableValueInr: 125000,
+          dueReturnDate: "2026-11-20",
+          securitySealNumber: "SEC-JW-9014",
+          authorizedBy: "Vikram Malhotra, Production Director",
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.challanNumber).toMatch(/^CHL\/JW\/2026-27\/\d{4}$/);
+      expect(res.body.data.status).toBe("ISSUED_IN_TRANSIT");
+      expect(res.body.data.statutoryRule).toContain("Rule 45(1)");
+      expect(res.body.data.challanQrPayload).toBeTruthy();
+
+      createdChallanId = res.body.data.id;
+      createdChallanNumber = res.body.data.challanNumber;
+    });
+
+    it("GET /api/v1/manufacturing/challans/:id retrieves single challan by ID or number", async () => {
+      const res = await request(app).get(`/api/v1/manufacturing/challans/${createdChallanId}`);
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.challanNumber).toBe(createdChallanNumber);
+    });
+
+    it("POST /api/v1/manufacturing/jobs/:id/settle-loss rejects invalid supervisor authorization PIN", async () => {
+      const res = await request(app)
+        .post(`/api/v1/manufacturing/jobs/${createdJobId || "job-4820"}/settle-loss`)
+        .send({
+          jobOrderId: createdJobId || "job-4820",
+          jobNumber: "JOB-2026-4820",
+          karigarId: createdKarigarId || "krg-02",
+          karigarCode: "KRG-KOL-02",
+          karigarName: "Ustad Birendra Swarnakar",
+          issuedGrossMetalGrams: 48.8,
+          returnedCraftedPieceGrams: 41.5,
+          returnedScrapMetalGrams: 6.2,
+          allowedTolerancePct: 1.5,
+          goldSpotFixRatePerGram: 7850,
+          laborMakingChargesPayableInr: 35000,
+          settlementType: "LABOR_OFFSET",
+          supervisorPin: "9999", // Invalid PIN
+          supervisorNotes: "Testing unauthorized PIN rejection",
+        });
+
+      expect(res.status).toBe(400);
+      const errorMsg = res.body.detail || res.body.message || res.body.error?.message || JSON.stringify(res.body);
+      expect(errorMsg).toContain("Invalid supervisor authorization PIN");
+    });
+
+    it("POST /api/v1/manufacturing/jobs/:id/settle-loss reconciles excess shrinkage and issues debit note", async () => {
+      // Issued: 48.80g
+      // Returned: 41.50g piece + 6.20g scrap = 47.70g total returned
+      // Loss: 1.10g (2.254% loss vs 1.50% tolerance -> excess loss 0.368g)
+      // Penalty: ~0.368g * 7850 = ₹2,889
+      // Making charge: ₹35,000 -> Net payout ₹32,111
+      const res = await request(app)
+        .post(`/api/v1/manufacturing/jobs/${createdJobId || "job-4820"}/settle-loss`)
+        .send({
+          jobOrderId: createdJobId || "job-4820",
+          jobNumber: "JOB-2026-4820",
+          karigarId: createdKarigarId || "krg-02",
+          karigarCode: "KRG-KOL-02",
+          karigarName: "Ustad Birendra Swarnakar",
+          issuedGrossMetalGrams: 48.8,
+          returnedCraftedPieceGrams: 41.5,
+          returnedScrapMetalGrams: 6.2,
+          allowedTolerancePct: 1.5,
+          goldSpotFixRatePerGram: 7850,
+          laborMakingChargesPayableInr: 35000,
+          settlementType: "LABOR_OFFSET",
+          supervisorPin: "1234",
+          supervisorNotes: "Excess shrinkage penalized at spot fix rate ₹7,850/g. Offset against labor.",
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.lossStatus).toBe("EXCESS_LOSS_PENALIZED");
+      expect(res.body.data.excessFineGoldLossGrams).toBeGreaterThan(0.3);
+      expect(res.body.data.grossShrinkagePenaltyInr).toBeGreaterThan(2000);
+      expect(res.body.data.netSettlementAmountInr).toBeLessThan(35000);
+      expect(res.body.data.debitNoteNumber).toMatch(/^DBN-JW-2026-\d{4}$/);
+    });
+
+    it("GET /api/v1/manufacturing/settlements lists all Karigar loss settlements", async () => {
+      const res = await request(app).get("/api/v1/manufacturing/settlements");
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBeGreaterThanOrEqual(2);
+    });
+  });
 });

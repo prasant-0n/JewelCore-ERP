@@ -306,3 +306,115 @@ export async function completeJobOrderHandler(
     next(err);
   }
 }
+
+// ============================================================================
+// Milestone 13: Form GST ITC-04 Statutory Delivery Challans & Karigar Settlement
+// ============================================================================
+
+export async function listItc04ChallansHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    const { listItc04ChallansService } = await import("./itc04Service.js");
+    const challans = await listItc04ChallansService(orgId);
+
+    res.status(200).json({
+      success: true,
+      data: challans,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getItc04ChallanByIdHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    if (!id) throw new BadRequestError("Challan ID parameter is required");
+
+    const { getItc04ChallanByIdService } = await import("./itc04Service.js");
+    const challan = await getItc04ChallanByIdService(orgId, id);
+
+    res.status(200).json({
+      success: true,
+      data: challan,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function createItc04ChallanHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    const storeId = req.storeContext?.storeId ?? "0192e300-0001-7000-8000-000000000001";
+    const { createItc04ChallanSchema } = await import("@jewelcore/shared");
+    const { createItc04ChallanService } = await import("./itc04Service.js");
+
+    const parsed = createItc04ChallanSchema.parse(req.body);
+    const challan = await createItc04ChallanService(orgId, storeId, parsed, req.user?.userId);
+
+    res.status(201).json({
+      success: true,
+      data: challan,
+      message: `Statutory Form GST ITC-04 Delivery Challan ${challan.challanNumber} issued successfully`,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function settleKarigarLossHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    const storeId = req.storeContext?.storeId ?? "0192e300-0001-7000-8000-000000000001";
+    const { settleKarigarLossSchema } = await import("@jewelcore/shared");
+    const { settleKarigarLossService } = await import("./itc04Service.js");
+
+    const parsed = settleKarigarLossSchema.parse(req.body);
+    const settlement = await settleKarigarLossService(orgId, storeId, parsed, req.user?.userId);
+
+    res.status(200).json({
+      success: true,
+      data: settlement,
+      message: `Artisan loss settled: ${settlement.lossStatus} (Net settlement ₹${settlement.netSettlementAmountInr})`,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function listKarigarSettlementsHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
+    const { listKarigarSettlementsService } = await import("./itc04Service.js");
+    const settlements = await listKarigarSettlementsService(orgId);
+
+    res.status(200).json({
+      success: true,
+      data: settlements,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
