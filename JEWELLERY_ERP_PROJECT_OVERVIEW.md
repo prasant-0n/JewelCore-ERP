@@ -3461,3 +3461,121 @@ Eventually processed rather than synchronously completed, but much better respon
 
 This is the level of reasoning expected from a professional backend
 engineer.
+
+
+---
+
+# 130. Milestone 10 — Hardware Device Binding (NIST SP 800-63B AAL3) & Showroom LAN Geofencing
+
+### Business Requirement
+High-value treasury vault hubs and POS billing counters must prevent session hijacking, stolen credential replay, and off-premises access by malicious actors or unauthorized employees.
+
+### Technical Problem
+Standard bearer JWTs stored in browser storage can be stolen via cross-site scripting (XSS) or exported to off-premises rogue machines.
+
+### Implementation Architecture
+1. **Hardware Device Cryptographic Binding**:
+   - Implemented client-side asymmetric keypair generation using W3C `window.crypto.subtle` (`ECDSA P-256`, non-extractable).
+   - Public keys are enrolled and bound to specific physical workstation hardware IDs (`TERM-POS-01`, `VAULT-KIOSK-02`).
+   - Every outgoing HTTP mutation attaches an `x-device-signature` and client timestamp signed with the private key.
+2. **Showroom Subnet Geofencing**:
+   - Enforces IP and CIDR subnet boundaries (`192.168.1.0/24`) for on-premises cashier and artisan terminals.
+   - Off-premises access is blocked unless designated as an Executive Roaming Profile under mutual TLS / secure corporate VPN.
+
+---
+
+# 131. Milestone 11 — Statutory Indian GST, E-Invoicing (IRN/QR) & E-Way Bill Transit
+
+### Business Requirement
+All wholesale and retail jewelry sales exceeding statutory thresholds must comply with the Goods and Services Tax (GST) Act, including real-time Invoice Registration Number (IRN) generation, Signed QR codes, and E-Way bills for inter-branch armored transit.
+
+### Technical Problem
+Jewelry transactions involve mixed tax rates: 3% GST on physical precious metal (HSN 7113 / 7108), divided into 1.5% CGST + 1.5% SGST (or 3% IGST), and 5% GST on artisan making/labor charges (Job Work SAC 9988). Additionally, PMLA Section 12 requires KYC for cash sales exceeding ₹1,99,999.
+
+### Implementation Architecture
+1. **Dynamic Tax Engine**:
+   - Calculates exact CGST, SGST, and IGST breakdowns dynamically based on POS state of supply vs recipient state.
+   - Enforces PMLA PAN / Aadhaar KYC collection threshold before invoice finalization.
+2. **Statutory E-Invoice Generation**:
+   - Generates compliant 64-character SHA-256 Invoice Registration Numbers (IRN) and digitally signed B2B / B2C QR codes containing seller GSTIN, buyer GSTIN, invoice number, line items, and tax totals.
+3. **E-Way Bill Armored Transit Manifest**:
+   - Inter-branch inventory transfers exceeding ₹50,000 automatically generate Part A and Part B E-Way Bill manifests with transporter ID and armored vehicle registration.
+
+---
+
+# 132. Milestone 12 — Bureau of Indian Standards (BIS) Hallmarking & HUID Metrology
+
+### Business Requirement
+Under the Bureau of Indian Standards (BIS) Act and Hallmarking Regulations, no gold jewelry artifact can be sold without an authentic, traceable 6-digit alphanumeric Hallmarking Unique ID (HUID).
+
+### Technical Problem
+Counterfeit hallmarking and untracked inventory items risk severe statutory penalties and confiscation. The system must track each piece's journey through certified Assaying and Hallmarking Centers (AHCs).
+
+### Implementation Architecture
+1. **HUID Validation & Laser Metrology**:
+   - Strict regex and checksum validation on 6-character alphanumeric identifiers (`^[A-Z0-9]{6}$`).
+   - Integrated XRF metrology and spectrometer assay results tied to each HUID record.
+2. **AHC Chain-of-Custody**:
+   - State machine governing outbound dispatch to BIS AHC, laser engraving, and verified inward receipt before pieces can transition to `SELLABLE` status.
+
+---
+
+# 133. Milestone 13 — Atelier Manufacturing, Karigar Jobwork & Form GST ITC-04
+
+### Business Requirement
+Luxury jewelry ateliers dispatch raw 24K bullion casting grains to artisanal goldsmiths (Karigars) for custom manufacturing and bespoke bridal orders. Section 143 of the CGST Act mandates strict quarterly reconciliation under Form GST ITC-04.
+
+### Technical Problem
+Manufacturing jewelry incurs physical melting loss ("tunda/ghat") and scrap returns. Discrepancies between issued bullion weight and returned ornament weight plus scrap must be tracked to within 0.001g precision.
+
+### Implementation Architecture
+1. **Job Order Workflow**:
+   - Tracks Issue of Bullion (gross weight, purity) → Karigar Workbench → Finished Ornament Intake → Scrap & Filing Reconciliation.
+2. **Wastage / Tunda Loss Tolerance Engine**:
+   - Enforces configurable maximum allowable wastage percentages (e.g., 2.5% for hand-filigree casting).
+   - Generates statutory quarterly Form GST ITC-04 manifests for all dispatched inputs and received capital goods.
+
+---
+
+# 134. Milestone 14 — Enterprise Staff Roster Expansion (12 Personas across 6 Divisions)
+
+### Business Requirement
+A realistic enterprise luxury atelier operates with specialized staff across multiple physical branch showrooms, high-security vault hubs, analytical laboratories, and manufacturing workshops.
+
+### Implementation Architecture
+Seeded 12 distinct operational personas into PostgreSQL with cryptographic Argon2id password hashing (`JewelCore@2026`) across 3 physical facilities:
+1. **Executive Management & Retail Direction**:
+   - `Rachel R.` (`rachel.r@jewelcore.internal`): Managing Director & Store Manager (Flagship Showroom `INV-11`)
+2. **Treasury Vault Hub & Armored Logistics**:
+   - `Vikram M.` (`vikram.m@jewelcore.internal`): Head Vault Custodian & Inward GRN (Treasury Hub `VAULT-01`)
+   - `Siddharth R.` (`siddharth.r@jewelcore.internal`): Armored Logistics & Inter-Branch Transit Specialist (`VAULT-01`)
+3. **Analytical QC, Gemology & BIS Hallmarking**:
+   - `Devika S.` (`devika.s@jewelcore.internal`): Senior QC Gemologist & Assayer (`INV-11`)
+   - `Ananya P.` (`ananya.p@jewelcore.internal`): BIS Hallmarking & HUID Inspector (`INV-11`)
+4. **Master Goldsmiths & Atelier Karkhana Crafting**:
+   - `Rajesh K.` (`rajesh.k@jewelcore.internal`): Master Goldsmith & Atelier Manufacturing Supervisor (`VAULT-01`)
+   - `Farooq A.` (`farooq.a@jewelcore.internal`): Senior Karigar Artisan & Form GST ITC-04 Specialist (`VAULT-01`)
+5. **Showroom Point-of-Sale & VIP Salon Concierge**:
+   - `Arjun K.` (`arjun.k@jewelcore.internal`): Senior POS Cashier & E-Invoice Lead (`INV-11`)
+   - `Priya M.` (`priya.m@jewelcore.internal`): High-Jewellery VIP Client Salon Director (`SHOW-02`)
+6. **Bullion Trading & Statutory Financial Governance**:
+   - `Alexander V.` (`alexander.v@jewelcore.internal`): Chief Compliance Officer & HSM Quorum Overseer (`INV-11`)
+   - `Kavita N.` (`kavita.n@jewelcore.internal`): Chief Bullion Trader & Feed Analyst (`VAULT-01`)
+   - `Rohan D.` (`rohan.d@jewelcore.internal`): Financial Controller & Statutory Tax Auditor (`INV-11`)
+
+---
+
+# 135. Milestone 15 — Joint Executive Security & Production Readiness Audit
+
+### Business Mandate
+Conducted a joint engineering and IT audit from the combined perspectives of **Chief Technology Officer (CTO)**, **Production IT Manager**, and **Engineering Team Lead** to scan the entire monorepo for production bugs, security vulnerabilities, and separation of duties compliance.
+
+### Critical Remediations Applied
+1. **PBAC Role Token Lockout Remediation**:
+   - Expanded `getUserRoleTokens()` to resolve all 12 operational titles to proper functional tokens, preventing accidental lockout from `/manufacturing`, `/inventory`, and `/governance`.
+2. **Separation of Duties (SoD) & SOC 2 Profile Segregation**:
+   - Replaced unconditional display of emergency break-glass protocols, NIST SP 800-63B passkey rotation, and live IAM forensic audit streams with strict role-based visibility. Non-managerial staff are restricted from executive disaster recovery tools.
+3. **CORS Production Whitelisting (CWE-942)**:
+   - Replaced wildcard reflection (`origin: true`) with strict origin validation against `process.env.CORS_ORIGIN` and `*.jewelcore.internal`.
+4. **Zero-Hardcoded Secrets Enforcement (CWE-798)**:
+   - Added fatal startup assertion terminating the API cluster if `JWT_SECRET` is unset in production environments.
