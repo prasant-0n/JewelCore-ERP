@@ -98,6 +98,7 @@ export async function seedShowroomDatabase(): Promise<void> {
   const dummyHash =
     "$argon2id$v=19$m=19456,t=2,p=1$boXwNYA3SipXVGifZ89rnA$DjAB+4iNmKdglnBDOUWafz4rOOYj61kjm/IvHIjGBi0";
   const users = [
+    // 1. Executive Management & Store Operations
     {
       id: "0192e300-0002-7000-8000-000000000001",
       email: "rachel.r@jewelcore.internal",
@@ -107,6 +108,7 @@ export async function seedShowroomDatabase(): Promise<void> {
       roleId: "0192e302-0001-7000-8000-000000000002", // STORE_MANAGER
       storeId: "0192e300-0001-7000-8000-000000000001", // INV-11
     },
+    // 2. Treasury Vault Hub & Master Inventory Intake
     {
       id: "0192e300-0002-7000-8000-000000000002",
       email: "vikram.m@jewelcore.internal",
@@ -116,6 +118,7 @@ export async function seedShowroomDatabase(): Promise<void> {
       roleId: "0192e302-0001-7000-8000-000000000003", // INVENTORY_CONTROLLER
       storeId: "0192e300-0001-7000-8000-000000000002", // VAULT-01
     },
+    // 3. Analytical QC & Gemstone Assaying
     {
       id: "0192e300-0002-7000-8000-000000000003",
       email: "devika.s@jewelcore.internal",
@@ -125,6 +128,7 @@ export async function seedShowroomDatabase(): Promise<void> {
       roleId: "0192e302-0001-7000-8000-000000000004", // SALES_ASSOCIATE
       storeId: "0192e300-0001-7000-8000-000000000001", // INV-11
     },
+    // 4. POS Cashier & Statutory Invoicing
     {
       id: "0192e300-0002-7000-8000-000000000004",
       email: "arjun.k@jewelcore.internal",
@@ -134,9 +138,89 @@ export async function seedShowroomDatabase(): Promise<void> {
       roleId: "0192e302-0001-7000-8000-000000000001", // SYSTEM_ADMIN
       storeId: "0192e300-0001-7000-8000-000000000001", // INV-11
     },
+    // 5. Chief Compliance Officer & HSM Quorum Overseer
+    {
+      id: "0192e300-0002-7000-8000-000000000005",
+      email: "alexander.v@jewelcore.internal",
+      firstName: "Alexander",
+      lastName: "V.",
+      phone: "+91 98200 11005",
+      roleId: "0192e302-0001-7000-8000-000000000001", // SYSTEM_ADMIN
+      storeId: "0192e300-0001-7000-8000-000000000001", // INV-11
+    },
+    // 6. Armored Logistics & Inter-Branch Transit Specialist
+    {
+      id: "0192e300-0002-7000-8000-000000000006",
+      email: "siddharth.r@jewelcore.internal",
+      firstName: "Siddharth",
+      lastName: "R.",
+      phone: "+91 98200 11006",
+      roleId: "0192e302-0001-7000-8000-000000000003", // INVENTORY_CONTROLLER
+      storeId: "0192e300-0001-7000-8000-000000000002", // VAULT-01
+    },
+    // 7. Bureau of Indian Standards (BIS) Hallmarking & HUID Inspector
+    {
+      id: "0192e300-0002-7000-8000-000000000007",
+      email: "ananya.p@jewelcore.internal",
+      firstName: "Ananya",
+      lastName: "P.",
+      phone: "+91 98200 11007",
+      roleId: "0192e302-0001-7000-8000-000000000003", // INVENTORY_CONTROLLER
+      storeId: "0192e300-0001-7000-8000-000000000001", // INV-11
+    },
+    // 8. Master Goldsmith & Atelier Manufacturing Supervisor
+    {
+      id: "0192e300-0002-7000-8000-000000000008",
+      email: "rajesh.k@jewelcore.internal",
+      firstName: "Rajesh",
+      lastName: "K.",
+      phone: "+91 98200 11008",
+      roleId: "0192e302-0001-7000-8000-000000000002", // STORE_MANAGER
+      storeId: "0192e300-0001-7000-8000-000000000002", // VAULT-01
+    },
+    // 9. Senior Karigar Artisan & Form GST ITC-04 Reconciliation Specialist
+    {
+      id: "0192e300-0002-7000-8000-000000000009",
+      email: "farooq.a@jewelcore.internal",
+      firstName: "Farooq",
+      lastName: "A.",
+      phone: "+91 98200 11009",
+      roleId: "0192e302-0001-7000-8000-000000000003", // INVENTORY_CONTROLLER
+      storeId: "0192e300-0001-7000-8000-000000000002", // VAULT-01
+    },
+    // 10. High-Jewellery VIP Client Salon Director
+    {
+      id: "0192e300-0002-7000-8000-00000000000a",
+      email: "priya.m@jewelcore.internal",
+      firstName: "Priya",
+      lastName: "M.",
+      phone: "+91 98200 11010",
+      roleId: "0192e302-0001-7000-8000-000000000004", // SALES_ASSOCIATE
+      storeId: "0192e300-0001-7000-8000-000000000003", // SHOW-02
+    },
+    // 11. Chief Bullion Trader & Spot Market Arbitrage Analyst
+    {
+      id: "0192e300-0002-7000-8000-00000000000b",
+      email: "kavita.n@jewelcore.internal",
+      firstName: "Kavita",
+      lastName: "N.",
+      phone: "+91 98200 11011",
+      roleId: "0192e302-0001-7000-8000-000000000002", // STORE_MANAGER
+      storeId: "0192e300-0001-7000-8000-000000000002", // VAULT-01
+    },
+    // 12. Chief Financial Officer & Statutory Tax Controller
+    {
+      id: "0192e300-0002-7000-8000-00000000000c",
+      email: "rohan.d@jewelcore.internal",
+      firstName: "Rohan",
+      lastName: "D.",
+      phone: "+91 98200 11012",
+      roleId: "0192e302-0001-7000-8000-000000000001", // SYSTEM_ADMIN
+      storeId: "0192e300-0001-7000-8000-000000000001", // INV-11
+    },
   ];
 
-  for (const u of users) {
+  for (const [i, u] of users.entries()) {
     await pool.query(
       `INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name, phone, is_active, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, true, NOW(), NOW())
@@ -151,7 +235,8 @@ export async function seedShowroomDatabase(): Promise<void> {
       [u.id, u.roleId],
     );
 
-    const orgMemId = `0192e300-0003-7000-8000-00000000000${u.id.slice(-1)}`;
+    const suffix = (i + 1).toString(16).padStart(2, "0");
+    const orgMemId = `0192e300-0003-7000-8000-0000000000${suffix}`;
     await pool.query(
       `INSERT INTO organization_memberships (id, organization_id, user_id, is_active, joined_at, created_at, updated_at)
        VALUES ($1, $2, $3, true, NOW(), NOW(), NOW())
@@ -159,7 +244,7 @@ export async function seedShowroomDatabase(): Promise<void> {
       [orgMemId, orgId, u.id],
     );
 
-    const storeMemId = `0192e300-0004-7000-8000-00000000000${u.id.slice(-1)}`;
+    const storeMemId = `0192e300-0004-7000-8000-0000000000${suffix}`;
     await pool.query(
       `INSERT INTO store_memberships (id, organization_membership_id, store_id, is_default, is_active, created_at, updated_at)
        VALUES ($1, $2, $3, true, true, NOW(), NOW())

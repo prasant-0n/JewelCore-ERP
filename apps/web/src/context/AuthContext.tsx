@@ -63,6 +63,84 @@ export interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+export const STAFF_PROFILES: Record<
+  string,
+  { firstName: string; lastName: string; role: string; id: string }
+> = {
+  "rachel.r@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-000000000001",
+    firstName: "Rachel",
+    lastName: "R.",
+    role: "Managing Director & Store Manager",
+  },
+  "vikram.m@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-000000000002",
+    firstName: "Vikram",
+    lastName: "M.",
+    role: "Head Vault Custodian & Inward GRN",
+  },
+  "devika.s@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-000000000003",
+    firstName: "Devika",
+    lastName: "S.",
+    role: "Senior QC Gemologist & Assayer",
+  },
+  "arjun.k@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-000000000004",
+    firstName: "Arjun",
+    lastName: "K.",
+    role: "Senior POS Cashier & E-Invoice Lead",
+  },
+  "alexander.v@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-000000000005",
+    firstName: "Alexander",
+    lastName: "V.",
+    role: "Chief Compliance Officer & HSM Quorum",
+  },
+  "siddharth.r@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-000000000006",
+    firstName: "Siddharth",
+    lastName: "R.",
+    role: "Armored Logistics & Transfer Officer",
+  },
+  "ananya.p@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-000000000007",
+    firstName: "Ananya",
+    lastName: "P.",
+    role: "BIS Hallmarking & HUID Inspector",
+  },
+  "rajesh.k@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-000000000008",
+    firstName: "Rajesh",
+    lastName: "K.",
+    role: "Master Goldsmith & Atelier Supervisor",
+  },
+  "farooq.a@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-000000000009",
+    firstName: "Farooq",
+    lastName: "A.",
+    role: "Senior Karigar & Metal Reconciliation",
+  },
+  "priya.m@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-00000000000a",
+    firstName: "Priya",
+    lastName: "M.",
+    role: "High-Jewellery VIP Salon Director",
+  },
+  "kavita.n@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-00000000000b",
+    firstName: "Kavita",
+    lastName: "N.",
+    role: "Chief Bullion Trader & Feed Analyst",
+  },
+  "rohan.d@jewelcore.internal": {
+    id: "0192e300-0002-7000-8000-00000000000c",
+    firstName: "Rohan",
+    lastName: "D.",
+    role: "Financial Controller & Statutory Tax Auditor",
+  },
+};
+
 // Default fallback user for initial showroom hydration
 export const DEFAULT_STAFF_USER: AuthUser = {
   id: "0192e300-0002-7000-8000-000000000001",
@@ -71,7 +149,7 @@ export const DEFAULT_STAFF_USER: AuthUser = {
   firstName: "Rachel",
   lastName: "R.",
   phone: "+91 98200 11001",
-  role: "Store Branch Manager",
+  role: "Managing Director & Store Manager",
   initials: "RR",
 };
 
@@ -359,15 +437,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         `${rawUser.firstName?.[0] || ""}${rawUser.lastName?.[0] || ""}`.toUpperCase() ||
         rawUser.email.substring(0, 2).toUpperCase();
 
-      const roleTitle = rawUser.email.includes("rachel")
-        ? "Store Branch Manager"
-        : rawUser.email.includes("vikram")
-        ? "Inventory Controller"
-        : rawUser.email.includes("devika")
-        ? "Senior QC Gemologist"
-        : rawUser.email.includes("arjun")
-        ? "Showroom POS Cashier"
-        : "Operational Staff";
+      const staffProfile = STAFF_PROFILES[rawUser.email.toLowerCase()];
+      const roleTitle =
+        staffProfile?.role ||
+        (rawUser.email.includes("rachel")
+          ? "Managing Director & Store Manager"
+          : rawUser.email.includes("vikram")
+          ? "Head Vault Custodian & Inward GRN"
+          : rawUser.email.includes("devika")
+          ? "Senior QC Gemologist & Assayer"
+          : rawUser.email.includes("arjun")
+          ? "Senior POS Cashier & E-Invoice Lead"
+          : "Operational Staff");
 
       const authUser: AuthUser = {
         ...rawUser,
@@ -421,24 +502,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Valid credentials in offline/mock mode:
+      const staffProfile = STAFF_PROFILES[credentials.email.toLowerCase()];
       const rawUser = {
-        id: "0192e300-0002-7000-8000-000000000001",
+        id: staffProfile?.id || "0192e300-0002-7000-8000-000000000001",
         organizationId: "0192e300-0001-7000-8000-000000000001",
         email: credentials.email,
-        firstName: credentials.email.includes("vikram")
-          ? "Vikram"
-          : credentials.email.includes("devika")
-          ? "Devika"
-          : credentials.email.includes("arjun")
-          ? "Arjun"
-          : "Rachel",
-        lastName: credentials.email.includes("vikram")
-          ? "M."
-          : credentials.email.includes("devika")
-          ? "S."
-          : credentials.email.includes("arjun")
-          ? "K."
-          : "R.",
+        firstName:
+          staffProfile?.firstName ||
+          (credentials.email.includes("vikram")
+            ? "Vikram"
+            : credentials.email.includes("devika")
+            ? "Devika"
+            : credentials.email.includes("arjun")
+            ? "Arjun"
+            : "Rachel"),
+        lastName:
+          staffProfile?.lastName ||
+          (credentials.email.includes("vikram")
+            ? "M."
+            : credentials.email.includes("devika")
+            ? "S."
+            : credentials.email.includes("arjun")
+            ? "K."
+            : "R."),
       };
 
       const accessToken = "mock-jwt-authenticated-session";
@@ -446,15 +532,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(accessToken);
 
       const initials = `${rawUser.firstName[0]}${rawUser.lastName[0]}`.toUpperCase();
-      const roleTitle = credentials.email.includes("rachel")
-        ? "Store Branch Manager"
-        : credentials.email.includes("vikram")
-        ? "Inventory Controller"
-        : credentials.email.includes("devika")
-        ? "Senior QC Gemologist"
-        : credentials.email.includes("arjun")
-        ? "Showroom POS Cashier"
-        : "Operational Staff";
+      const roleTitle =
+        staffProfile?.role ||
+        (credentials.email.includes("rachel")
+          ? "Managing Director & Store Manager"
+          : credentials.email.includes("vikram")
+          ? "Head Vault Custodian & Inward GRN"
+          : credentials.email.includes("devika")
+          ? "Senior QC Gemologist & Assayer"
+          : credentials.email.includes("arjun")
+          ? "Senior POS Cashier & E-Invoice Lead"
+          : "Operational Staff");
 
       const authUser: AuthUser = {
         ...rawUser,

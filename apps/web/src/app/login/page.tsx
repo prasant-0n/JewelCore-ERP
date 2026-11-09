@@ -19,7 +19,123 @@ import {
   Smartphone,
   FileText,
   CheckCircle2,
+  Users,
+  Briefcase,
 } from "lucide-react";
+
+interface StaffPersona {
+  name: string;
+  role: string;
+  email: string;
+  department: string;
+  storeId: string;
+  storeCode: string;
+}
+
+const ENTERPRISE_STAFF_ROSTER: StaffPersona[] = [
+  // 1. Executive Management & Corporate Governance
+  {
+    name: "Rachel R.",
+    role: "Managing Director",
+    email: "rachel.r@jewelcore.internal",
+    department: "Executive",
+    storeId: "0192e300-0001-7000-8000-000000000001",
+    storeCode: "INV-11",
+  },
+  {
+    name: "Alexander V.",
+    role: "Chief Compliance Officer",
+    email: "alexander.v@jewelcore.internal",
+    department: "Executive",
+    storeId: "0192e300-0001-7000-8000-000000000001",
+    storeCode: "INV-11",
+  },
+  // 2. Treasury Vault Hub & Master Inventory Intake
+  {
+    name: "Vikram M.",
+    role: "Head Vault Custodian",
+    email: "vikram.m@jewelcore.internal",
+    department: "Vault",
+    storeId: "0192e300-0001-7000-8000-000000000002",
+    storeCode: "VAULT-01",
+  },
+  {
+    name: "Siddharth R.",
+    role: "Armored Logistics Specialist",
+    email: "siddharth.r@jewelcore.internal",
+    department: "Vault",
+    storeId: "0192e300-0001-7000-8000-000000000002",
+    storeCode: "VAULT-01",
+  },
+  // 3. Analytical QC & Bureau of Indian Standards Hallmarking
+  {
+    name: "Devika S.",
+    role: "Senior QC Gemologist",
+    email: "devika.s@jewelcore.internal",
+    department: "QC & BIS",
+    storeId: "0192e300-0001-7000-8000-000000000001",
+    storeCode: "INV-11",
+  },
+  {
+    name: "Ananya P.",
+    role: "BIS Hallmarking Inspector",
+    email: "ananya.p@jewelcore.internal",
+    department: "QC & BIS",
+    storeId: "0192e300-0001-7000-8000-000000000001",
+    storeCode: "INV-11",
+  },
+  // 4. Atelier Manufacturing & Karigar Work Orders
+  {
+    name: "Rajesh K.",
+    role: "Master Goldsmith & Supervisor",
+    email: "rajesh.k@jewelcore.internal",
+    department: "Atelier",
+    storeId: "0192e300-0001-7000-8000-000000000002",
+    storeCode: "VAULT-01",
+  },
+  {
+    name: "Farooq A.",
+    role: "Senior Karigar Artisan",
+    email: "farooq.a@jewelcore.internal",
+    department: "Atelier",
+    storeId: "0192e300-0001-7000-8000-000000000002",
+    storeCode: "VAULT-01",
+  },
+  // 5. Showroom Retail Salon & POS Billing
+  {
+    name: "Arjun K.",
+    role: "Senior POS Cashier",
+    email: "arjun.k@jewelcore.internal",
+    department: "Retail",
+    storeId: "0192e300-0001-7000-8000-000000000001",
+    storeCode: "INV-11",
+  },
+  {
+    name: "Priya M.",
+    role: "VIP Salon Director",
+    email: "priya.m@jewelcore.internal",
+    department: "Retail",
+    storeId: "0192e300-0001-7000-8000-000000000003",
+    storeCode: "SHOW-02",
+  },
+  // 6. Bullion Treasury & Statutory Accounting
+  {
+    name: "Kavita N.",
+    role: "Chief Bullion Trader",
+    email: "kavita.n@jewelcore.internal",
+    department: "Treasury",
+    storeId: "0192e300-0001-7000-8000-000000000002",
+    storeCode: "VAULT-01",
+  },
+  {
+    name: "Rohan D.",
+    role: "Senior Tax Controller",
+    email: "rohan.d@jewelcore.internal",
+    department: "Treasury",
+    storeId: "0192e300-0001-7000-8000-000000000001",
+    storeCode: "INV-11",
+  },
+];
 
 export default function LoginPage() {
   const { login, isLoading } = useAuth();
@@ -31,6 +147,7 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [rememberTerminal, setRememberTerminal] = useState(true);
   const [require2FA, setRequire2FA] = useState(false);
+  const [selectedDept, setSelectedDept] = useState<string>("All");
 
   // 2FA TOTP state
   const [totpDigits, setTotpDigits] = useState(["", "", "", "", "", ""]);
@@ -126,9 +243,12 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickFill = (staffEmail: string) => {
+  const handleQuickFill = (staffEmail: string, storeId?: string) => {
     setEmail(staffEmail);
     setPassword("JewelCore@2026");
+    if (storeId) {
+      setSelectedStoreId(storeId);
+    }
     setErrorMessage(null);
   };
 
@@ -523,55 +643,80 @@ export default function LoginPage() {
           {/* Quick-Fill Staff Credentials Helper (Only visible on Step 1) */}
           {step === "credentials" && (
             <div className="mt-6 pt-4 border-t border-surface-border">
-              <span className="block text-[10px] uppercase font-mono text-muted-foreground text-center mb-2.5">
-                Quick Staff Ingestion (Click to autofill)
-              </span>
-              <div className="grid grid-cols-2 gap-1.5">
-                {[
-                  {
-                    name: "Rachel R.",
-                    role: "Store Manager",
-                    email: "rachel.r@jewelcore.internal",
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] uppercase font-mono text-muted-foreground flex items-center gap-1.5 font-semibold">
+                  <Users className="w-3.5 h-3.5 text-gold" />
+                  Enterprise Staff Roster ({ENTERPRISE_STAFF_ROSTER.length})
+                </span>
+                <span className="text-[9px] font-mono text-gold/80">Click card to autofill</span>
+              </div>
+
+              {/* Department Category Filter Pills */}
+              <div className="flex items-center gap-1 overflow-x-auto pb-1.5 mb-2.5 text-[10px]">
+                {["All", "Executive", "Vault", "QC & BIS", "Atelier", "Retail", "Treasury"].map(
+                  (dept) => {
+                    const count =
+                      dept === "All"
+                        ? ENTERPRISE_STAFF_ROSTER.length
+                        : ENTERPRISE_STAFF_ROSTER.filter((s) => s.department === dept).length;
+                    const isActive = selectedDept === dept;
+                    return (
+                      <button
+                        key={dept}
+                        type="button"
+                        onClick={() => setSelectedDept(dept)}
+                        className={`px-2 py-0.5 rounded-full whitespace-nowrap font-mono text-[9px] transition-colors cursor-pointer border ${
+                          isActive
+                            ? "bg-gold/20 text-gold border-gold/40 font-semibold"
+                            : "bg-surface-elevated text-muted-foreground border-surface-border hover:border-gold/30 hover:text-foreground"
+                        }`}
+                      >
+                        {dept} ({count})
+                      </button>
+                    );
                   },
-                  {
-                    name: "Vikram M.",
-                    role: "Vault Custodian",
-                    email: "vikram.m@jewelcore.internal",
-                  },
-                  {
-                    name: "Devika S.",
-                    role: "QC Gemologist",
-                    email: "devika.s@jewelcore.internal",
-                  },
-                  {
-                    name: "Arjun K.",
-                    role: "POS Cashier",
-                    email: "arjun.k@jewelcore.internal",
-                  },
-                ].map((staff) => (
+                )}
+              </div>
+
+              {/* Staff Cards Grid */}
+              <div className="grid grid-cols-2 gap-1.5 max-h-56 overflow-y-auto pr-1">
+                {ENTERPRISE_STAFF_ROSTER.filter(
+                  (s) => selectedDept === "All" || s.department === selectedDept,
+                ).map((staff) => (
                   <button
                     key={staff.email}
                     type="button"
-                    onClick={() => handleQuickFill(staff.email)}
-                    className={`p-2 rounded-lg text-left border transition-all text-xs ${
+                    onClick={() => handleQuickFill(staff.email, staff.storeId)}
+                    className={`p-2 rounded-lg text-left border transition-all text-xs cursor-pointer ${
                       email === staff.email
-                        ? "border-gold/50 bg-gold/10 text-gold"
-                        : "border-surface-border bg-surface-elevated hover:border-gold/30 text-foreground"
+                        ? "border-gold/60 bg-gold/15 text-gold shadow-xs"
+                        : "border-surface-border bg-surface-elevated hover:border-gold/40 text-foreground"
                     }`}
                   >
-                    <span className="block font-medium leading-tight truncate text-[11px]">
-                      {staff.name}
-                    </span>
-                    <span className="block text-[9px] text-muted-foreground font-mono truncate">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="block font-semibold leading-tight truncate text-[11px]">
+                        {staff.name}
+                      </span>
+                      <span className="text-[8px] font-mono px-1 py-0.2 rounded bg-surface/60 border border-surface-border text-muted-foreground">
+                        {staff.storeCode}
+                      </span>
+                    </div>
+                    <span className="block text-[9px] text-muted-foreground font-mono truncate leading-tight">
                       {staff.role}
+                    </span>
+                    <span className="block text-[8px] text-gold/70 font-mono mt-0.5 uppercase tracking-wider">
+                      {staff.department}
                     </span>
                   </button>
                 ))}
               </div>
-              <p className="text-[10px] text-muted-foreground/60 text-center mt-2 font-mono">
-                Default password:{" "}
-                <span className="text-gold font-bold">JewelCore@2026</span>
-              </p>
+
+              <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-surface-border/50 text-[10px] text-muted-foreground/70 font-mono">
+                <span>
+                  Default Password: <span className="text-gold font-bold">JewelCore@2026</span>
+                </span>
+                <span className="text-[9px] opacity-80">Argon2id Verified</span>
+              </div>
             </div>
           )}
         </div>
