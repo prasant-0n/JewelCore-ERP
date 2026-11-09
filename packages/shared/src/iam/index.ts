@@ -339,6 +339,11 @@ export const IamAuditAction = {
   AUTH_ARMORED_DESEAL_VERIFIED: "AUTH_ARMORED_DESEAL_VERIFIED",
   AUTH_ARMORED_SEAL_TAMPER_FLAGGED: "AUTH_ARMORED_SEAL_TAMPER_FLAGGED",
   AUTH_ARMORED_WEIGHT_DISCREPANCY_FLAGGED: "AUTH_ARMORED_WEIGHT_DISCREPANCY_FLAGGED",
+  AUTH_DEVICE_BOUND: "AUTH_DEVICE_BOUND",
+  AUTH_DEVICE_REVOKED: "AUTH_DEVICE_REVOKED",
+  AUTH_DEVICE_TIER_UPDATED: "AUTH_DEVICE_TIER_UPDATED",
+  AUTH_DEVICE_CHALLENGE_FAILED: "AUTH_DEVICE_CHALLENGE_FAILED",
+  AUTH_DEVICE_HEARTBEAT: "AUTH_DEVICE_HEARTBEAT",
 } as const;
 
 export type IamAuditAction = (typeof IamAuditAction)[keyof typeof IamAuditAction];
@@ -348,6 +353,7 @@ export const IamAuditCategory = {
   CREDENTIAL_SECURITY: "CREDENTIAL_SECURITY",
   WORKSTATION_ACCESS: "WORKSTATION_ACCESS",
   PRIVILEGE_ELEVATION: "PRIVILEGE_ELEVATION",
+  HARDWARE_BINDING: "HARDWARE_BINDING",
 } as const;
 
 export type IamAuditCategory = (typeof IamAuditCategory)[keyof typeof IamAuditCategory];
@@ -522,6 +528,72 @@ export interface BreakGlassStatus {
   isActive: boolean;
   activeSession: BreakGlassSession | null;
 }
+
+/**
+ * Hardware Security Token Binding & Workstation Device Fingerprinting (Milestone 10 / NIST SP 800-63B AAL3)
+ */
+export const DeviceTrustTier = {
+  TIER_1_VAULT_TERMINAL: "TIER_1_VAULT_TERMINAL",
+  TIER_2_POS_REGISTER: "TIER_2_POS_REGISTER",
+  TIER_3_SALON_TABLET: "TIER_3_SALON_TABLET",
+  TIER_4_MOBILE_FIELD: "TIER_4_MOBILE_FIELD",
+  UNTRUSTED_EXTERNAL: "UNTRUSTED_EXTERNAL",
+} as const;
+
+export type DeviceTrustTier = (typeof DeviceTrustTier)[keyof typeof DeviceTrustTier];
+
+export const DeviceBindingStatus = {
+  ACTIVE_BOUND: "ACTIVE_BOUND",
+  PENDING_APPROVAL: "PENDING_APPROVAL",
+  SUSPENDED: "SUSPENDED",
+  REVOKED: "REVOKED",
+} as const;
+
+export type DeviceBindingStatus =
+  (typeof DeviceBindingStatus)[keyof typeof DeviceBindingStatus];
+
+export interface WorkstationDevice {
+  id: string;
+  organizationId: string;
+  stationCode: string;
+  deviceName: string;
+  deviceFingerprint: string;
+  trustTier: DeviceTrustTier;
+  status: DeviceBindingStatus;
+  enrolledByUserId: string;
+  enrolledByUserName?: string;
+  enrolledAt: string;
+  lastHeartbeatAt: string;
+  ipAddress: string;
+  hardwareSecurityModule?: string;
+  residentKeyEnforced: boolean;
+}
+
+export const registerWorkstationDeviceSchema = z.object({
+  stationCode: z.string().trim().min(2, "Station code is required").max(50),
+  deviceName: z.string().trim().min(2, "Device name is required").max(100),
+  deviceFingerprint: z.string().min(8).max(128).optional(),
+  trustTier: z
+    .nativeEnum(DeviceTrustTier)
+    .default(DeviceTrustTier.TIER_2_POS_REGISTER),
+  hardwareSecurityModule: z.string().max(100).optional(),
+  residentKeyEnforced: z.boolean().default(true),
+  supervisorPin: z.string().min(4).max(10).optional(),
+});
+
+export type RegisterWorkstationDeviceInput = z.infer<
+  typeof registerWorkstationDeviceSchema
+>;
+
+export const updateDeviceTrustTierSchema = z.object({
+  trustTier: z.nativeEnum(DeviceTrustTier),
+  reason: z.string().min(3).max(500).optional(),
+});
+
+export type UpdateDeviceTrustTierInput = z.infer<
+  typeof updateDeviceTrustTierSchema
+>;
+
 
 
 

@@ -22,6 +22,10 @@ import {
   activateBreakGlassHandler,
   getBreakGlassStatusHandler,
   revokeBreakGlassHandler,
+  listDevicesHandler,
+  registerDeviceHandler,
+  revokeDeviceHandler,
+  updateDeviceTierHandler,
 } from "./authController.js";
 
 export function createAuthRouter(): Router {
@@ -49,6 +53,10 @@ export function createAuthRouter(): Router {
   router.post("/break-glass/activate", activateBreakGlassHandler);
   router.get("/break-glass/status", getBreakGlassStatusHandler);
   router.post("/break-glass/revoke", revokeBreakGlassHandler);
+  router.get("/devices", listDevicesHandler);
+  router.post("/devices", registerDeviceHandler);
+  router.delete("/devices/:id", revokeDeviceHandler);
+  router.put("/devices/:id/tier", updateDeviceTierHandler);
 
   return router;
 }

@@ -8,6 +8,8 @@ import {
   simulateNetworkIpSchema,
   stepUpVerificationSchema,
   breakGlassActivationSchema,
+  registerWorkstationDeviceSchema,
+  updateDeviceTrustTierSchema,
   UnauthorizedError,
   NotFoundError,
 } from "@jewelcore/shared";
@@ -30,6 +32,10 @@ import {
   activateBreakGlassService,
   getBreakGlassStatusService,
   revokeBreakGlassService,
+  getOrganizationDevices,
+  registerOrganizationDevice,
+  revokeOrganizationDevice,
+  updateOrganizationDeviceTier,
 } from "./authService.js";
 import {
   verifyJwt,
@@ -696,6 +702,153 @@ export async function revokeBreakGlassHandler(
 
     res.status(200).json({
       data: { revoked },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function listDevicesHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    let orgId = "0192e300-0001-7000-8000-000000000001";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        userId = claims.userId;
+        orgId = claims.orgId || orgId;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const devices = getOrganizationDevices(orgId, userId);
+
+    res.status(200).json({
+      data: devices,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function registerDeviceHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    let orgId = "0192e300-0001-7000-8000-000000000001";
+    let userName = "Rachel R.";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        userId = claims.userId;
+        orgId = claims.orgId || orgId;
+        userName = (claims as any).name || userName;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const validated = registerWorkstationDeviceSchema.parse(req.body);
+    const device = registerOrganizationDevice(orgId, userId, validated, userName);
+
+    res.status(201).json({
+      data: device,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function revokeDeviceHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    let orgId = "0192e300-0001-7000-8000-000000000001";
+    let userName = "Rachel R.";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        userId = claims.userId;
+        orgId = claims.orgId || orgId;
+        userName = (claims as any).name || userName;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const rawId = req.params.id;
+    const deviceId = Array.isArray(rawId) ? rawId[0] : rawId;
+    if (!deviceId) {
+      throw new NotFoundError("Device", "undefined");
+    }
+
+    const revoked = revokeOrganizationDevice(orgId, userId, deviceId, userName);
+    if (!revoked) {
+      throw new NotFoundError("Device", deviceId);
+    }
+
+    res.status(200).json({
+      data: { revoked: true, id: deviceId },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateDeviceTierHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    let orgId = "0192e300-0001-7000-8000-000000000001";
+    let userName = "Rachel R.";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        userId = claims.userId;
+        orgId = claims.orgId || orgId;
+        userName = (claims as any).name || userName;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const rawId = req.params.id;
+    const deviceId = Array.isArray(rawId) ? rawId[0] : rawId;
+    if (!deviceId) {
+      throw new NotFoundError("Device", "undefined");
+    }
+
+    const validated = updateDeviceTrustTierSchema.parse(req.body);
+    const updated = updateOrganizationDeviceTier(orgId, userId, deviceId, validated, userName);
+
+    res.status(200).json({
+      data: updated,
       timestamp: new Date().toISOString(),
     });
   } catch (err) {

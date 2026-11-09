@@ -658,5 +658,81 @@ describe("IAM Authentication & User Endpoints (FEAT-IAM-02)", () => {
         expect(statusRes.body.data.activeSession).toBeNull();
       });
     });
+
+    describe("Hardware Security Token Binding & Device Fingerprinting (Milestone 10)", () => {
+      let enrolledDeviceId: string;
+
+      it("GET /api/v1/auth/devices lists enrolled showroom devices", async () => {
+        const res = await request(app)
+          .get("/api/v1/auth/devices")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(res.status).toBe(200);
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.data.length).toBeGreaterThanOrEqual(3);
+
+        const stationCodes = res.body.data.map((d: any) => d.stationCode);
+        expect(stationCodes).toContain("STATION-DESK-01");
+        expect(stationCodes).toContain("POS-TERMINAL-02");
+        expect(stationCodes).toContain("SALON-IPAD-01");
+      });
+
+      it("POST /api/v1/auth/devices rejects enrollment with invalid supervisor PIN", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/devices")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            stationCode: "VAULT-TEMP-99",
+            deviceName: "Unauthorized Terminal",
+            supervisorPin: "0000",
+          });
+
+        expect(res.status).toBe(401);
+      });
+
+      it("POST /api/v1/auth/devices successfully enrolls new device with valid supervisor PIN", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/devices")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            stationCode: "SURAT-ATELIER-01",
+            deviceName: "Surat Crafting Atelier Terminal #01",
+            trustTier: "TIER_1_VAULT_TERMINAL",
+            hardwareSecurityModule: "YubiKey 5 FIPS / WebAuthn AAL3",
+            residentKeyEnforced: true,
+            supervisorPin: "1234",
+          });
+
+        expect(res.status).toBe(201);
+        expect(res.body.data.stationCode).toBe("SURAT-ATELIER-01");
+        expect(res.body.data.trustTier).toBe("TIER_1_VAULT_TERMINAL");
+        expect(res.body.data.status).toBe("ACTIVE_BOUND");
+        expect(res.body.data.residentKeyEnforced).toBe(true);
+
+        enrolledDeviceId = res.body.data.id;
+      });
+
+      it("PUT /api/v1/auth/devices/:id/tier updates device trust tier", async () => {
+        const res = await request(app)
+          .put(`/api/v1/auth/devices/${enrolledDeviceId}/tier`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            trustTier: "TIER_2_POS_REGISTER",
+            reason: "Relocated from vault to showroom register",
+          });
+
+        expect(res.status).toBe(200);
+        expect(res.body.data.trustTier).toBe("TIER_2_POS_REGISTER");
+      });
+
+      it("DELETE /api/v1/auth/devices/:id revokes device binding", async () => {
+        const res = await request(app)
+          .delete(`/api/v1/auth/devices/${enrolledDeviceId}`)
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body.data.revoked).toBe(true);
+      });
+    });
   });
 });

@@ -28,7 +28,7 @@ test.describe("Active Workstation Sessions & Remote Revocation Panel", () => {
     await expect(modalHeading).toBeVisible({ timeout: 5000 });
 
     // Verify current workstation card
-    await expect(page.getByText("STATION-DESK-01")).toBeVisible();
+    await expect(page.getByRole("dialog").getByText("STATION-DESK-01")).toBeVisible();
     await expect(page.getByText("This Workstation (Current)")).toBeVisible();
 
     // Verify remote terminals

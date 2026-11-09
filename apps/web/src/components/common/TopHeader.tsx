@@ -52,6 +52,7 @@ import { IamAuditLogModal } from "../auth/IamAuditLogModal";
 import { WebAuthnModal } from "../auth/WebAuthnModal";
 import { NetworkPerimeterModal } from "../auth/NetworkPerimeterModal";
 import { BreakGlassModal } from "../auth/BreakGlassModal";
+import { DeviceBindingModal } from "../auth/DeviceBindingModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -132,6 +133,7 @@ export function TopHeader({
   const [isWebAuthnOpen, setIsWebAuthnOpen] = useState(false);
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const [isBreakGlassOpen, setIsBreakGlassOpen] = useState(false);
+  const [isDeviceBindingOpen, setIsDeviceBindingOpen] = useState(false);
   const [breakGlassRemaining, setBreakGlassRemaining] = useState("00:00");
   const [isLanSecured, setIsLanSecured] = useState(true);
 
@@ -774,6 +776,19 @@ export function TopHeader({
             <span className="font-semibold">{isLanSecured ? "LAN SECURED" : "OFF-PREMISES"}</span>
           </button>
 
+          {/* Ambient Workstation Device Binding Badge (NIST SP 800-63B AAL3) */}
+          <button
+            type="button"
+            onClick={() => setIsDeviceBindingOpen(true)}
+            title="Workstation Hardware Trust & AAL3 Device Binding (STATION-DESK-01)"
+            aria-label="Workstation Hardware Device Binding"
+            className="hidden lg:flex items-center space-x-1.5 px-2 py-1 rounded-md text-[10px] font-mono border border-gold/30 bg-gold/10 text-gold hover:bg-gold/20 transition-colors shrink-0"
+          >
+            <Cpu className="w-3 h-3 text-gold" />
+            <span className="font-semibold">STATION-DESK-01</span>
+            <span className="text-[9px] bg-gold/20 px-1 py-0.2 rounded font-mono">AAL3</span>
+          </button>
+
           {/* Quick Lock Padlock */}
           <button
             onClick={onLockClick}
@@ -1022,6 +1037,26 @@ export function TopHeader({
                   </button>
                 </div>
 
+                {/* Hardware Device Binding (NIST SP 800-63B AAL3) Action */}
+                <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      setIsDeviceBindingOpen(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Cpu className="w-3.5 h-3.5 text-gold shrink-0" />
+                      <span>Hardware Device Binding</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-gold/10 text-gold border border-gold/30 font-semibold">
+                      AAL3 Bound
+                    </span>
+                  </button>
+                </div>
+
                 {/* Break-Glass Emergency Bypass Protocol Action */}
                 <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
                   <button
@@ -1180,6 +1215,12 @@ export function TopHeader({
       <BreakGlassModal
         isOpen={isBreakGlassOpen}
         onClose={() => setIsBreakGlassOpen(false)}
+      />
+
+      {/* Hardware Security Token Binding & Device Fingerprinting (Milestone 10) */}
+      <DeviceBindingModal
+        isOpen={isDeviceBindingOpen}
+        onClose={() => setIsDeviceBindingOpen(false)}
       />
     </>
   );

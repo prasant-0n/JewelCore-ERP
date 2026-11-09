@@ -15,6 +15,11 @@ import {
   type BreakGlassActivationInput,
   type BreakGlassSession,
   type BreakGlassStatus,
+  type WorkstationDevice,
+  type RegisterWorkstationDeviceInput,
+  type UpdateDeviceTrustTierInput,
+  DeviceTrustTier,
+  DeviceBindingStatus,
   StepUpMethod,
   NetworkPerimeterStatus,
   IamAuditCategory,
@@ -952,6 +957,234 @@ export function revokeBreakGlassService(
   });
 
   return true;
+}
+
+/**
+ * Hardware Security Token Binding & Device Fingerprinting (Milestone 10 / NIST SP 800-63B AAL3)
+ */
+const orgDevices = new Map<string, WorkstationDevice[]>();
+
+export function getOrganizationDevices(
+  orgId: string,
+  currentUserId: string,
+): WorkstationDevice[] {
+  let devices = orgDevices.get(orgId);
+  if (!devices) {
+    devices = [
+      {
+        id: "dev_desk_01",
+        organizationId: orgId,
+        stationCode: "STATION-DESK-01",
+        deviceName: "Flagship Mumbai Atelier Terminal #01",
+        deviceFingerprint: "fp_9f8a42b10c8973d4a6e5b2c1f0e9d8a7c6b5a493",
+        trustTier: DeviceTrustTier.TIER_1_VAULT_TERMINAL,
+        status: DeviceBindingStatus.ACTIVE_BOUND,
+        enrolledByUserId: currentUserId,
+        enrolledByUserName: "Rachel R. (Store Branch Manager)",
+        enrolledAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
+        lastHeartbeatAt: new Date().toISOString(),
+        ipAddress: "192.168.1.102 (Showroom LAN)",
+        hardwareSecurityModule: "Apple T2 / Secure Enclave (SEP)",
+        residentKeyEnforced: true,
+      },
+      {
+        id: "dev_pos_02",
+        organizationId: orgId,
+        stationCode: "POS-TERMINAL-02",
+        deviceName: "Showroom POS Counter Register #02",
+        deviceFingerprint: "fp_8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b",
+        trustTier: DeviceTrustTier.TIER_2_POS_REGISTER,
+        status: DeviceBindingStatus.ACTIVE_BOUND,
+        enrolledByUserId: currentUserId,
+        enrolledByUserName: "Rachel R. (Store Branch Manager)",
+        enrolledAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        lastHeartbeatAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+        ipAddress: "192.168.1.105 (Showroom LAN)",
+        hardwareSecurityModule: "Intel PTT TPM 2.0 / FIPS 140-2",
+        residentKeyEnforced: true,
+      },
+      {
+        id: "dev_salon_01",
+        organizationId: orgId,
+        stationCode: "SALON-IPAD-01",
+        deviceName: "Private VIP Salon Concierge Tablet",
+        deviceFingerprint: "fp_7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b",
+        trustTier: DeviceTrustTier.TIER_3_SALON_TABLET,
+        status: DeviceBindingStatus.ACTIVE_BOUND,
+        enrolledByUserId: currentUserId,
+        enrolledByUserName: "Rachel R. (Store Branch Manager)",
+        enrolledAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+        lastHeartbeatAt: new Date(Date.now() - 35 * 60 * 1000).toISOString(),
+        ipAddress: "192.168.1.120 (Showroom WLAN)",
+        hardwareSecurityModule: "Apple Secure Enclave A16",
+        residentKeyEnforced: true,
+      },
+    ];
+    orgDevices.set(orgId, devices);
+  }
+  return devices;
+}
+
+export function registerOrganizationDevice(
+  orgId: string,
+  userId: string,
+  input: RegisterWorkstationDeviceInput,
+  userName?: string,
+): WorkstationDevice {
+  // Validate supervisor PIN if provided
+  if (
+    input.supervisorPin &&
+    input.supervisorPin !== "1234" &&
+    input.supervisorPin !== "9999"
+  ) {
+    recordIamAuditEvent({
+      action: "AUTH_DEVICE_CHALLENGE_FAILED",
+      category: IamAuditCategory.HARDWARE_BINDING,
+      severity: IamAuditSeverity.WARNING,
+      stationId: input.stationCode,
+      ipAddress: "192.168.1.102 (Showroom LAN)",
+      actorUserId: userId,
+      actorName: userName || "Rachel R.",
+      actorEmail: "rachel@jewelcore.internal",
+      actorRole: "STORE_MANAGER",
+      details: `Failed hardware device enrollment challenge for ${input.stationCode}: invalid supervisor PIN`,
+      metadata: { stationCode: input.stationCode },
+    });
+    throw new UnauthorizedError(
+      "Invalid supervisor authorization PIN for hardware enrollment",
+    );
+  }
+
+  const devices = getOrganizationDevices(orgId, userId);
+
+  const existing = devices.find(
+    (d) =>
+      d.stationCode.toUpperCase() === input.stationCode.trim().toUpperCase(),
+  );
+  if (existing && existing.status === DeviceBindingStatus.ACTIVE_BOUND) {
+    throw new ConflictError(
+      `Device with station code '${input.stationCode}' is already registered and active.`,
+    );
+  }
+
+  const fingerprint =
+    input.deviceFingerprint ||
+    `fp_${Date.now().toString(16)}_${Math.random().toString(36).substring(2, 10)}`;
+
+  const newDevice: WorkstationDevice = {
+    id: `dev_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    organizationId: orgId,
+    stationCode: input.stationCode.trim().toUpperCase(),
+    deviceName: input.deviceName.trim(),
+    deviceFingerprint: fingerprint,
+    trustTier: input.trustTier || DeviceTrustTier.TIER_2_POS_REGISTER,
+    status: DeviceBindingStatus.ACTIVE_BOUND,
+    enrolledByUserId: userId,
+    enrolledByUserName: userName || "Rachel R. (Store Branch Manager)",
+    enrolledAt: new Date().toISOString(),
+    lastHeartbeatAt: new Date().toISOString(),
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    hardwareSecurityModule:
+      input.hardwareSecurityModule || "YubiKey FIPS 140-3 / WebAuthn AAL3",
+    residentKeyEnforced: input.residentKeyEnforced ?? true,
+  };
+
+  devices.unshift(newDevice);
+  orgDevices.set(orgId, devices);
+
+  recordIamAuditEvent({
+    action: "AUTH_DEVICE_BOUND",
+    category: IamAuditCategory.HARDWARE_BINDING,
+    severity: IamAuditSeverity.NOTICE,
+    stationId: newDevice.stationCode,
+    ipAddress: newDevice.ipAddress,
+    actorUserId: userId,
+    actorName: userName || "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: `Hardware device ${newDevice.stationCode} ('${newDevice.deviceName}') enrolled under ${newDevice.trustTier} (AAL3 Bound)`,
+    metadata: {
+      deviceId: newDevice.id,
+      stationCode: newDevice.stationCode,
+      deviceFingerprint: newDevice.deviceFingerprint,
+      trustTier: newDevice.trustTier,
+      hsm: newDevice.hardwareSecurityModule,
+    },
+  });
+
+  return newDevice;
+}
+
+export function revokeOrganizationDevice(
+  orgId: string,
+  userId: string,
+  deviceId: string,
+  userName?: string,
+): boolean {
+  const devices = getOrganizationDevices(orgId, userId);
+  const device = devices.find((d) => d.id === deviceId);
+  if (!device) return false;
+
+  device.status = DeviceBindingStatus.REVOKED;
+
+  recordIamAuditEvent({
+    action: "AUTH_DEVICE_REVOKED",
+    category: IamAuditCategory.HARDWARE_BINDING,
+    severity: IamAuditSeverity.CRITICAL,
+    stationId: device.stationCode,
+    ipAddress: device.ipAddress,
+    actorUserId: userId,
+    actorName: userName || "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: `Hardware device binding revoked for ${device.stationCode} ('${device.deviceName}'). Terminal decommissioned from AAL3 trust network.`,
+    metadata: {
+      deviceId: device.id,
+      stationCode: device.stationCode,
+      revokedAt: new Date().toISOString(),
+    },
+  });
+
+  return true;
+}
+
+export function updateOrganizationDeviceTier(
+  orgId: string,
+  userId: string,
+  deviceId: string,
+  input: UpdateDeviceTrustTierInput,
+  userName?: string,
+): WorkstationDevice {
+  const devices = getOrganizationDevices(orgId, userId);
+  const device = devices.find((d) => d.id === deviceId);
+  if (!device) {
+    throw new NotFoundError("Device", deviceId);
+  }
+
+  const oldTier = device.trustTier;
+  device.trustTier = input.trustTier;
+
+  recordIamAuditEvent({
+    action: "AUTH_DEVICE_TIER_UPDATED",
+    category: IamAuditCategory.HARDWARE_BINDING,
+    severity: IamAuditSeverity.WARNING,
+    stationId: device.stationCode,
+    ipAddress: device.ipAddress,
+    actorUserId: userId,
+    actorName: userName || "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: `Workstation trust tier updated for ${device.stationCode} from ${oldTier} to ${input.trustTier}. Reason: ${input.reason || "Administrative reassignment"}`,
+    metadata: {
+      deviceId: device.id,
+      stationCode: device.stationCode,
+      oldTier,
+      newTier: input.trustTier,
+      reason: input.reason,
+    },
+  });
+
+  return device;
 }
 
 
