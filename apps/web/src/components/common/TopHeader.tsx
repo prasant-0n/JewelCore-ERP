@@ -51,6 +51,7 @@ import { DelegatedAuthorityModal } from "../auth/DelegatedAuthorityModal";
 import { IamAuditLogModal } from "../auth/IamAuditLogModal";
 import { WebAuthnModal } from "../auth/WebAuthnModal";
 import { NetworkPerimeterModal } from "../auth/NetworkPerimeterModal";
+import { BreakGlassModal } from "../auth/BreakGlassModal";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -116,7 +117,7 @@ export function TopHeader({
     syncExchangeFeed,
   } = useHardwareTelemetry();
   const { currentStore, stores, switchStore } = useStoreContext();
-  const { user, logout } = useAuth();
+  const { user, logout, breakGlassSession, revokeBreakGlass } = useAuth();
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isMeshOpen, setIsMeshOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -130,7 +131,23 @@ export function TopHeader({
   const [isIamAuditOpen, setIsIamAuditOpen] = useState(false);
   const [isWebAuthnOpen, setIsWebAuthnOpen] = useState(false);
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
+  const [isBreakGlassOpen, setIsBreakGlassOpen] = useState(false);
+  const [breakGlassRemaining, setBreakGlassRemaining] = useState("00:00");
   const [isLanSecured, setIsLanSecured] = useState(true);
+
+  useEffect(() => {
+    if (!breakGlassSession || !breakGlassSession.isActive) return;
+
+    const update = () => {
+      const diff = Math.max(0, new Date(breakGlassSession.expiresAt).getTime() - Date.now());
+      const m = Math.floor(diff / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setBreakGlassRemaining(`${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`);
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [breakGlassSession]);
 
   // Active authenticated operator profile
   const activeUser = user || {
@@ -250,6 +267,47 @@ export function TopHeader({
           }}
           aria-hidden="true"
         />
+      )}
+
+      {/* Break-Glass Emergency Clearance Active Alert Banner */}
+      {breakGlassSession?.isActive && (
+        <div
+          data-testid="break-glass-top-banner"
+          className="bg-rose-950 border-b border-rose-600/70 px-3 py-1.5 flex items-center justify-between text-xs text-rose-200 z-50 sticky top-0 shadow-lg shadow-rose-950/50"
+        >
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping shrink-0" />
+            <span className="font-bold text-rose-300 font-mono tracking-wide uppercase flex items-center gap-1.5">
+              <span>🚨 BREAK-GLASS EMERGENCY CLEARANCE ACTIVE</span>
+              <span className="text-[10px] bg-rose-500/20 px-1.5 py-0.5 rounded border border-rose-500/40">
+                {breakGlassSession.incidentRef}
+              </span>
+            </span>
+            <span className="hidden md:inline text-rose-300/80 font-mono text-[11px]">
+              • High-Assurance Quorum Bypassed • NIST SP 800-53
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <div className="font-mono text-rose-300 bg-rose-900/60 px-2 py-0.5 rounded border border-rose-500/30 text-xs font-semibold">
+              ⏱ {breakGlassRemaining}
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsBreakGlassOpen(true)}
+              className="text-[11px] underline text-rose-300 hover:text-rose-100 mr-1"
+            >
+              Details
+            </button>
+            <button
+              type="button"
+              onClick={() => void revokeBreakGlass()}
+              className="px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-600 hover:bg-rose-500 text-stone-100 transition-colors"
+            >
+              Relinquish
+            </button>
+          </div>
+        </div>
       )}
 
       <header className="h-14 bg-surface border-b border-surface-border px-3 sm:px-4 lg:px-5 xl:px-6 flex items-center justify-between z-40 flex-shrink-0 relative">
@@ -964,6 +1022,32 @@ export function TopHeader({
                   </button>
                 </div>
 
+                {/* Break-Glass Emergency Bypass Protocol Action */}
+                <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPersonaOpen(false);
+                      setIsBreakGlassOpen(true);
+                    }}
+                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                      <span>Break-Glass Emergency</span>
+                    </div>
+                    {breakGlassSession?.isActive ? (
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-rose-500/20 text-rose-400 border border-rose-500/40 font-bold animate-pulse">
+                        Active
+                      </span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold">
+                        NIST 800-53
+                      </span>
+                    )}
+                  </button>
+                </div>
+
                 {/* Sign Out Action */}
                 <div className="pt-1.5 px-2">
                   <button
@@ -1090,6 +1174,12 @@ export function TopHeader({
         isOpen={isNetworkModalOpen}
         onClose={() => setIsNetworkModalOpen(false)}
         onProfileUpdate={(p) => setIsLanSecured(p.isTrustedSubnet)}
+      />
+
+      {/* Break-Glass Emergency Bypass Protocol (Milestone 8) */}
+      <BreakGlassModal
+        isOpen={isBreakGlassOpen}
+        onClose={() => setIsBreakGlassOpen(false)}
       />
     </>
   );

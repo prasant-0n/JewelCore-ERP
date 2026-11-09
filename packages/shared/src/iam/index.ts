@@ -332,6 +332,9 @@ export const IamAuditAction = {
   AUTH_STEP_UP_CHALLENGED: "AUTH_STEP_UP_CHALLENGED",
   AUTH_STEP_UP_VERIFIED: "AUTH_STEP_UP_VERIFIED",
   AUTH_STEP_UP_REJECTED: "AUTH_STEP_UP_REJECTED",
+  AUTH_BREAK_GLASS_TRIGGERED: "AUTH_BREAK_GLASS_TRIGGERED",
+  AUTH_BREAK_GLASS_REVOKED: "AUTH_BREAK_GLASS_REVOKED",
+  AUTH_BREAK_GLASS_EXPIRED: "AUTH_BREAK_GLASS_EXPIRED",
 } as const;
 
 export type IamAuditAction = (typeof IamAuditAction)[keyof typeof IamAuditAction];
@@ -479,6 +482,43 @@ export interface StepUpVerificationResult {
   expiresAt: string;
   verifiedAt: string;
 }
+
+/**
+ * Break-Glass Emergency Bypass Protocol (Milestone 8 / NIST SP 800-53 / SOC 2)
+ */
+export const breakGlassActivationSchema = z.object({
+  incidentRef: z.string().trim().min(3, "Incident reference code is required"),
+  reason: z
+    .string()
+    .trim()
+    .min(15, "Operational justification must be at least 15 characters"),
+  masterPassphrase: z.string().min(6, "Master emergency passphrase is required"),
+  secondaryPin: z.string().optional(),
+  durationMinutes: z.number().int().min(5).max(120).default(30),
+});
+
+export type BreakGlassActivationInput = z.infer<typeof breakGlassActivationSchema>;
+
+export interface BreakGlassSession {
+  id: string;
+  userId: string;
+  actorName: string;
+  actorRole: string;
+  incidentRef: string;
+  reason: string;
+  durationMinutes: number;
+  activatedAt: string;
+  expiresAt: string;
+  isActive: boolean;
+  revokedAt?: string | null;
+  revokedBy?: string | null;
+}
+
+export interface BreakGlassStatus {
+  isActive: boolean;
+  activeSession: BreakGlassSession | null;
+}
+
 
 
 

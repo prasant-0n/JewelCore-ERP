@@ -10,6 +10,7 @@ import React, {
 import { useRouter } from "next/navigation";
 import { api, DEFAULT_STORE_ID, ApiProblemError } from "@/lib/api";
 import { BRANCH_STORES, type BranchStore } from "@/hooks/useStoreContext";
+import type { BreakGlassSession, BreakGlassActivationInput } from "@jewelcore/shared";
 import { toast } from "sonner";
 
 export interface DelegatedAuthority {
@@ -55,6 +56,9 @@ export interface AuthContextType {
     delegation: Omit<DelegatedAuthority, "grantedAt" | "expiresAt">,
   ) => void;
   relinquishDelegation: () => void;
+  breakGlassSession: BreakGlassSession | null;
+  activateBreakGlass: (input: BreakGlassActivationInput) => Promise<BreakGlassSession>;
+  revokeBreakGlass: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -78,6 +82,89 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentStore, setCurrentStore] = useState<BranchStore>(BRANCH_STORES[0]);
   const [permissions, setPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [breakGlassSession, setBreakGlassSession] = useState<BreakGlassSession | null>(null);
+
+  // Restore break glass session from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("jewelcore_break_glass");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored) as BreakGlassSession;
+          if (parsed.isActive && new Date(parsed.expiresAt) > new Date()) {
+            setBreakGlassSession(parsed);
+          } else {
+            localStorage.removeItem("jewelcore_break_glass");
+          }
+        } catch {
+          localStorage.removeItem("jewelcore_break_glass");
+        }
+      }
+    }
+  }, []);
+
+  // Periodic timer for Break-Glass TTL countdown & automatic expiry
+  useEffect(() => {
+    if (!breakGlassSession || !breakGlassSession.isActive) return;
+
+    const interval = setInterval(() => {
+      if (new Date(breakGlassSession.expiresAt) <= new Date()) {
+        setBreakGlassSession(null);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("jewelcore_break_glass");
+        }
+        toast.warning("Break-Glass Emergency Clearance Expired", {
+          description: "Time-bound elevation ended. Standard operational controls restored.",
+        });
+        void api.get("/auth/break-glass/status").catch(() => {});
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [breakGlassSession]);
+
+  const activateBreakGlass = useCallback(
+    async (input: BreakGlassActivationInput): Promise<BreakGlassSession> => {
+      try {
+        const res = await api.post<{ data: BreakGlassSession }>(
+          "/auth/break-glass/activate",
+          input,
+        );
+        const session = res.data;
+        setBreakGlassSession(session);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("jewelcore_break_glass", JSON.stringify(session));
+        }
+        toast.error("🚨 Break-Glass Emergency Clearance Activated", {
+          description: `NIST SP 800-53 Emergency Clearance Active (${input.durationMinutes}m TTL). Ref: ${input.incidentRef}`,
+        });
+        return session;
+      } catch (err: any) {
+        const errorMsg = err?.detail || err?.message || "Failed to activate Break-Glass clearance";
+        toast.error("Emergency Clearance Rejected", {
+          description: errorMsg,
+        });
+        throw err;
+      }
+    },
+    [],
+  );
+
+  const revokeBreakGlass = useCallback(async (): Promise<void> => {
+    try {
+      await api.post("/auth/break-glass/revoke", {});
+    } catch {
+      // Ignore API errors on offline
+    } finally {
+      setBreakGlassSession(null);
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("jewelcore_break_glass");
+      }
+      toast.info("Break-Glass Emergency Clearance Relinquished", {
+        description: "Standard security controls and dual-control quorum restored.",
+      });
+    }
+  }, []);
 
   // Initialize store and session state from storage on client mount
   useEffect(() => {
@@ -530,6 +617,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserDirectly,
         grantDelegation,
         relinquishDelegation,
+        breakGlassSession,
+        activateBreakGlass,
+        revokeBreakGlass,
       }}
     >
       {children}

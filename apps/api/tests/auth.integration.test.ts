@@ -596,5 +596,67 @@ describe("IAM Authentication & User Endpoints (FEAT-IAM-02)", () => {
         expect(res.body.detail).toContain("Step-up verification failed");
       });
     });
+
+    describe("POST /api/v1/auth/break-glass/* (Milestone 8)", () => {
+      it("successfully activates Break-Glass Emergency Clearance with valid master passphrase", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/break-glass/activate")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            incidentRef: "INC-2026-9912",
+            reason: "Biometric reader hardware malfunction during VIP vault release",
+            masterPassphrase: "JEWELCORE-BREAK-GLASS-2026",
+            durationMinutes: 30,
+          });
+
+        expect(res.status).toBe(200);
+        expect(res.body.data.isActive).toBe(true);
+        expect(res.body.data.incidentRef).toBe("INC-2026-9912");
+        expect(res.body.data.durationMinutes).toBe(30);
+        expect(res.body.data.expiresAt).toBeDefined();
+
+        // Check status returns active
+        const statusRes = await request(app)
+          .get("/api/v1/auth/break-glass/status")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(statusRes.status).toBe(200);
+        expect(statusRes.body.data.isActive).toBe(true);
+        expect(statusRes.body.data.activeSession.incidentRef).toBe("INC-2026-9912");
+      });
+
+      it("rejects Break-Glass activation with invalid emergency passphrase with 401", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/break-glass/activate")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            incidentRef: "INC-2026-FAIL",
+            reason: "Unauthorized attempt with fraudulent master key",
+            masterPassphrase: "invalid-passphrase-attempt",
+            durationMinutes: 15,
+          });
+
+        expect(res.status).toBe(401);
+        expect(res.body.code).toBe("ERR_BREAK_GLASS_INVALID_KEY");
+      });
+
+      it("relinquishes Break-Glass emergency clearance early", async () => {
+        const revokeRes = await request(app)
+          .post("/api/v1/auth/break-glass/revoke")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(revokeRes.status).toBe(200);
+        expect(revokeRes.body.data.revoked).toBe(true);
+
+        // Verify status is now inactive
+        const statusRes = await request(app)
+          .get("/api/v1/auth/break-glass/status")
+          .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(statusRes.status).toBe(200);
+        expect(statusRes.body.data.isActive).toBe(false);
+        expect(statusRes.body.data.activeSession).toBeNull();
+      });
+    });
   });
 });

@@ -96,10 +96,15 @@ test.describe("Multi-Factor Authentication (TOTP 2FA Authenticator & Backup Code
     ).toBeVisible();
 
     // Fill valid TOTP: 123456
-    const digits = ["1", "2", "3", "4", "5", "6"];
-    for (let i = 0; i < 6; i++) {
-      const digitInput = page.getByRole("textbox", { name: `Digit ${i + 1}` });
-      await digitInput.fill(digits[i]);
+    const demoBtn = page.getByRole("button", { name: "Demo TOTP: 123456" });
+    if (await demoBtn.isVisible()) {
+      await demoBtn.click();
+    } else {
+      const digits = ["1", "2", "3", "4", "5", "6"];
+      for (let i = 0; i < 6; i++) {
+        const digitInput = page.getByRole("textbox", { name: `Digit ${i + 1}` });
+        await digitInput.fill(digits[i]);
+      }
     }
 
     const verifyBtn = page.getByRole("button", {

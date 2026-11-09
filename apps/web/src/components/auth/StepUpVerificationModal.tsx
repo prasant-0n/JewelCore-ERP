@@ -28,6 +28,7 @@ import {
   Layers,
 } from "lucide-react";
 import { api } from "../../lib/api";
+import { useAuth } from "../../context/AuthContext";
 import { StepUpMethod, type StepUpVerificationResult } from "@jewelcore/shared";
 
 export interface StepUpVerificationModalProps {
@@ -59,6 +60,7 @@ export function StepUpVerificationModal({
   thresholdNotice = "Dual-key supervisor quorum or FIDO2 hardware passkey touch is required.",
   onVerified,
 }: StepUpVerificationModalProps) {
+  const { breakGlassSession } = useAuth();
   const [selectedMethod, setSelectedMethod] = useState<StepUpMethod>(StepUpMethod.WEBAUTHN_PASSKEY);
   const [supervisor, setSupervisor] = useState(SUPERVISOR_ROSTER[0].name);
   const [pin, setPin] = useState("");
@@ -224,6 +226,35 @@ export function StepUpVerificationModal({
               </p>
             </div>
           </div>
+
+          {/* Emergency Break-Glass Active Bypass Banner */}
+          {breakGlassSession?.isActive && (
+            <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-600/50 flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-rose-300">
+                <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
+                <span>
+                  Emergency Break-Glass Active: <strong>{breakGlassSession.incidentRef}</strong>
+                </span>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => {
+                  onVerified({
+                    stepUpToken: `breakglass_proof_${Date.now()}_${breakGlassSession.incidentRef}`,
+                    method: StepUpMethod.SECURITY_PIN,
+                  });
+                  onClose();
+                  toast.success("Break-Glass Emergency Step-Up Bypassed", {
+                    description: `Authorized under Incident Ref ${breakGlassSession.incidentRef}. Incident recorded in audit ledger.`,
+                  });
+                }}
+                className="h-7 text-xs bg-rose-600 hover:bg-rose-500 text-stone-100 font-semibold shrink-0"
+              >
+                Instant Bypass
+              </Button>
+            </div>
+          )}
 
           {/* Verification Method Selection Tabs */}
           <div className="grid grid-cols-3 gap-2 p-1 bg-obsidian-deep/80 rounded-lg border border-surface-border">

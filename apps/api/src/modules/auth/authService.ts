@@ -12,6 +12,9 @@ import {
   type SimulateNetworkIpInput,
   type StepUpVerificationInput,
   type StepUpVerificationResult,
+  type BreakGlassActivationInput,
+  type BreakGlassSession,
+  type BreakGlassStatus,
   StepUpMethod,
   NetworkPerimeterStatus,
   IamAuditCategory,
@@ -794,6 +797,163 @@ export function verifyStepUpService(
     verifiedAt,
   };
 }
+
+/**
+ * Break-Glass Emergency Bypass Protocol (Milestone 8 / NIST SP 800-53 / SOC 2)
+ */
+const activeBreakGlassSessions = new Map<string, BreakGlassSession>();
+
+export function activateBreakGlassService(
+  userId: string,
+  input: BreakGlassActivationInput,
+): BreakGlassSession {
+  // Validate emergency master passphrase / PIN
+  const validPassphrases = [
+    "JEWELCORE-BREAK-GLASS-2026",
+    "JEWELCORE-EMERGENCY-9921",
+    "EMERGENCY-MASTER-9999",
+    "JEWELCORE-EMERGENCY-2026",
+    "999999",
+    "1234",
+  ];
+
+  const isMasterKeyValid = validPassphrases.includes(input.masterPassphrase);
+  if (!isMasterKeyValid) {
+    recordIamAuditEvent({
+      action: "AUTH_BREAK_GLASS_TRIGGERED",
+      category: IamAuditCategory.PRIVILEGE_ELEVATION,
+      severity: IamAuditSeverity.CRITICAL,
+      stationId: "MAIN-SHOWROOM-DESK-01",
+      ipAddress: "192.168.1.102 (Showroom LAN)",
+      actorUserId: userId,
+      actorName: "Rachel R.",
+      actorEmail: "rachel@jewelcore.internal",
+      actorRole: "STORE_MANAGER",
+      details: `Break-Glass emergency elevation REJECTED: invalid emergency master passphrase (Ref: ${input.incidentRef})`,
+      metadata: {
+        incidentRef: input.incidentRef,
+        reason: input.reason,
+        durationMinutes: input.durationMinutes,
+        rejected: true,
+      },
+    });
+
+    throw new UnauthorizedError(
+      "Break-glass authorization rejected: invalid emergency master passphrase or secondary PIN",
+      "ERR_BREAK_GLASS_INVALID_KEY",
+    );
+  }
+
+  const now = new Date();
+  const durationMs = input.durationMinutes * 60 * 1000;
+  const expiresAt = new Date(now.getTime() + durationMs).toISOString();
+
+  const session: BreakGlassSession = {
+    id: `bg_session_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    userId,
+    actorName: "Rachel R.",
+    actorRole: "Store Branch Manager",
+    incidentRef: input.incidentRef,
+    reason: input.reason,
+    durationMinutes: input.durationMinutes,
+    activatedAt: now.toISOString(),
+    expiresAt,
+    isActive: true,
+  };
+
+  activeBreakGlassSessions.set(userId, session);
+
+  recordIamAuditEvent({
+    action: "AUTH_BREAK_GLASS_TRIGGERED",
+    category: IamAuditCategory.PRIVILEGE_ELEVATION,
+    severity: IamAuditSeverity.CRITICAL,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: userId,
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: `🚨 NIST SP 800-53 BREAK-GLASS EMERGENCY ACTIVATED (${input.durationMinutes}m TTL). Justification: ${input.reason} [Ref: ${input.incidentRef}]`,
+    metadata: {
+      sessionId: session.id,
+      incidentRef: session.incidentRef,
+      durationMinutes: session.durationMinutes,
+      expiresAt: session.expiresAt,
+      reason: session.reason,
+    },
+  });
+
+  return session;
+}
+
+export function getBreakGlassStatusService(userId: string): BreakGlassStatus {
+  const session = activeBreakGlassSessions.get(userId);
+  if (!session) {
+    return { isActive: false, activeSession: null };
+  }
+
+  if (session.isActive && new Date(session.expiresAt) <= new Date()) {
+    session.isActive = false;
+    recordIamAuditEvent({
+      action: "AUTH_BREAK_GLASS_EXPIRED",
+      category: IamAuditCategory.PRIVILEGE_ELEVATION,
+      severity: IamAuditSeverity.NOTICE,
+      stationId: "MAIN-SHOWROOM-DESK-01",
+      ipAddress: "192.168.1.102 (Showroom LAN)",
+      actorUserId: userId,
+      actorName: "Rachel R.",
+      actorEmail: "rachel@jewelcore.internal",
+      actorRole: "STORE_MANAGER",
+      details: `Break-Glass emergency elevation expired automatically [Ref: ${session.incidentRef}]`,
+      metadata: {
+        sessionId: session.id,
+        incidentRef: session.incidentRef,
+      },
+    });
+    return { isActive: false, activeSession: null };
+  }
+
+  return {
+    isActive: session.isActive,
+    activeSession: session.isActive ? session : null,
+  };
+}
+
+export function revokeBreakGlassService(
+  userId: string,
+  revokedById?: string,
+): boolean {
+  const session = activeBreakGlassSessions.get(userId);
+  if (!session || !session.isActive) {
+    return false;
+  }
+
+  session.isActive = false;
+  session.revokedAt = new Date().toISOString();
+  session.revokedBy = revokedById || userId;
+
+  recordIamAuditEvent({
+    action: "AUTH_BREAK_GLASS_REVOKED",
+    category: IamAuditCategory.PRIVILEGE_ELEVATION,
+    severity: IamAuditSeverity.WARNING,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: userId,
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: `Break-Glass emergency elevation relinquished early by operator [Ref: ${session.incidentRef}]`,
+    metadata: {
+      sessionId: session.id,
+      incidentRef: session.incidentRef,
+      revokedAt: session.revokedAt,
+      revokedBy: session.revokedBy,
+    },
+  });
+
+  return true;
+}
+
 
 
 

@@ -7,6 +7,7 @@ import {
   registerPasskeySchema,
   simulateNetworkIpSchema,
   stepUpVerificationSchema,
+  breakGlassActivationSchema,
   UnauthorizedError,
   NotFoundError,
 } from "@jewelcore/shared";
@@ -26,6 +27,9 @@ import {
   getWorkstationNetworkProfile,
   simulateWorkstationNetworkIp,
   verifyStepUpService,
+  activateBreakGlassService,
+  getBreakGlassStatusService,
+  revokeBreakGlassService,
 } from "./authService.js";
 import {
   verifyJwt,
@@ -604,6 +608,94 @@ export async function verifyStepUpHandler(
 
     res.status(200).json({
       data: result,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function activateBreakGlassHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        userId = claims.userId;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const validated = breakGlassActivationSchema.parse(req.body);
+    const session = activateBreakGlassService(userId, validated);
+
+    res.status(200).json({
+      data: session,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getBreakGlassStatusHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        userId = claims.userId;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const status = getBreakGlassStatusService(userId);
+
+    res.status(200).json({
+      data: status,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function revokeBreakGlassHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        userId = claims.userId;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const revoked = revokeBreakGlassService(userId);
+
+    res.status(200).json({
+      data: { revoked },
       timestamp: new Date().toISOString(),
     });
   } catch (err) {
