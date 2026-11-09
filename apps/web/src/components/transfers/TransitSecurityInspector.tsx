@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ConsignmentItemData } from "./ConsignmentItemCard";
-import { Truck, ShieldCheck, Printer, X, MapPin, KeyRound } from "lucide-react";
+import { Truck, ShieldCheck, Printer, X, MapPin, KeyRound, ShieldAlert } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { TabularCurrency } from "@/components/workstation/TabularCurrency";
 import { StatusBadge } from "@/components/workstation/StatusBadge";
 import { toast } from "sonner";
 import { api } from "../../lib/api";
+import { DeSealReceivingModal } from "./DeSealReceivingModal";
 
 interface TransitSecurityInspectorProps {
   item: ConsignmentItemData | null;
@@ -29,6 +30,7 @@ export function TransitSecurityInspector({
   onAcknowledgeDeSeal,
 }: TransitSecurityInspectorProps) {
   const [isDeSealing, setIsDeSealing] = useState(false);
+  const [isDeSealModalOpen, setIsDeSealModalOpen] = useState(false);
 
   if (!item) {
     return (
@@ -294,23 +296,51 @@ export function TransitSecurityInspector({
             </Button>
           </div>
 
-          <Button
-            variant="gold"
-            size="default"
-            onClick={handleDeSeal}
-            disabled={isDeSealing || status === "DE_SEALED"}
-            isLoading={isDeSealing}
-            className="w-full font-mono text-xs"
-          >
-            <KeyRound className="w-4 h-4 mr-1.5" />
-            <span>
-              {status === "DE_SEALED"
-                ? "Vault Inward Handover Confirmed"
-                : "Acknowledge Inward Vault Handover & De-Seal"}
-            </span>
-          </Button>
+          <div className="space-y-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsDeSealModalOpen(true)}
+              disabled={status === "DE_SEALED"}
+              className="w-full font-mono text-xs border-gold/40 text-gold hover:bg-gold/10 hover:text-gold"
+            >
+              <ShieldCheck className="w-4 h-4 mr-1.5 text-gold" />
+              <span>Dual-Custody Tare &amp; De-Seal Gate</span>
+            </Button>
+
+            <Button
+              variant="gold"
+              size="default"
+              onClick={handleDeSeal}
+              disabled={isDeSealing || status === "DE_SEALED"}
+              isLoading={isDeSealing}
+              className="w-full font-mono text-xs"
+            >
+              <KeyRound className="w-4 h-4 mr-1.5" />
+              <span>
+                {status === "DE_SEALED"
+                  ? "Vault Inward Handover Confirmed"
+                  : "Acknowledge Inward Vault Handover & De-Seal"}
+              </span>
+            </Button>
+          </div>
         </div>
       </CardContent>
+
+      {/* High-Assurance Dual-Custody Receiving Modal */}
+      <DeSealReceivingModal
+        isOpen={isDeSealModalOpen}
+        onClose={() => setIsDeSealModalOpen(false)}
+        item={item}
+        parentRouteTitle={parentRouteTitle}
+        carrierPlate={carrierPlate}
+        onConfirmedDeSeal={(updatedItem, outcome) => {
+          onAcknowledgeDeSeal?.({
+            ...updatedItem,
+            status: outcome.status,
+          });
+        }}
+      />
     </Card>
   );
 }

@@ -252,6 +252,7 @@ export async function receiveTransferManifest(
     );
 
     const receivedSet = new Set(input.receivedItemIds);
+    let totalExpectedGrossWeight = 0;
 
     for (const item of itemsRes.rows) {
       const pieceRes = await client.query<{
@@ -274,6 +275,7 @@ export async function receiveTransferManifest(
       }
 
       if (receivedSet.has(piece.id)) {
+        totalExpectedGrossWeight += Number(piece.gross_weight_grams);
         // Piece received intact -> Ingest into destination store & compartment
         await client.query(
           `UPDATE inventory_items
@@ -414,6 +416,35 @@ export async function receiveTransferManifest(
       }
     }
 
+    // 6b. Metrology Tare Weight Verification (NIST SP 800-53 / Analytical Precision 0.01g)
+    if (input.measuredTareWeightGrams !== undefined) {
+      const tolerance = input.tareToleranceGrams ?? 0.01;
+      const weightDelta = Math.abs(totalExpectedGrossWeight - input.measuredTareWeightGrams);
+      if (weightDelta > tolerance) {
+        const disputeId = uuidv7();
+        const disputeInsert = await client.query<DisputeRow>(
+          `INSERT INTO transfer_disputes (
+            id, organization_id, transfer_order_id, transfer_manifest_id, claim_type,
+            severity, status, reported_by_user_id, witness_user_id, details, created_at, updated_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, clock_timestamp(), clock_timestamp())
+          RETURNING *`,
+          [
+            disputeId,
+            organizationId,
+            order.id,
+            manifestId,
+            DisputeClaimType.WEIGHT_DISCREPANCY,
+            DisputeSeverity.CRITICAL,
+            DisputeStatus.OPEN,
+            receiverUserId,
+            input.witnessUserId,
+            `Analytical tare scale discrepancy detected: expected ${totalExpectedGrossWeight.toFixed(2)}g, measured ${input.measuredTareWeightGrams.toFixed(2)}g (variance Δ=${weightDelta.toFixed(3)}g exceeds ${tolerance}g tolerance).`,
+          ],
+        );
+        createdDisputes.push(mapDispute(disputeInsert.rows[0]!));
+      }
+    }
+
     // 7. Final status updates
     const hasDisputes = createdDisputes.length > 0;
     const finalOrderStatus = hasDisputes
@@ -453,6 +484,8 @@ export async function receiveTransferManifest(
           disputesCount: createdDisputes.length,
           receivedPiecesCount: receivedSet.size,
           finalStatus: finalManifestStatus,
+          measuredTareWeightGrams: input.measuredTareWeightGrams,
+          escortBadgeNumber: input.escortBadgeNumber,
         }),
       ],
     );

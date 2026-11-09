@@ -36,6 +36,10 @@ export const receiveTransferManifestSchema = z.object({
   sealVerifications: z
     .array(sealVerificationItemSchema)
     .min(1, "All seals must be verified upon receipt"),
+  measuredTareWeightGrams: z.number().positive().optional(),
+  tareToleranceGrams: z.number().nonnegative().default(0.01).optional(),
+  escortBadgeNumber: z.string().max(100).optional(),
+  dualAuthPin: z.string().max(20).optional(),
   notes: z.string().max(1000).optional(),
 });
 

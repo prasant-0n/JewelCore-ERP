@@ -30,6 +30,9 @@ export const createTransferManifestSchema = z.object({
   sealNumbers: z
     .array(z.string().min(2).max(50))
     .min(1, "At least one security seal is required (INV-16)"),
+  measuredTareWeightGrams: z.number().positive().optional(),
+  escortBadgeNumber: z.string().max(100).optional(),
+  dualAuthPin: z.string().max(20).optional(),
   notes: z.string().max(1000).optional(),
 });
 
@@ -76,6 +79,8 @@ export interface TransferManifestRecord {
   dispatchedAt: string;
   status: ManifestStatus;
   notes?: string | null;
+  measuredTareWeightGrams?: number | null;
+  escortBadgeNumber?: string | null;
   createdAt: string;
   seals?: SecuritySealRecord[];
 }

@@ -348,6 +348,8 @@ export async function dispatchTransferOrder(
           witnessUserId: input.witnessUserId,
           carrierName: input.carrierName,
           sealsCount: input.sealNumbers.length,
+          measuredTareWeightGrams: input.measuredTareWeightGrams,
+          escortBadgeNumber: input.escortBadgeNumber,
         }),
       ],
     );

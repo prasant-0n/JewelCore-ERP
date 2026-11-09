@@ -68,6 +68,7 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
   let disputeOrderId: string;
   let disputePiece1Id: string;
   let disputePiece2Id: string;
+  let makeItem: (serial: string, seq: number) => Promise<string>;
 
   async function cleanFixtures() {
     await query(
@@ -450,7 +451,7 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
     const qcId = qcRes.rows[0].id;
 
     // Helper to create an inventory item in sourceComp
-    async function makeItem(serial: string, seq: number): Promise<string> {
+    makeItem = async (serial: string, seq: number): Promise<string> => {
       const qciRes = await query<{ id: string }>(
         `INSERT INTO quality_check_items (
           id, quality_check_id, shipment_item_id, item_sequence_number, status,
@@ -783,5 +784,57 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
     expect(res.status).toBe(201);
     expect(res.body.claimType).toBe(DisputeClaimType.WEIGHT_DISCREPANCY);
     expect(res.body.status).toBe(DisputeStatus.OPEN);
+  });
+
+  it("detects tare scale weight discrepancy exceeding 0.01g tolerance and creates automated WEIGHT_DISCREPANCY dispute", async () => {
+    // 1. Create a piece and order for tare metrology check
+    const tarePieceId = await makeItem(`SN-RCV-TARE-${Date.now()}`, 5);
+    const tareOrder = await createTransferOrder(orgId, receiverUserId, {
+      sourceStoreId,
+      destinationStoreId,
+      priority: TransferOrderPriority.NORMAL,
+      itemIds: [tarePieceId],
+    });
+    await submitTransferOrder(orgId, tareOrder.id, receiverUserId);
+    await approveTransferOrder(orgId, tareOrder.id, receiverUserId);
+
+    const sealNum = `SEAL-TARE-${Date.now()}`;
+    const tareManifest = await dispatchTransferOrder(orgId, receiverUserId, {
+      transferOrderId: tareOrder.id,
+      witnessUserId,
+      carrierName: "BRINKS_ARMORED",
+      sealNumbers: [sealNum],
+    });
+
+    // 2. Attempt receipt with weight deviating by +0.08g from declared weight (declared weight = 10.00g)
+    const receiveRes = await request(app)
+      .post(`/api/v1/transfers/manifests/${tareManifest.id}/receive`)
+      .set("Authorization", `Bearer ${receiverToken}`)
+      .send({
+        witnessUserId,
+        destinationCompartmentId: destCompId,
+        receivedItemIds: [tarePieceId],
+        sealVerifications: [
+          {
+            sealNumber: sealNum,
+            status: SealStatus.VERIFIED_INTACT,
+          },
+        ],
+        measuredTareWeightGrams: 4.58, // 4.58g vs 4.50g (variance 0.08g > 0.01g tolerance)
+        tareToleranceGrams: 0.01,
+        notes: "Tare scale re-weighing at inward gate",
+      });
+
+    expect(receiveRes.status).toBe(200);
+    expect(receiveRes.body.manifest.status).toBe(ManifestStatus.DISPUTED);
+    expect(receiveRes.body.order.status).toBe(TransferOrderStatus.DISPUTED);
+    expect(receiveRes.body.disputes.length).toBeGreaterThanOrEqual(1);
+
+    const weightDispute = receiveRes.body.disputes.find(
+      (d: any) => d.claimType === DisputeClaimType.WEIGHT_DISCREPANCY,
+    );
+    expect(weightDispute).toBeDefined();
+    expect(weightDispute.severity).toBe(DisputeSeverity.CRITICAL);
+    expect(weightDispute.details).toContain("Analytical tare scale discrepancy detected");
   });
 });

@@ -13,6 +13,7 @@ import {
 } from "../../components/transfers/ManifestSection";
 import { TransitSecurityInspector } from "../../components/transfers/TransitSecurityInspector";
 import { ScheduleTransferModal } from "../../components/transfers/ScheduleTransferModal";
+import { DualCustodyDispatchModal } from "../../components/transfers/DualCustodyDispatchModal";
 import {
   WorkstationKpiGrid,
   KpiItem,
@@ -26,6 +27,7 @@ import { toast } from "sonner";
 import {
   Truck,
   ShieldCheck,
+  ShieldAlert,
   Lock,
   Search,
   Plus,
@@ -149,6 +151,7 @@ export default function TransfersTransitPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [isDualCustodyModalOpen, setIsDualCustodyModalOpen] = useState(false);
   const [isSigningDispatch, setIsSigningDispatch] = useState(false);
 
   // Filter manifests
@@ -298,6 +301,16 @@ export default function TransfersTransitPage() {
             </Button>
 
             <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsDualCustodyModalOpen(true)}
+              className="border-gold/40 text-gold hover:bg-gold/10 hover:text-gold"
+            >
+              <ShieldAlert className="w-4 h-4 mr-1 text-gold" />
+              <span>Dual-Custody Dispatch Gate</span>
+            </Button>
+
+            <Button
               variant="gold"
               size="sm"
               onClick={handleDualSignDispatch}
@@ -410,6 +423,19 @@ export default function TransfersTransitPage() {
           isOpen={isScheduleModalOpen}
           onClose={() => setIsScheduleModalOpen(false)}
           onScheduled={handleScheduledItem}
+        />
+
+        {/* High-Assurance Dual-Custody Armored Dispatch Modal */}
+        <DualCustodyDispatchModal
+          isOpen={isDualCustodyModalOpen}
+          onClose={() => setIsDualCustodyModalOpen(false)}
+          activeManifests={manifests}
+          onDispatched={(newManifest) => {
+            setManifests((prev) => [newManifest, ...prev]);
+            setSelectedItem(newManifest.items[0]);
+            setSelectedRouteTitle(newManifest.routeTitle);
+            setSelectedCarrierPlate(newManifest.carrierPlate);
+          }}
         />
       </div>
     </AppShell>
