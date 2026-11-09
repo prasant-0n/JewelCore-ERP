@@ -92,17 +92,29 @@ export function ClientSelectModal({
           }>;
         }>("/sales/customers");
         if (Array.isArray(res.data) && res.data.length > 0) {
-          const mapped: ClientProfileData[] = res.data.map((c) => ({
-            id: c.id,
-            name: `${c.firstName} ${c.lastName}`.trim(),
-            vipTier: c.tags?.join(" • ") || "Verified Atelier Client",
-            panNumber: c.taxIdentifier || "PAN PENDING",
-            phone: c.phone || "+91 98200 00000",
-            lifetimeSpendInr: 24500000,
-            assignedSalon: "Private Salon Suite 1",
-            relationshipManager: "N. Mehta",
-          }));
-          setClients(mapped);
+          const mapped: ClientProfileData[] = res.data.map((c) => {
+            const prefix =
+              c.firstName.startsWith("Mr.") || c.firstName.startsWith("Mrs.")
+                ? ""
+                : c.firstName.includes("Radhika") || c.firstName.includes("Ananya")
+                ? "Mrs. "
+                : "Mr. ";
+            return {
+              id: c.id,
+              name: `${prefix}${c.firstName} ${c.lastName}`.trim(),
+              vipTier: c.tags?.join(" • ") || "Verified Atelier Client",
+              panNumber: c.taxIdentifier || "PAN PENDING",
+              phone: c.phone || "+91 98200 00000",
+              lifetimeSpendInr: 24500000,
+              assignedSalon: "Private Salon Suite 1",
+              relationshipManager: "N. Mehta",
+            };
+          });
+          const apiNames = new Set(mapped.map((m) => m.name.toLowerCase()));
+          const missingDefaults = SAMPLE_CLIENTS.filter(
+            (s) => !apiNames.has(s.name.toLowerCase()),
+          );
+          setClients([...mapped, ...missingDefaults]);
         }
       } catch {
         // Keep SAMPLE_CLIENTS fallback

@@ -329,6 +329,9 @@ export const IamAuditAction = {
   AUTH_PASSKEY_VERIFIED: "AUTH_PASSKEY_VERIFIED",
   AUTH_NETWORK_PERIMETER_EVALUATED: "AUTH_NETWORK_PERIMETER_EVALUATED",
   AUTH_NETWORK_PERIMETER_RESTRICTED: "AUTH_NETWORK_PERIMETER_RESTRICTED",
+  AUTH_STEP_UP_CHALLENGED: "AUTH_STEP_UP_CHALLENGED",
+  AUTH_STEP_UP_VERIFIED: "AUTH_STEP_UP_VERIFIED",
+  AUTH_STEP_UP_REJECTED: "AUTH_STEP_UP_REJECTED",
 } as const;
 
 export type IamAuditAction = (typeof IamAuditAction)[keyof typeof IamAuditAction];
@@ -445,6 +448,38 @@ export const simulateNetworkIpSchema = z.object({
 });
 
 export type SimulateNetworkIpInput = z.infer<typeof simulateNetworkIpSchema>;
+
+/**
+ * Step-Up High-Assurance Verification & Quorum (Milestone 7)
+ */
+export const StepUpMethod = {
+  WEBAUTHN_PASSKEY: "WEBAUTHN_PASSKEY",
+  SUPERVISOR_QUORUM: "SUPERVISOR_QUORUM",
+  SECURITY_PIN: "SECURITY_PIN",
+} as const;
+
+export type StepUpMethod = (typeof StepUpMethod)[keyof typeof StepUpMethod];
+
+export const stepUpVerificationSchema = z.object({
+  action: z.string().min(1, "Target action is required"),
+  method: z.nativeEnum(StepUpMethod),
+  credential: z.string().min(1, "Verification credential is required"),
+  reason: z.string().min(1, "Business reason is required"),
+  resourceId: z.string().default("0192e300-0001-7000-8000-000000000001"),
+  resourceValue: z.number().default(0),
+  supervisorCoSigner: z.string().optional(),
+});
+
+export type StepUpVerificationInput = z.infer<typeof stepUpVerificationSchema>;
+
+export interface StepUpVerificationResult {
+  verified: boolean;
+  method: StepUpMethod;
+  stepUpToken: string;
+  expiresAt: string;
+  verifiedAt: string;
+}
+
 
 
 

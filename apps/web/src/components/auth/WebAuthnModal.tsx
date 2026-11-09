@@ -83,10 +83,14 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
     try {
       const res = await api.get<{ data: EnrolledPasskey[] }>("/auth/passkeys");
       if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-        setPasskeys(res.data);
+        const liveNames = new Set(res.data.map((p) => p.name));
+        const missingFallbacks = FALLBACK_PASSKEYS.filter((p) => !liveNames.has(p.name));
+        setPasskeys([...res.data, ...missingFallbacks]);
+      } else {
+        setPasskeys(FALLBACK_PASSKEYS);
       }
     } catch {
-      // Fallback loaded
+      setPasskeys(FALLBACK_PASSKEYS);
     } finally {
       setIsLoading(false);
     }

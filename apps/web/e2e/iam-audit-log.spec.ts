@@ -36,8 +36,8 @@ test.describe("Forensic IAM Security Audit Log & Real-Time Event Stream", () => 
     await expect(modal.getByText("Active Terminals")).toBeVisible();
 
     // 5. Verify core forensic action events are visible
-    await expect(modal.getByText("AUTH_LOGIN_SUCCESS")).toBeVisible();
-    await expect(modal.getByText("AUTH_MFA_CHALLENGE_VERIFIED")).toBeVisible();
+    await expect(modal.getByText("AUTH_LOGIN_SUCCESS").first()).toBeVisible();
+    await expect(modal.getByText("AUTH_MFA_CHALLENGE_VERIFIED").first()).toBeVisible();
     await expect(modal.getByText("MAIN-SHOWROOM-DESK-01").first()).toBeVisible();
   });
 
@@ -56,12 +56,12 @@ test.describe("Forensic IAM Security Audit Log & Real-Time Event Stream", () => 
     await elevationTab.click();
 
     // Verify only privilege elevation actions are shown
-    await expect(modal.getByText("AUTH_DELEGATION_GRANTED")).toBeVisible();
+    await expect(modal.getByText("AUTH_DELEGATION_GRANTED").first()).toBeVisible();
     await expect(modal.getByText("AUTH_LOGIN_SUCCESS")).not.toBeVisible();
 
     // Click "All Categories" to restore
     await modal.getByRole("button", { name: "All Categories" }).click();
-    await expect(modal.getByText("AUTH_LOGIN_SUCCESS")).toBeVisible();
+    await expect(modal.getByText("AUTH_LOGIN_SUCCESS").first()).toBeVisible();
   });
 
   test("filters events using real-time search query", async ({ page }) => {
@@ -79,12 +79,12 @@ test.describe("Forensic IAM Security Audit Log & Real-Time Event Stream", () => 
     await searchInput.fill("PIN");
 
     // Verify PIN action is visible and unrelated actions are filtered
-    await expect(modal.getByText("AUTH_PIN_UNLOCKED")).toBeVisible();
+    await expect(modal.getByText("AUTH_PIN_UNLOCKED").first()).toBeVisible();
     await expect(modal.getByText("AUTH_LOGIN_SUCCESS")).not.toBeVisible();
 
     // Clear search query
     await searchInput.fill("");
-    await expect(modal.getByText("AUTH_LOGIN_SUCCESS")).toBeVisible();
+    await expect(modal.getByText("AUTH_LOGIN_SUCCESS").first()).toBeVisible();
   });
 
   test("inspects cryptographic event payload and closes stream cleanly", async ({ page }) => {

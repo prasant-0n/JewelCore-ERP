@@ -33,8 +33,8 @@ test.describe("FIDO2 / WebAuthn Biometric & Hardware Passkeys", () => {
     await expect(modal.getByText("FIDO2 / WebAuthn", { exact: true })).toBeVisible();
 
     // 4. Verify initial hardware keys are rendered
-    await expect(modal.getByText("YubiKey 5 NFC (Vault Custody Key)")).toBeVisible();
-    await expect(modal.getByText("Apple TouchID (Atelier Main Terminal)")).toBeVisible();
+    await expect(modal.getByText("YubiKey 5 NFC (Vault Custody Key)").first()).toBeVisible();
+    await expect(modal.getByText("Apple TouchID (Atelier Main Terminal)").first()).toBeVisible();
   });
 
   test("enrolls a new FIDO2 hardware passkey", async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe("FIDO2 / WebAuthn Biometric & Hardware Passkeys", () => {
     await submitBtn.click();
 
     // Verify new passkey is listed in the authenticators list
-    await expect(modal.getByText("Vault Master Key 04")).toBeVisible();
+    await expect(modal.getByText("Vault Master Key 04").first()).toBeVisible();
   });
 
   test("simulates hardware touch assertion verification", async ({ page }) => {
@@ -99,7 +99,7 @@ test.describe("FIDO2 / WebAuthn Biometric & Hardware Passkeys", () => {
     // Revoke Apple TouchID
     const revokeBtn = modal.getByRole("button", {
       name: "Revoke Apple TouchID (Atelier Main Terminal)",
-    });
+    }).first();
     await revokeBtn.click();
 
     // Verify Apple TouchID is removed

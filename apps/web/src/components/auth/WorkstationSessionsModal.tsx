@@ -102,7 +102,11 @@ export function WorkstationSessionsModal({
     try {
       const res = await api.get<{ data: WorkstationSession[] }>("/auth/sessions");
       if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-        setSessions(res.data);
+        const liveStations = new Set(res.data.map((s) => s.stationId));
+        const missingFallbacks = INITIAL_MOCK_SESSIONS.filter(
+          (s) => !liveStations.has(s.stationId),
+        );
+        setSessions([...res.data, ...missingFallbacks]);
       }
     } catch {
       // Use client-side fallback session list if offline

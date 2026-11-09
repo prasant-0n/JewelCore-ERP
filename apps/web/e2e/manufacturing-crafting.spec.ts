@@ -82,13 +82,13 @@ test.describe("Atelier Manufacturing & Karigar Work Orders (Pathway A)", () => {
     // Master Karigars tab
     await page.getByRole("button", { name: /Master Karigars Directory/i }).click();
     await expect(page.getByText("KRG-MUM-01")).toBeVisible();
-    await expect(page.getByText("DIAMOND MICRO PAVE")).toBeVisible();
-    await expect(page.getByText("Bowbazar Crafting Lane 12, Kolkata")).toBeVisible();
+    await expect(page.getByText("DIAMOND MICRO PAVE").first()).toBeVisible();
+    await expect(page.getByText("Bowbazar Crafting Lane 12, Kolkata").first()).toBeVisible();
 
     // BOM Design Recipes tab
     await page.getByRole("button", { name: /BOM Design Recipes/i }).click();
-    await expect(page.getByText("BOM-SOL-2026")).toBeVisible();
-    await expect(page.getByText("BOM-CHK-2026")).toBeVisible();
+    await expect(page.getByText("BOM-SOL-2026").first()).toBeVisible();
+    await expect(page.getByText("BOM-CHK-2026").first()).toBeVisible();
     await expect(page.getByText("Standard Making Charge:").first()).toBeVisible();
   });
 

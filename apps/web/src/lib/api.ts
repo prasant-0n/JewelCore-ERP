@@ -86,9 +86,31 @@ class ApiClient {
       return this.refreshPromise;
     }
 
+    const refreshToken = this.getRefreshToken();
+    const existingToken = this.getToken();
+
+    // If we have neither a refresh token nor an existing session token, do not attempt refresh or expire session
+    if (!refreshToken && !existingToken) {
+      return null;
+    }
+
     this.refreshPromise = (async () => {
       try {
-        const refreshToken = this.getRefreshToken();
+        if (!refreshToken) {
+          // If we had a mock/client token without backend refresh token:
+          if (existingToken && typeof window !== "undefined") {
+            const renewed = "mock-jwt-refreshed-session-" + Date.now();
+            this.setToken(renewed);
+            window.dispatchEvent(
+              new CustomEvent("jewelcore:token-refreshed", {
+                detail: { token: renewed },
+              }),
+            );
+            return renewed;
+          }
+          return null;
+        }
+
         const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
           method: "POST",
           headers: {
@@ -96,12 +118,11 @@ class ApiClient {
             "x-store-id": this.getStoreId(),
           },
           credentials: "include",
-          body: JSON.stringify(refreshToken ? { refreshToken } : {}),
+          body: JSON.stringify({ refreshToken }),
         });
 
         if (!res.ok) {
           // If offline or mock token active:
-          const existingToken = this.getToken();
           if (existingToken && typeof window !== "undefined") {
             const renewed = "mock-jwt-refreshed-session-" + Date.now();
             this.setToken(renewed);
@@ -135,7 +156,9 @@ class ApiClient {
         }
         return null;
       } catch {
-        this.handleSessionExpired();
+        if (refreshToken) {
+          this.handleSessionExpired();
+        }
         return null;
       } finally {
         this.refreshPromise = null;
@@ -186,7 +209,10 @@ class ApiClient {
       response.status === 401 &&
       !isRetry &&
       !endpoint.includes("/auth/login") &&
-      !endpoint.includes("/auth/refresh")
+      !endpoint.includes("/auth/refresh") &&
+      !endpoint.includes("/auth/step-up") &&
+      !endpoint.includes("/auth/persona-token") &&
+      (this.getRefreshToken() || this.getToken())
     ) {
       const newToken = await this.refreshTokenSilently();
       if (newToken) {

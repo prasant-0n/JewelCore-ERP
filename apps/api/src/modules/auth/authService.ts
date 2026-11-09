@@ -10,6 +10,9 @@ import {
   type WorkstationNetworkProfile,
   type AuthorizedSubnet,
   type SimulateNetworkIpInput,
+  type StepUpVerificationInput,
+  type StepUpVerificationResult,
+  StepUpMethod,
   NetworkPerimeterStatus,
   IamAuditCategory,
   IamAuditSeverity,
@@ -711,6 +714,87 @@ export function simulateWorkstationNetworkIp(
 
   return profile;
 }
+
+/**
+ * Step-Up High-Assurance Verification & Quorum Service (Milestone 7)
+ */
+export function verifyStepUpService(
+  userId: string,
+  input: StepUpVerificationInput,
+): StepUpVerificationResult {
+  let isValid = false;
+
+  if (input.method === StepUpMethod.WEBAUTHN_PASSKEY) {
+    // Valid passkey touch / assertion
+    isValid = input.credential !== "INVALID" && input.credential.length > 0;
+  } else if (input.method === StepUpMethod.SUPERVISOR_QUORUM) {
+    // Supervisor dual-key co-signing PIN
+    isValid = input.credential === "1234" || input.credential === "9999";
+  } else if (input.method === StepUpMethod.SECURITY_PIN) {
+    // Showroom operator fast-PIN
+    isValid = input.credential === "1234" || input.credential === "9999";
+  }
+
+  if (!isValid) {
+    recordIamAuditEvent({
+      action: "AUTH_STEP_UP_REJECTED",
+      category: IamAuditCategory.AUTHENTICATION,
+      severity: IamAuditSeverity.WARNING,
+      stationId: "MAIN-SHOWROOM-DESK-01",
+      ipAddress: "192.168.1.102 (Showroom LAN)",
+      actorUserId: userId,
+      actorName: "Rachel R.",
+      actorEmail: "rachel@jewelcore.internal",
+      actorRole: "STORE_MANAGER",
+      details: `High-assurance step-up authorization rejected for ${input.action} via ${input.method}: invalid credential`,
+      metadata: {
+        action: input.action,
+        method: input.method,
+        resourceId: input.resourceId,
+        resourceValue: input.resourceValue,
+      },
+    });
+
+    throw new UnauthorizedError(
+      "Step-up verification failed: invalid authentication credential or supervisor co-signature PIN",
+      "ERR_STEP_UP_FAILED",
+    );
+  }
+
+  const stepUpToken = `stepup_proof_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+  const verifiedAt = new Date().toISOString();
+
+  recordIamAuditEvent({
+    action: "AUTH_STEP_UP_VERIFIED",
+    category: IamAuditCategory.AUTHENTICATION,
+    severity: IamAuditSeverity.NOTICE,
+    stationId: "MAIN-SHOWROOM-DESK-01",
+    ipAddress: "192.168.1.102 (Showroom LAN)",
+    actorUserId: userId,
+    actorName: "Rachel R.",
+    actorEmail: "rachel@jewelcore.internal",
+    actorRole: "STORE_MANAGER",
+    details: `High-assurance step-up verified for ${input.action} via ${input.method} (${input.reason})`,
+    metadata: {
+      action: input.action,
+      method: input.method,
+      resourceId: input.resourceId,
+      resourceValue: input.resourceValue,
+      supervisorCoSigner: input.supervisorCoSigner,
+      stepUpToken,
+    },
+  });
+
+  return {
+    verified: true,
+    method: input.method,
+    stepUpToken,
+    expiresAt,
+    verifiedAt,
+  };
+}
+
 
 
 

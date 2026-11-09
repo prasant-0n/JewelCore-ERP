@@ -295,14 +295,14 @@ test.describe("Cradle-to-Grave Golden Path: Full Luxury Jewellery Lifecycle", ()
     await expect(selectClientBtn).toBeVisible();
     await selectClientBtn.click();
 
-    const birlaCard = page.locator("text=Mr. Vikramaditya Birla").first();
+    const birlaCard = page.locator("text=Vikramaditya Birla").first();
     await expect(birlaCard).toBeVisible();
     await birlaCard.click();
 
     // Verify Billing Inspector reflects VIP client
     const posInspector = page.getByTestId("workstation-inspector");
     await expect(
-      posInspector.locator("text=Mr. Vikramaditya Birla").first(),
+      posInspector.locator("text=Vikramaditya Birla").first(),
     ).toBeVisible();
 
     // 7.3 Authorize sale and render official Tax Invoice & Certificate

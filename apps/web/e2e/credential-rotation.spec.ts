@@ -3,7 +3,13 @@ import { test, expect } from "@playwright/test";
 test.describe("Staff Credential Rotation & NIST SP 800-63B Password Policy", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
+    await page.evaluate(() => {
+      sessionStorage.clear();
+      localStorage.clear();
+    });
+    await page.reload();
     await page.waitForLoadState("domcontentloaded");
+    await expect(page.getByTestId("workspace-shell")).toBeVisible();
   });
 
   test("opens Rotate Passkey modal from TopHeader and displays NIST criteria", async ({
@@ -15,7 +21,7 @@ test.describe("Staff Credential Rotation & NIST SP 800-63B Password Policy", () 
     await operatorBtn.click();
 
     // Click Rotate Passkey action
-    const rotateBtn = page.getByRole("button", { name: "Rotate Passkey" });
+    const rotateBtn = page.getByRole("button", { name: /Rotate Passkey/i });
     await expect(rotateBtn).toBeVisible();
     await rotateBtn.click();
 
@@ -42,7 +48,7 @@ test.describe("Staff Credential Rotation & NIST SP 800-63B Password Policy", () 
     const operatorBtn = page.locator('button[title*="Switch User Identity"]');
     await operatorBtn.click();
 
-    const rotateBtn = page.getByRole("button", { name: "Rotate Passkey" });
+    const rotateBtn = page.getByRole("button", { name: /Rotate Passkey/i });
     await rotateBtn.click();
 
     const newPasswordInput = page.locator('input[id="new-password"]');
@@ -66,7 +72,7 @@ test.describe("Staff Credential Rotation & NIST SP 800-63B Password Policy", () 
     const operatorBtn = page.locator('button[title*="Switch User Identity"]');
     await operatorBtn.click();
 
-    const rotateBtn = page.getByRole("button", { name: "Rotate Passkey" });
+    const rotateBtn = page.getByRole("button", { name: /Rotate Passkey/i });
     await rotateBtn.click();
 
     const currentPasswordInput = page.locator('input[id="current-password"]');
@@ -89,7 +95,7 @@ test.describe("Staff Credential Rotation & NIST SP 800-63B Password Policy", () 
     const operatorBtn = page.locator('button[title*="Switch User Identity"]');
     await operatorBtn.click();
 
-    const rotateBtn = page.getByRole("button", { name: "Rotate Passkey" });
+    const rotateBtn = page.getByRole("button", { name: /Rotate Passkey/i });
     await rotateBtn.click();
 
     // Fill valid credentials
@@ -108,6 +114,20 @@ test.describe("Staff Credential Rotation & NIST SP 800-63B Password Policy", () 
     await submitBtn.click();
 
     // Verify toast confirmation and modal dismissal
+    await expect(page.getByText("Passkey Rotated Successfully")).toBeVisible({
+      timeout: 5000,
+    });
+    await expect(
+      page.getByRole("heading", { name: "Rotate Workstation Passkey" }),
+    ).not.toBeVisible();
+
+    // Revert password back to baseline (JewelCore@2026) for test idempotency
+    await operatorBtn.click();
+    await rotateBtn.click();
+    await currentInput.fill("JewelCore@Master2026!");
+    await newInput.fill("JewelCore@2026");
+    await confirmInput.fill("JewelCore@2026");
+    await submitBtn.click();
     await expect(page.getByText("Passkey Rotated Successfully")).toBeVisible({
       timeout: 5000,
     });

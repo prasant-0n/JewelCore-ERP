@@ -12,7 +12,7 @@ COPY apps/ ./apps/
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter "@jewelcore/shared" run build
-RUN pnpm --filter "@jewelcore/web" run build
+RUN BUILD_STANDALONE=1 pnpm --filter "@jewelcore/web" run build
 
 FROM base AS runner
 WORKDIR /app

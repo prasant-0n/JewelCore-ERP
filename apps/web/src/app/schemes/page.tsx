@@ -307,10 +307,14 @@ export default function SavingsSchemePage() {
           api.get<{ success: boolean; data: CustomerSchemeAccount[] }>("/schemes/accounts"),
         ]);
         if (schemesRes?.data && Array.isArray(schemesRes.data) && schemesRes.data.length > 0) {
-          setSchemes(schemesRes.data);
+          const apiCodes = new Set(schemesRes.data.map((s) => s.code));
+          const missingDefaults = DEFAULT_SCHEMES.filter((s) => !apiCodes.has(s.code));
+          setSchemes([...schemesRes.data, ...missingDefaults]);
         }
         if (accountsRes?.data && Array.isArray(accountsRes.data) && accountsRes.data.length > 0) {
-          setAccounts(accountsRes.data);
+          const apiAccountNums = new Set(accountsRes.data.map((a) => a.accountNumber));
+          const missingDefaults = DEFAULT_ACCOUNTS.filter((a) => !apiAccountNums.has(a.accountNumber));
+          setAccounts([...accountsRes.data, ...missingDefaults]);
         }
       } catch {
         // offline fallback

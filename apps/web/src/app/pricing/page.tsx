@@ -462,6 +462,7 @@ export default function PricingMasterPage() {
             <Button
               variant="gold"
               size="sm"
+              data-testid="broadcast-spot-fix-btn"
               onClick={handleBroadcast}
             >
               <Radio className="w-3.5 h-3.5 mr-1" />

@@ -5,6 +5,7 @@ import {
   TrendingUp,
   Scale,
   ShieldCheck,
+  ShieldAlert,
   Radio,
   Zap,
   CheckCircle2,
@@ -23,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { TabularCurrency } from "@/components/workstation/TabularCurrency";
 import { api, DEFAULT_STORE_ID } from "../../lib/api";
+import { StepUpVerificationModal } from "../auth/StepUpVerificationModal";
 import { toast } from "sonner";
 
 interface PublishRateFixModalProps {
@@ -61,6 +63,8 @@ export function PublishRateFixModal({
   );
   const [revalueInventory, setRevalueInventory] = useState(true);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isStepUpOpen, setIsStepUpOpen] = useState(false);
+  const [stepUpToken, setStepUpToken] = useState<string | null>(null);
 
   const numericGold = parseFloat(goldRate) || currentGoldRate;
   const numericPlatinum = parseFloat(platinumRate) || currentPlatinumRate;
@@ -76,8 +80,7 @@ export function PublishRateFixModal({
     setGoldRate(updated.toFixed(1));
   };
 
-  const handlePublish = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const executePublish = async (proofToken?: string) => {
     setIsPublishing(true);
 
     try {
@@ -89,7 +92,7 @@ export function PublishRateFixModal({
         ratePerGramCad: numericGold,
         currency: "INR",
         rateSource: fixSource === "LBMA_PM" ? "LBMA_FEED" : "MANUAL_OVERRIDE",
-        notes: `${fixNotes} • Source: ${fixSource}`,
+        notes: `${fixNotes} • Source: ${fixSource}${proofToken ? ` • Step-Up Proof: ${proofToken.substring(0, 12)}` : ""}`,
         storeId,
       });
 
@@ -174,6 +177,25 @@ export function PublishRateFixModal({
     } finally {
       setIsPublishing(false);
     }
+  };
+
+  const handlePublish = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (fixSource === "MANUAL_OVERRIDE" && !stepUpToken) {
+      setIsStepUpOpen(true);
+      return;
+    }
+
+    await executePublish(stepUpToken || undefined);
+  };
+
+  const handleStepUpVerified = (proof: { stepUpToken: string; method: string }) => {
+    setStepUpToken(proof.stepUpToken);
+    toast.success("Manual Rate Override Authorized", {
+      description: `Step-up verification confirmed via ${proof.method}. Broadcasting bullion fix...`,
+    });
+    executePublish(proof.stepUpToken);
   };
 
   return (
@@ -316,8 +338,12 @@ export function PublishRateFixModal({
                 Benchmark Source
               </label>
               <select
+                data-testid="fix-source-select"
                 value={fixSource}
-                onChange={(e) => setFixSource(e.target.value as any)}
+                onChange={(e) => {
+                  setFixSource(e.target.value as any);
+                  setStepUpToken(null);
+                }}
                 className="w-full h-8 px-2.5 rounded-md bg-surface border border-surface-border text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-gold"
               >
                 <option value="MCX_SPOT">MCX India Spot Fix</option>
@@ -337,6 +363,37 @@ export function PublishRateFixModal({
                 className="text-xs h-8"
               />
             </div>
+
+            {/* Manual Override High-Assurance Status Banner */}
+            {fixSource === "MANUAL_OVERRIDE" && (
+              <div className="col-span-2 p-2.5 rounded-lg bg-obsidian-surface border border-surface-border flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  {stepUpToken ? (
+                    <ShieldCheck className="w-4 h-4 text-status-emerald" />
+                  ) : (
+                    <ShieldAlert className="w-4 h-4 text-gold animate-pulse" />
+                  )}
+                  <div>
+                    <span className="font-semibold text-foreground">
+                      {stepUpToken
+                        ? "Manual Spot Override Quorum Authorized"
+                        : "Quorum Step-Up Required"}
+                    </span>
+                    <p className="text-[11px] text-muted-foreground">
+                      {stepUpToken
+                        ? `Token proof: ${stepUpToken.substring(0, 16)}...`
+                        : "Executive board rate fix requires dual-key supervisor quorum or passkey touch."}
+                    </p>
+                  </div>
+                </div>
+                <Badge
+                  variant={stepUpToken ? "emerald" : "gold"}
+                  className="font-mono text-[10px]"
+                >
+                  {stepUpToken ? "AUTHORIZED" : "STEP-UP REQ"}
+                </Badge>
+              </div>
+            )}
           </div>
 
           {/* Revaluation Toggle */}
@@ -373,6 +430,7 @@ export function PublishRateFixModal({
               type="submit"
               variant="gold"
               size="sm"
+              data-testid="broadcast-rates-btn"
               isLoading={isPublishing}
             >
               <Radio className="w-3.5 h-3.5 mr-1" />
@@ -380,6 +438,19 @@ export function PublishRateFixModal({
             </Button>
           </DialogFooter>
         </form>
+
+        {/* Step-Up High-Assurance Bullion Rate Override Modal */}
+        <StepUpVerificationModal
+          isOpen={isStepUpOpen}
+          onClose={() => setIsStepUpOpen(false)}
+          action="BULLION_RATE_MANUAL_OVERRIDE"
+          actionTitle="Manual Bullion Rate Override"
+          resourceId="pricing-rate-override-gold"
+          resourceValue={numericGold}
+          resourceDescription={`Spot Rate Fix: ₹${numericGold}/g Au 24K (${fixNotes})`}
+          thresholdNotice="Manual bullion spot rate overrides bypass LBMA/MCX feeds and require dual-key supervisor quorum or FIDO2 hardware passkey touch."
+          onVerified={handleStepUpVerified}
+        />
       </DialogContent>
     </Dialog>
   );

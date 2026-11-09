@@ -116,6 +116,10 @@ test.describe("Corporate Staff Authentication & Session Governance (Option A)", 
     // Should redirect cleanly back to /login
     await page.waitForURL("**/login", { timeout: 10000 });
     expect(page.url()).toContain("/login");
+    await page.evaluate(() => {
+      sessionStorage.clear();
+      localStorage.clear();
+    });
   });
 
   test("exclusive user session: logging in as Vikram M. strictly displays only Vikram M. in TopHeader profile and no multi-persona switcher", async ({
@@ -148,7 +152,7 @@ test.describe("Corporate Staff Authentication & Session Governance (Option A)", 
     );
     await expect(activeHeaderUser).toBeVisible();
     await expect(activeHeaderUser.locator("text=Vikram M.")).toBeVisible();
-    await expect(activeHeaderUser.locator("text=Compliance Director")).toBeVisible();
+    await expect(activeHeaderUser.locator("text=Inventory Controller")).toBeVisible();
 
     // Click operator profile dropdown
     await activeHeaderUser.click();
@@ -170,5 +174,9 @@ test.describe("Corporate Staff Authentication & Session Governance (Option A)", 
     await signOutBtn.click();
     await page.waitForURL("**/login", { timeout: 10000 });
     expect(page.url()).toContain("/login");
+    await page.evaluate(() => {
+      sessionStorage.clear();
+      localStorage.clear();
+    });
   });
 });

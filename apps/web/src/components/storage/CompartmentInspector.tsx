@@ -26,6 +26,7 @@ import { TabularWeight } from "@/components/workstation/TabularWeight";
 import { StatusBadge } from "@/components/workstation/StatusBadge";
 import { JewelleryTagModal } from "../common/JewelleryTagModal";
 import { JewelleryTagData } from "../../lib/printing/zplBarcodeTagGenerator";
+import { StepUpVerificationModal } from "../auth/StepUpVerificationModal";
 import { toast } from "sonner";
 
 interface StoredItemMock {
@@ -88,6 +89,8 @@ export function CompartmentInspector({
 }: CompartmentInspectorProps) {
   const [isAuditing, setIsAuditing] = useState(false);
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [isStepUpModalOpen, setIsStepUpModalOpen] = useState(false);
+  const [stepUpToken, setStepUpToken] = useState<string | null>(null);
 
   if (!compartment) {
     return (
@@ -117,6 +120,9 @@ export function CompartmentInspector({
 
   const currentWeightGrams = occupiedItemCount * 18.52;
   const items = SAMPLE_STORED_ITEMS[code] || SAMPLE_STORED_ITEMS.default;
+  const estimatedValuationUsd = Math.round(currentWeightGrams * 95);
+  const isHighValue = estimatedValuationUsd >= 50000 || occupiedItemCount >= 10;
+  const valuation = isHighValue ? Math.max(84500, estimatedValuationUsd) : estimatedValuationUsd;
 
   const handleSimulateAudit = () => {
     setIsAuditing(true);
@@ -137,8 +143,21 @@ export function CompartmentInspector({
   };
 
   const handleTransfer = () => {
+    if (isHighValue && !stepUpToken) {
+      setIsStepUpModalOpen(true);
+      return;
+    }
+
     toast.info(`Initiating Transfer Request for ${code}`, {
       description: "Opening inter-locker custody dispatch workflow.",
+    });
+    onTransferClick?.();
+  };
+
+  const handleStepUpVerified = (proof: { stepUpToken: string; method: string }) => {
+    setStepUpToken(proof.stepUpToken);
+    toast.success(`Custody Transfer Authorized for ${code}`, {
+      description: `High-value transfer verified via ${proof.method}. Token proof: ${proof.stepUpToken.substring(0, 16)}...`,
     });
     onTransferClick?.();
   };
@@ -186,6 +205,16 @@ export function CompartmentInspector({
             <ShieldCheck className="w-3 h-3 mr-1" />
             Tamper Seal Intact
           </Badge>
+          {stepUpToken && (
+            <Badge
+              variant="emerald"
+              data-testid="step-up-verified-badge"
+              className="font-mono text-[10px]"
+            >
+              <ShieldCheck className="w-3 h-3 mr-1 text-status-emerald" />
+              Step-Up Authorized
+            </Badge>
+          )}
           <StatusBadge status={status || "AVAILABLE"} size="sm" />
         </div>
       </CardHeader>
@@ -288,6 +317,7 @@ export function CompartmentInspector({
           variant="gold"
           size="sm"
           className="flex-1"
+          data-testid="transfer-compartment-btn"
           onClick={handleTransfer}
         >
           <ArrowRightLeft className="w-3.5 h-3.5 mr-1" />
@@ -309,6 +339,19 @@ export function CompartmentInspector({
           hallmarkId: `BIS-${code.replace(/[^a-zA-Z0-9]/g, "")}`,
           retailPriceInr: Math.round(it.weightGrams * 7450),
         }))}
+      />
+
+      {/* Step-Up High-Assurance Vault Custody Modal */}
+      <StepUpVerificationModal
+        isOpen={isStepUpModalOpen}
+        onClose={() => setIsStepUpModalOpen(false)}
+        action="VAULT_HIGH_VALUE_TRANSFER"
+        actionTitle="High-Value Vault Custody Transfer"
+        resourceId={code}
+        resourceValue={valuation}
+        resourceDescription={`${parentVaultName} > ${parentLockerName} > ${code} (${occupiedItemCount} items, ${currentWeightGrams.toFixed(1)}g)`}
+        thresholdNotice="Custody operations exceeding $50,000 threshold require dual-key supervisor quorum or FIDO2 hardware passkey touch."
+        onVerified={handleStepUpVerified}
       />
     </Card>
   );

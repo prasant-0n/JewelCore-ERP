@@ -176,7 +176,9 @@ export function IamAuditLogModal({ isOpen, onClose }: IamAuditLogModalProps) {
     try {
       const res = await api.get<{ data: IamAuditEventRecord[] }>("/auth/audit-log");
       if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-        setEvents(res.data);
+        const liveIds = new Set(res.data.map((r) => r.id));
+        const missingFallbacks = FALLBACK_IAM_EVENTS.filter((f) => !liveIds.has(f.id));
+        setEvents([...res.data, ...missingFallbacks]);
       }
     } catch {
       // Fallback already preloaded

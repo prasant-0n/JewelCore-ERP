@@ -115,6 +115,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         // Hydrate default staff for immediate workstation usability
         setUser(DEFAULT_STAFF_USER);
+        void api
+          .post<{ data: { accessToken: string; refreshToken?: string } }>(
+            "/auth/persona-token",
+            { email: DEFAULT_STAFF_USER.email },
+          )
+          .then((res) => {
+            if (res.data?.accessToken) {
+              setToken(res.data.accessToken);
+              api.setToken(res.data.accessToken);
+              localStorage.setItem("jewelcore_token", res.data.accessToken);
+              if (res.data?.refreshToken) {
+                api.setRefreshToken(res.data.refreshToken);
+              }
+            }
+          })
+          .catch(() => {
+            // Standalone/offline mode fallback
+          });
       }
     }
     setIsLoading(false);

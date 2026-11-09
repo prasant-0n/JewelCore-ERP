@@ -526,5 +526,75 @@ describe("IAM Authentication & User Endpoints (FEAT-IAM-02)", () => {
         expect(restoreRes.body.data.perimeterStatus).toBe("SECURED");
       });
     });
+
+    describe("Step-Up High-Assurance Vault & Pricing Quorum (Milestone 7)", () => {
+      let accessToken: string;
+
+      beforeAll(async () => {
+        const loginRes = await request(app).post("/api/v1/auth/login").send({
+          email: "auth_user1@jewelcore.local",
+          password: "BrandNewSecurePassword@2026",
+        });
+        accessToken = loginRes.body.data.accessToken;
+      });
+
+      it("successfully verifies step-up via WebAuthn passkey assertion", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/step-up/verify")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            action: "VAULT_HIGH_VALUE_TRANSFER",
+            method: "WEBAUTHN_PASSKEY",
+            credential: "passkey_attestation_sig_abc123",
+            reason: "High-value bullion vault custody transfer exceeding $50k",
+            resourceId: "compartment-vault-01",
+            resourceValue: 84500,
+          });
+
+        expect(res.status).toBe(200);
+        expect(res.body.data.verified).toBe(true);
+        expect(res.body.data.method).toBe("WEBAUTHN_PASSKEY");
+        expect(res.body.data.stepUpToken).toMatch(/^stepup_proof_/);
+        expect(res.body.data.expiresAt).toBeDefined();
+      });
+
+      it("successfully verifies step-up via Supervisor Dual-Key Quorum PIN", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/step-up/verify")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            action: "BULLION_RATE_MANUAL_OVERRIDE",
+            method: "SUPERVISOR_QUORUM",
+            credential: "1234",
+            reason: "Manual spot rate override exceeding delta threshold",
+            resourceId: "pricing-rate-override-gold",
+            resourceValue: 78.5,
+            supervisorCoSigner: "Marcus Aurelius (Chief Appraiser)",
+          });
+
+        expect(res.status).toBe(200);
+        expect(res.body.data.verified).toBe(true);
+        expect(res.body.data.method).toBe("SUPERVISOR_QUORUM");
+        expect(res.body.data.stepUpToken).toBeDefined();
+      });
+
+      it("rejects invalid step-up credential with 401 Unauthorized", async () => {
+        const res = await request(app)
+          .post("/api/v1/auth/step-up/verify")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send({
+            action: "VAULT_HIGH_VALUE_TRANSFER",
+            method: "SUPERVISOR_QUORUM",
+            credential: "wrong_pin_0000",
+            reason: "Unauthorized attempt",
+            resourceId: "compartment-vault-01",
+            resourceValue: 84500,
+          });
+
+        expect(res.status).toBe(401);
+        expect(res.body.code).toBe("ERR_STEP_UP_FAILED");
+        expect(res.body.detail).toContain("Step-up verification failed");
+      });
+    });
   });
 });

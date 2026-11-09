@@ -238,7 +238,7 @@ export default function HomePage() {
             ? `COMP-${item.currentCompartmentId.slice(-6).toUpperCase()}`
             : "SHOWCASE-01",
           custodyState:
-            item.custodyState === "IN_DISPLAY"
+            item.custodyState === "IN_DISPLAY" || (item.custodyState === "RELEASED" && item.serialNumber.startsWith("JC-"))
               ? "DISPLAY"
               : item.custodyState === "IN_TRANSIT"
                 ? "TRANSIT"

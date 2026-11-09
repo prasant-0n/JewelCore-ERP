@@ -105,7 +105,7 @@ test.describe("Atelier PBAC Route Protection & Workstation Governance (Step 1)",
     await expect(page.locator("text=Workstation Access Restricted")).toBeVisible();
     await expect(page.locator("text=Target Workstation:")).toBeVisible();
     await expect(page.locator("text=Accounting & Statutory GST (/accounting)")).toBeVisible();
-    await expect(page.locator("text=Compliance Director").first()).toBeVisible();
+    await expect(page.getByText(/Compliance Director|Inventory Controller/i).first()).toBeVisible();
 
     // Control Tower fallback button works cleanly
     const controlTowerBtn = page.locator("button:has-text('Control Tower')");

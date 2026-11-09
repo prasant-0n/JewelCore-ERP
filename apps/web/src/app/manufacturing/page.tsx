@@ -348,13 +348,19 @@ export default function ManufacturingPage() {
           api.get<{ success: boolean; data: BomRecipe[] }>("/manufacturing/boms"),
         ]);
         if (jobsRes?.data && Array.isArray(jobsRes.data) && jobsRes.data.length > 0) {
-          setJobs(jobsRes.data);
+          const apiJobNums = new Set(jobsRes.data.map((j) => j.jobNumber));
+          const missingJobs = DEFAULT_JOBS.filter((j) => !apiJobNums.has(j.jobNumber));
+          setJobs([...jobsRes.data, ...missingJobs]);
         }
         if (karigarsRes?.data && Array.isArray(karigarsRes.data) && karigarsRes.data.length > 0) {
-          setKarigars(karigarsRes.data);
+          const apiCodes = new Set(karigarsRes.data.map((k) => k.code));
+          const missingKarigars = DEFAULT_KARIGARS.filter((k) => !apiCodes.has(k.code));
+          setKarigars([...karigarsRes.data, ...missingKarigars]);
         }
         if (bomsRes?.data && Array.isArray(bomsRes.data) && bomsRes.data.length > 0) {
-          setBoms(bomsRes.data);
+          const apiBomCodes = new Set(bomsRes.data.map((b) => b.bomCode));
+          const missingBoms = DEFAULT_BOMS.filter((b) => !apiBomCodes.has(b.bomCode));
+          setBoms([...bomsRes.data, ...missingBoms]);
         }
       } catch {
         // graceful offline fallback

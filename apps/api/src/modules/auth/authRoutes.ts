@@ -18,6 +18,7 @@ import {
   revokePasskeyHandler,
   getNetworkPerimeterHandler,
   simulateNetworkIpHandler,
+  verifyStepUpHandler,
 } from "./authController.js";
 
 export function createAuthRouter(): Router {
@@ -41,6 +42,7 @@ export function createAuthRouter(): Router {
   router.delete("/passkeys/:id", revokePasskeyHandler);
   router.get("/network-perimeter", getNetworkPerimeterHandler);
   router.post("/network-perimeter/simulate", simulateNetworkIpHandler);
+  router.post("/step-up/verify", verifyStepUpHandler);
 
   return router;
 }

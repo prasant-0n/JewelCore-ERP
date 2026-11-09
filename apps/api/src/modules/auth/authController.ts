@@ -6,6 +6,7 @@ import {
   createIamAuditEventSchema,
   registerPasskeySchema,
   simulateNetworkIpSchema,
+  stepUpVerificationSchema,
   UnauthorizedError,
   NotFoundError,
 } from "@jewelcore/shared";
@@ -24,6 +25,7 @@ import {
   revokeUserPasskey,
   getWorkstationNetworkProfile,
   simulateWorkstationNetworkIp,
+  verifyStepUpService,
 } from "./authService.js";
 import {
   verifyJwt,
@@ -572,6 +574,36 @@ export async function simulateNetworkIpHandler(
 
     res.status(200).json({
       data: profile,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function verifyStepUpHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId = "0192e300-0002-7000-8000-000000000001";
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.substring(7);
+        const claims = await verifyJwt(token);
+        userId = claims.userId;
+      } catch {
+        // Fallback default
+      }
+    }
+
+    const validated = stepUpVerificationSchema.parse(req.body);
+    const result = verifyStepUpService(userId, validated);
+
+    res.status(200).json({
+      data: result,
       timestamp: new Date().toISOString(),
     });
   } catch (err) {

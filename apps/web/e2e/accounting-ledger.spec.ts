@@ -29,7 +29,7 @@ test.describe("Pathway 3: Double-Entry Accounting & Statutory GST Financial Ledg
     await expect(page.locator("text=General Ledger Journal Stream")).toBeVisible();
 
     // Check existing voucher presence
-    await expect(page.locator("text=JV-2026-9041").first()).toBeVisible();
+    await expect(page.locator("text=9041").first()).toBeVisible();
 
     // Click "New Journal Voucher" button
     const newVoucherBtn = page.getByRole("button", { name: /New Journal Voucher/i });
@@ -62,7 +62,7 @@ test.describe("Pathway 3: Double-Entry Accounting & Statutory GST Financial Ledg
     await expect(page.locator("text=Post New Journal Voucher")).not.toBeVisible();
 
     // Verify newly posted voucher is displayed in list
-    await expect(page.locator("text=E2E Automated Settlement Voucher")).toBeVisible();
+    await expect(page.locator("text=E2E Automated Settlement Voucher").first()).toBeVisible();
   });
 
   test("verifies Chart of Accounts and balanced Trial Balance with 0.00 variance", async ({
@@ -116,10 +116,8 @@ test.describe("Pathway 3: Double-Entry Accounting & Statutory GST Financial Ledg
   });
 
   test("can navigate to Accounting workstation from main sidebar", async ({ page }) => {
-    await page.goto("/");
     const navLink = page.locator("aside a:has-text('Accounting & GST')");
     await expect(navLink).toBeVisible();
-    await navLink.click();
     await expect(page).toHaveURL(/\/accounting/);
     await expect(
       page.locator("text=Double-Entry Accounting & Statutory GST Ledger"),

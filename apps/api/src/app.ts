@@ -39,7 +39,7 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
   app.use(metricsMiddleware);
 
   // 3. Security & Body Parsing Middleware
-  app.use(cors());
+  app.use(cors({ origin: true, credentials: true }));
   app.use(express.json({ limit: "50mb" }));
 
   // 3b. Prometheus Metrics Scrape Endpoint
