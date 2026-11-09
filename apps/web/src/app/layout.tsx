@@ -76,7 +76,10 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable}`}
     >
-      <body className="bg-background text-foreground min-h-screen antialiased selection:bg-gold/30 selection:text-gold-light font-sans">
+      <body
+        suppressHydrationWarning
+        className="bg-background text-foreground min-h-screen antialiased selection:bg-gold/30 selection:text-gold-light font-sans"
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
