@@ -45,7 +45,7 @@ export async function checkRateLimit(
 
       if (results && results[0] && results[1]) {
         const [incrErr, currentCount] = results[0];
-        const [ttlErr, ttl] = results[1];
+        const [, ttl] = results[1];
 
         if (!incrErr && typeof currentCount === "number") {
           const count = currentCount;

@@ -7,7 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.0.0] - 2026-11-10
+
+### Enterprise Production Release — General Availability (GA)
+
+This milestone marks the official production launch of **JewelCore ERP v1.0.0**, complete with enterprise-grade luxury workstation theming, high-throughput Redis caching, pessimistic concurrency guarantees, distributed API rate limiting, and regulatory compliance with Indian jewelry statutes (BIS HUID, GST E-Invoice/E-Way Bill, and ITC-04).
+
+#### Added & Enhanced
+
+- **Luxury Workstation UI Harmonization & Theming**:
+  - Harmonized all 11 operational workstations to the luxury **VengeanceUI / Skipper UI** standard with atmospheric radial glow hero banners, Playfair Display serif typography, metadata breadcrumbs, and live telemetry badges.
+  - Standardized tactile 4-KPI precision cards with glowing box micro-icons, tabular numerals, and status badges.
+  - Implemented high-contrast segmented pill navigation across all stations with gold/obsidian active states.
+  - Polished dark/light theme switching with zero contrast regressions across all UI components.
+  - Streamlined sidebar navigation: icons-only for locked items without redundant text labels.
+- **Backend Concurrency Hardening & High-Throughput Performance**:
+  - **Redis Permission Caching (`PERF-01`)**: Implemented a resilient Redis cache singleton with 300s TTL in `apps/api/src/common/redis.ts` and transparent PostgreSQL fallback, eliminating repeated RBAC query overhead during sales spikes.
+  - **Pessimistic Concurrency Row Locking (`CONC-01`)**: Hardened `salesInvoiceRepository.ts` with `SELECT ... FOR UPDATE` row locks across invoice reservation, cancellation, and physical custody release, eliminating piece double-allocation risks.
+  - **Distributed API Gateway Rate Limiting (`RATE-01`)**: Built `rateLimiterMiddleware.ts` backed by Redis atomic increments with in-memory sliding window fallback, protecting public bullion ticker feeds (120 req/min) and auth login endpoints (15 req/min).
+- **Automated Verification & Release Quality Gate**:
+  - **895 / 895 backend Vitest integration tests passed** across 127 test suites with 100% green status.
+  - **20 / 20 Next.js production routes built cleanly** with zero static or dynamic build warnings.
+  - **100% Playwright E2E browser test pass rate** across all 11 workstations, multi-signatory quorums, and cradle-to-grave lifecycle flows.
+  - **Automated Disaster Recovery Drill**: Verified atomic `pg_dump`, gzip compression, SHA-256 verification, and OpenSSL AES-256-CBC PBKDF2 encryption/decryption drill.
+  - **Docker Compose Production Mesh**: Validated container topology in `docker-compose.prod.yml` (`postgres`, `redis`, `api`, `worker`, `web`, `db_seed`).
+
+---
 
 ## [0.13.0] - 2026-11-09
 
