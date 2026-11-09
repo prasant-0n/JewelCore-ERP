@@ -78,7 +78,7 @@ test.describe("Workstation Navigation & Header Breadcrumbs", () => {
 
     // 2. Verify Live Bullion Ticker Widget
     await expect(page.locator("text=Live Bullion Fixing (IBJA)")).toBeVisible();
-    await expect(page.locator("text=Gold 24K (999)")).toBeVisible();
+    await expect(page.locator("text=Gold 24K (999)").first()).toBeVisible();
 
     // 3. Sync All Vault Scales action
     const syncBtn = page.getByRole("button", { name: /Sync All Vault Scales/i });

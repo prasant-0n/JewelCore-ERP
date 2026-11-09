@@ -416,80 +416,91 @@ export default function PricingMasterPage() {
   return (
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
-        {/* Top Subheader: Breadcrumbs, Market Telemetry & Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-              <span>Flagship Mumbai (INV-11)</span>
-              <span>&gt;</span>
-              <span className="text-gold font-medium">
-                Bullion Fixing & Dynamic Pricing Engine
-              </span>
-              <Badge variant="emerald" dot className="ml-1 sm:ml-2">
-                MCX Gold Spot ₹{liveGoldRate.toLocaleString("en-IN", { minimumFractionDigits: 1 })}/g • Reuters IBJA Feed Live
-              </Badge>
+        {/* Atmospheric Luxury Hero Header Banner */}
+        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-sm">
+          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-80 h-80 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                <span>Flagship Mumbai (INV-11)</span>
+                <span>&gt;</span>
+                <span className="text-gold font-medium">Bullion Fixing &amp; Dynamic Pricing Engine</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground tracking-tight">
+                  Bullion Fixing, Dynamic Making Charges &amp; Margin Rules
+                </h1>
+                <Badge variant="emerald" dot className="text-xs font-mono font-bold">
+                  MCX Gold Spot ₹{liveGoldRate.toLocaleString("en-IN", { minimumFractionDigits: 1 })}/g
+                </Badge>
+                <Badge variant="outline" className="border-gold/30 text-gold bg-gold/10 text-xs font-mono">
+                  Reuters IBJA Feed Live
+                </Badge>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
+                Live Multi Commodity Exchange Continuous Parity, Dynamic Karat Purity Spreads, Automated Wastage Escalation &amp; Broadcast Retail Terminals.
+              </p>
             </div>
-            <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground">
-              Bullion Fixing, Dynamic Making Charges &amp; Margin Rules
-            </h1>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={isSyncingFeed}
-              onClick={handleSyncExchange}
-              className="font-mono text-xs border-gold/30 hover:bg-gold/10 hover:text-gold"
-            >
-              <RefreshCw
-                className={`w-3.5 h-3.5 mr-1.5 ${
-                  isSyncingFeed ? "animate-spin" : ""
-                }`}
-              />
-              <span>
-                {isSyncingFeed ? "Syncing..." : "Sync MCX Feed"}
-              </span>
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setIsNewTierModalOpen(true)}
-            >
-              <Plus className="w-3.5 h-3.5 mr-1" />
-              <span>Add Purity / Margin Tier</span>
-            </Button>
-            <Button
-              variant="gold"
-              size="sm"
-              data-testid="broadcast-spot-fix-btn"
-              onClick={handleBroadcast}
-            >
-              <Radio className="w-3.5 h-3.5 mr-1" />
-              <span>Broadcast Spot Fix</span>
-            </Button>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isSyncingFeed}
+                onClick={handleSyncExchange}
+                className="font-mono text-xs border-gold/30 hover:bg-gold/10 hover:text-gold"
+              >
+                <RefreshCw
+                  className={`w-3.5 h-3.5 mr-1.5 ${
+                    isSyncingFeed ? "animate-spin" : ""
+                  }`}
+                />
+                <span>
+                  {isSyncingFeed ? "Syncing..." : "Sync MCX Feed"}
+                </span>
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsNewTierModalOpen(true)}
+                className="font-mono text-xs"
+              >
+                <Plus className="w-3.5 h-3.5 mr-1" />
+                <span>Add Purity / Margin Tier</span>
+              </Button>
+              <Button
+                variant="gold"
+                size="sm"
+                data-testid="broadcast-spot-fix-btn"
+                onClick={handleBroadcast}
+                className="font-mono text-xs shadow-md hover:shadow-lg transition-all"
+              >
+                <Radio className="w-3.5 h-3.5 mr-1" />
+                <span>Broadcast Spot Fix</span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Live Commodity Exchange Ingestion Banner (Pathway C) */}
-        <Card className="p-3.5 bg-surface-elevated/70 border border-surface-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <Card className="p-4 bg-surface-card border border-surface-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
           <div className="flex items-start sm:items-center space-x-3">
             <div className="p-2 rounded-lg bg-gold/10 border border-gold/20 text-gold flex-shrink-0">
               <TrendingUp className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-                <span className="text-xs font-semibold text-foreground">
+                <span className="text-xs font-semibold text-foreground font-sans">
                   Commodity Exchange Ingestion Engine (MCX / LBMA / IBJA)
                 </span>
-                <span className="px-1.5 py-0.2 text-[9px] font-mono rounded bg-surface border border-surface-border text-gold font-bold">
+                <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-gold font-bold">
                   MCX Continuous Parity
                 </span>
                 <Badge variant={isConnected ? "emerald" : "gold"} dot>
                   {isConnected ? "WebSocket Stream Live" : "Feed Active"}
                 </Badge>
               </div>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
+              <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">
                 Tariff-Adjusted Calculation: [LBMA USD/oz × 84.45 FX ÷ 31.1035] × 1.06 (Customs Duty) + ₹45 Refiner Premium = Au 24K Benchmark
               </p>
             </div>
@@ -497,8 +508,8 @@ export default function PricingMasterPage() {
 
           <div className="flex items-center space-x-4 w-full md:w-auto justify-between md:justify-end">
             <div className="text-right font-mono text-xs">
-              <div className="text-muted-foreground text-[10px]">Active Benchmark</div>
-              <div className="text-gold font-bold">
+              <div className="text-muted-foreground text-[10px] uppercase">Active Benchmark</div>
+              <div className="text-gold font-bold text-base tabular-nums">
                 ₹{liveGoldRate.toLocaleString("en-IN", { minimumFractionDigits: 2 })}/g
               </div>
             </div>
@@ -507,7 +518,7 @@ export default function PricingMasterPage() {
               size="sm"
               disabled={isSyncingFeed}
               onClick={handleSyncExchange}
-              className="text-xs font-mono"
+              className="text-xs font-mono shadow-sm"
             >
               <RefreshCw
                 className={`w-3.5 h-3.5 mr-1.5 ${
@@ -519,8 +530,81 @@ export default function PricingMasterPage() {
           </div>
         </Card>
 
-        {/* 4 Summary Metric Cards */}
-        <WorkstationKpiGrid items={pricingKpiItems} />
+        {/* 4 Tactile Precision KPI Metric Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                MCX 24K Gold Spot
+              </span>
+              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                <TrendingUp className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              ₹{liveGoldRate.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
+              <span className="text-sm text-gold font-normal font-sans">/ g</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+              <span>+0.64% Today (+₹46.80)</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                22K Benchmark (Au 916)
+              </span>
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <Scale className="h-4 w-4 text-gold" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              ₹{(Math.round(liveGoldRate * 0.916 * 10) / 10).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
+              <span className="text-sm text-gold font-normal font-sans">/ g</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground font-medium font-mono">
+              <span>Base Jeweller Standard</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Active Margin Rules
+              </span>
+              <div className="p-1.5 rounded-lg bg-surface-elevated text-foreground border border-surface-border">
+                <Sliders className="h-4 w-4 text-foreground" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {totalRulesCount}{" "}
+              <span className="text-sm text-muted-foreground font-normal font-sans">Active Tiers</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-gold font-medium font-mono">
+              <span>Atelier &amp; Retail Synced</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Treasury Hedging Cover
+              </span>
+              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                <ShieldCheck className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              98.4%{" "}
+              <span className="text-sm text-status-emerald font-normal font-sans">Hedged</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <span>MCX Gold Mini Contracts</span>
+            </div>
+          </Card>
+        </div>
 
         {/* Workstation 65% / 35% Layout */}
         <WorkstationLayout
@@ -533,20 +617,20 @@ export default function PricingMasterPage() {
         >
           {/* Left Column (65%): Pricing Tiers Directory */}
           <div className="space-y-4">
-            {/* Search & Filter Toolbar */}
-            <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            {/* Search & Segmented Filter Toolbar */}
+            <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-surface-border bg-surface-card/80">
               <div className="relative flex-1">
                 <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <Input
                   placeholder="Filter by Karat Tag, Alloy Description, Formula..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 h-8"
+                  className="pl-9 h-8 bg-surface-elevated/60 text-xs font-mono"
                 />
               </div>
 
-              {/* Filter Pills */}
-              <div className="flex items-center space-x-1 overflow-x-auto text-xs">
+              {/* Segmented Filter Pills */}
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-surface-elevated/70 border border-surface-border shrink-0 overflow-x-auto">
                 {[
                   { id: "ALL", label: "All Tiers" },
                   { id: "24K", label: "24K Bullion" },
@@ -556,10 +640,10 @@ export default function PricingMasterPage() {
                   <button
                     key={id}
                     onClick={() => setFilterState(id)}
-                    className={`px-2.5 py-1 rounded-md font-mono text-[11px] font-medium transition-all whitespace-nowrap ${
+                    className={`px-3 py-1 rounded-lg font-mono text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer ${
                       filterState === id
-                        ? "bg-gold text-black font-semibold shadow-sm"
-                        : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
+                        ? "bg-gold text-obsidian font-bold shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {label}

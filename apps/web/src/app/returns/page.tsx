@@ -293,38 +293,84 @@ export default function ReturnsRefiningPage() {
   return (
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
-        {/* Top Subheader: Breadcrumbs, Refinery Telemetry & Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-              <span>Flagship Mumbai (INV-11)</span>
-              <span>&gt;</span>
-              <span className="text-gold font-medium">
-                Refining &amp; Scrap Melting
-              </span>
-              <Badge variant="emerald" dot className="ml-1 sm:ml-2">
-                Induction Furnace Active • Niton XRF Verified
-              </Badge>
-            </div>
-            <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground">
-              Returns, Buyback Valuation &amp; Scrap Refining Workflow
-            </h1>
-          </div>
+        {/* Luxury Hero Returns & Refining Banner */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-elevated/90 via-surface-card/60 to-surface-card/90 border border-gold/20 p-6 md:p-8 backdrop-blur-xl shadow-2xl">
+          <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl" />
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-            <Button
-              variant="gold"
-              size="sm"
-              onClick={() => setIsBuybackModalOpen(true)}
-            >
-              <Plus className="w-3.5 h-3.5 mr-1" />
-              <span>Log Old Gold Buyback</span>
-            </Button>
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                <span>Flagship Mumbai (INV-11)</span>
+                <span>/</span>
+                <span>Refining &amp; Scrap Melting</span>
+                <span>/</span>
+                <span className="text-gold font-semibold">
+                  Old Gold Returns &amp; Assaying
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl md:text-3xl font-serif font-black tracking-tight text-foreground">
+                  Returns, Buyback Valuation &amp; Scrap Refining Workflow
+                </h1>
+                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  Induction Furnace Active • Niton XRF Verified
+                </Badge>
+                <Badge variant="outline" className="border-gold/30 text-gold font-mono text-[11px] px-2.5 py-1">
+                  BIS Gold Scheme Ready
+                </Badge>
+              </div>
+              <p className="text-xs md:text-sm text-muted-foreground max-w-3xl">
+                Customer exchange old gold assaying, automated karat melt loss deduction, spot valuation calculation, and induction furnace bar casting custody logs.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <Button
+                variant="gold"
+                size="sm"
+                onClick={() => setIsBuybackModalOpen(true)}
+                className="font-mono text-xs font-semibold shadow-lg shadow-gold/20"
+              >
+                <Plus className="w-3.5 h-3.5 mr-1" />
+                <span>Log Old Gold Buyback</span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* 4 Summary Metric Cards */}
-        <WorkstationKpiGrid items={returnsKpis} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {returnsKpis.map((kpi) => (
+            <Card
+              key={kpi.id}
+              className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                  {kpi.title}
+                </span>
+                <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-gold">
+                  {kpi.icon}
+                </div>
+              </div>
+              <div className="text-2xl font-serif font-black tracking-tight text-foreground">
+                {kpi.value}
+              </div>
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-surface-border/40 text-xs">
+                <span className="text-muted-foreground font-mono">{kpi.subValue}</span>
+                {kpi.badge && (
+                  <Badge
+                    variant={kpi.badge.variant as any}
+                    className="font-mono text-[10px] px-1.5 py-0.5"
+                  >
+                    {kpi.badge.text}
+                  </Badge>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
 
         {/* Workstation 65% / 35% Layout */}
         <WorkstationLayout
@@ -337,20 +383,20 @@ export default function ReturnsRefiningPage() {
         >
           {/* Left Column (65%): Scrap Batches */}
           <div className="space-y-4">
-            {/* Search & Filter Toolbar */}
-            <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            {/* Luxury Search & Filter Toolbar */}
+            <div className="bg-surface-card/90 border border-surface-border rounded-xl p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-sm backdrop-blur-md">
               <div className="relative flex-1">
                 <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <Input
                   placeholder="Filter by Lot #, Customer Name, Metal Alloy or Item ID..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 h-8"
+                  className="pl-9 h-9 rounded-lg font-mono text-xs bg-surface-elevated border-surface-border"
                 />
               </div>
 
-              {/* Filter Pills */}
-              <div className="flex items-center space-x-1 overflow-x-auto text-xs">
+              {/* Segmented Filter Pills */}
+              <div className="flex items-center p-1 bg-surface-elevated rounded-lg border border-surface-border/60 gap-1 overflow-x-auto">
                 {[
                   { id: "ALL", label: "All Lots" },
                   { id: "OLD_GOLD", label: "Customer Old Gold" },
@@ -359,17 +405,17 @@ export default function ReturnsRefiningPage() {
                   <button
                     key={id}
                     onClick={() => setFilterState(id)}
-                    className={`px-2.5 py-1 rounded-md font-mono text-[11px] font-medium transition-all whitespace-nowrap ${
+                    className={`px-3 py-1.5 rounded-md font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
                       filterState === id
-                        ? "bg-gold text-black font-semibold shadow-sm"
-                        : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
+                        ? "bg-gold text-obsidian font-bold shadow-xs"
+                        : "text-muted-foreground hover:text-foreground hover:bg-surface-card/60"
                     }`}
                   >
                     {label}
                   </button>
                 ))}
               </div>
-            </Card>
+            </div>
 
             {/* Hierarchical Scrap Batches */}
             <div className="space-y-4">

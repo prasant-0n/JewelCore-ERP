@@ -337,77 +337,121 @@ export default function GovernanceApprovalPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        {/* Top Subheader: Breadcrumbs, Telemetry & Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
-              <span className="flex items-center gap-1.5 font-medium text-foreground">
-                <JewelCoreLogo size="xs" variant="mark" />
-                JewelCore ERP
-              </span>
-              <span>/</span>
-              <span>Security &amp; Compliance</span>
-              <span>/</span>
-              <span className="text-gold font-semibold">
-                Dual-Custody Audit &amp; Governance Approval Center
-              </span>
+        {/* Luxury Hero Governance Banner */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-elevated/90 via-surface-card/60 to-surface-card/90 border border-gold/20 p-6 md:p-8 backdrop-blur-xl shadow-2xl">
+          <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
+
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                <span className="flex items-center gap-1.5 font-medium text-foreground">
+                  <JewelCoreLogo size="xs" variant="mark" />
+                  JewelCore ERP
+                </span>
+                <span>/</span>
+                <span>Security &amp; Compliance</span>
+                <span>/</span>
+                <span className="text-gold font-semibold">
+                  Dual-Custody Audit &amp; Governance Approval Center
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl md:text-3xl font-serif font-black tracking-tight text-foreground">
+                  Multi-Signatory Quorum &amp; Cryptographic Merkle Ledger
+                </h1>
+                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  HSM Key Card &amp; Dual Biometrics Synced • Zero Failures
+                </Badge>
+                <Badge variant="outline" className="border-gold/30 text-gold font-mono text-[11px] px-2.5 py-1">
+                  SHA-256 Chained
+                </Badge>
+              </div>
+              <p className="text-xs md:text-sm text-muted-foreground max-w-3xl">
+                Dual-signatory threshold authorization for high-value vault transfers, refining smelt crucible handoffs, and armored consignments with cryptographic audit verification.
+              </p>
             </div>
-            <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground tracking-tight mt-1 flex flex-wrap items-center gap-2 sm:gap-3">
-              <span>Multi-Signatory Quorum & Cryptographic Merkle Ledger</span>
-              <Badge variant="emerald" dot>
-                HSM Key Card & Dual Biometrics Synced • Zero Failures
-              </Badge>
-            </h1>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsAuditModalOpen(true)}
-              className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-500" />
-              <span>Audit Event Stream</span>
-            </Button>
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsAuditModalOpen(true)}
+                className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 font-mono text-xs"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-500" />
+                <span>Audit Event Stream</span>
+              </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsOverrideModalOpen(true)}
-              className="hover:border-rose-500 hover:text-rose-600 dark:hover:text-rose-400"
-            >
-              <AlertTriangle className="w-3.5 h-3.5 mr-1 text-rose-500" />
-              <span>Emergency Override Request</span>
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsOverrideModalOpen(true)}
+                className="hover:border-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-mono text-xs border-surface-border"
+              >
+                <AlertTriangle className="w-3.5 h-3.5 mr-1 text-rose-500" />
+                <span>Emergency Override Request</span>
+              </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsQuorumModalOpen(true)}
-              className="border-gold/40 text-gold hover:bg-gold/10 font-mono text-xs"
-            >
-              <KeyRound className="w-3.5 h-3.5 mr-1 text-gold" />
-              <span>Dual-Key Quorum Signoff</span>
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsQuorumModalOpen(true)}
+                className="border-gold/40 text-gold hover:bg-gold/10 font-mono text-xs"
+              >
+                <KeyRound className="w-3.5 h-3.5 mr-1 text-gold" />
+                <span>Dual-Key Quorum Signoff</span>
+              </Button>
 
-            <Button
-              variant="gold"
-              size="sm"
-              onClick={handleDualSignBatchAll}
-              disabled={isDualSigningAll || pendingApprovalsCount === 0}
-              isLoading={isDualSigningAll}
-            >
-              <Lock className="w-4 h-4 mr-1.5" />
-              <span>
-                {`Dual-Sign & Release Pending (${pendingApprovalsCount})`}
-              </span>
-            </Button>
+              <Button
+                variant="gold"
+                size="sm"
+                onClick={handleDualSignBatchAll}
+                disabled={isDualSigningAll || pendingApprovalsCount === 0}
+                isLoading={isDualSigningAll}
+                className="font-mono text-xs font-semibold shadow-lg shadow-gold/20"
+              >
+                <Lock className="w-4 h-4 mr-1.5" />
+                <span>
+                  {`Dual-Sign & Release Pending (${pendingApprovalsCount})`}
+                </span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* 4 Metric KPI Cards */}
-        <WorkstationKpiGrid items={kpis} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {kpis.map((kpi) => (
+            <Card
+              key={kpi.id}
+              className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                  {kpi.title}
+                </span>
+                <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-gold">
+                  {kpi.icon}
+                </div>
+              </div>
+              <div className="text-2xl font-serif font-black tracking-tight text-foreground">
+                {kpi.value}
+              </div>
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-surface-border/40 text-xs">
+                <span className="text-muted-foreground font-mono">{kpi.subValue}</span>
+                {kpi.badge && (
+                  <Badge
+                    variant={kpi.badge.variant as any}
+                    className="font-mono text-[10px] px-1.5 py-0.5"
+                  >
+                    {kpi.badge.text}
+                  </Badge>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
 
         {/* Master Workspace: 65% Directory + 35% Sticky Inspector */}
         <WorkstationLayout
@@ -436,20 +480,20 @@ export default function GovernanceApprovalPage() {
           }
         >
           <div className="space-y-4">
-            {/* Filter & Search Bar */}
-            <div className="bg-surface-card border border-surface-border rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-              <div className="relative flex-1 min-w-[240px]">
-                <Search className="w-4 h-4 absolute left-3 top-2.5 text-muted-foreground" />
+            {/* Luxury Filter & Search Toolbar */}
+            <div className="bg-surface-card/90 border border-surface-border rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-sm backdrop-blur-md">
+              <div className="relative flex-1 min-w-[260px]">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Filter by Request ID, Custodian Name, Target Safe or Action Type..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 bg-surface-elevated border-surface-border font-mono text-xs"
+                  className="pl-9 bg-surface-elevated border-surface-border font-mono text-xs h-9 rounded-lg"
                 />
               </div>
 
-              <div className="flex items-center space-x-1.5 text-xs font-mono">
+              <div className="flex items-center p-1 bg-surface-elevated rounded-lg border border-surface-border/60 gap-1 overflow-x-auto">
                 {(["ALL", "VAULT", "POS", "SMELT", "TRANSIT"] as const).map(
                   (key) => {
                     const labels: Record<string, string> = {
@@ -460,14 +504,17 @@ export default function GovernanceApprovalPage() {
                       TRANSIT: "Armored Transit",
                     };
                     return (
-                      <Button
+                      <button
                         key={key}
-                        variant={filterState === key ? "gold" : "outline"}
-                        size="xs"
                         onClick={() => setFilterState(key)}
+                        className={`px-3 py-1.5 rounded-md font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
+                          filterState === key
+                            ? "bg-gold text-obsidian font-bold shadow-xs"
+                            : "text-muted-foreground hover:text-foreground hover:bg-surface-card/60"
+                        }`}
                       >
                         {labels[key]}
-                      </Button>
+                      </button>
                     );
                   },
                 )}

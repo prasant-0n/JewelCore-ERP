@@ -277,124 +277,145 @@ export default function AccountingLedgerPage() {
   return (
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-16">
-        {/* Top Header & Breadcrumb Banner */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-              <span>Financial Governance</span>
-              <span>&gt;</span>
-              <span className="text-gold font-medium">
-                Double-Entry Accounting &amp; Statutory GST Ledger
-              </span>
-              <Badge variant="emerald" dot className="ml-1 sm:ml-2">
-                FY 2026-27 Books Online • Balanced
-              </Badge>
+        {/* Luxury Hero Financial Banner */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-elevated/90 via-surface-card/60 to-surface-card/90 border border-gold/20 p-6 md:p-8 backdrop-blur-xl shadow-2xl">
+          <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
+
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                <span>Financial Governance</span>
+                <span>/</span>
+                <span className="text-gold font-semibold">
+                  Double-Entry Accounting &amp; Statutory GST Ledger
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl md:text-3xl font-serif font-black tracking-tight text-foreground">
+                  General Ledger, Chart of Accounts &amp; GST Returns
+                </h1>
+                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  FY 2026-27 Books Online • Balanced
+                </Badge>
+                <Badge variant="secondary" className="font-mono text-xs border border-surface-border">
+                  GSTIN: 27AABCU9603R1ZM
+                </Badge>
+              </div>
+              <p className="text-xs md:text-sm text-muted-foreground max-w-3xl">
+                Cryptographic double-entry general ledger, automated trial balance, HSN-level GSTR-1 outward supplies liability, and GSTR-3B input tax credit netting.
+              </p>
             </div>
-            <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground">
-              General Ledger, Chart of Accounts &amp; GST Returns
-            </h1>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-            <Badge variant="secondary" className="font-mono text-xs">
-              GSTIN: 27AABCU9603R1ZM
-            </Badge>
-
-            <Button
-              variant="gold"
-              size="sm"
-              onClick={() => setIsVoucherModalOpen(true)}
-              className="font-medium text-xs shadow-sm"
-            >
-              <Plus className="w-3.5 h-3.5 mr-1" />
-              <span>New Journal Voucher</span>
-            </Button>
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <Button
+                variant="gold"
+                size="sm"
+                onClick={() => setIsVoucherModalOpen(true)}
+                className="font-mono text-xs font-semibold shadow-lg shadow-gold/20"
+              >
+                <Plus className="w-3.5 h-3.5 mr-1" />
+                <span>New Journal Voucher</span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* 4 Financial & Tax Metrics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Card 1: Asset Reserves */}
-          <Card className="p-4 bg-surface-elevated/70 border-surface-border">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+          <Card className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
                 Bullion &amp; Cash Reserves
               </span>
-              <div className="p-1.5 rounded-full bg-gold/15 text-gold">
+              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-gold">
                 <Coins className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-2xl font-serif font-black text-foreground mt-2">
+            <div className="text-2xl font-serif font-black text-foreground">
               ₹ 1.48 Crore
             </div>
-            <div className="text-xs text-muted-foreground font-mono mt-1">
-              Vault Cash + Bank + Au 24K Physical Stock
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-surface-border/40 text-xs">
+              <span className="text-muted-foreground font-mono">Vault Cash + Bank + Au 24K</span>
+              <Badge variant="gold" className="font-mono text-[10px] px-1.5 py-0.5">
+                Physical Stock
+              </Badge>
             </div>
           </Card>
 
           {/* Card 2: Net Sales Turnover */}
-          <Card className="p-4 bg-surface-elevated/70 border-surface-border">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+          <Card className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
                 Net Sales Turnover
               </span>
-              <div className="p-1.5 rounded-full bg-blue-500/15 text-blue-400">
+              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-blue-400">
                 <TrendingUp className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-2xl font-serif font-black text-foreground mt-2">
+            <div className="text-2xl font-serif font-black text-foreground">
               ₹ {((gstData?.gstr1Summary.totalTaxableTurnoverInr || 8450000) / 100000).toFixed(2)} Lakh
             </div>
-            <div className="text-xs text-emerald-700 dark:text-emerald-400 font-mono mt-1 font-medium">
-              Taxable Outward Supplies (Form GSTR-1)
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-surface-border/40 text-xs">
+              <span className="text-emerald-700 dark:text-emerald-400 font-mono font-medium">Form GSTR-1</span>
+              <Badge variant="emerald" className="font-mono text-[10px] px-1.5 py-0.5">
+                Taxable Outward
+              </Badge>
             </div>
           </Card>
 
           {/* Card 3: Output GST Liability */}
-          <Card className="p-4 bg-surface-elevated/70 border-surface-border">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+          <Card className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
                 Output GST Liability (3%)
               </span>
-              <div className="p-1.5 rounded-full bg-amber-500/15 text-amber-500">
+              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-amber-500">
                 <Building className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-2xl font-serif font-black text-foreground mt-2">
+            <div className="text-2xl font-serif font-black text-foreground">
               ₹ {((gstData?.gstr1Summary.totalTaxLiabilityInr || 253500) / 100000).toFixed(2)} Lakh
             </div>
-            <div className="text-xs text-muted-foreground font-mono mt-1">
-              CGST 1.5% + SGST 1.5% Collected
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-surface-border/40 text-xs">
+              <span className="text-muted-foreground font-mono">CGST 1.5% + SGST 1.5%</span>
+              <Badge variant="amber" className="font-mono text-[10px] px-1.5 py-0.5">
+                Collected
+              </Badge>
             </div>
           </Card>
 
           {/* Card 4: Net Tax to Pay */}
-          <Card className="p-4 bg-surface-elevated/70 border-surface-border">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+          <Card className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
                 Net Tax Payable (GSTR-3B)
               </span>
-              <div className="p-1.5 rounded-full bg-emerald-500/15 text-emerald-400">
+              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-emerald-400">
                 <ShieldCheck className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-2xl font-serif font-black text-emerald-700 dark:text-emerald-400 mt-2">
+            <div className="text-2xl font-serif font-black text-emerald-700 dark:text-emerald-400">
               ₹ {((gstData?.gstr3bSummary.netTaxPayableInr || 163500) / 100000).toFixed(2)} Lakh
             </div>
-            <div className="text-xs text-muted-foreground font-mono mt-1">
-              After ₹{(gstData?.gstr3bSummary.eligibleItcInr || 90000).toLocaleString("en-IN")} Eligible ITC
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-surface-border/40 text-xs">
+              <span className="text-muted-foreground font-mono">₹{(gstData?.gstr3bSummary.eligibleItcInr || 90000).toLocaleString("en-IN")} ITC</span>
+              <Badge variant="emerald" className="font-mono text-[10px] px-1.5 py-0.5">
+                Eligible Offset
+              </Badge>
             </div>
           </Card>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-surface-border space-x-6 text-sm font-medium">
+        <div className="flex items-center p-1.5 bg-surface-card border border-surface-border rounded-xl space-x-1 overflow-x-auto text-sm font-medium shadow-sm">
           <button
             onClick={() => setActiveTab("JOURNAL")}
-            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 ${
+            className={`px-4 py-2 rounded-lg font-mono text-xs transition-all duration-200 flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "JOURNAL"
-                ? "border-gold text-gold font-bold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "bg-gold text-obsidian font-bold shadow-xs"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated"
             }`}
           >
             <Layers className="w-4 h-4" />
@@ -403,10 +424,10 @@ export default function AccountingLedgerPage() {
 
           <button
             onClick={() => setActiveTab("COA")}
-            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 ${
+            className={`px-4 py-2 rounded-lg font-mono text-xs transition-all duration-200 flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "COA"
-                ? "border-gold text-gold font-bold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "bg-gold text-obsidian font-bold shadow-xs"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated"
             }`}
           >
             <Scale className="w-4 h-4" />
@@ -415,10 +436,10 @@ export default function AccountingLedgerPage() {
 
           <button
             onClick={() => setActiveTab("GST")}
-            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 ${
+            className={`px-4 py-2 rounded-lg font-mono text-xs transition-all duration-200 flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "GST"
-                ? "border-gold text-gold font-bold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "bg-gold text-obsidian font-bold shadow-xs"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated"
             }`}
           >
             <FileText className="w-4 h-4" />
@@ -427,10 +448,10 @@ export default function AccountingLedgerPage() {
 
           <button
             onClick={() => setActiveTab("EINVOICE")}
-            className={`pb-3 border-b-2 font-mono transition-all flex items-center space-x-2 ${
+            className={`px-4 py-2 rounded-lg font-mono text-xs transition-all duration-200 flex items-center space-x-2 whitespace-nowrap ${
               activeTab === "EINVOICE"
-                ? "border-gold text-gold font-bold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "bg-gold text-obsidian font-bold shadow-xs"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated"
             }`}
           >
             <QrCode className="w-4 h-4" />

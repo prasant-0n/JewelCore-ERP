@@ -297,38 +297,121 @@ export default function InventoryMasterPage() {
   return (
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
-        {/* Top Subheader: Breadcrumbs, RFID Telemetry & Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-              <span>Flagship Mumbai (INV-11)</span>
-              <span>&gt;</span>
-              <span className="text-gold font-medium">
-                Vault & Finished Goods Custody
-              </span>
-              <Badge variant="emerald" dot className="ml-1 sm:ml-2">
-                UHF RFID Mesh Active • 99.98% Synced
-              </Badge>
+        {/* Atmospheric Luxury Hero Header Banner */}
+        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-sm">
+          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-80 h-80 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                <span>Flagship Mumbai (INV-11)</span>
+                <span>&gt;</span>
+                <span className="text-gold font-medium">Vault &amp; Finished Goods Custody</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground tracking-tight">
+                  Serialized Inventory &amp; Provenance Directory
+                </h1>
+                <Badge variant="emerald" dot className="text-xs font-mono font-bold">
+                  UHF RFID Mesh Active • 99.98% Synced
+                </Badge>
+                <Badge variant="outline" className="border-gold/30 text-gold bg-gold/10 text-xs font-mono">
+                  BIS Hallmarked &amp; Lloyd&apos;s Insured
+                </Badge>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
+                Granular Metrology Piece Master, Cradle-to-Grave Provenance Ledger, Dual-Custody Drawer Assignment &amp; Live RFID Tray Telemetry.
+              </p>
             </div>
-            <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground">
-              Serialized Inventory &amp; Provenance Directory
-            </h1>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-            <Button
-              variant="gold"
-              size="sm"
-              onClick={() => setIsBirthModalOpen(true)}
-            >
-              <Plus className="w-3.5 h-3.5 mr-1" />
-              <span>Birth Serialized Piece</span>
-            </Button>
+            <div className="flex items-center gap-3 shrink-0">
+              <Button
+                variant="gold"
+                size="sm"
+                onClick={() => setIsBirthModalOpen(true)}
+                className="font-semibold text-xs h-9 gap-1.5 shadow-md hover:shadow-lg transition-all font-mono"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Birth Serialized Piece</span>
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* 4 Summary Metric Cards */}
-        <WorkstationKpiGrid items={inventoryKpis} />
+        {/* 4 Tactile Precision KPI Metric Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Total Live Inventory Pieces
+              </span>
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <Sparkles className="h-4 w-4 text-gold" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {totalPiecesCount}{" "}
+              <span className="text-sm text-muted-foreground font-normal font-sans">Active Pieces</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+              <span>100% RFID Serialized</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Gross Stock Valuation
+              </span>
+              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                <Gem className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              ₹ {(totalValuationInr / 10000000).toFixed(2)}{" "}
+              <span className="text-sm text-gold font-normal font-sans">Cr</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <span>Lloyd&apos;s Specie Insured</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Total Gold Weight
+              </span>
+              <div className="p-1.5 rounded-lg bg-surface-elevated text-foreground border border-surface-border">
+                <Scale className="h-4 w-4 text-foreground" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {(totalGrossWeight / 1000).toFixed(3)}{" "}
+              <span className="text-sm text-gold font-normal font-sans">kg</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground font-medium font-mono">
+              <span>Au 916 / Au 750 Calibrated</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Showroom Display Active
+              </span>
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <Radio className="h-4 w-4 text-gold" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {showroomPiecesCount}{" "}
+              <span className="text-sm text-muted-foreground font-normal font-sans">Pieces</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <span>Live UHF Tray Sensor Mesh</span>
+            </div>
+          </Card>
+        </div>
 
         {/* Workstation 65% / 35% Layout */}
         <WorkstationLayout
@@ -342,20 +425,20 @@ export default function InventoryMasterPage() {
           {/* Left Column (65%): Piece Directory */}
           <div className="space-y-4">
             {/* Search, Filter & View Mode Toolbar */}
-            <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-surface-border bg-surface-card/80">
               <div className="relative flex-1">
                 <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <Input
                   placeholder="Filter by Serial #, Title, RFID EPC Tag, Karat..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 h-8"
+                  className="pl-9 h-8 bg-surface-elevated/60 text-xs font-mono"
                 />
               </div>
 
               <div className="flex items-center gap-2">
-                {/* Filter Pills */}
-                <div className="flex items-center space-x-1 overflow-x-auto text-xs">
+                {/* Segmented Filter Pills */}
+                <div className="flex items-center gap-1 p-1 rounded-xl bg-surface-elevated/70 border border-surface-border shrink-0 overflow-x-auto">
                   {[
                     { id: "ALL", label: "All Custody" },
                     { id: "VAULT", label: "Vault Safe" },
@@ -365,10 +448,10 @@ export default function InventoryMasterPage() {
                     <button
                       key={id}
                       onClick={() => setFilterState(id)}
-                      className={`px-2 py-1 rounded-md font-mono text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg font-mono text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer ${
                         filterState === id
-                          ? "bg-gold text-obsidian font-semibold shadow-sm"
-                          : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
+                          ? "bg-gold text-obsidian font-bold shadow-xs"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {label}
@@ -377,11 +460,11 @@ export default function InventoryMasterPage() {
                 </div>
 
                 {/* View Mode Switcher (Skiper UI style) */}
-                <div className="flex items-center gap-0.5 border border-surface-border rounded-lg p-0.5 bg-surface-elevated shrink-0">
+                <div className="flex items-center gap-0.5 border border-surface-border rounded-xl p-1 bg-surface-elevated/70 shrink-0">
                   <button
                     type="button"
                     onClick={() => setViewMode("table")}
-                    className={`px-2 py-1 rounded-md text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
                       viewMode === "table"
                         ? "bg-gold text-obsidian font-bold shadow-xs"
                         : "text-muted-foreground hover:text-foreground"
@@ -394,7 +477,7 @@ export default function InventoryMasterPage() {
                   <button
                     type="button"
                     onClick={() => setViewMode("grid")}
-                    className={`px-2 py-1 rounded-md text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
                       viewMode === "grid"
                         ? "bg-gold text-obsidian font-bold shadow-xs"
                         : "text-muted-foreground hover:text-foreground"

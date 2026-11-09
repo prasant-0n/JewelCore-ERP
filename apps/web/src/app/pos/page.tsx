@@ -367,62 +367,147 @@ export default function PosTerminalPage() {
   return (
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
-        {/* Top Subheader: Breadcrumbs, VIP Client Context & Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-              <span>Flagship Mumbai (INV-11)</span>
-              <span>&gt;</span>
-              <span className="text-gold font-medium">
-                Showroom POS &amp; Clienteling
-              </span>
-              <Badge variant="emerald" dot className="ml-1 sm:ml-2">
-                Terminal POS-01 Online • Tax Invoice Compliant
-              </Badge>
+        {/* Atmospheric Luxury Hero Header Banner */}
+        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-sm">
+          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-80 h-80 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                <span>Flagship Mumbai (INV-11)</span>
+                <span>&gt;</span>
+                <span className="text-gold font-medium">Showroom POS &amp; Clienteling</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground tracking-tight">
+                  Point of Sale (POS) Showroom Terminal &amp; Clienteling
+                </h1>
+                <Badge variant="emerald" dot className="text-xs font-mono font-bold">
+                  Terminal POS-01 Online
+                </Badge>
+                <Badge variant="outline" className="border-gold/30 text-gold bg-gold/10 text-xs font-mono">
+                  Tax Invoice &amp; PMLA Compliant
+                </Badge>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
+                Ultra-High Metrology Point of Sale, Split-Tender Settlement, Gravimetric Mettler Toledo Scale Verification &amp; NIC E-Invoice Generation.
+              </p>
             </div>
-            <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground">
-              Point of Sale (POS) Showroom Terminal &amp; Clienteling
-            </h1>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                if (selectedPiece) {
-                  openSalonView(selectedPiece);
-                } else if (groups[0]?.pieces[0]) {
-                  openSalonView(groups[0].pieces[0]);
-                }
-              }}
-              title="Open Client-Facing VIP Salon Presentation View"
-            >
-              <Sparkles className="w-3.5 h-3.5 mr-1 text-gold" />
-              <span>Salon View</span>
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setIsClientModalOpen(true)}
-            >
-              <UserCheck className="w-3.5 h-3.5 mr-1" />
-              <span>Select Client ({activeClient.name.split(" ")[1]})</span>
-            </Button>
-            <Button
-              variant="gold"
-              size="sm"
-              onClick={handleWeighCart}
-              isLoading={isScanningScale}
-            >
-              <Scale className="w-3.5 h-3.5 mr-1" />
-              <span>Weigh Cart on Scale</span>
-            </Button>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (selectedPiece) {
+                    openSalonView(selectedPiece);
+                  } else if (groups[0]?.pieces[0]) {
+                    openSalonView(groups[0].pieces[0]);
+                  }
+                }}
+                className="border-gold/30 hover:bg-gold/10 text-xs font-mono"
+                title="Open Client-Facing VIP Salon Presentation View"
+              >
+                <Sparkles className="w-3.5 h-3.5 mr-1 text-gold" />
+                <span>Salon View</span>
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsClientModalOpen(true)}
+                className="text-xs font-mono"
+              >
+                <UserCheck className="w-3.5 h-3.5 mr-1" />
+                <span>Select Client ({activeClient.name.split(" ")[1]})</span>
+              </Button>
+              <Button
+                variant="gold"
+                size="sm"
+                onClick={handleWeighCart}
+                isLoading={isScanningScale}
+                className="text-xs font-mono shadow-md hover:shadow-lg transition-all"
+              >
+                <Scale className="w-3.5 h-3.5 mr-1" />
+                <span>Weigh Cart on Scale</span>
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* 4 Summary Metric Cards */}
-        <WorkstationKpiGrid items={posKpis} />
+        {/* 4 Tactile Precision KPI Metric Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Today's Showroom Gross
+              </span>
+              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                <TrendingUp className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              ₹ {(todayGrossInr / 100000).toFixed(1)}{" "}
+              <span className="text-sm text-gold font-normal font-sans">Lakh</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+              <span>+14.2% vs Daily Target</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Active Client Sessions
+              </span>
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <ShoppingBag className="h-4 w-4 text-gold" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {activeCartsCount}{" "}
+              <span className="text-sm text-muted-foreground font-normal font-sans">Open Carts</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-gold font-medium font-mono">
+              <Sparkles className="h-3.5 w-3.5 shrink-0" />
+              <span>VIP Private Salon Reserved</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Average Ticket Size (ATV)
+              </span>
+              <div className="p-1.5 rounded-lg bg-surface-elevated text-foreground border border-surface-border">
+                <Scale className="h-4 w-4 text-foreground" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              ₹ {(averageTicketSizeInr / 100000).toFixed(2)}{" "}
+              <span className="text-sm text-gold font-normal font-sans">Lakh</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground font-medium font-mono">
+              <span>High Jewellery Segment</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Live Bullion Lock
+              </span>
+              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                <ShieldCheck className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              Au 24K: ₹7,450<span className="text-xs text-muted-foreground font-normal font-sans">/g</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <span>Mid-Day MCX Fix Synced</span>
+            </div>
+          </Card>
+        </div>
 
         {/* Workstation 65% / 35% Layout */}
         <WorkstationLayout
@@ -453,20 +538,20 @@ export default function PosTerminalPage() {
         >
           {/* Left Column (65%): Showcase & Cart Sections */}
           <div className="space-y-4">
-            {/* Search & Filter Toolbar */}
-            <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            {/* Search & Segmented Filter Toolbar */}
+            <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-surface-border bg-surface-card/80">
               <div className="relative flex-1">
                 <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <Input
                   placeholder="Filter by Serial #, Title, Diamond Carat, or EPC Tag..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 h-8"
+                  className="pl-9 h-8 bg-surface-elevated/60 text-xs font-mono"
                 />
               </div>
 
-              {/* Filter Pills */}
-              <div className="flex items-center space-x-1 overflow-x-auto text-xs">
+              {/* Segmented Filter Pills */}
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-surface-elevated/70 border border-surface-border shrink-0 overflow-x-auto">
                 {[
                   { id: "ALL", label: "All Vitrine Items" },
                   { id: "CART", label: `Cart (${cartPieces.length})` },
@@ -475,10 +560,10 @@ export default function PosTerminalPage() {
                   <button
                     key={id}
                     onClick={() => setFilterState(id)}
-                    className={`px-2.5 py-1 rounded-md font-mono text-[11px] font-medium transition-all whitespace-nowrap ${
+                    className={`px-3 py-1 rounded-lg font-mono text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer ${
                       filterState === id
-                        ? "bg-gold text-black font-semibold shadow-sm"
-                        : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
+                        ? "bg-gold text-obsidian font-bold shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {label}
