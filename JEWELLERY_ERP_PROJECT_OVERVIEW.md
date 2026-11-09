@@ -3579,3 +3579,68 @@ Conducted a joint engineering and IT audit from the combined perspectives of **C
    - Replaced wildcard reflection (`origin: true`) with strict origin validation against `process.env.CORS_ORIGIN` and `*.jewelcore.internal`.
 4. **Zero-Hardcoded Secrets Enforcement (CWE-798)**:
    - Added fatal startup assertion terminating the API cluster if `JWT_SECRET` is unset in production environments.
+
+---
+
+# 136. Milestone 16 — Open-Source Governance, Community Health & Security Framework
+
+### Business & Portfolio Mandate
+Transform JewelCore ERP from a proprietary codebase into a world-class, community-ready, open-source enterprise resource planning system that serves as a benchmark for high-jewellery technology architecture.
+
+### Governance Architecture & Policy Assets
+1. **Apache License, Version 2.0 (`LICENSE`)**:
+   - Adopted permissive enterprise licensing with an explicit patent grant clause, ensuring legal protection for both contributors and downstream enterprise deployers.
+2. **Contributor Guidelines (`CONTRIBUTING.md`)**:
+   - Zero-friction developer onboarding manual outlining pnpm monorepo structure, Docker infrastructure spin-up, Conventional Commits specification (`feat(pos):`, `fix(security):`), and pre-PR verification gates.
+3. **Contributor Covenant v2.1 (`CODE_OF_CONDUCT.md`)**:
+   - Standard community conduct pledge established across Linux Foundation and CNCF projects.
+4. **Responsible Disclosure Security Policy (`SECURITY.md`)**:
+   - Documented vulnerability reporting SLA (24h response, 48h triage, 5-day critical patch) with dedicated private security advisory channels.
+5. **System Architecture Deep-Dive (`ARCHITECTURE.md`)**:
+   - Complete technical specification covering PBAC role token resolution, pessimistic row locking (`SELECT ... FOR UPDATE`), Merkle audit trails (`INV-09`), and hardware telemetry SSE streams.
+6. **Structured GitHub Issue & Pull Request Templates**:
+   - Added `.github/ISSUE_TEMPLATE/` containing `bug_report.yml`, `feature_request.yml`, `compliance_update.yml` (specialized for BIS/GST statutory revisions), and `pull_request_template.md`.
+
+---
+
+# 137. Milestone 17 — Parallel Multi-Stage CI/CD Pipeline & CodeQL AST Analysis
+
+### Engineering Requirement
+Replace monolithic, sequential GitHub Actions jobs with an enterprise Directed Acyclic Graph (DAG) featuring parallel execution, service containers, and automated security scans.
+
+### Implementation Architecture
+1. **Parallel Multi-Stage CI (`.github/workflows/ci.yml`)**:
+   - **`lint-and-typecheck`**: Fast-fail stage verifying 0 TypeScript errors across 5 workspace packages in $\le 45$s.
+   - **`backend-integration`**: Spawns `postgres:16-alpine` and `redis:7-alpine` healthchecked service containers, executes multi-tenant database provisioning, and runs all **888 Vitest integration tests**.
+   - **`e2e-workstation-verification`**: Installs Playwright Chromium and executes all **154 Playwright browser E2E tests** with automated screenshot/trace artifact upload on failure.
+   - **`production-build`**: Verifies Next.js 15 App Router static generation (20/20 static pages) and package compilation.
+2. **GitHub CodeQL Static Analysis (`.github/workflows/codeql.yml`)**:
+   - Weekly and PR-level Abstract Syntax Tree (AST) scanning detecting SQL injection, insecure cryptography, and prototype pollution.
+3. **Automated Semantic Release (`.github/workflows/release.yml`)**:
+   - Triggered on semantic tags (`v*.*.*`), generating automated changelogs and GitHub Releases.
+
+---
+
+# 138. Milestone 18 — Vengeance, Animaster & Skiper Luxury Design System
+
+### Design & Human Factors Mandate
+Conduct an exhaustive forensic audit across all 15 operational workstations to detect and eradicate synthetic "AI dashboard" giveaways (repetitive 4-card bento grids, low-density puffy padding, floating dog-ear badges, and ambient background blur blobs). Re-engineer the frontend using a luxury haute-horlogerie design system combining **Vengeance UI**, **Animaster**, and **Skiper UI** principles.
+
+### Key Architectural Upgrades
+1. **Dual-Engine Luxury Materiality & Gradients (`globals.css`)**:
+   - **Obsidian Imperial (Dark Theme)**: `#080B10` deepest base with `#141A24` velvet slate and `#D4AF37` champagne brushed gold accents.
+   - **Ivory Atelier (Light Theme)**: `#FAFAF8` French alabaster base with pure linen card surfaces, warm bronze hairline borders, and 7:1 WCAG AAA slate typography.
+   - Replaced decorative blur blobs with an authentic geometric hairline architectural micro-grid (`32px x 32px`).
+2. **Vengeance UI Tactile Cards (`TactileCard.tsx`)**:
+   - Stripped the floating `-top-2 -right-2` "Selected" dog-ear badge across POS and Inventory piece cards.
+   - Replaced with an elegant **left-edge vertical accent bar** (`border-l-4 border-l-gold bg-gold/5`), silky elevation hover transitions, and tactile click physics.
+3. **Animaster Laser Hallmark Badges (`LaserHallmarkBadge.tsx`)**:
+   - Rendered authentic Bureau of Indian Standards (BIS) triangular hallmark emblems, alloy purity stamps (`18K 750` / `22K 916`), and 6-character alphanumeric HUID laser engravings with a subtle sweep highlight.
+4. **Skiper UI Global Spotlight Command Palette (`GlobalCommandPalette.tsx`)**:
+   - Integrated a system-wide `⌘K` / `Ctrl+K` command palette into `TopHeader.tsx` allowing instant keyboard navigation to all 15 workstations and operational functions.
+5. **High-Density Inventory Dual-Mode Switcher (`/inventory`)**:
+   - Added a dual-mode toggle allowing operators to switch between a **High-Density Table View** (displaying 0.001g precision gross/net weights, BIS HUID badges, and custody states) and a **Visual Salon Grid**.
+6. **POS Cashier Speed-of-Service (`BillingInspector.tsx`)**:
+   - Added physical function key badges (`[F1] RTGS`, `[F2] AMEX`, `[F3] SPLIT`, `[F12] Authorize Sale`) and an interactive collapsible touch numpad drawer for touchscreen counter terminals.
+7. **Continuous Bullion Ticker Ribbon (`BullionTickerRibbon.tsx`)**:
+   - Added a continuous live financial and metrology ticker to the Executive Control Tower (`/`) streaming real-time MCX Gold 24K/22K, Silver 999, LBMA Gold, and active vault occupancy status.
