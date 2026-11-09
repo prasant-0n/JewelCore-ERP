@@ -605,7 +605,20 @@ export async function cancelSalesInvoice(
       [params.id, params.organizationId, cancelNote],
     );
 
-    // 3. Return reserved pieces to AVAILABLE_FOR_SALE
+    // 3. Return reserved pieces to AVAILABLE_FOR_SALE with pessimistic row lock (CONC-01)
+    await client.query(
+      `
+      SELECT id FROM inventory_items
+      WHERE id IN (
+        SELECT inventory_item_id
+        FROM sales_invoice_items
+        WHERE sales_invoice_id = $1
+      )
+      FOR UPDATE
+      `,
+      [params.id],
+    );
+
     await client.query(
       `
       UPDATE inventory_items

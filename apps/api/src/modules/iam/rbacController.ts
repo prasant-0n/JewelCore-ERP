@@ -14,6 +14,7 @@ import {
   getUserById,
   getUserRoles,
 } from "@jewelcore/database";
+import { invalidateUserPermissionCache } from "../../common/redis.js";
 
 export async function listPermissionsHandler(
   req: Request,
@@ -127,6 +128,7 @@ export async function assignUserRoleHandler(
     }
 
     await assignRoleToUser(userId, roleId);
+    await invalidateUserPermissionCache(userId);
     const updatedRoles = await getUserRoles(userId);
 
     res.status(200).json({

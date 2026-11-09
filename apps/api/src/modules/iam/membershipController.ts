@@ -10,6 +10,7 @@ import {
   assignRoleToStoreMembership,
   getUserAccessibleStores,
 } from "@jewelcore/database";
+import { invalidateAllPermissionCaches } from "../../common/redis.js";
 
 export async function createOrgMembershipHandler(
   req: Request,
@@ -57,6 +58,7 @@ export async function assignMembershipRoleHandler(
       ...validated,
       assignedByUserId,
     });
+    await invalidateAllPermissionCaches();
     res.status(201).json({
       data: assignment,
       timestamp: new Date().toISOString(),

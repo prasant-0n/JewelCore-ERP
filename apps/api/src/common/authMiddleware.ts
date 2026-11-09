@@ -2,6 +2,10 @@ import type { Request, Response, NextFunction } from "express";
 import { UnauthorizedError, ForbiddenError } from "@jewelcore/shared";
 import { verifyJwt, type TokenClaims } from "../modules/auth/authUtils.js";
 import { getUserPermissionCodes, getUserRoles } from "@jewelcore/database";
+import {
+  getUserCachedPermissions,
+  setUserCachedPermissions,
+} from "./redis.js";
 
 declare global {
   namespace Express {
@@ -61,15 +65,36 @@ export function requirePermission(permissionCode: string) {
         );
       }
 
-      // Check if user has SYSTEM_ADMIN role
-      const userRoles = await getUserRoles(req.user.userId);
+      const userId = req.user.userId;
+
+      // 1. Check Redis cache first (5-minute TTL - PERF-01)
+      const cached = await getUserCachedPermissions(userId);
+      if (cached) {
+        if (cached.isSystemAdmin) {
+          return next();
+        }
+        req.permissions = cached.permissions;
+        if (!cached.permissions.includes(permissionCode)) {
+          throw new ForbiddenError(
+            `User lacks the required permission '${permissionCode}' to perform this action`,
+            "ERR_INSUFFICIENT_PERMISSIONS",
+          );
+        }
+        return next();
+      }
+
+      // 2. Cache miss or Redis unavailable: query PostgreSQL transactional database
+      const userRoles = await getUserRoles(userId);
       const isSystemAdmin = userRoles.some((r) => r.code === "SYSTEM_ADMIN");
+      const permissions = await getUserPermissionCodes(userId);
+
+      // 3. Write through to Redis cache (300s TTL)
+      await setUserCachedPermissions(userId, { isSystemAdmin, permissions });
+
       if (isSystemAdmin) {
         return next();
       }
 
-      // Fetch active permissions
-      const permissions = await getUserPermissionCodes(req.user.userId);
       req.permissions = permissions;
 
       if (!permissions.includes(permissionCode)) {
