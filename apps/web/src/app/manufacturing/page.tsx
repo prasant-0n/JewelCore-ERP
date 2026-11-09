@@ -23,6 +23,14 @@ import {
   RefreshCw,
   UserCheck,
   FileText,
+  BadgePercent,
+  Calendar,
+  Layers,
+  ArrowUpRight,
+  User,
+  Shield,
+  Briefcase,
+  ChevronRight,
 } from "lucide-react";
 import { Itc04ChallanRegistry } from "../../components/manufacturing/Itc04ChallanRegistry";
 import { KarigarSettlementModal } from "../../components/manufacturing/KarigarSettlementModal";
@@ -536,144 +544,185 @@ export default function ManufacturingPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
-        {/* Header Banner */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-border/40 pb-5">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <Hammer className="h-5 w-5" />
+      <div className="space-y-6 max-w-[1600px] mx-auto pb-16">
+        {/* Luxury Atelier Header Banner */}
+        <div className="relative rounded-2xl bg-gradient-to-r from-surface-elevated/95 via-surface to-surface-card border border-gold/30 dark:border-gold/20 p-6 sm:p-7 shadow-sm overflow-hidden backdrop-blur-md">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gold/15 via-transparent to-transparent pointer-events-none" />
+
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest font-semibold">
+                <Hammer className="w-4 h-4 text-gold animate-pulse" />
+                <span>Precision Goldsmithing &amp; Multi-Stage Crafting Lifecycle</span>
               </div>
-              <div>
-                <h1 className="text-2xl font-serif font-bold tracking-tight text-white flex items-center gap-2">
-                  Atelier Manufacturing & Karigar Work Orders
-                  <Badge variant="outline" className="text-amber-400 border-amber-500/30 bg-amber-500/10 text-xs">
-                    Karkhana Floor
-                  </Badge>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-serif font-black tracking-tight text-foreground">
+                  Atelier Manufacturing &amp; Karigar Work Orders
                 </h1>
-                <p className="text-sm text-muted-foreground">
-                  Precision Goldsmithing, Multi-Stage Crafting & Strict Metal Loss Reconciliation
-                </p>
+                <Badge variant="gold" className="text-xs font-mono font-bold">
+                  Karkhana Floor
+                </Badge>
+                <Badge variant="outline" className="border-gold/30 text-gold bg-gold/10 text-xs font-mono">
+                  Rule 45 / Section 143
+                </Badge>
               </div>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
+                Precision Goldsmithing, Multi-Stage Crafting Lifecycle, Gemstone Micro-Setting &amp; Strict Metal Shrinkage Reconciliation.
+              </p>
             </div>
-          </div>
-          <div className="flex items-center gap-2.5">
-            <Button
-              onClick={() => setIsIssueModalOpen(true)}
-              className="bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs h-9 gap-1.5 shadow-lg shadow-amber-500/20"
-            >
-              <Plus className="h-4 w-4" /> Issue Job Card
-            </Button>
+
+            <div className="flex items-center gap-3 shrink-0">
+              <Button
+                variant="gold"
+                onClick={() => setIsIssueModalOpen(true)}
+                className="font-semibold text-xs h-9 gap-1.5 shadow-md hover:shadow-lg transition-all"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Issue Job Card</span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Operational KPI Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-card/50 border-border/40 p-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pure Bullion In Custody</span>
-              <Coins className="h-4 w-4 text-amber-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Pure Bullion In Custody
+              </span>
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <Coins className="h-4 w-4 text-gold" />
+              </div>
             </div>
-            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
-              {totalPureGoldInCustody.toFixed(3)} <span className="text-sm text-amber-400 font-normal">g 24K</span>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {totalPureGoldInCustody.toFixed(3)}{" "}
+              <span className="text-sm text-gold font-normal font-sans">g 24K</span>
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <ShieldCheck className="h-3 w-3 text-emerald-400" /> Issued to {karigars.length} Master Craftsmen
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+              <span>Issued to {karigars.length} Master Craftsmen</span>
             </div>
           </Card>
 
-          <Card className="bg-card/50 border-border/40 p-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active Artisan Job Cards</span>
-              <Hammer className="h-4 w-4 text-blue-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Active Artisan Job Cards
+              </span>
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <Hammer className="h-4 w-4 text-gold" />
+              </div>
             </div>
-            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
-              {activeJobsCount} <span className="text-sm text-muted-foreground font-normal">Active Orders</span>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {activeJobsCount}{" "}
+              <span className="text-sm text-muted-foreground font-normal font-sans">Active Orders</span>
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Clock className="h-3 w-3 text-blue-400" /> In casting, setting & polish
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground font-medium font-mono">
+              <Clock className="h-3.5 w-3.5 text-gold shrink-0" />
+              <span>In casting, setting &amp; polish</span>
             </div>
           </Card>
 
-          <Card className="bg-card/50 border-border/40 p-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Atelier Metal Wastage Rate</span>
-              <Flame className="h-4 w-4 text-rose-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Atelier Metal Wastage Rate
+              </span>
+              <div className="p-1.5 rounded-lg bg-status-rose/10 text-status-rose border border-status-rose/20">
+                <Flame className="h-4 w-4 text-status-rose" />
+              </div>
             </div>
-            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
-              {avgLossPct}% <span className="text-sm text-emerald-400 font-normal">(SLA ≤ 1.20%)</span>
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
+              {avgLossPct}%{" "}
+              <span className="text-sm text-status-emerald font-normal font-sans">(SLA ≤ 1.20%)</span>
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-emerald-400">
-              <CheckCircle2 className="h-3 w-3" /> Within statutory BIS tolerance
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-status-emerald font-medium font-mono">
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+              <span>Within statutory BIS tolerance</span>
             </div>
           </Card>
 
-          <Card className="bg-card/50 border-border/40 p-4">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Making Charges Allocated</span>
-              <Sparkles className="h-4 w-4 text-purple-400" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+                Making Charges Allocated
+              </span>
+              <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
+                <Sparkles className="h-4 w-4 text-gold" />
+              </div>
             </div>
-            <div className="mt-2 text-2xl font-mono font-bold text-white tracking-tight tabular-nums">
+            <div className="mt-2 text-2xl font-mono font-bold text-foreground tracking-tight tabular-nums">
               ₹ {totalLaborSpent.toLocaleString("en-IN")}
             </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Scale className="h-3 w-3 text-purple-400" /> High-jewelry artisan labor
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground font-medium font-mono">
+              <Scale className="h-3.5 w-3.5 text-gold shrink-0" />
+              <span>High-jewelry artisan labor</span>
             </div>
           </Card>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-border/40 space-x-1">
+        {/* Segmented Workstation Tabs */}
+        <div className="flex items-center gap-1.5 p-1 bg-surface-elevated/80 border border-surface-border rounded-xl overflow-x-auto">
           <button
             onClick={() => setActiveTab("jobs")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-mono font-semibold rounded-lg transition-all whitespace-nowrap ${
               activeTab === "jobs"
-                ? "border-amber-400 text-amber-400"
-                : "border-transparent text-muted-foreground hover:text-white"
+                ? "bg-gold text-obsidian shadow-sm font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface/60"
             }`}
           >
-            <Hammer className="h-4 w-4" /> Active Job Cards ({jobs.length})
+            <Hammer className="h-3.5 w-3.5" />
+            <span>Active Job Cards ({jobs.length})</span>
           </button>
+
           <button
             onClick={() => setActiveTab("reconciliation")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-mono font-semibold rounded-lg transition-all whitespace-nowrap ${
               activeTab === "reconciliation"
-                ? "border-amber-400 text-amber-400"
-                : "border-transparent text-muted-foreground hover:text-white"
+                ? "bg-gold text-obsidian shadow-sm font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface/60"
             }`}
           >
-            <Scale className="h-4 w-4" /> Metal Loss & Scrap Reconciliation
+            <Scale className="h-3.5 w-3.5" />
+            <span>Metal Loss &amp; Scrap Reconciliation</span>
           </button>
+
           <button
             onClick={() => setActiveTab("karigars")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-mono font-semibold rounded-lg transition-all whitespace-nowrap ${
               activeTab === "karigars"
-                ? "border-amber-400 text-amber-400"
-                : "border-transparent text-muted-foreground hover:text-white"
+                ? "bg-gold text-obsidian shadow-sm font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface/60"
             }`}
           >
-            <UserCheck className="h-4 w-4" /> Master Karigars Directory ({karigars.length})
+            <UserCheck className="h-3.5 w-3.5" />
+            <span>Master Karigars Directory ({karigars.length})</span>
           </button>
+
           <button
             onClick={() => setActiveTab("boms")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-mono font-semibold rounded-lg transition-all whitespace-nowrap ${
               activeTab === "boms"
-                ? "border-amber-400 text-amber-400"
-                : "border-transparent text-muted-foreground hover:text-white"
+                ? "bg-gold text-obsidian shadow-sm font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface/60"
             }`}
           >
-            <FileSpreadsheet className="h-4 w-4" /> BOM Design Recipes ({boms.length})
+            <FileSpreadsheet className="h-3.5 w-3.5" />
+            <span>BOM Design Recipes ({boms.length})</span>
           </button>
+
           <button
             onClick={() => setActiveTab("challans")}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-mono font-semibold rounded-lg transition-all whitespace-nowrap ${
               activeTab === "challans"
-                ? "border-amber-400 text-amber-400"
-                : "border-transparent text-muted-foreground hover:text-white"
+                ? "bg-gold text-obsidian shadow-sm font-bold"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface/60"
             }`}
             data-testid="itc04-challans-tab-btn"
           >
-            <FileText className="h-4 w-4" /> Form GST ITC-04 Challans
+            <FileText className="h-3.5 w-3.5" />
+            <span>Form GST ITC-04 Challans</span>
           </button>
         </div>
 
@@ -681,22 +730,22 @@ export default function ManufacturingPage() {
         {activeTab === "jobs" && (
           <div className="space-y-4">
             {/* Filter Bar */}
-            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-surface-card p-3 rounded-xl border border-surface-border">
               <div className="relative w-full sm:w-80">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search job #, artisan or design..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 bg-card/60 border-border/40 h-9 text-xs"
+                  className="pl-9 bg-surface-elevated border-surface-border h-9 text-xs text-foreground placeholder:text-muted-foreground/60"
                 />
               </div>
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <span className="text-xs text-muted-foreground whitespace-nowrap">Filter Karigar:</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground font-mono whitespace-nowrap">Filter Karigar:</span>
                 <select
                   value={selectedKarigarFilter}
                   onChange={(e) => setSelectedKarigarFilter(e.target.value)}
-                  className="bg-card/80 border border-border/40 text-xs rounded-md px-3 py-1.5 text-white"
+                  className="bg-surface-elevated border border-surface-border text-xs rounded-lg px-3 py-1.5 text-foreground font-mono focus:outline-none focus:border-gold"
                 >
                   <option value="ALL">All Craftsmen</option>
                   {karigars.map((k) => (
@@ -713,52 +762,59 @@ export default function ManufacturingPage() {
               {filteredJobs.map((job) => (
                 <Card
                   key={job.id}
-                  className="bg-card/40 border-border/40 p-5 hover:border-amber-500/30 transition-colors"
+                  className="bg-surface-card border-surface-border p-5 hover:border-gold/40 hover:shadow-md transition-all duration-200 rounded-xl"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2.5">
-                        <span className="font-mono text-sm font-bold text-amber-400">{job.jobNumber}</span>
+                    <div className="space-y-2 flex-1 min-w-0">
+                      <div className="flex items-center gap-2.5 flex-wrap">
+                        <span className="font-mono text-sm font-bold text-gold tracking-wider">{job.jobNumber}</span>
                         <Badge
-                          variant="outline"
-                          className={
+                          variant={
                             job.status === "COMPLETED"
-                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 text-[10px]"
+                              ? "emerald"
                               : job.status === "QUALITY_INSPECTION"
-                                ? "bg-purple-500/10 text-purple-400 border-purple-500/30 text-[10px]"
-                                : "bg-blue-500/10 text-blue-400 border-blue-500/30 text-[10px]"
+                                ? "gold"
+                                : "outline"
                           }
+                          className="text-[10px] font-mono"
                         >
                           {job.status.replace("_", " ")}
                         </Badge>
-                        <Badge variant="outline" className="bg-zinc-800 text-zinc-300 border-zinc-700 text-[10px]">
+                        <Badge variant="outline" className="bg-surface-elevated border-surface-border text-muted-foreground text-[10px] font-mono">
                           {job.category}
                         </Badge>
                       </div>
-                      <h3 className="text-base font-semibold text-white">{job.title}</h3>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1 text-zinc-300">
-                          <UserCheck className="h-3 w-3 text-amber-400" /> Artisan: <strong>{job.karigarName}</strong>
+
+                      <h3 className="text-base font-serif font-bold text-foreground tracking-tight">{job.title}</h3>
+
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground font-mono">
+                        <span className="flex items-center gap-1.5 text-foreground">
+                          <UserCheck className="h-3.5 w-3.5 text-gold shrink-0" />
+                          <span>Artisan: <strong>{job.karigarName}</strong></span>
                         </span>
                         <span>Due: {job.dueDate}</span>
                         <span>Labor Charge: ₹ {job.laborChargeInr.toLocaleString("en-IN")}</span>
-                        {job.bomCode && <span className="font-mono text-zinc-400">Recipe: {job.bomCode}</span>}
+                        {job.bomCode && (
+                          <span className="text-gold/90 bg-gold/10 px-2 py-0.5 rounded border border-gold/20">
+                            Recipe: {job.bomCode}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Weight & Carat Specs */}
-                    <div className="flex flex-wrap items-center gap-3 border-t lg:border-t-0 lg:border-l border-border/30 pt-3 lg:pt-0 lg:pl-5">
+                    {/* Weight & Carat Metrology Specs */}
+                    <div className="flex flex-wrap items-center gap-4 border-t lg:border-t-0 lg:border-l border-surface-border pt-3 lg:pt-0 lg:pl-5 shrink-0">
                       <div className="text-right">
-                        <div className="text-xs text-muted-foreground">Issued Gross Metal</div>
-                        <div className="text-sm font-bold text-white font-mono">{job.issuedGrossMetalGrams.toFixed(3)} g</div>
-                        <div className="text-[10px] text-zinc-400">({job.issuedPureGoldGrams}g Au + {job.issuedAlloyGrams}g Alloy)</div>
+                        <div className="text-[11px] text-muted-foreground font-mono">Issued Gross Metal</div>
+                        <div className="text-sm font-bold text-foreground font-mono tabular-nums">{job.issuedGrossMetalGrams.toFixed(3)} g</div>
+                        <div className="text-[10px] text-muted-foreground font-mono">({job.issuedPureGoldGrams}g Au + {job.issuedAlloyGrams}g Alloy)</div>
                       </div>
 
                       {job.issuedDiamondCarats > 0 && (
-                        <div className="text-right pl-3 border-l border-border/20">
-                          <div className="text-xs text-muted-foreground">Gemstones</div>
-                          <div className="text-sm font-bold text-cyan-400 font-mono">{job.issuedDiamondCarats.toFixed(2)} ct</div>
-                          <div className="text-[10px] text-zinc-400">Diamonds</div>
+                        <div className="text-right pl-4 border-l border-surface-border">
+                          <div className="text-[11px] text-muted-foreground font-mono">Gemstones</div>
+                          <div className="text-sm font-bold text-foreground font-mono tabular-nums">{job.issuedDiamondCarats.toFixed(2)} ct</div>
+                          <div className="text-[10px] text-muted-foreground font-mono">Diamonds</div>
                         </div>
                       )}
 
@@ -770,34 +826,38 @@ export default function ManufacturingPage() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleAdvanceStage(job)}
-                                className="h-8 text-xs border-amber-500/30 text-amber-400 hover:bg-amber-500/10 gap-1"
+                                className="h-8 text-xs border-gold/40 text-gold hover:bg-gold/10 font-semibold gap-1 shadow-sm"
                               >
-                                Advance Stage <ArrowRight className="h-3.5 w-3.5" />
+                                <span>Advance Stage</span>
+                                <ArrowRight className="h-3.5 w-3.5" />
                               </Button>
                             )}
                             <Button
                               size="sm"
+                              variant="gold"
                               onClick={() => handleOpenReturnModal(job)}
-                              className="h-8 text-xs bg-amber-500 hover:bg-amber-600 text-black font-semibold gap-1"
+                              className="h-8 text-xs font-semibold gap-1 shadow-sm"
                             >
-                              <Scale className="h-3.5 w-3.5" /> Record Return
+                              <Scale className="h-3.5 w-3.5" />
+                              <span>Record Return</span>
                             </Button>
                           </>
                         )}
                         {job.status === "COMPLETED" && (
-                          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 gap-1 py-1">
-                            <CheckCircle2 className="h-3 w-3" /> Piece Hallmarked & Vaulted
+                          <Badge variant="emerald" className="gap-1 py-1 text-xs font-mono">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            <span>Piece Hallmarked &amp; Vaulted</span>
                           </Badge>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  {/* Stage Progress Timeline */}
-                  <div className="mt-4 pt-4 border-t border-border/20">
+                  {/* Stage Progress Pipeline */}
+                  <div className="mt-4 pt-4 border-t border-surface-border">
                     <div className="text-[11px] font-medium text-muted-foreground mb-2 flex items-center justify-between">
-                      <span>Crafting Lifecycle Pipeline:</span>
-                      <span className="text-amber-400 font-mono">Current Stage: {job.stage}</span>
+                      <span className="font-mono font-semibold">Crafting Lifecycle Pipeline:</span>
+                      <span className="text-gold font-mono font-bold">Current Stage: {job.stage}</span>
                     </div>
                     <div className="grid grid-cols-7 gap-1.5">
                       {CRAFTING_STAGES.map((s, idx) => {
@@ -808,12 +868,12 @@ export default function ManufacturingPage() {
                         return (
                           <div
                             key={s}
-                            className={`rounded-md p-1.5 text-center text-[10px] font-medium transition-all ${
+                            className={`rounded-lg p-2 text-center text-[10px] font-mono transition-all ${
                               isCurrent
-                                ? "bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20"
+                                ? "bg-gradient-to-r from-gold to-gold-dark text-black font-bold shadow-md shadow-gold/20 border border-gold/40"
                                 : isPast
-                                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                                  : "bg-zinc-800/60 text-zinc-500 border border-zinc-700/30"
+                                  ? "bg-status-emerald/10 text-status-emerald border border-status-emerald/30 font-medium"
+                                  : "bg-surface-elevated text-muted-foreground/60 border border-surface-border/60"
                             }`}
                           >
                             {s.replace("_", " ")}
@@ -831,79 +891,85 @@ export default function ManufacturingPage() {
         {/* TAB 2: METAL LOSS & RECONCILIATION */}
         {activeTab === "reconciliation" && (
           <div className="space-y-4">
-            <Card className="bg-card/40 border-border/40 p-5">
-              <div className="mb-4">
-                <h3 className="text-base font-semibold text-white">Artisan Metal Reconciliation & Shrinkage Ledger</h3>
-                <p className="text-xs text-muted-foreground">
+            <Card className="bg-surface-card border-surface-border p-6 rounded-2xl shadow-sm">
+              <div className="mb-5 space-y-1">
+                <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest font-semibold">
+                  <Scale className="w-4 h-4 text-gold" />
+                  <span>Shrinkage SLA Governance</span>
+                </div>
+                <h3 className="text-xl font-serif font-black tracking-tight text-foreground">
+                  Artisan Metal Reconciliation &amp; Shrinkage Ledger
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   In accordance with statutory hallmarking and internal atelier loss tolerance limits (Allowed ≤ 1.20% – 1.50%).
                 </p>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto rounded-xl border border-surface-border">
                 <table className="w-full text-left text-xs">
-                  <thead className="border-b border-border/40 text-muted-foreground uppercase text-[10px] tracking-wider">
+                  <thead className="bg-surface-elevated/80 border-b border-surface-border text-muted-foreground uppercase text-[10px] font-mono tracking-wider">
                     <tr>
-                      <th className="py-2.5 px-3">Job Order</th>
-                      <th className="py-2.5 px-3">Artisan</th>
-                      <th className="py-2.5 px-3 text-right">Issued Metal (g)</th>
-                      <th className="py-2.5 px-3 text-right">Crafted Piece (g)</th>
-                      <th className="py-2.5 px-3 text-right">Clean Scrap (g)</th>
-                      <th className="py-2.5 px-3 text-right">Unrecovered Loss (g)</th>
-                      <th className="py-2.5 px-3 text-right">Actual Loss %</th>
-                      <th className="py-2.5 px-3 text-right">Allowed SLA</th>
-                      <th className="py-2.5 px-3 text-center">Status</th>
-                      <th className="py-2.5 px-3 text-right">Actions</th>
+                      <th className="py-3 px-3.5">Job Order</th>
+                      <th className="py-3 px-3.5">Artisan</th>
+                      <th className="py-3 px-3.5 text-right">Issued Metal (g)</th>
+                      <th className="py-3 px-3.5 text-right">Crafted Piece (g)</th>
+                      <th className="py-3 px-3.5 text-right">Clean Scrap (g)</th>
+                      <th className="py-3 px-3.5 text-right">Unrecovered Loss (g)</th>
+                      <th className="py-3 px-3.5 text-right">Actual Loss %</th>
+                      <th className="py-3 px-3.5 text-right">Allowed SLA</th>
+                      <th className="py-3 px-3.5 text-center">Status</th>
+                      <th className="py-3 px-3.5 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border/20 text-zinc-300">
+                  <tbody className="divide-y divide-surface-border text-foreground font-mono">
                     {jobs.map((job) => {
                       const hasReturned = job.returnedCraftedPieceGrams > 0;
                       return (
-                        <tr key={job.id} className="hover:bg-muted/10 transition-colors">
-                          <td className="py-3 px-3 font-mono font-medium text-amber-400">{job.jobNumber}</td>
-                          <td className="py-3 px-3 text-white font-medium">{job.karigarName}</td>
-                          <td className="py-3 px-3 text-right font-mono">{job.issuedGrossMetalGrams.toFixed(3)}</td>
-                          <td className="py-3 px-3 text-right font-mono">
+                        <tr key={job.id} className="hover:bg-surface-elevated/40 transition-colors">
+                          <td className="py-3 px-3.5 font-bold text-gold">{job.jobNumber}</td>
+                          <td className="py-3 px-3.5 font-sans font-medium text-foreground">{job.karigarName}</td>
+                          <td className="py-3 px-3.5 text-right tabular-nums">{job.issuedGrossMetalGrams.toFixed(3)}</td>
+                          <td className="py-3 px-3.5 text-right tabular-nums">
                             {hasReturned ? job.returnedCraftedPieceGrams.toFixed(3) : "—"}
                           </td>
-                          <td className="py-3 px-3 text-right font-mono">
+                          <td className="py-3 px-3.5 text-right tabular-nums">
                             {hasReturned ? job.returnedScrapMetalGrams.toFixed(3) : "—"}
                           </td>
-                          <td className="py-3 px-3 text-right font-mono">
+                          <td className="py-3 px-3.5 text-right tabular-nums">
                             {hasReturned ? (
-                              <span className="text-amber-300 font-semibold">{job.unrecoveredLossGrams.toFixed(3)}</span>
+                              <span className="text-gold font-bold">{job.unrecoveredLossGrams.toFixed(3)}</span>
                             ) : (
                               "—"
                             )}
                           </td>
-                          <td className="py-3 px-3 text-right font-mono font-bold">
+                          <td className="py-3 px-3.5 text-right tabular-nums font-bold">
                             {hasReturned ? `${job.actualLossPct.toFixed(2)}%` : "—"}
                           </td>
-                          <td className="py-3 px-3 text-right font-mono text-muted-foreground">
+                          <td className="py-3 px-3.5 text-right text-muted-foreground tabular-nums">
                             ≤ {job.karigarTolerancePct.toFixed(2)}%
                           </td>
-                          <td className="py-3 px-3 text-center">
+                          <td className="py-3 px-3.5 text-center">
                             {!hasReturned ? (
-                              <Badge variant="outline" className="bg-zinc-800 text-zinc-400 border-zinc-700 text-[10px]">
+                              <Badge variant="outline" className="bg-surface-elevated border-surface-border text-muted-foreground text-[10px]">
                                 IN PROGRESS
                               </Badge>
                             ) : job.lossStatus === "WITHIN_TOLERANCE" ? (
-                              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 text-[10px]">
+                              <Badge variant="emerald" className="text-[10px]">
                                 PASS (TOLERANCE OK)
                               </Badge>
                             ) : (
-                              <Badge variant="outline" className="bg-rose-500/10 text-rose-400 border-rose-500/30 text-[10px]">
+                              <Badge variant="rose" className="text-[10px]">
                                 EXCESS LOSS
                               </Badge>
                             )}
                           </td>
-                          <td className="py-3 px-3 text-right">
+                          <td className="py-3 px-3.5 text-right">
                             {hasReturned && (
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setSettleModalJob(job)}
-                                className="h-6 text-[10px] px-2 font-mono border-amber-400/40 text-amber-400 hover:bg-amber-400/10"
+                                className="h-6 text-[10px] px-2.5 font-mono border-gold/40 text-gold hover:bg-gold/10"
                                 data-testid={`settle-loss-btn-${job.jobNumber}`}
                               >
                                 Settle Loss
@@ -930,37 +996,42 @@ export default function ManufacturingPage() {
                 .reduce((sum, j) => sum + j.issuedPureGoldGrams, 0);
 
               return (
-                <Card key={k.id} className="bg-card/40 border-border/40 p-4 space-y-3">
+                <Card key={k.id} className="bg-surface-card border-surface-border p-5 hover:border-gold/40 hover:shadow-md transition-all duration-200 rounded-xl space-y-4">
                   <div className="flex items-start justify-between">
-                    <div>
-                      <span className="font-mono text-xs text-amber-400">{k.code}</span>
-                      <h4 className="text-sm font-bold text-white mt-0.5">{k.name}</h4>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gold/10 border border-gold/25 flex items-center justify-center text-gold font-serif font-black text-sm shrink-0">
+                        {k.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
+                      </div>
+                      <div>
+                        <span className="font-mono text-xs text-gold font-bold">{k.code}</span>
+                        <h4 className="text-sm font-serif font-bold text-foreground mt-0.5">{k.name}</h4>
+                      </div>
                     </div>
-                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 text-[10px]">
+                    <Badge variant="emerald" className="text-[10px] font-mono">
                       ACTIVE
                     </Badge>
                   </div>
 
-                  <div className="text-xs space-y-1.5 text-zinc-300">
+                  <div className="text-xs space-y-2 text-foreground font-mono border-t border-surface-border pt-3">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Specialization:</span>
-                      <span className="font-medium text-amber-300">{k.specialization.replace(/_/g, " ")}</span>
+                      <span className="text-muted-foreground font-sans">Specialization:</span>
+                      <span className="font-semibold text-gold font-sans">{k.specialization.replace(/_/g, " ")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Loss Tolerance:</span>
-                      <span className="font-mono font-bold text-white">≤ {k.lossTolerancePct.toFixed(2)}%</span>
+                      <span className="text-muted-foreground font-sans">Loss Tolerance:</span>
+                      <span className="font-bold text-foreground">≤ {k.lossTolerancePct.toFixed(2)}%</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Gold in Custody:</span>
-                      <span className="font-mono text-amber-400 font-bold">{activeGold.toFixed(3)} g</span>
+                      <span className="text-muted-foreground font-sans">Gold in Custody:</span>
+                      <span className="text-gold font-bold">{activeGold.toFixed(3)} g</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Active Orders:</span>
-                      <span className="font-bold text-white">{assignedJobs.filter((j) => j.status !== "COMPLETED").length}</span>
+                      <span className="text-muted-foreground font-sans">Active Orders:</span>
+                      <span className="font-bold text-foreground">{assignedJobs.filter((j) => j.status !== "COMPLETED").length}</span>
                     </div>
                   </div>
 
-                  <div className="border-t border-border/20 pt-2 text-[11px] text-muted-foreground">
+                  <div className="border-t border-surface-border pt-2.5 text-[11px] text-muted-foreground font-mono space-y-0.5">
                     <div>{k.address}</div>
                     {k.phone && <div>Tel: {k.phone}</div>}
                   </div>
@@ -974,49 +1045,51 @@ export default function ManufacturingPage() {
         {activeTab === "boms" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {boms.map((bom) => (
-              <Card key={bom.id} className="bg-card/40 border-border/40 p-5 space-y-3">
+              <Card key={bom.id} className="bg-surface-card border-surface-border p-5 hover:border-gold/40 hover:shadow-md transition-all duration-200 rounded-xl space-y-3.5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="font-mono text-xs text-amber-400 font-bold">{bom.bomCode}</span>
-                    <h4 className="text-sm font-bold text-white mt-0.5">{bom.name}</h4>
+                    <span className="font-mono text-xs text-gold font-bold">{bom.bomCode}</span>
+                    <h4 className="text-sm font-serif font-bold text-foreground mt-0.5">{bom.name}</h4>
                   </div>
-                  <Badge variant="outline" className="bg-zinc-800 text-zinc-300 border-zinc-700 text-[10px]">
+                  <Badge variant="outline" className="bg-surface-elevated border-surface-border text-muted-foreground text-[10px] font-mono">
                     {bom.category}
                   </Badge>
                 </div>
 
-                <div className="text-xs space-y-1.5 text-zinc-300 border-t border-border/20 pt-2">
+                <div className="text-xs space-y-2 text-foreground font-mono border-t border-surface-border pt-3">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Target Purity:</span>
-                    <span className="font-semibold text-white">{bom.targetPurity}</span>
+                    <span className="text-muted-foreground font-sans">Target Purity:</span>
+                    <span className="font-semibold text-foreground">{bom.targetPurity}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Target Gross Weight:</span>
-                    <span className="font-mono font-bold text-amber-400">{bom.targetGrossWeightGrams.toFixed(2)} g</span>
+                    <span className="text-muted-foreground font-sans">Target Gross Weight:</span>
+                    <span className="font-bold text-gold tabular-nums">{bom.targetGrossWeightGrams.toFixed(2)} g</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Fine Gold Net:</span>
-                    <span className="font-mono text-white">{bom.targetNetGoldGrams.toFixed(2)} g</span>
+                    <span className="text-muted-foreground font-sans">Fine Gold Net:</span>
+                    <span className="text-foreground tabular-nums">{bom.targetNetGoldGrams.toFixed(2)} g</span>
                   </div>
                   {bom.targetDiamondCarats > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Diamonds Required:</span>
-                      <span className="font-mono text-cyan-400 font-bold">{bom.targetDiamondCarats.toFixed(2)} ct</span>
+                      <span className="text-muted-foreground font-sans">Diamonds Required:</span>
+                      <span className="font-bold text-foreground tabular-nums">{bom.targetDiamondCarats.toFixed(2)} ct</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Standard Making Charge:</span>
-                    <span className="font-bold text-emerald-400">₹ {bom.standardMakingChargeInr.toLocaleString("en-IN")}</span>
+                    <span className="text-muted-foreground font-sans">Standard Making Charge:</span>
+                    <span className="font-bold text-status-emerald tabular-nums">₹ {bom.standardMakingChargeInr.toLocaleString("en-IN")}</span>
                   </div>
                 </div>
 
-                <div className="border-t border-border/20 pt-2">
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Components:</span>
-                  <div className="mt-1.5 space-y-1">
+                <div className="border-t border-surface-border pt-3">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider font-mono">
+                    Components:
+                  </span>
+                  <div className="mt-2 space-y-1.5">
                     {bom.componentsJson.map((c, i) => (
-                      <div key={i} className="text-[11px] text-zinc-400 flex justify-between bg-zinc-900/50 px-2 py-1 rounded">
-                        <span>{c.component || c.type}</span>
-                        <span className="font-mono text-zinc-300">{c.qty || `${c.weightGrams}g` || `${c.carats}ct`}</span>
+                      <div key={i} className="text-[11px] text-muted-foreground flex justify-between bg-surface-elevated px-2.5 py-1 rounded-md border border-surface-border/50 font-mono">
+                        <span className="text-foreground">{c.component || c.type}</span>
+                        <span className="font-bold text-gold">{c.qty || `${c.weightGrams}g` || `${c.carats}ct`}</span>
                       </div>
                     ))}
                   </div>
@@ -1033,24 +1106,29 @@ export default function ManufacturingPage() {
 
         {/* ISSUE JOB CARD MODAL */}
         <Dialog open={isIssueModalOpen} onOpenChange={setIsIssueModalOpen}>
-          <DialogContent className="sm:max-w-[550px] bg-zinc-950 border-zinc-800 text-white">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-white">
-                <Hammer className="h-5 w-5 text-amber-400" /> Issue Manufacturing Job Card (Karkhana Pass)
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground">
-                Authorize issue of raw fine gold grains, master alloys, and precious gemstones to a master artisan.
-              </DialogDescription>
-            </DialogHeader>
+          <DialogContent className="sm:max-w-[550px] bg-surface-card border border-surface-border text-foreground shadow-2xl rounded-2xl p-0 overflow-hidden">
+            <div className="p-5 border-b border-surface-border bg-surface-elevated/70">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2.5 text-foreground font-serif text-base font-bold">
+                  <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/25">
+                    <Hammer className="h-4 w-4 text-gold" />
+                  </div>
+                  <span>Issue Manufacturing Job Card (Karkhana Pass)</span>
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  Authorize issue of raw fine gold grains, master alloys, and precious gemstones to a master artisan.
+                </DialogDescription>
+              </DialogHeader>
+            </div>
 
-            <form onSubmit={handleIssueJobCard} className="space-y-4 text-xs">
+            <form onSubmit={handleIssueJobCard} className="p-6 space-y-4 text-xs font-mono">
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-muted-foreground">Assigned Master Karigar *</label>
+                <div className="space-y-1.5">
+                  <label className="text-muted-foreground font-sans">Assigned Master Karigar *</label>
                   <select
                     value={issueKarigarId}
                     onChange={(e) => setIssueKarigarId(e.target.value)}
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded-md p-2 text-white"
+                    className="w-full bg-surface-elevated border border-surface-border rounded-lg p-2 text-foreground text-xs focus:outline-none focus:border-gold"
                     required
                   >
                     <option value="">Select Craftsman</option>
@@ -1062,8 +1140,8 @@ export default function ManufacturingPage() {
                   </select>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-muted-foreground">Select BOM Recipe (Optional)</label>
+                <div className="space-y-1.5">
+                  <label className="text-muted-foreground font-sans">Select BOM Recipe (Optional)</label>
                   <select
                     value={issueBomId}
                     onChange={(e) => {
@@ -1077,7 +1155,7 @@ export default function ManufacturingPage() {
                         setIssueLaborChargeInr(selected.standardMakingChargeInr.toString());
                       }
                     }}
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded-md p-2 text-white"
+                    className="w-full bg-surface-elevated border border-surface-border rounded-lg p-2 text-foreground text-xs focus:outline-none focus:border-gold"
                   >
                     <option value="">Custom Piece (No Recipe)</option>
                     {boms.map((b) => (
@@ -1089,109 +1167,111 @@ export default function ManufacturingPage() {
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-muted-foreground">Piece Title / Design Description *</label>
+              <div className="space-y-1.5">
+                <label className="text-muted-foreground font-sans">Piece Title / Design Description *</label>
                 <Input
                   value={issueTitle}
                   onChange={(e) => setIssueTitle(e.target.value)}
                   placeholder="e.g. 18K Oval Solitaire Halo Ring"
-                  className="bg-zinc-900 border-zinc-700 text-xs"
+                  className="bg-surface-elevated border-surface-border text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-gold"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-muted-foreground">Category *</label>
+                <div className="space-y-1.5">
+                  <label className="text-muted-foreground font-sans">Category *</label>
                   <Input
                     value={issueCategory}
                     onChange={(e) => setIssueCategory(e.target.value)}
                     placeholder="Rings & Solitaires"
-                    className="bg-zinc-900 border-zinc-700 text-xs"
+                    className="bg-surface-elevated border-surface-border text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-gold"
                     required
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-muted-foreground">Completion Due Date *</label>
+                <div className="space-y-1.5">
+                  <label className="text-muted-foreground font-sans">Completion Due Date *</label>
                   <Input
                     type="date"
                     value={issueDueDate}
                     onChange={(e) => setIssueDueDate(e.target.value)}
-                    className="bg-zinc-900 border-zinc-700 text-xs"
+                    className="bg-surface-elevated border-surface-border text-xs text-foreground focus:border-gold"
                     required
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 bg-zinc-900/60 p-3 rounded-lg border border-zinc-800">
-                <div className="space-y-1">
-                  <label className="text-amber-400 font-semibold">24K Pure Gold (g) *</label>
+              <div className="grid grid-cols-3 gap-3 bg-surface-elevated/70 p-3 rounded-xl border border-surface-border">
+                <div className="space-y-1.5">
+                  <label className="text-gold font-bold font-sans">24K Pure Gold (g) *</label>
                   <Input
                     type="number"
                     step="0.001"
                     value={issuePureGoldGrams}
                     onChange={(e) => setIssuePureGoldGrams(e.target.value)}
-                    className="bg-zinc-900 border-zinc-700 font-mono text-xs"
+                    className="bg-surface border-surface-border font-mono text-xs text-foreground focus:border-gold"
                     required
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-zinc-300">Master Alloy (g)</label>
+                <div className="space-y-1.5">
+                  <label className="text-foreground font-medium font-sans">Master Alloy (g)</label>
                   <Input
                     type="number"
                     step="0.001"
                     value={issueAlloyGrams}
                     onChange={(e) => setIssueAlloyGrams(e.target.value)}
-                    className="bg-zinc-900 border-zinc-700 font-mono text-xs"
+                    className="bg-surface border-surface-border font-mono text-xs text-foreground focus:border-gold"
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-cyan-400">Diamonds (Carats)</label>
+                <div className="space-y-1.5">
+                  <label className="text-gold font-medium font-sans">Diamonds (Carats)</label>
                   <Input
                     type="number"
                     step="0.01"
                     value={issueDiamondCarats}
                     onChange={(e) => setIssueDiamondCarats(e.target.value)}
-                    className="bg-zinc-900 border-zinc-700 font-mono text-xs"
+                    className="bg-surface border-surface-border font-mono text-xs text-foreground focus:border-gold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-muted-foreground">Artisan Making Charge (₹)</label>
+                <div className="space-y-1.5">
+                  <label className="text-muted-foreground font-sans">Artisan Making Charge (₹)</label>
                   <Input
                     type="number"
                     value={issueLaborChargeInr}
                     onChange={(e) => setIssueLaborChargeInr(e.target.value)}
-                    className="bg-zinc-900 border-zinc-700 text-xs font-mono"
+                    className="bg-surface-elevated border-surface-border text-xs font-mono text-foreground focus:border-gold"
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-muted-foreground">Special Instructions / Notes</label>
+                <div className="space-y-1.5">
+                  <label className="text-muted-foreground font-sans">Special Instructions / Notes</label>
                   <Input
                     value={issueNotes}
                     onChange={(e) => setIssueNotes(e.target.value)}
                     placeholder="e.g. Micro-claw prongs, antique kundan"
-                    className="bg-zinc-900 border-zinc-700 text-xs"
+                    className="bg-surface-elevated border-surface-border text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-gold"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
+              <div className="flex justify-end gap-2.5 pt-3 border-t border-surface-border">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsIssueModalOpen(false)}
-                  className="border-zinc-700 text-zinc-300 h-9 text-xs"
+                  className="h-9 text-xs"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-amber-500 hover:bg-amber-600 text-black font-semibold h-9 text-xs gap-1.5"
+                  variant="gold"
+                  className="font-semibold h-9 text-xs gap-1.5 shadow-md"
                 >
-                  <Check className="h-4 w-4" /> Issue Job Order
+                  <Check className="h-4 w-4" />
+                  <span>Issue Job Order</span>
                 </Button>
               </div>
             </form>
@@ -1200,59 +1280,64 @@ export default function ManufacturingPage() {
 
         {/* RECORD RETURN & SCRAP WEIGHING MODAL */}
         <Dialog open={isReturnModalOpen} onOpenChange={setIsReturnModalOpen}>
-          <DialogContent className="sm:max-w-[500px] bg-zinc-950 border-zinc-800 text-white">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-white">
-                <Scale className="h-5 w-5 text-amber-400" /> Record Artisan Return & Scrap Weighing
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground">
-                Weigh crafted piece and collected clean scrap sprues to reconcile metal loss.
-              </DialogDescription>
-            </DialogHeader>
+          <DialogContent className="sm:max-w-[500px] bg-surface-card border border-surface-border text-foreground shadow-2xl rounded-2xl p-0 overflow-hidden">
+            <div className="p-5 border-b border-surface-border bg-surface-elevated/70">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2.5 text-foreground font-serif text-base font-bold">
+                  <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/25">
+                    <Scale className="h-4 w-4 text-gold" />
+                  </div>
+                  <span>Record Artisan Return &amp; Scrap Weighing</span>
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  Weigh crafted piece and collected clean scrap sprues to reconcile metal loss.
+                </DialogDescription>
+              </DialogHeader>
+            </div>
 
             {selectedJobForReturn && (
-              <form onSubmit={handleSubmitReturn} className="space-y-4 text-xs">
-                <div className="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-1.5">
+              <form onSubmit={handleSubmitReturn} className="p-6 space-y-4 text-xs font-mono">
+                <div className="bg-surface-elevated p-3.5 rounded-xl border border-surface-border space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Job Order:</span>
-                    <span className="font-mono text-amber-400 font-bold">{selectedJobForReturn.jobNumber}</span>
+                    <span className="text-muted-foreground font-sans">Job Order:</span>
+                    <span className="font-bold text-gold">{selectedJobForReturn.jobNumber}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Artisan:</span>
-                    <span className="text-white font-medium">{selectedJobForReturn.karigarName}</span>
+                    <span className="text-muted-foreground font-sans">Artisan:</span>
+                    <span className="text-foreground font-bold font-sans">{selectedJobForReturn.karigarName}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Gross Metal Issued:</span>
-                    <span className="font-mono text-white font-bold">{selectedJobForReturn.issuedGrossMetalGrams.toFixed(3)} g</span>
+                    <span className="text-muted-foreground font-sans">Gross Metal Issued:</span>
+                    <span className="text-foreground font-bold tabular-nums">{selectedJobForReturn.issuedGrossMetalGrams.toFixed(3)} g</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Max Allowed Loss SLA:</span>
-                    <span className="font-mono text-emerald-400 font-bold">≤ {selectedJobForReturn.karigarTolerancePct.toFixed(2)}%</span>
+                    <span className="text-muted-foreground font-sans">Max Allowed Loss SLA:</span>
+                    <span className="text-status-emerald font-bold tabular-nums">≤ {selectedJobForReturn.karigarTolerancePct.toFixed(2)}%</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-emerald-400 font-semibold">Crafted Piece Gross (g) *</label>
+                  <div className="space-y-1.5">
+                    <label className="text-status-emerald font-bold font-sans">Crafted Piece Gross (g) *</label>
                     <Input
                       type="number"
                       step="0.001"
                       value={returnPieceWeightGrams}
                       onChange={(e) => setReturnPieceWeightGrams(e.target.value)}
                       placeholder="e.g. 4.850"
-                      className="bg-zinc-900 border-zinc-700 font-mono text-xs"
+                      className="bg-surface-elevated border-surface-border text-foreground font-mono text-xs focus:border-gold"
                       required
                     />
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-zinc-300 font-semibold">Clean Scrap Sprues (g) *</label>
+                  <div className="space-y-1.5">
+                    <label className="text-foreground font-bold font-sans">Clean Scrap Sprues (g) *</label>
                     <Input
                       type="number"
                       step="0.001"
                       value={returnScrapWeightGrams}
                       onChange={(e) => setReturnScrapWeightGrams(e.target.value)}
                       placeholder="e.g. 2.410"
-                      className="bg-zinc-900 border-zinc-700 font-mono text-xs"
+                      className="bg-surface-elevated border-surface-border text-foreground font-mono text-xs focus:border-gold"
                       required
                     />
                   </div>
@@ -1260,7 +1345,7 @@ export default function ManufacturingPage() {
 
                 {/* Real-time Loss Calculation Preview */}
                 {returnPieceWeightGrams && returnScrapWeightGrams && (
-                  <div className="bg-zinc-900 p-3 rounded-md border border-zinc-800 space-y-1 text-xs">
+                  <div className="bg-surface-elevated p-3.5 rounded-xl border border-surface-border space-y-1.5 text-xs">
                     {(() => {
                       const p = parseFloat(returnPieceWeightGrams) || 0;
                       const s = parseFloat(returnScrapWeightGrams) || 0;
@@ -1273,18 +1358,18 @@ export default function ManufacturingPage() {
                       return (
                         <>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Total Returned Metal:</span>
-                            <span className="font-mono text-white">{totalRet.toFixed(3)} g</span>
+                            <span className="text-muted-foreground font-sans">Total Returned Metal:</span>
+                            <span className="text-foreground font-bold tabular-nums">{totalRet.toFixed(3)} g</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Unrecovered Filing Dust / Loss:</span>
-                            <span className="font-mono text-amber-300 font-bold">{loss.toFixed(3)} g</span>
+                            <span className="text-muted-foreground font-sans">Unrecovered Filing Dust / Loss:</span>
+                            <span className="text-gold font-bold tabular-nums">{loss.toFixed(3)} g</span>
                           </div>
-                          <div className="flex justify-between items-center pt-1 border-t border-zinc-800">
-                            <span className="text-muted-foreground">Actual Loss Percentage:</span>
+                          <div className="flex justify-between items-center pt-2 border-t border-surface-border">
+                            <span className="text-muted-foreground font-sans">Actual Loss Percentage:</span>
                             <Badge
-                              variant="outline"
-                              className={isOk ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-mono" : "bg-rose-500/10 text-rose-400 border-rose-500/30 font-mono"}
+                              variant={isOk ? "emerald" : "rose"}
+                              className="font-mono text-xs"
                             >
                               {pct.toFixed(2)}% ({isOk ? "Within Tolerance" : "Excess Loss"})
                             </Badge>
@@ -1295,30 +1380,32 @@ export default function ManufacturingPage() {
                   </div>
                 )}
 
-                <div className="space-y-1">
-                  <label className="text-muted-foreground">Inspection Notes</label>
+                <div className="space-y-1.5">
+                  <label className="text-muted-foreground font-sans">Inspection Notes</label>
                   <Input
                     value={returnNotes}
                     onChange={(e) => setReturnNotes(e.target.value)}
                     placeholder="e.g. Sprues recovered, weighed on Mettler Toledo scale"
-                    className="bg-zinc-900 border-zinc-700 text-xs"
+                    className="bg-surface-elevated border-surface-border text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-gold"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
+                <div className="flex justify-end gap-2.5 pt-3 border-t border-surface-border">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setIsReturnModalOpen(false)}
-                    className="border-zinc-700 text-zinc-300 h-9 text-xs"
+                    className="h-9 text-xs"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-amber-500 hover:bg-amber-600 text-black font-semibold h-9 text-xs gap-1.5"
+                    variant="gold"
+                    className="font-semibold h-9 text-xs gap-1.5 shadow-md"
                   >
-                    <Check className="h-4 w-4" /> Finalize Weighing & Advance to QC
+                    <Check className="h-4 w-4" />
+                    <span>Finalize Weighing &amp; Advance to QC</span>
                   </Button>
                 </div>
               </form>

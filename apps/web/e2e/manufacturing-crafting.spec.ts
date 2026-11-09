@@ -16,7 +16,7 @@ test.describe("Atelier Manufacturing & Karigar Work Orders (Pathway A)", () => {
     await page.goto("/manufacturing");
 
     await expect(page.getByText("JOB-2026-4819")).toBeVisible();
-    await expect(page.locator("strong", { hasText: "Master Rameshwar Chitrakar" })).toBeVisible();
+    await expect(page.locator("strong", { hasText: "Master Rameshwar Chitrakar" }).first()).toBeVisible();
 
     // Verify stage pipeline is visible
     await expect(page.getByText("Crafting Lifecycle Pipeline:").first()).toBeVisible();
