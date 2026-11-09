@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { Tag, Printer, Download, Sparkles, CheckCircle2, ShieldCheck, QrCode } from "lucide-react";
+import { BarcodeRenderer } from "@/components/luxury/BarcodeRenderer";
+import { QrCodeRenderer } from "@/components/luxury/QrCodeRenderer";
 import {
   Dialog,
   DialogContent,
@@ -142,22 +144,21 @@ export function JewelleryTagModal({
                   </p>
                 </div>
 
-                {/* Simulated Code-128 Barcode */}
+                {/* Industrial Code-128 Barcode */}
                 <div className="mt-1">
-                  <div className="h-6 w-full flex items-center space-x-0.5 overflow-hidden">
-                    {[3, 1, 2, 1, 3, 2, 1, 1, 2, 3, 1, 2, 1, 3, 2, 1, 1, 2, 1, 3, 2, 1, 2, 1, 3, 1, 2, 3, 1, 2, 1, 3, 2, 1].map(
-                      (w, i) => (
-                        <div
-                          key={i}
-                          style={{ width: `${w * 1.5}px` }}
-                          className="h-full bg-black shrink-0"
-                        />
-                      ),
-                    )}
+                  <div className="h-6 w-full flex items-center justify-center overflow-hidden bg-white">
+                    <BarcodeRenderer
+                      value={activeTag.serialNumber || activeTag.skuCode}
+                      height={22}
+                      width={1.1}
+                      margin={1}
+                      displayValue={false}
+                      className="max-h-full"
+                    />
                   </div>
                   <div className="flex justify-between items-center text-[8px] font-mono text-neutral-500 mt-0.5">
-                    <span>{activeTag.skuCode}</span>
-                    <span>{activeTag.epcTag ? "RFID" : "BARCODE"}</span>
+                    <span className="font-semibold text-neutral-700">{activeTag.skuCode}</span>
+                    <span className="bg-neutral-100 text-neutral-700 px-1 rounded font-bold">{activeTag.epcTag ? "RFID+BARCODE" : "GS1 CODE-128"}</span>
                   </div>
                 </div>
               </div>
@@ -185,16 +186,15 @@ export function JewelleryTagModal({
                     </div>
                   </div>
 
-                  {/* 2D DataMatrix Simulation */}
-                  <div className="w-8 h-8 bg-black p-0.5 rounded flex flex-wrap gap-0.5 shrink-0">
-                    {Array.from({ length: 16 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className={`w-1.5 h-1.5 ${
-                          (i * 7) % 3 === 0 ? "bg-white" : "bg-black"
-                        }`}
-                      />
-                    ))}
+                  {/* Scannable 2D Tag QR Matrix */}
+                  <div className="shrink-0">
+                    <QrCodeRenderer
+                      value={`JEWELCORE:${activeTag.serialNumber}:${activeTag.metalPurity.replace(/\s+/g, "")}:${activeTag.grossWeightGrams}g:${activeTag.hallmarkId || "HUID-PENDING"}`}
+                      size={36}
+                      margin={0}
+                      errorCorrectionLevel="M"
+                      className="border border-neutral-300 rounded shadow-2xs"
+                    />
                   </div>
                 </div>
 

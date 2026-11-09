@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { HuidRecord } from "@jewelcore/shared";
+import { QrCodeRenderer } from "@/components/luxury/QrCodeRenderer";
 
 interface BisCertificateModalProps {
   isOpen: boolean;
@@ -167,8 +168,18 @@ export function BisCertificateModal({
           {/* Public Verification & BIS Care Portal */}
           <div className="p-4 rounded-lg bg-surface-elevated/50 border border-surface-border flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded bg-white text-black shrink-0">
-                <QrCode className="w-8 h-8" />
+              <div className="shrink-0">
+                <QrCodeRenderer
+                  value={
+                    record.bisCareQrUrl ||
+                    `https://www.manakonline.in/MANAK/bisCare/viewHuidDetails?huid=${encodeURIComponent(record.huid)}`
+                  }
+                  size={64}
+                  margin={1}
+                  errorCorrectionLevel="H"
+                  centerLogo="bis"
+                  caption={record.huid}
+                />
               </div>
               <div>
                 <span className="text-foreground font-bold block">

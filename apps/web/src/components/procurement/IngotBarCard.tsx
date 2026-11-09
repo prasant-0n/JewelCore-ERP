@@ -49,9 +49,7 @@ export function IngotBarCard({
       }`}
     >
       {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
-          Selected
-        </div>
+        <div className="absolute top-0 left-0 bottom-0 w-1 bg-gold rounded-l-xl" />
       )}
 
       {/* Top Header: Bar Code & Tolerance Pill */}

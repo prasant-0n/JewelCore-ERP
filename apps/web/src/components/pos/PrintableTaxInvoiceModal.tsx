@@ -30,6 +30,8 @@ import {
 } from "../../lib/printing/escposFormatter";
 import { toast } from "sonner";
 import { api } from "../../lib/api";
+import { BarcodeRenderer } from "@/components/luxury/BarcodeRenderer";
+import { QrCodeRenderer } from "@/components/luxury/QrCodeRenderer";
 
 interface PrintableTaxInvoiceModalProps {
   isOpen: boolean;
@@ -324,16 +326,23 @@ export function PrintableTaxInvoiceModal({
                   </p>
                 </div>
 
-                <div className="text-right">
+                <div className="text-right flex flex-col items-end">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-stone-500 block">
                     ORIGINAL FOR RECIPIENT
                   </span>
                   <p className="text-sm font-black font-mono text-stone-900 mt-0.5">
                     INVOICE #: {invoiceNumber}
                   </p>
-                  <p className="text-xs font-mono text-stone-600">
+                  <p className="text-xs font-mono text-stone-600 mb-1">
                     DATE: {invoiceDate} • {invoiceTime}
                   </p>
+                  <BarcodeRenderer
+                    value={invoiceNumber}
+                    height={20}
+                    width={0.9}
+                    margin={2}
+                    displayValue={false}
+                  />
                 </div>
               </div>
 
@@ -495,13 +504,25 @@ export function PrintableTaxInvoiceModal({
 
               {/* Signatures & Verification Stamp */}
               <div className="pt-6 flex justify-between items-end text-xs">
-                <div>
-                  <div className="w-16 h-16 rounded border-2 border-stone-400 p-1 flex items-center justify-center bg-stone-100">
-                    <QrCode className="w-14 h-14 text-stone-700" />
-                  </div>
-                  <span className="text-[9px] font-mono text-stone-500 mt-1 block">
-                    e-Invoice IRN Verified
-                  </span>
+                <div className="flex flex-col items-center">
+                  <QrCodeRenderer
+                    value={JSON.stringify({
+                      SellerGstin: "27AABCU9603R1ZM",
+                      BuyerGstin: panNumber || "URP",
+                      DocNo: invoiceNumber,
+                      DocTyp: "INV",
+                      DocDt: invoiceDate,
+                      TotInvVal: finalInvoiceTotal,
+                      ItemCnt: cartPieces.length,
+                      MainHsnCode: "711319",
+                      Irn: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    })}
+                    size={72}
+                    margin={1}
+                    errorCorrectionLevel="H"
+                    centerLogo="gst"
+                    caption="e-Invoice IRN Verified"
+                  />
                 </div>
 
                 <div className="text-center">

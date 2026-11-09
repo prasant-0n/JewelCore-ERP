@@ -13,6 +13,7 @@ import {
   Radio,
   X,
   ArrowRightLeft,
+  Tag,
 } from "lucide-react";
 import {
   Card,
@@ -28,6 +29,8 @@ import { TabularWeight } from "@/components/workstation/TabularWeight";
 import { TabularCurrency } from "@/components/workstation/TabularCurrency";
 import { StatusBadge } from "@/components/workstation/StatusBadge";
 import { toast } from "sonner";
+import { BarcodeRenderer } from "@/components/luxury/BarcodeRenderer";
+import { JewelleryTagModal } from "@/components/common/JewelleryTagModal";
 
 interface PieceLineageInspectorProps {
   piece: InventoryPieceData | null;
@@ -44,6 +47,8 @@ export function PieceLineageInspector({
   onCheckoutClick,
   onTransferClick,
 }: PieceLineageInspectorProps) {
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+
   if (!piece) {
     return (
       <Card className="h-full p-8 flex flex-col items-center justify-center text-center">
@@ -113,16 +118,27 @@ export function PieceLineageInspector({
             </p>
           </div>
 
-          {onClose && (
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onClose}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <BarcodeRenderer
+              value={serialNumber}
+              height={20}
+              width={1.0}
+              margin={2}
+              fontSize={8}
+              displayValue={false}
+              showToolbar={true}
+            />
+            {onClose && (
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={onClose}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Telemetry Status Badges */}
@@ -228,6 +244,16 @@ export function PieceLineageInspector({
       {/* Action Footer */}
       <CardFooter className="p-3 bg-surface-elevated/70 border-t border-surface-border flex gap-2">
         <Button
+          variant="outline"
+          size="sm"
+          className="px-2.5 text-gold border-gold/30 hover:bg-gold/10"
+          title="Print 50×12mm Jewellery Dumbbell Tag"
+          onClick={() => setIsTagModalOpen(true)}
+        >
+          <Tag className="w-3.5 h-3.5 mr-1" />
+          Tag
+        </Button>
+        <Button
           variant="secondary"
           size="sm"
           className="flex-1"
@@ -246,6 +272,27 @@ export function PieceLineageInspector({
           POS Checkout
         </Button>
       </CardFooter>
+
+      {/* Jewellery Barcode & RFID Tag Printing Station */}
+      <JewelleryTagModal
+        isOpen={isTagModalOpen}
+        onClose={() => setIsTagModalOpen(false)}
+        tags={[
+          {
+            serialNumber,
+            skuCode: `SKU-${metalPurity.split(" ")[0]}`,
+            itemName,
+            metalPurity,
+            grossWeightGrams,
+            netWeightGrams: netGoldGrams,
+            diamondCarat,
+            diamondSpecs: diamondClarity && diamondColor ? `${diamondClarity}-${diamondColor}` : undefined,
+            hallmarkId: giaCertNumber || `BIS-${serialNumber.slice(-6)}`,
+            retailPriceInr: priceInr,
+            epcTag: epcRfidTag,
+          },
+        ]}
+      />
     </Card>
   );
 }

@@ -30,6 +30,7 @@ import { TabularWeight } from "@/components/workstation/TabularWeight";
 import { TabularCurrency } from "@/components/workstation/TabularCurrency";
 import { StatusBadge } from "@/components/workstation/StatusBadge";
 import { toast } from "sonner";
+import { BarcodeRenderer } from "@/components/luxury/BarcodeRenderer";
 
 interface IngotInspectorProps {
   ingot: IngotBarItem | null;
@@ -116,16 +117,27 @@ export function IngotInspector({
             </p>
           </div>
 
-          {onClose && (
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onClose}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <BarcodeRenderer
+              value={barCode}
+              height={22}
+              width={1.0}
+              margin={2}
+              fontSize={8}
+              displayValue={false}
+              showToolbar={true}
+            />
+            {onClose && (
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={onClose}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Telemetry Status Badges */}

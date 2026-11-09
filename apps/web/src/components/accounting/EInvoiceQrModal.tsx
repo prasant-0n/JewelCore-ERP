@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { EInvoiceItem } from "@jewelcore/shared";
+import { QrCodeRenderer } from "@/components/luxury/QrCodeRenderer";
+import { BarcodeRenderer } from "@/components/luxury/BarcodeRenderer";
 
 interface EInvoiceQrModalProps {
   isOpen: boolean;
@@ -39,6 +41,20 @@ export function EInvoiceQrModal({
   const [copied, setCopied] = useState(false);
 
   if (!invoice) return null;
+
+  const nicPayload =
+    invoice.signedInvoicePayload ||
+    JSON.stringify({
+      SellerGstin: invoice.supplierGstin || "27AABCJ1982K1Z5",
+      BuyerGstin: invoice.recipientGstin || "URP",
+      DocNo: invoice.invoiceNumber,
+      DocTyp: invoice.docType || "INV",
+      DocDt: invoice.invoiceDate || new Date().toLocaleDateString("en-GB"),
+      TotInvVal: invoice.totalAmountInr,
+      ItemCnt: 1,
+      MainHsnCode: invoice.hsnCode || "7113",
+      Irn: invoice.irn || "IRN-PENDING-VALIDATION",
+    });
 
   const handleCopyIrn = () => {
     if (invoice.irn) {
@@ -94,13 +110,18 @@ export function EInvoiceQrModal({
               </div>
             </div>
 
-            <div className="text-right">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground block">
-                Invoice No
+            <div className="text-right flex flex-col items-end">
+              <span className="text-[10px] font-mono uppercase text-muted-foreground block mb-0.5">
+                Invoice Barcode (Code-128)
               </span>
-              <span className="font-mono font-bold text-gold text-sm">
-                {invoice.invoiceNumber}
-              </span>
+              <BarcodeRenderer
+                value={invoice.invoiceNumber}
+                height={22}
+                width={1.0}
+                margin={2}
+                fontSize={9}
+                displayValue={true}
+              />
             </div>
           </div>
         </div>
@@ -109,49 +130,17 @@ export function EInvoiceQrModal({
         <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
           {/* QR Code and Quick Verification Row */}
           <div className="flex flex-col sm:flex-row items-center gap-6 p-5 rounded-xl bg-surface-elevated border border-surface-border">
-            {/* Visual B2B QR Code */}
-            <div className="w-40 h-40 bg-white rounded-lg p-3 flex flex-col items-center justify-between shrink-0 shadow-md border-2 border-gold/40 relative group">
-              <div className="w-full h-full flex flex-col items-center justify-center text-stone-900 font-mono text-[9px] text-center space-y-1">
-                {/* SVG QR Code Pattern */}
-                <svg
-                  viewBox="0 0 100 100"
-                  className="w-28 h-28 text-black fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* Position detection markers */}
-                  <rect x="0" y="0" width="30" height="30" fill="currentColor" />
-                  <rect x="4" y="4" width="22" height="22" fill="white" />
-                  <rect x="8" y="8" width="14" height="14" fill="currentColor" />
-
-                  <rect x="70" y="0" width="30" height="30" fill="currentColor" />
-                  <rect x="74" y="4" width="22" height="22" fill="white" />
-                  <rect x="78" y="8" width="14" height="14" fill="currentColor" />
-
-                  <rect x="0" y="70" width="30" height="30" fill="currentColor" />
-                  <rect x="4" y="74" width="22" height="22" fill="white" />
-                  <rect x="8" y="78" width="14" height="14" fill="currentColor" />
-
-                  {/* Cryptographic QR Pattern representation */}
-                  <rect x="36" y="8" width="8" height="8" fill="currentColor" />
-                  <rect x="48" y="16" width="6" height="6" fill="currentColor" />
-                  <rect x="58" y="8" width="6" height="6" fill="currentColor" />
-                  <rect x="36" y="24" width="6" height="6" fill="currentColor" />
-                  <rect x="48" y="32" width="12" height="6" fill="currentColor" />
-                  <rect x="12" y="38" width="8" height="8" fill="currentColor" />
-                  <rect x="28" y="42" width="6" height="6" fill="currentColor" />
-                  <rect x="40" y="46" width="18" height="8" fill="currentColor" />
-                  <rect x="68" y="36" width="12" height="10" fill="currentColor" />
-                  <rect x="84" y="48" width="10" height="8" fill="currentColor" />
-                  <rect x="36" y="60" width="8" height="14" fill="currentColor" />
-                  <rect x="48" y="68" width="12" height="8" fill="currentColor" />
-                  <rect x="66" y="62" width="14" height="10" fill="currentColor" />
-                  <rect x="84" y="74" width="10" height="10" fill="currentColor" />
-                  <rect x="40" y="82" width="16" height="10" fill="currentColor" />
-                </svg>
-                <span className="font-bold text-[8px] tracking-wider text-black">
-                  NIC GST VERIFIED
-                </span>
-              </div>
+            {/* Visual B2B IRN QR Code */}
+            <div className="shrink-0 flex flex-col items-center">
+              <QrCodeRenderer
+                value={nicPayload}
+                size={160}
+                errorCorrectionLevel="H"
+                centerLogo="gst"
+                showToolbar={true}
+                caption="NIC GST VERIFIED"
+                className="border-2 border-gold/40 rounded-xl bg-white p-1"
+              />
             </div>
 
             {/* Verification Metadata */}

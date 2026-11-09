@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { Itc04ChallanRecord } from "@jewelcore/shared";
+import { QrCodeRenderer } from "@/components/luxury/QrCodeRenderer";
+import { BarcodeRenderer } from "@/components/luxury/BarcodeRenderer";
 
 interface Itc04ChallanModalProps {
   isOpen: boolean;
@@ -74,8 +76,8 @@ export function Itc04ChallanModal({
               </div>
             </div>
 
-            <div className="text-right">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground block">
+            <div className="text-right flex flex-col items-end">
+              <span className="text-[10px] font-mono uppercase text-muted-foreground block mb-0.5">
                 Challan No
               </span>
               <span
@@ -84,6 +86,15 @@ export function Itc04ChallanModal({
               >
                 {challan.challanNumber}
               </span>
+              <BarcodeRenderer
+                value={challan.challanNumber}
+                height={18}
+                width={0.95}
+                margin={1}
+                fontSize={8}
+                displayValue={false}
+                className="mt-0.5"
+              />
             </div>
           </div>
         </div>
@@ -212,8 +223,14 @@ export function Itc04ChallanModal({
           {/* QR Verification & Statutory Sign-off */}
           <div className="p-4 rounded-lg bg-surface-elevated/60 border border-surface-border flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded bg-white text-black shrink-0">
-                <QrCode className="w-8 h-8" />
+              <div className="shrink-0">
+                <QrCodeRenderer
+                  value={`GST-ITC04:${challan.challanNumber}:CONSIGNOR=${challan.consignorGstin}:ARTISAN=${challan.karigarCode}:GROSS=${challan.issuedGrossMetalGrams}g:SEAL=${challan.securitySealNumber}`}
+                  size={64}
+                  margin={1}
+                  errorCorrectionLevel="H"
+                  centerLogo="gst"
+                />
               </div>
               <div>
                 <span className="text-foreground font-bold block">

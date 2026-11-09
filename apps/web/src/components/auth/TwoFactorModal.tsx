@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { QrCodeRenderer } from "@/components/luxury/QrCodeRenderer";
 
 interface TwoFactorModalProps {
   isOpen: boolean;
@@ -134,45 +135,16 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
 
         {/* QR Code and Secret Key Section */}
         <div className="mt-4 p-4 rounded-xl bg-surface border border-surface-border flex flex-col sm:flex-row items-center gap-4">
-          {/* Stylized QR Code Graphic */}
-          <div className="w-28 h-28 bg-white p-2 rounded-lg border border-gold/30 shrink-0 flex flex-col items-center justify-center shadow-inner relative group">
-            <svg
-              className="w-full h-full text-obsidian"
-              viewBox="0 0 100 100"
-              fill="currentColor"
-            >
-              {/* Corner position markers */}
-              <rect x="5" y="5" width="28" height="28" rx="3" />
-              <rect x="9" y="9" width="20" height="20" rx="2" fill="white" />
-              <rect x="13" y="13" width="12" height="12" rx="1" />
-
-              <rect x="67" y="5" width="28" height="28" rx="3" />
-              <rect x="71" y="9" width="20" height="20" rx="2" fill="white" />
-              <rect x="75" y="13" width="12" height="12" rx="1" />
-
-              <rect x="5" y="67" width="28" height="28" rx="3" />
-              <rect x="9" y="71" width="20" height="20" rx="2" fill="white" />
-              <rect x="13" y="75" width="12" height="12" rx="1" />
-
-              {/* Data matrix dots */}
-              <rect x="38" y="10" width="8" height="8" />
-              <rect x="50" y="10" width="8" height="8" />
-              <rect x="38" y="24" width="8" height="8" />
-              <rect x="10" y="42" width="8" height="8" />
-              <rect x="24" y="42" width="8" height="8" />
-              <rect x="42" y="42" width="16" height="16" rx="2" fill="#D4AF37" />
-              <rect x="65" y="42" width="8" height="8" />
-              <rect x="80" y="42" width="8" height="8" />
-              <rect x="38" y="65" width="8" height="8" />
-              <rect x="50" y="65" width="8" height="8" />
-              <rect x="65" y="65" width="8" height="8" />
-              <rect x="80" y="65" width="8" height="8" />
-              <rect x="65" y="80" width="8" height="8" />
-              <rect x="80" y="80" width="8" height="8" />
-            </svg>
-            <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center text-[10px] font-bold text-obsidian">
-              Scan
-            </div>
+          {/* Authentic ISO/IEC 18004 TOTP QR Code */}
+          <div className="shrink-0">
+            <QrCodeRenderer
+              value={`otpauth://totp/JewelCore%20Atelier:${encodeURIComponent(user?.email || "admin@jewelcore.internal")}?secret=${encodeURIComponent(DEFAULT_SECRET)}&issuer=JewelCore%20Atelier&algorithm=SHA1&digits=6&period=30`}
+              size={116}
+              centerLogo="lock"
+              showToolbar={true}
+              caption="RFC 6238 TOTP"
+              className="border border-gold/30 rounded-lg p-0.5"
+            />
           </div>
 
           <div className="flex-1 min-w-0 text-left">

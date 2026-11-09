@@ -135,6 +135,38 @@ export function CameraScannerModal({
     setIsTorchOn(false);
   };
 
+  // Continuous Hardware Barcode / QR Detection Loop using native BarcodeDetector API
+  useEffect(() => {
+    if (!cameraActive || !videoRef.current) return;
+    let intervalId: any;
+
+    if (typeof window !== "undefined" && "BarcodeDetector" in window) {
+      try {
+        const detector = new (window as any).BarcodeDetector({
+          formats: ["code_128", "qr_code", "ean_13", "data_matrix"],
+        });
+
+        intervalId = setInterval(async () => {
+          if (!videoRef.current || videoRef.current.readyState < 2) return;
+          try {
+            const detected = await detector.detect(videoRef.current);
+            if (detected && detected.length > 0 && detected[0].rawValue) {
+              handleDetectedCode(detected[0].rawValue);
+            }
+          } catch {
+            // Frame processing idle
+          }
+        }, 250);
+      } catch {
+        // BarcodeDetector format unsupported
+      }
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [cameraActive]);
+
   useEffect(() => {
     if (isOpen) {
       startCamera();

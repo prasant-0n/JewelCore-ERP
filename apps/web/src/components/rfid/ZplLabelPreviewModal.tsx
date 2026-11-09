@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Printer, Download, Copy, Check, QrCode, Barcode, Radio } from "lucide-react";
+import { BarcodeRenderer } from "@/components/luxury/BarcodeRenderer";
+import { QrCodeRenderer } from "@/components/luxury/QrCodeRenderer";
 import {
   generateZplJewelleryTag,
   JewelleryTagData,
@@ -180,11 +182,15 @@ export function ZplLabelPreviewModal({
                     </div>
                   </div>
 
-                  {/* Simulated 1D Barcode */}
-                  <div className="my-auto py-1">
-                    <div className="h-6 w-full flex items-center gap-[1.5px] bg-neutral-950 p-1 rounded-sm justify-center">
-                      <Barcode className="w-full h-full text-white" />
-                    </div>
+                  {/* Industrial Code-128 Barcode */}
+                  <div className="my-auto py-0.5 flex items-center justify-center bg-white rounded-xs">
+                    <BarcodeRenderer
+                      value={tagData.serialNumber}
+                      height={20}
+                      width={1.0}
+                      margin={1}
+                      displayValue={false}
+                    />
                   </div>
 
                   <div className="text-[7.5px] font-mono text-neutral-600 truncate">
@@ -219,9 +225,14 @@ export function ZplLabelPreviewModal({
                       )}
                     </div>
 
-                    {/* 2D DataMatrix Simulation */}
-                    <div className="w-7 h-7 bg-neutral-950 rounded p-0.5 flex items-center justify-center text-white shrink-0">
-                      <QrCode className="w-full h-full text-white" />
+                    {/* Industrial ISO/IEC 18004 QR Matrix */}
+                    <div className="shrink-0">
+                      <QrCodeRenderer
+                        value={`JEWELCORE:${tagData.serialNumber}:${tagData.hallmarkId}:${tagData.grossWeightGrams}g`}
+                        size={32}
+                        margin={0}
+                        errorCorrectionLevel="M"
+                      />
                     </div>
                   </div>
 
