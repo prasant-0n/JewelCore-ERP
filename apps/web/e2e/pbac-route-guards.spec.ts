@@ -66,7 +66,7 @@ test.describe("Atelier PBAC Route Protection & Workstation Governance (Step 1)",
     await expect(page.locator("text=Target Workstation:")).toBeVisible();
     await expect(page.locator("text=Stock Gate & Dual-Key Quorum (/governance)")).toBeVisible();
     await expect(page.locator("text=Your Assigned Role:")).toBeVisible();
-    await expect(page.locator("text=Showroom POS Cashier").first()).toBeVisible();
+    await expect(page.getByText(/Showroom POS Cashier|Senior POS Cashier/i).first()).toBeVisible();
 
     // Click "Return to Authorized Station" -> navigates to /pos
     const returnBtn = page.locator("button:has-text('Return to Authorized Station')");
@@ -105,7 +105,7 @@ test.describe("Atelier PBAC Route Protection & Workstation Governance (Step 1)",
     await expect(page.locator("text=Workstation Access Restricted")).toBeVisible();
     await expect(page.locator("text=Target Workstation:")).toBeVisible();
     await expect(page.locator("text=Accounting & Statutory GST (/accounting)")).toBeVisible();
-    await expect(page.getByText(/Compliance Director|Inventory Controller/i).first()).toBeVisible();
+    await expect(page.getByText(/Compliance Director|Inventory Controller|Head Vault Custodian/i).first()).toBeVisible();
 
     // Control Tower fallback button works cleanly
     const controlTowerBtn = page.locator("button:has-text('Control Tower')");

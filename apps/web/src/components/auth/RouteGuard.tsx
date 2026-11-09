@@ -10,7 +10,7 @@ import { JewelCoreLogo } from "@/components/common/JewelCoreLogo";
 export function RouteGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, breakGlassSession } = useAuth();
 
   const isPublicRoute =
     pathname === "/login" || pathname === "/not-found" || pathname.startsWith("/_");
@@ -18,13 +18,13 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
   // Run redirection if unauthenticated
   useEffect(() => {
     if (!isLoading && !isPublicRoute) {
-      const access = checkRouteAccess(pathname, user);
+      const access = checkRouteAccess(pathname, user, breakGlassSession);
       if (!access.allowed && !user) {
         const redirectParam = pathname !== "/" ? `?redirect=${encodeURIComponent(pathname)}` : "";
         router.replace(`/login${redirectParam}`);
       }
     }
-  }, [pathname, user, isLoading, isPublicRoute, router]);
+  }, [pathname, user, isLoading, isPublicRoute, router, breakGlassSession]);
 
   if (isPublicRoute) {
     return <>{children}</>;
@@ -45,7 +45,7 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const access = checkRouteAccess(pathname, user);
+  const access = checkRouteAccess(pathname, user, breakGlassSession);
 
   // If unauthenticated, render null while redirecting
   if (!access.allowed && !user) {

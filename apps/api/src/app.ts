@@ -39,7 +39,34 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
   app.use(metricsMiddleware);
 
   // 3. Security & Body Parsing Middleware
-  app.use(cors({ origin: true, credentials: true }));
+  const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(",").map((s) => s.trim())
+    : [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+        "https://jewelcore-erp.vercel.app",
+      ];
+
+  app.use(
+    cors({
+      origin: (requestOrigin, callback) => {
+        // Allow mobile apps, curl, server-to-server or requests without origin
+        if (!requestOrigin) return callback(null, true);
+        if (
+          process.env.NODE_ENV !== "production" ||
+          allowedOrigins.includes(requestOrigin) ||
+          requestOrigin.endsWith(".jewelcore.internal")
+        ) {
+          return callback(null, true);
+        }
+        return callback(
+          new Error(`CORS violation: Origin ${requestOrigin} is not authorized`),
+        );
+      },
+      credentials: true,
+    }),
+  );
   app.use(express.json({ limit: "50mb" }));
 
   // 3b. Prometheus Metrics Scrape Endpoint

@@ -112,10 +112,14 @@ export const ROUTE_POLICIES: Record<string, RoutePolicy> = {
 
 /**
  * Normalizes user role string to matching role tokens.
- * e.g. "Store Branch Manager" -> ["MANAGER", "STAFF"]
- * e.g. "Compliance Director" -> ["DIRECTOR", "CONTROLLER"]
- * e.g. "Showroom POS Cashier" -> ["CASHIER", "SALES"]
- * e.g. "Senior QC Gemologist" -> ["GEMOLOGIST", "STAFF"]
+ * Supports composite titles across Executive, Vault Hub, Metrology QC,
+ * Atelier Crafting, Logistics, Retail POS, and Compliance divisions.
+ *
+ * e.g. "Master Goldsmith & Atelier Supervisor" -> ["MANAGER", "CONTROLLER", "STAFF"]
+ * e.g. "BIS Hallmarking & HUID Inspector" -> ["GEMOLOGIST", "CONTROLLER", "STAFF"]
+ * e.g. "Chief Compliance Officer & HSM Quorum" -> ["ADMIN", "DIRECTOR", "CONTROLLER", "STAFF"]
+ * e.g. "Armored Logistics & Transfer Officer" -> ["CONTROLLER", "STAFF"]
+ * e.g. "High-Jewellery VIP Salon Director" -> ["DIRECTOR", "SALES", "MANAGER", "STAFF"]
  */
 export function getUserRoleTokens(
   role?: string,
@@ -125,21 +129,133 @@ export function getUserRoleTokens(
   if (delegation && new Date(delegation.expiresAt) > new Date()) {
     effectiveRole = `${effectiveRole} ${delegation.elevatedRole}`;
   }
-  if (!effectiveRole) return [];
+  if (!effectiveRole) return ["STAFF"];
   const r = effectiveRole.toUpperCase();
-  const tokens: string[] = [];
+  const tokens = new Set<string>();
 
-  if (r.includes("ADMIN")) tokens.push("ADMIN");
-  if (r.includes("MANAGER")) tokens.push("MANAGER");
-  if (r.includes("DIRECTOR")) tokens.push("DIRECTOR", "CONTROLLER");
-  if (r.includes("CONTROLLER")) tokens.push("CONTROLLER");
-  if (r.includes("CASHIER")) tokens.push("CASHIER", "SALES");
-  if (r.includes("SALES")) tokens.push("SALES");
-  if (r.includes("GEMOLOGIST") || r.includes("QC")) tokens.push("GEMOLOGIST");
-  if (r.includes("FINANCE") || r.includes("ACCOUNT")) tokens.push("FINANCE");
-  if (r.includes("STAFF")) tokens.push("STAFF");
+  // 1. Executive Management & Compliance Governance
+  if (
+    r.includes("ADMIN") ||
+    r.includes("COMPLIANCE") ||
+    r.includes("HSM") ||
+    r.includes("EXECUTIVE")
+  ) {
+    tokens.add("ADMIN");
+    tokens.add("DIRECTOR");
+    tokens.add("CONTROLLER");
+  }
 
-  return tokens;
+  // 2. Branch & Operations Leadership
+  if (
+    r.includes("MANAGER") ||
+    r.includes("SUPERVISOR") ||
+    r.includes("DIRECTOR")
+  ) {
+    tokens.add("MANAGER");
+    tokens.add("STAFF");
+  }
+
+  if (r.includes("DIRECTOR")) {
+    tokens.add("DIRECTOR");
+    tokens.add("CONTROLLER");
+    tokens.add("SALES"); // VIP Client directors oversee high-value customer sales
+  }
+
+  // 3. Treasury Vault Custody, Logistics, and Asset Registrars
+  if (
+    r.includes("CONTROLLER") ||
+    r.includes("CUSTODIAN") ||
+    r.includes("LOGISTICS") ||
+    r.includes("TRANSFER") ||
+    r.includes("TRANSIT") ||
+    r.includes("REGISTRAR")
+  ) {
+    tokens.add("CONTROLLER");
+    tokens.add("STAFF");
+  }
+
+  // 4. POS Cashiers, Billing & Invoicing Leads
+  if (
+    r.includes("CASHIER") ||
+    r.includes("BILLING") ||
+    r.includes("INVOIC") ||
+    r.includes("COUNTER")
+  ) {
+    tokens.add("CASHIER");
+    tokens.add("SALES");
+    tokens.add("STAFF");
+  }
+
+  // 5. Retail Sales Associates & VIP Concierge
+  if (
+    r.includes("SALES") ||
+    r.includes("SALON") ||
+    r.includes("ASSOCIATE") ||
+    r.includes("CONCIERGE")
+  ) {
+    tokens.add("SALES");
+    tokens.add("STAFF");
+  }
+
+  // 6. Gemologists, Spectrometry QC, Appraisers & BIS HUID Inspectors
+  if (
+    r.includes("GEMOLOGIST") ||
+    r.includes("QC") ||
+    r.includes("APPRAISER") ||
+    r.includes("ASSAY") ||
+    r.includes("HALLMARK") ||
+    r.includes("HUID") ||
+    r.includes("INSPECTOR")
+  ) {
+    tokens.add("GEMOLOGIST");
+    tokens.add("CONTROLLER");
+    tokens.add("STAFF");
+  }
+
+  // 7. Goldsmiths, Karigar Artisans & Atelier Jobwork Supervisors
+  if (
+    r.includes("GOLDSMITH") ||
+    r.includes("KARIGAR") ||
+    r.includes("ATELIER") ||
+    r.includes("ARTISAN") ||
+    r.includes("CRAFT") ||
+    r.includes("MANUFACTURING")
+  ) {
+    tokens.add("CONTROLLER");
+    tokens.add("STAFF");
+    tokens.add("MANAGER");
+  }
+
+  // 8. Bullion Traders & Feed Analysts
+  if (
+    r.includes("TRADER") ||
+    r.includes("BULLION") ||
+    r.includes("FEED") ||
+    r.includes("ANALYST")
+  ) {
+    tokens.add("CONTROLLER");
+    tokens.add("STAFF");
+    tokens.add("MANAGER");
+  }
+
+  // 9. Financial Controllers, Statutory Accountants & Tax Auditors
+  if (
+    r.includes("FINANCE") ||
+    r.includes("ACCOUNT") ||
+    r.includes("AUDIT") ||
+    r.includes("TAX")
+  ) {
+    tokens.add("FINANCE");
+    tokens.add("CONTROLLER");
+    tokens.add("STAFF");
+  }
+
+  // 10. Default baseline role
+  if (r.includes("STAFF") || tokens.size === 0) {
+    tokens.add("STAFF");
+  }
+
+  return Array.from(tokens);
 }
 
 export interface AccessCheckResult {
@@ -155,6 +271,7 @@ export interface AccessCheckResult {
 export function checkRouteAccess(
   pathname: string,
   user: AuthUser | null,
+  breakGlassSession?: { isActive: boolean; expiresAt: string } | null,
 ): AccessCheckResult {
   // Public routes (login, not-found, icons, etc.)
   if (pathname === "/login" || pathname === "/not-found" || pathname.startsWith("/_")) {
@@ -175,6 +292,14 @@ export function checkRouteAccess(
       reason: "Authentication required to access workstation.",
       policy,
     };
+  }
+
+  // NIST SP 800-53 Emergency Break-Glass clearance bypasses routine PBAC boundaries
+  if (
+    breakGlassSession?.isActive &&
+    new Date(breakGlassSession.expiresAt) > new Date()
+  ) {
+    return { allowed: true, policy };
   }
 
   // System Administrators always bypass role restrictions

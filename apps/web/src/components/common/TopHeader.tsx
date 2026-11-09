@@ -38,6 +38,7 @@ import {
 } from "../ui/sheet";
 import { SidebarNavList } from "./Sidebar";
 import { api } from "../../lib/api";
+import { getUserRoleTokens } from "../../lib/pbac";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { useHardwareTelemetry } from "../../hooks/useHardwareTelemetry";
 import { useStoreContext, BRANCH_STORES, BranchStore } from "../../hooks/useStoreContext";
@@ -260,6 +261,27 @@ export function TopHeader({
     `${activeUser.firstName?.[0] || ""}${activeUser.lastName?.[0] || ""}`.toUpperCase() ||
     "OP";
   const activeUserRole = activeUser.role || "Operational Staff";
+  const matchedPersona = PERSONAS.find(
+    (p) => p.email.toLowerCase() === activeUser.email.toLowerCase(),
+  );
+  const activeUserScope = matchedPersona?.permission || "Full Atelier PBAC";
+  const activeUserDepartment = matchedPersona?.department || "Operations";
+
+  const userTokens = getUserRoleTokens(activeUser.role, user?.delegation);
+  const isPrivilegedOfficer = userTokens.some((t) =>
+    ["ADMIN", "MANAGER", "DIRECTOR"].includes(t),
+  );
+  const isGovernanceAuditor = userTokens.some((t) =>
+    ["ADMIN", "DIRECTOR", "FINANCE"].includes(t),
+  );
+  const isControllerOrVault = userTokens.some((t) =>
+    ["CONTROLLER", "GEMOLOGIST"].includes(t),
+  );
+  const activeWorkstationCount = isPrivilegedOfficer
+    ? 3
+    : isControllerOrVault
+    ? 2
+    : 1;
 
   const desktopSearchInputRef = useRef<HTMLInputElement>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
@@ -963,8 +985,19 @@ export function TopHeader({
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-muted-foreground">
+                    <span className="text-[10px] uppercase tracking-wider">Department:</span>
+                    <span className="text-gold font-medium">
+                      {activeUserDepartment}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-muted-foreground">
                     <span className="text-[10px] uppercase tracking-wider">Access Scope:</span>
-                    <span className="text-foreground font-medium">Full Atelier PBAC</span>
+                    <span
+                      className="text-foreground font-medium truncate max-w-[160px] text-right"
+                      title={activeUserScope}
+                    >
+                      {activeUserScope}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between text-muted-foreground">
                     <span className="text-[10px] uppercase tracking-wider">Cryptography:</span>
@@ -987,11 +1020,15 @@ export function TopHeader({
                   >
                     <div className="flex items-center space-x-2">
                       <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                      <span>Delegated Authority</span>
+                      <span>{isPrivilegedOfficer ? "Delegated Authority Quorum" : "Delegated Authority"}</span>
                     </div>
                     {user?.delegation && new Date(user.delegation.expiresAt) > new Date() ? (
                       <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-amber-500/20 text-amber-500 border border-amber-500/40 font-bold">
                         Elevated
+                      </span>
+                    ) : isPrivilegedOfficer ? (
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">
+                        Supervisor
                       </span>
                     ) : (
                       <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-muted-foreground">
@@ -1036,7 +1073,7 @@ export function TopHeader({
                       <span>Connected Workstations</span>
                     </div>
                     <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-gold/10 text-gold border border-gold/30 font-semibold">
-                      3 Active
+                      {activeWorkstationCount} Active
                     </span>
                   </button>
                 </div>
@@ -1062,24 +1099,38 @@ export function TopHeader({
                 </div>
 
                 {/* Forensic IAM Security Audit Stream Action */}
-                <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsPersonaOpen(false);
-                      setIsIamAuditOpen(true);
-                    }}
-                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <ShieldAlert className="w-3.5 h-3.5 text-gold shrink-0" />
-                      <span>Forensic IAM Audit Stream</span>
+                {isGovernanceAuditor || isPrivilegedOfficer ? (
+                  <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsPersonaOpen(false);
+                        setIsIamAuditOpen(true);
+                      }}
+                      className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <ShieldAlert className="w-3.5 h-3.5 text-gold shrink-0" />
+                        <span>Forensic IAM Audit Stream</span>
+                      </div>
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-emerald/10 text-status-emerald border border-status-emerald/30 font-semibold">
+                        Live
+                      </span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5 opacity-60">
+                    <div className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-muted-foreground font-medium">
+                      <div className="flex items-center space-x-2">
+                        <ShieldAlert className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                        <span>IAM Audit Stream</span>
+                      </div>
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-muted-foreground">
+                        Restricted
+                      </span>
                     </div>
-                    <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-emerald/10 text-status-emerald border border-status-emerald/30 font-semibold">
-                      Live
-                    </span>
-                  </button>
-                </div>
+                  </div>
+                )}
 
                 {/* Biometric & Hardware Passkeys (FIDO2) Action */}
                 <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
@@ -1119,10 +1170,16 @@ export function TopHeader({
                       className={`px-1.5 py-0.5 text-[9px] font-mono rounded font-semibold border ${
                         isLanSecured
                           ? "bg-status-emerald/10 text-status-emerald border-status-emerald/30"
+                          : isPrivilegedOfficer
+                          ? "bg-sky-500/10 text-sky-400 border-sky-500/30"
                           : "bg-amber-500/10 text-amber-400 border-amber-500/30"
                       }`}
                     >
-                      {isLanSecured ? "LAN 192.168.1.x" : "Off-Premises"}
+                      {isLanSecured
+                        ? "LAN 192.168.1.x"
+                        : isPrivilegedOfficer
+                        ? "VPN Hybrid"
+                        : "Off-Premises"}
                     </span>
                   </button>
                 </div>
@@ -1148,30 +1205,44 @@ export function TopHeader({
                 </div>
 
                 {/* Break-Glass Emergency Bypass Protocol Action */}
-                <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsPersonaOpen(false);
-                      setIsBreakGlassOpen(true);
-                    }}
-                    className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                      <span>Break-Glass Emergency</span>
+                {isPrivilegedOfficer ? (
+                  <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsPersonaOpen(false);
+                        setIsBreakGlassOpen(true);
+                      }}
+                      className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                        <span>Break-Glass Emergency</span>
+                      </div>
+                      {breakGlassSession?.isActive ? (
+                        <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-rose-500/20 text-rose-400 border border-rose-500/40 font-bold animate-pulse">
+                          Active
+                        </span>
+                      ) : (
+                        <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold">
+                          NIST 800-53
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="pt-1.5 px-2 border-b border-surface-border pb-1.5 opacity-60">
+                    <div className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-muted-foreground font-medium">
+                      <div className="flex items-center space-x-2">
+                        <ShieldAlert className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                        <span>Break-Glass Override</span>
+                      </div>
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-surface border border-surface-border text-muted-foreground">
+                        Privileged Only
+                      </span>
                     </div>
-                    {breakGlassSession?.isActive ? (
-                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-rose-500/20 text-rose-400 border border-rose-500/40 font-bold animate-pulse">
-                        Active
-                      </span>
-                    ) : (
-                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold">
-                        NIST 800-53
-                      </span>
-                    )}
-                  </button>
-                </div>
+                  </div>
+                )}
 
                 {/* Sign Out Action */}
                 <div className="pt-1.5 px-2">

@@ -152,7 +152,7 @@ test.describe("Corporate Staff Authentication & Session Governance (Option A)", 
     );
     await expect(activeHeaderUser).toBeVisible();
     await expect(activeHeaderUser.locator("text=Vikram M.")).toBeVisible();
-    await expect(activeHeaderUser.locator("text=Inventory Controller")).toBeVisible();
+    await expect(activeHeaderUser.locator("text=Head Vault Custodian & Inward GRN")).toBeVisible();
 
     // Click operator profile dropdown
     await activeHeaderUser.click();

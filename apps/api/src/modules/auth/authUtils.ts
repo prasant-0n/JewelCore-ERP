@@ -1,6 +1,15 @@
 import * as argon2 from "@node-rs/argon2";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 
+if (
+  process.env.NODE_ENV === "production" &&
+  (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32)
+) {
+  throw new Error(
+    "FATAL CONFIGURATION ERROR: In production, process.env.JWT_SECRET must be explicitly set and contain at least 32 characters (CWE-798 / OWASP A02:2021).",
+  );
+}
+
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET ??
     "jewelcore_super_secret_jwt_key_at_least_32_characters_long!",
