@@ -23,12 +23,18 @@ import {
   listItemDecisionsHandler,
   createSessionDecisionHandler,
   listSessionDecisionsHandler,
+  listHuidRecordsHandler,
+  registerHuidHandler,
+  verifyHuidHandler,
 } from "./qcController.js";
 
 export function createQcRouter(): Router {
   const router = Router();
 
-  // All QC endpoints require authentication
+  // Public Bureau of Indian Standards (BIS Care) Verification (Milestone 12)
+  router.get("/huid/verify/:huid", verifyHuidHandler);
+
+  // All other QC endpoints require authentication
   router.use(authenticate);
 
   // Store-context scoping & multi-store isolation (INV-11)
@@ -120,6 +126,10 @@ export function createQcRouter(): Router {
     requirePermission("qc:view"),
     listSessionDecisionsHandler,
   );
+
+  // Bureau of Indian Standards (BIS) Hallmarking & HUID Registry (Milestone 12)
+  router.get("/huid", listHuidRecordsHandler);
+  router.post("/huid/register", registerHuidHandler);
 
   return router;
 }

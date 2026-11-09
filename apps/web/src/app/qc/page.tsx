@@ -9,6 +9,7 @@ import {
 } from "../../components/qc/QcSessionSection";
 import { AssayInspector } from "../../components/qc/AssayInspector";
 import { NewQcBatchModal } from "../../components/qc/NewQcBatchModal";
+import { BisHuidRegistryModal } from "../../components/qc/BisHuidRegistryModal";
 import {
   FlaskConical,
   Scale,
@@ -17,6 +18,7 @@ import {
   Search,
   Plus,
   Microscope,
+  Award,
 } from "lucide-react";
 import {
   WorkstationKpiGrid,
@@ -179,6 +181,7 @@ export default function QcPage() {
       INITIAL_QC_SESSIONS[0].batchName,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isHuidRegistryOpen, setIsHuidRegistryOpen] = useState(false);
 
   const filteredSessions = sessions
     .filter((sess) => {
@@ -235,6 +238,16 @@ export default function QcPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsHuidRegistryOpen(true)}
+              className="border-gold/40 text-gold hover:bg-gold/10 font-mono"
+              data-testid="bis-huid-registry-btn"
+            >
+              <Award className="w-3.5 h-3.5 mr-1" />
+              <span>BIS HUID Registry</span>
+            </Button>
             <Button
               variant="secondary"
               size="sm"
@@ -322,6 +335,12 @@ export default function QcPage() {
         <NewQcBatchModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+        />
+
+        {/* BIS Hallmarking & HUID Registry Modal */}
+        <BisHuidRegistryModal
+          isOpen={isHuidRegistryOpen}
+          onClose={() => setIsHuidRegistryOpen(false)}
         />
       </div>
     </AppShell>

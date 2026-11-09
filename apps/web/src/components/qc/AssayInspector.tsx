@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { QcItemData } from "./QcItemCard";
 import {
   Scale,
@@ -10,6 +10,8 @@ import {
   X,
   RefreshCw,
   Waves,
+  Award,
+  Zap,
 } from "lucide-react";
 import {
   Card,
@@ -24,6 +26,11 @@ import { MetrologyGauge } from "@/components/workstation/MetrologyGauge";
 import { TabularWeight } from "@/components/workstation/TabularWeight";
 import { StatusBadge } from "@/components/workstation/StatusBadge";
 import { toast } from "sonner";
+import { HuidStatus, type HuidRecord } from "@jewelcore/shared";
+import { BisCertificateModal } from "./BisCertificateModal";
+import { HuidRegistrationModal } from "./HuidRegistrationModal";
+import { FALLBACK_HUID_RECORDS } from "./BisHuidRegistryModal";
+import { api } from "../../lib/api";
 
 interface AssayInspectorProps {
   item: QcItemData | null;
@@ -40,6 +47,25 @@ export function AssayInspector({
 }: AssayInspectorProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [huidRecords, setHuidRecords] = useState<HuidRecord[]>(FALLBACK_HUID_RECORDS);
+  const [isCertOpen, setIsCertOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    api.get<{ data: HuidRecord[] }>("/qc/huid")
+      .then((res) => {
+        if (mounted && res.data && Array.isArray(res.data) && res.data.length > 0) {
+          setHuidRecords(res.data);
+        }
+      })
+      .catch(() => {
+        // offline fallback
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   if (!item) {
     return (
@@ -71,6 +97,13 @@ export function AssayInspector({
     elements,
     destinationPath,
   } = item;
+
+  const currentHuidRecord = huidRecords.find(
+    (r) =>
+      r.pieceSerial === parentPieceSerial ||
+      r.itemCode === itemCode ||
+      (r.huid && r.pieceSerial.toLowerCase() === parentPieceSerial.toLowerCase())
+  );
 
   const handleRetestSpectrum = () => {
     setIsScanning(true);
@@ -203,6 +236,74 @@ export function AssayInspector({
             {destinationPath}
           </span>
         </div>
+
+        {/* BIS 6-Character HUID Statutory Card */}
+        <div className="p-3.5 rounded-lg bg-surface-elevated border border-gold/30 space-y-2.5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Award className="w-4 h-4 text-gold" />
+              <span className="text-xs font-mono font-bold text-foreground">
+                BIS Hallmarking (IS 1417:2016)
+              </span>
+            </div>
+            {currentHuidRecord && currentHuidRecord.status === HuidStatus.HUID_REGISTERED ? (
+              <Badge variant="emerald" className="text-[10px] font-mono">
+                Laser Attested
+              </Badge>
+            ) : (
+              <Badge variant="amber" className="text-[10px] font-mono">
+                Pending Laser
+              </Badge>
+            )}
+          </div>
+
+          {currentHuidRecord && currentHuidRecord.status === HuidStatus.HUID_REGISTERED ? (
+            <div className="flex items-center justify-between p-2 rounded bg-surface border border-gold/20">
+              <div>
+                <span className="text-[10px] uppercase text-muted-foreground block font-mono">
+                  6-Character HUID
+                </span>
+                <span
+                  data-testid="assay-huid-display"
+                  className="text-base font-black font-mono tracking-widest text-gold"
+                >
+                  {currentHuidRecord.huid}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsCertOpen(true)}
+                className="h-7 text-[11px] gap-1 px-2 border-gold/30 text-gold hover:bg-gold/10 font-mono"
+                data-testid="view-bis-cert-btn"
+              >
+                <Award className="w-3 h-3" />
+                <span>View BIS Certificate</span>
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between p-2 rounded bg-surface border border-surface-border">
+              <div>
+                <span className="text-[10px] uppercase text-muted-foreground block font-mono">
+                  Statutory HUID
+                </span>
+                <span className="text-xs text-muted-foreground font-mono italic">
+                  Awaiting AHC Laser Pulse
+                </span>
+              </div>
+              <Button
+                variant="gold"
+                size="sm"
+                onClick={() => setIsRegisterOpen(true)}
+                className="h-7 text-[11px] gap-1 px-2 font-mono font-semibold"
+                data-testid="laser-engrave-huid-btn"
+              >
+                <Zap className="w-3 h-3" />
+                <span>Laser Engrave HUID</span>
+              </Button>
+            </div>
+          )}
+        </div>
       </CardContent>
 
       {/* Action Footer */}
@@ -228,6 +329,29 @@ export function AssayInspector({
           Approve Hallmark
         </Button>
       </CardFooter>
+
+      {/* Sub-modals */}
+      <BisCertificateModal
+        isOpen={isCertOpen}
+        onClose={() => setIsCertOpen(false)}
+        record={currentHuidRecord || null}
+      />
+
+      <HuidRegistrationModal
+        isOpen={isRegisterOpen}
+        onClose={() => setIsRegisterOpen(false)}
+        pieceSerial={parentPieceSerial}
+        itemCode={itemCode}
+        materialDescription={item.materialDescription}
+        grossWeightGrams={grossWeightGrams}
+        xrfGoldPercent={purityPercent}
+        onSuccess={(newRec) => {
+          setHuidRecords((prev) => [
+            newRec,
+            ...prev.filter((p) => p.pieceSerial !== newRec.pieceSerial),
+          ]);
+        }}
+      />
     </Card>
   );
 }

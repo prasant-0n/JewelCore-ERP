@@ -336,4 +336,89 @@ describe("Quality Inspection Sessions API (FEAT-QC-01)", () => {
     expect(mutateRes.status).toBe(422);
     expect(mutateRes.body.code).toBe("ERR_SESSION_SEALED");
   });
+
+  describe("Bureau of Indian Standards (BIS) Hallmarking & HUID Registry (Milestone 12)", () => {
+    it("GET /api/v1/qc/huid lists registered and pending HUID jewellery items", async () => {
+      const res = await request(app)
+        .get("/api/v1/qc/huid")
+        .set("Authorization", `Bearer ${inspectorToken}`)
+        .set("x-store-id", store001Id);
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBeGreaterThanOrEqual(4);
+
+      const bar01 = res.body.data.find(
+        (r: any) => r.pieceSerial === "VAL-BAR-01",
+      );
+      expect(bar01).toBeDefined();
+      expect(bar01.huid).toBe("JC9041");
+      expect(bar01.purityGrade).toBe("KARAT_24_999");
+      expect(bar01.status).toBe("HUID_REGISTERED");
+    });
+
+    it("POST /api/v1/qc/huid/register registers a 6-character HUID with AHC certificate", async () => {
+      const res = await request(app)
+        .post("/api/v1/qc/huid/register")
+        .set("Authorization", `Bearer ${inspectorToken}`)
+        .set("x-store-id", store001Id)
+        .send({
+          pieceSerial: "JWL-2026-09145",
+          itemCode: "QC-ITM-06",
+          materialDescription: "Heritage Temple Gold Bangle 22K with Floral Filigree",
+          huid: "KL5190",
+          purityGrade: "KARAT_22_916",
+          grossWeightGrams: 32.4,
+          hydrostaticDensity: 17.65,
+          xrfGoldPercent: 91.65,
+          ahcCenterId: "AHC-MH-MUM-0192",
+          laserPulsePowerWatts: 20,
+          laserEngravingDepthMicrons: 15,
+          supervisorPin: "1234",
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.huid).toBe("KL5190");
+      expect(res.body.data.status).toBe("HUID_REGISTERED");
+      expect(res.body.data.certificateNumber).toContain("BIS-AHC-2026-");
+      expect(res.body.data.bisCareQrUrl).toContain("KL5190");
+    });
+
+    it("POST /api/v1/qc/huid/register rejects invalid HUID format", async () => {
+      const res = await request(app)
+        .post("/api/v1/qc/huid/register")
+        .set("Authorization", `Bearer ${inspectorToken}`)
+        .set("x-store-id", store001Id)
+        .send({
+          pieceSerial: "JWL-2026-TEST",
+          itemCode: "QC-TEST",
+          materialDescription: "Test Item",
+          huid: "INVALID_LENGTH",
+          purityGrade: "KARAT_22_916",
+          grossWeightGrams: 10,
+          xrfGoldPercent: 91.6,
+        });
+
+      expect(res.status).toBe(400);
+    });
+
+    it("GET /api/v1/qc/huid/verify/:huid provides public statutory verification", async () => {
+      // Verify valid registered HUID
+      const validRes = await request(app).get("/api/v1/qc/huid/verify/JC9041");
+
+      expect(validRes.status).toBe(200);
+      expect(validRes.body.success).toBe(true);
+      expect(validRes.body.data.verified).toBe(true);
+      expect(validRes.body.data.record.pieceSerial).toBe("VAL-BAR-01");
+      expect(validRes.body.data.record.purityGrade).toBe("KARAT_24_999");
+
+      // Verify non-existent HUID
+      const invalidRes = await request(app).get("/api/v1/qc/huid/verify/ZZ9999");
+      expect(invalidRes.status).toBe(200);
+      expect(invalidRes.body.data.verified).toBe(false);
+      expect(invalidRes.body.data.record).toBeNull();
+    });
+  });
 });
