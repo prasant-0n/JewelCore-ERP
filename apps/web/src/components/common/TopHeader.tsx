@@ -54,6 +54,7 @@ import { WebAuthnModal } from "../auth/WebAuthnModal";
 import { NetworkPerimeterModal } from "../auth/NetworkPerimeterModal";
 import { BreakGlassModal } from "../auth/BreakGlassModal";
 import { DeviceBindingModal } from "../auth/DeviceBindingModal";
+import { GlobalCommandPalette } from "../luxury/GlobalCommandPalette";
 import { toast } from "sonner";
 
 interface TopHeaderProps {
@@ -225,6 +226,7 @@ export function TopHeader({
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
   const [isBreakGlassOpen, setIsBreakGlassOpen] = useState(false);
   const [isDeviceBindingOpen, setIsDeviceBindingOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [breakGlassRemaining, setBreakGlassRemaining] = useState("00:00");
   const [isLanSecured, setIsLanSecured] = useState(true);
 
@@ -309,12 +311,9 @@ export function TopHeader({
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        if (window.innerWidth >= 1024) {
-          desktopSearchInputRef.current?.focus();
-        } else {
-          setIsSearchExpanded((prev) => !prev);
-        }
+        setIsCommandPaletteOpen((prev) => !prev);
       } else if (e.key === "Escape") {
+        setIsCommandPaletteOpen(false);
         setIsSearchExpanded(false);
         setIsStoreOpen(false);
         setIsMeshOpen(false);
@@ -548,32 +547,30 @@ export function TopHeader({
           )}
         </div>
 
-        {/* Center: Command Search Bar (Laptop & Desktop) */}
-        <form
-          onSubmit={handleSearchSubmit}
-          className="hidden xl:flex items-center xl:w-52 2xl:w-80 mx-2"
+        {/* Center: Command Search Bar (Laptop & Desktop - Skiper UI Spotlight trigger) */}
+        <div
+          onClick={() => setIsCommandPaletteOpen(true)}
+          className="hidden xl:flex items-center xl:w-52 2xl:w-80 mx-2 cursor-pointer"
         >
           <div className="relative w-full group">
-            <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2 group-focus-within:text-gold transition-colors" />
+            <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2 group-hover:text-gold transition-colors" />
             <input
-              ref={desktopSearchInputRef}
+              readOnly
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search pieces, RFID... (⌘K)"
-              className="w-full h-8 pl-8 pr-11 text-xs bg-surface-elevated border border-surface-border rounded-md text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30 transition-all"
+              className="w-full h-8 pl-8 pr-11 text-xs bg-surface-elevated border border-surface-border rounded-md text-foreground placeholder:text-muted-foreground/60 cursor-pointer group-hover:border-gold/50 transition-all pointer-events-none"
             />
             <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-mono px-1 py-0.5 rounded bg-surface border border-surface-border text-muted-foreground">
               ⌘K
             </kbd>
           </div>
-        </form>
+        </div>
 
         {/* Right: Hardware Mesh, Bullion Ticker, Theme Toggle, & Profile */}
         <div className="flex items-center space-x-1 sm:space-x-1.5 lg:space-x-2 xl:space-x-2.5 shrink-0">
           {/* Tablet & Mobile Command Search Trigger (< xl) */}
           <button
-            onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+            onClick={() => setIsCommandPaletteOpen(true)}
             className="xl:hidden p-1.5 rounded-md bg-surface-elevated border border-surface-border text-muted-foreground hover:text-foreground transition-colors shrink-0"
             title="Search pieces, RFID tags, customers... (⌘K)"
             aria-label="Toggle command search bar"
@@ -1382,6 +1379,12 @@ export function TopHeader({
       <DeviceBindingModal
         isOpen={isDeviceBindingOpen}
         onClose={() => setIsDeviceBindingOpen(false)}
+      />
+
+      {/* Global Workstation Spotlight Command Palette (Skiper UI) */}
+      <GlobalCommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
       />
     </>
   );

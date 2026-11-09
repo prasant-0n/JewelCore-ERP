@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import { Gem, CheckCircle2 } from "lucide-react";
+import { Gem, CheckCircle2, ShieldCheck } from "lucide-react";
+import { TactileCard } from "@/components/luxury/TactileCard";
+import { LaserHallmarkBadge } from "@/components/luxury/LaserHallmarkBadge";
 
 export interface InventoryPieceData {
   id: string;
@@ -54,20 +56,11 @@ export function PieceCard({
   } = piece;
 
   return (
-    <div
+    <TactileCard
+      isSelected={isSelected}
       onClick={() => onSelect?.(piece)}
-      className={`relative rounded-xl p-3.5 cursor-pointer transition-all duration-200 select-none flex flex-col justify-between ${
-        isSelected
-          ? "bg-surface-elevated border-2 border-gold shadow-[0_0_18px_rgba(212,175,55,0.22)]"
-          : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/60"
-      }`}
+      className="p-3.5 flex flex-col justify-between"
     >
-      {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
-          Selected
-        </div>
-      )}
-
       {/* Top Header: Serial & Custody State Pill */}
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1 pr-1.5">
@@ -85,23 +78,30 @@ export function PieceCard({
           >
             {itemName}
           </div>
+          <div className="mt-1">
+            <LaserHallmarkBadge
+              huid={piece.giaCertNumber || serialNumber.slice(-6)}
+              purity={metalPurity}
+              isBisVerified={qualityState === "HALLMARKED"}
+            />
+          </div>
         </div>
 
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
             custodyState === "VAULT"
-              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
               : custodyState === "DISPLAY"
-                ? "bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/30"
+                ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30"
                 : custodyState === "TRANSIT"
-                  ? "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/30"
-                  : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                  ? "bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30"
+                  : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
           }`}
         >
           <span
-            className={`w-1 h-1 rounded-full ${
+            className={`w-1.5 h-1.5 rounded-full ${
               custodyState === "VAULT"
-                ? "bg-emerald-500"
+                ? "bg-emerald-500 animate-pulse"
                 : custodyState === "DISPLAY"
                   ? "bg-cyan-500"
                   : custodyState === "TRANSIT"
@@ -114,7 +114,7 @@ export function PieceCard({
       </div>
 
       {/* Center Metrology & Stone Reading Box */}
-      <div className="my-3 py-2 px-2.5 bg-surface-elevated border border-surface-border/60 rounded-lg flex items-center justify-between">
+      <div className="my-2.5 py-2 px-2.5 bg-surface-elevated/80 border border-surface-border/60 rounded-lg flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="w-7 h-7 rounded bg-gold/10 border border-gold/30 flex items-center justify-center text-gold">
             <Gem className="w-3.5 h-3.5" />
@@ -143,15 +143,20 @@ export function PieceCard({
       <div>
         <div className="flex justify-between text-[10px] font-mono text-muted-foreground mb-1">
           <span>{metalPurity}</span>
-          <span className="text-gold font-semibold">
-            {qualityState === "HALLMARKED"
-              ? "100% Purity Hallmarked"
-              : "QC Pending"}
+          <span className="text-gold font-semibold flex items-center gap-1">
+            {qualityState === "HALLMARKED" ? (
+              <>
+                <ShieldCheck className="w-3 h-3 text-status-emerald" />
+                <span>IS 1417 Hallmarked</span>
+              </>
+            ) : (
+              <span>QC Inspection Pending</span>
+            )}
           </span>
         </div>
-        <div className="w-full bg-surface-elevated h-1.5 rounded-full overflow-hidden border border-surface-border/50">
+        <div className="w-full bg-surface-elevated h-1 rounded-full overflow-hidden border border-surface-border/40">
           <div
-            className={`h-full rounded-full ${
+            className={`h-full rounded-full transition-all duration-300 ${
               qualityState === "HALLMARKED"
                 ? "bg-emerald-500 w-full"
                 : "bg-amber-500 w-1/2"
@@ -159,6 +164,6 @@ export function PieceCard({
           />
         </div>
       </div>
-    </div>
+    </TactileCard>
   );
 }

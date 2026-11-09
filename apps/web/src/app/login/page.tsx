@@ -293,9 +293,16 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-6 bg-obsidian-deep relative overflow-hidden font-sans selection:bg-gold/30 selection:text-gold-light">
-      {/* Subtle luxury ambient gold glow in the background */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[300px] h-[300px] bg-status-indigo/5 rounded-full blur-[100px] pointer-events-none" />
+      {/* Subtle luxury architectural hairline grid pattern (Anti-Synthetic Craft) */}
+      <div
+        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.06] pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+        }}
+        aria-hidden="true"
+      />
 
       {/* Main Authentication Card */}
       <div className="w-full max-w-md relative z-10 flex flex-col items-center">

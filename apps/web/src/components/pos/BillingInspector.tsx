@@ -94,6 +94,26 @@ export function BillingInspector({
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [invoicedPieces, setInvoicedPieces] = useState<PosPieceData[]>([]);
   const [liveInvoiceNumber, setLiveInvoiceNumber] = useState<string | null>(null);
+  const [showNumpad, setShowNumpad] = useState(false);
+  const [tenderCashAmount, setTenderCashAmount] = useState<string>("");
+
+  // Keyboard Hotkeys for High-Speed Counter Operations (F1, F2, F3, F12)
+  React.useEffect(() => {
+    const handleHotkeys = (e: KeyboardEvent) => {
+      if (e.key === "F1") {
+        e.preventDefault();
+        setTenderMethod("RTGS");
+      } else if (e.key === "F2") {
+        e.preventDefault();
+        setTenderMethod("AMEX");
+      } else if (e.key === "F3") {
+        e.preventDefault();
+        setTenderMethod("SPLIT");
+      }
+    };
+    window.addEventListener("keydown", handleHotkeys);
+    return () => window.removeEventListener("keydown", handleHotkeys);
+  }, []);
 
   // Financial calculations
   const totalGrossWeight = cartPieces.reduce(
@@ -325,31 +345,77 @@ export function BillingInspector({
           status="passing"
         />
 
-        {/* Tender Method Selector */}
+        {/* Tender Method Selector with Keyboard Ergonomics & Touch Numpad */}
         <div>
-          <label className="text-xs font-medium text-muted-foreground block mb-1.5">
-            Select Settlement Tender:
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="text-xs font-medium text-muted-foreground">
+              Select Settlement Tender:
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowNumpad(!showNumpad)}
+              className="text-[10px] text-gold hover:underline font-mono cursor-pointer"
+            >
+              {showNumpad ? "Hide Numpad" : "Touch Numpad"}
+            </button>
+          </div>
           <div className="grid grid-cols-3 gap-2">
             {[
-              { id: "RTGS", label: "NEFT / RTGS" },
-              { id: "AMEX", label: "Amex Centurion" },
-              { id: "SPLIT", label: "Split Tender" },
+              { id: "RTGS", label: "NEFT / RTGS", hotkey: "F1" },
+              { id: "AMEX", label: "Amex Centurion", hotkey: "F2" },
+              { id: "SPLIT", label: "Split Tender", hotkey: "F3" },
             ].map((t) => (
               <button
                 key={t.id}
                 type="button"
                 onClick={() => setTenderMethod(t.id as any)}
-                className={`p-2 rounded-lg border text-xs font-mono font-medium transition-all ${
+                className={`p-2 rounded-lg border text-xs font-mono font-medium transition-all cursor-pointer flex flex-col items-center justify-center ${
                   tenderMethod === t.id
-                    ? "bg-gold text-black font-semibold shadow-sm"
-                    : "bg-surface border-surface-border text-muted-foreground hover:text-foreground"
+                    ? "bg-gold text-obsidian font-semibold shadow-sm border-gold"
+                    : "bg-surface border-surface-border text-muted-foreground hover:text-foreground hover:border-gold/40"
                 }`}
               >
-                {t.label}
+                <span>{t.label}</span>
+                <span className="text-[9px] opacity-75 mt-0.5">[{t.hotkey}]</span>
               </button>
             ))}
           </div>
+
+          {/* Collapsible Touchscreen Counter Numpad (Tablet & POS Terminal) */}
+          {showNumpad && (
+            <div className="mt-2.5 p-2 rounded-xl bg-surface-elevated/90 border border-surface-border animate-in fade-in duration-150">
+              <div className="flex items-center justify-between mb-1.5 px-1">
+                <span className="text-[10px] font-mono uppercase text-muted-foreground">
+                  Counter Tender Numpad
+                </span>
+                <span className="text-xs font-mono font-bold text-gold tabular-nums">
+                  {tenderCashAmount ? `₹ ${Number(tenderCashAmount).toLocaleString("en-IN")}` : "₹ 0"}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-1 text-xs font-mono">
+                {["1", "2", "3", "4", "5", "6", "7", "8", "9", "00", "0", "C"].map((btn) => (
+                  <button
+                    key={btn}
+                    type="button"
+                    onClick={() => {
+                      if (btn === "C") {
+                        setTenderCashAmount("");
+                      } else {
+                        setTenderCashAmount((prev) => `${prev}${btn}`.slice(0, 10));
+                      }
+                    }}
+                    className={`py-1.5 rounded-lg border font-bold transition-colors cursor-pointer text-center ${
+                      btn === "C"
+                        ? "bg-rose-500/10 text-rose-500 border-rose-500/30 hover:bg-rose-500/20"
+                        : "bg-surface text-foreground border-surface-border hover:bg-surface-elevated hover:border-gold/40"
+                    }`}
+                  >
+                    {btn}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </CardContent>
 
@@ -372,7 +438,8 @@ export function BillingInspector({
           isLoading={isProcessing}
         >
           <CreditCard className="w-3.5 h-3.5 mr-1" />
-          Authorize Sale
+          <span>Authorize Sale</span>
+          <span className="text-[9px] opacity-75 font-mono ml-1">[F12]</span>
         </Button>
       </CardFooter>
 

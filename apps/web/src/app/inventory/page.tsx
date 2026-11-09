@@ -12,7 +12,16 @@ import {
 } from "../../components/inventory/CategorySection";
 import { PieceLineageInspector } from "../../components/inventory/PieceLineageInspector";
 import { BirthPieceModal } from "../../components/inventory/BirthPieceModal";
-import { Gem, Scale, Search, Plus, Sparkles, Radio } from "lucide-react";
+import { Gem, Scale, Search, Plus, Sparkles, Radio, Table2, LayoutGrid, CheckCircle2 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { LaserHallmarkBadge } from "@/components/luxury/LaserHallmarkBadge";
 import {
   WorkstationKpiGrid,
   KpiItem,
@@ -157,6 +166,7 @@ export default function InventoryMasterPage() {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<string>("ALL");
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [isBirthModalOpen, setIsBirthModalOpen] = useState(false);
 
   // Compute summary KPI metrics
@@ -331,7 +341,7 @@ export default function InventoryMasterPage() {
         >
           {/* Left Column (65%): Piece Directory */}
           <div className="space-y-4">
-            {/* Search & Filter Toolbar */}
+            {/* Search, Filter & View Mode Toolbar */}
             <Card className="p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <div className="relative flex-1">
                 <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
@@ -343,43 +353,172 @@ export default function InventoryMasterPage() {
                 />
               </div>
 
-              {/* Filter Pills */}
-              <div className="flex items-center space-x-1 overflow-x-auto text-xs">
-                {[
-                  { id: "ALL", label: "All Custody" },
-                  { id: "VAULT", label: "Vault Safe" },
-                  { id: "DISPLAY", label: "Showroom Floor" },
-                  { id: "SOLITAIRE", label: "Certified Diamonds" },
-                ].map(({ id, label }) => (
+              <div className="flex items-center gap-2">
+                {/* Filter Pills */}
+                <div className="flex items-center space-x-1 overflow-x-auto text-xs">
+                  {[
+                    { id: "ALL", label: "All Custody" },
+                    { id: "VAULT", label: "Vault Safe" },
+                    { id: "DISPLAY", label: "Showroom Floor" },
+                    { id: "SOLITAIRE", label: "Diamonds" },
+                  ].map(({ id, label }) => (
+                    <button
+                      key={id}
+                      onClick={() => setFilterState(id)}
+                      className={`px-2 py-1 rounded-md font-mono text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer ${
+                        filterState === id
+                          ? "bg-gold text-obsidian font-semibold shadow-sm"
+                          : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* View Mode Switcher (Skiper UI style) */}
+                <div className="flex items-center gap-0.5 border border-surface-border rounded-lg p-0.5 bg-surface-elevated shrink-0">
                   <button
-                    key={id}
-                    onClick={() => setFilterState(id)}
-                    className={`px-2.5 py-1 rounded-md font-mono text-[11px] font-medium transition-all whitespace-nowrap ${
-                      filterState === id
-                        ? "bg-gold text-black font-semibold shadow-sm"
-                        : "text-muted-foreground hover:text-foreground bg-surface-elevated border border-surface-border"
+                    type="button"
+                    onClick={() => setViewMode("table")}
+                    className={`px-2 py-1 rounded-md text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
+                      viewMode === "table"
+                        ? "bg-gold text-obsidian font-bold shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
+                    title="High-Density Tabular View"
                   >
-                    {label}
+                    <Table2 className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Table</span>
                   </button>
-                ))}
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("grid")}
+                    className={`px-2 py-1 rounded-md text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
+                      viewMode === "grid"
+                        ? "bg-gold text-obsidian font-bold shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    title="Visual Salon Catalog Grid"
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Grid</span>
+                  </button>
+                </div>
               </div>
             </Card>
 
-            {/* Category Sections List */}
-            {filteredCategories.length === 0 ? (
-              <Card className="text-center py-12 text-muted-foreground text-xs">
-                No inventory pieces match your current filter criteria.
+            {/* View Mode Render: Dense Table vs Visual Category Grid */}
+            {viewMode === "table" ? (
+              <Card className="overflow-hidden border-surface-border">
+                <div className="overflow-x-auto max-h-[640px]">
+                  <Table>
+                    <TableHeader className="bg-surface-elevated/90 sticky top-0 z-10 text-[10px] uppercase font-mono tracking-wider">
+                      <TableRow className="hover:bg-transparent">
+                        <TableHead className="w-10 text-center">#</TableHead>
+                        <TableHead>Serial Number</TableHead>
+                        <TableHead>Piece Description</TableHead>
+                        <TableHead>Purity &amp; HUID</TableHead>
+                        <TableHead className="text-right">Gross (g)</TableHead>
+                        <TableHead className="text-right">Net Au (g)</TableHead>
+                        <TableHead className="text-right">Gemstones</TableHead>
+                        <TableHead>Custody</TableHead>
+                        <TableHead className="text-right">Retail Value</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody className="text-xs font-mono">
+                      {filteredCategories.flatMap((cat) =>
+                        cat.pieces.map((p) => ({ ...p, parentCategory: cat.categoryName })),
+                      ).length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={9} className="text-center py-8 text-muted-foreground text-xs font-sans">
+                            No inventory pieces match your current filter criteria.
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredCategories.flatMap((cat) =>
+                          cat.pieces.map((p) => ({ ...p, parentCategory: cat.categoryName })),
+                        ).map((p, idx) => {
+                          const isSelected = selectedPiece?.id === p.id;
+                          return (
+                            <TableRow
+                              key={p.id}
+                              onClick={() => {
+                                setSelectedPiece(p);
+                                setSelectedCategoryName(p.parentCategory);
+                              }}
+                              className={`cursor-pointer transition-colors ${
+                                isSelected
+                                  ? "bg-gold/15 dark:bg-gold/20 font-semibold border-l-4 border-l-gold"
+                                  : "hover:bg-surface-elevated/60"
+                              }`}
+                            >
+                              <TableCell className="text-center text-muted-foreground text-[11px]">
+                                {idx + 1}
+                              </TableCell>
+                              <TableCell className="font-bold text-foreground">
+                                <span className={isSelected ? "text-gold" : ""}>{p.serialNumber}</span>
+                              </TableCell>
+                              <TableCell className="font-sans text-[11px] max-w-[200px] truncate text-foreground font-medium">
+                                {p.itemName}
+                              </TableCell>
+                              <TableCell>
+                                <LaserHallmarkBadge
+                                  huid={p.giaCertNumber || p.serialNumber.slice(-6)}
+                                  purity={p.metalPurity}
+                                  isBisVerified={p.qualityState === "HALLMARKED"}
+                                  showSweepAnimation={false}
+                                />
+                              </TableCell>
+                              <TableCell className="text-right tabular-nums text-foreground font-semibold">
+                                {p.grossWeightGrams.toFixed(3)}
+                              </TableCell>
+                              <TableCell className="text-right tabular-nums text-muted-foreground">
+                                {p.netGoldGrams.toFixed(3)}
+                              </TableCell>
+                              <TableCell className="text-right tabular-nums text-gold">
+                                {p.diamondCarat ? `${p.diamondCarat.toFixed(2)} ct` : "—"}
+                              </TableCell>
+                              <TableCell>
+                                <span
+                                  className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-medium ${
+                                    p.custodyState === "VAULT"
+                                      ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                                      : p.custodyState === "DISPLAY"
+                                      ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30"
+                                      : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                                  }`}
+                                >
+                                  {p.custodyState}
+                                </span>
+                              </TableCell>
+                              <TableCell className="text-right tabular-nums text-emerald-600 dark:text-emerald-400 font-bold">
+                                ₹ {p.priceInr.toLocaleString("en-IN")}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </Card>
             ) : (
-              filteredCategories.map((category) => (
-                <CategorySection
-                  key={category.id}
-                  category={category}
-                  selectedPieceId={selectedPiece?.id}
-                  onSelectPiece={handleSelectPiece}
-                />
-              ))
+              /* Category Sections List */
+              filteredCategories.length === 0 ? (
+                <Card className="text-center py-12 text-muted-foreground text-xs">
+                  No inventory pieces match your current filter criteria.
+                </Card>
+              ) : (
+                filteredCategories.map((category) => (
+                  <CategorySection
+                    key={category.id}
+                    category={category}
+                    selectedPieceId={selectedPiece?.id}
+                    onSelectPiece={handleSelectPiece}
+                  />
+                ))
+              )
             )}
           </div>
         </WorkstationLayout>

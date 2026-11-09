@@ -176,6 +176,105 @@
   font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
+/* =========================================================================
+   Haute Horlogerie & Vengeance / Animaster / Skiper Luxury Animation System
+   ========================================================================= */
+
+@keyframes laser-sweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes gold-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(212, 175, 55, 0);
+  }
+}
+
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-laser-sweep {
+  animation: laser-sweep 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-gold-pulse {
+  animation: gold-pulse 2.2s infinite;
+}
+
+.animate-ticker-scroll {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll 35s linear infinite;
+}
+
+.animate-ticker-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Luxury Materiality Gradients & Dynamic Surface Lighting */
+.luxury-card-adaptive {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--surface-border));
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .luxury-card-adaptive {
+  background: linear-gradient(145deg, rgba(20, 26, 36, 0.95) 0%, rgba(13, 17, 23, 0.98) 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .luxury-card-adaptive:hover {
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.6), 0 0 20px -3px rgba(212, 175, 55, 0.18);
+}
+
+.luxury-card-adaptive:hover {
+  border-color: rgba(161, 98, 7, 0.35);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06), 0 0 15px -3px rgba(161, 98, 7, 0.12);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, hsl(var(--gold-light)) 0%, hsl(var(--gold)) 50%, hsl(var(--gold-dark)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border-accent {
+  position: relative;
+}
+
+.gold-border-accent::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, hsl(var(--gold-light)) 0%, hsl(var(--gold)) 100%);
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+
+
 .font-serif-luxury {
   font-family: var(--font-serif), 'Playfair Display', Georgia, Cambria, serif;
   letter-spacing: -0.015em;

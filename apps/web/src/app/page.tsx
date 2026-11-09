@@ -31,6 +31,7 @@ import {
   KpiItem,
 } from "@/components/workstation/WorkstationKpiCard";
 import { WorkstationLayout } from "@/components/workstation/WorkstationLayout";
+import { BullionTickerRibbon } from "@/components/luxury/BullionTickerRibbon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -402,6 +403,11 @@ export default function HomePage() {
   return (
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
+        {/* Continuous Bullion Spot & Telemetry Ribbon (Animaster / Live Exchange) */}
+        <div className="rounded-xl overflow-hidden border border-surface-border shadow-xs">
+          <BullionTickerRibbon />
+        </div>
+
         {/* Top Header / Greeting Bar */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-surface-border pb-4">
           <div className="flex items-center space-x-3.5">

@@ -4,11 +4,12 @@ import React from "react";
 import {
   ShoppingBag,
   Gem,
-  Scale,
   CheckCircle2,
   Bookmark,
   Sparkles,
 } from "lucide-react";
+import { TactileCard } from "@/components/luxury/TactileCard";
+import { LaserHallmarkBadge } from "@/components/luxury/LaserHallmarkBadge";
 
 export interface PosPieceData {
   id: string;
@@ -48,20 +49,11 @@ export function PosPieceCard({
   const isSaved = piece.status === "SAVED_FOR_TRIAL";
 
   return (
-    <div
+    <TactileCard
+      isSelected={isSelected}
       onClick={() => onSelect?.(piece)}
-      className={`relative rounded-xl p-3.5 cursor-pointer transition-all duration-200 select-none flex flex-col justify-between ${
-        isSelected
-          ? "bg-surface-elevated border-2 border-gold shadow-[0_0_18px_rgba(212,175,55,0.22)]"
-          : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/60"
-      }`}
+      className="p-3.5 flex flex-col justify-between"
     >
-      {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
-          Selected
-        </div>
-      )}
-
       {/* Top Header: Serial & Status Badge */}
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1 pr-1.5">
@@ -88,17 +80,21 @@ export function PosPieceCard({
           >
             {piece.itemName}
           </div>
-          <div className="text-[10px] font-mono text-muted-foreground mt-0.5 truncate">
-            Hallmark: {piece.hallmarkId}
+          <div className="mt-1">
+            <LaserHallmarkBadge
+              huid={piece.hallmarkId}
+              purity={piece.metalPurity}
+              isBisVerified={true}
+            />
           </div>
         </div>
 
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
             isInCart
-              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
               : isSaved
-                ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
                 : "bg-surface-elevated text-muted-foreground border border-surface-border"
           }`}
         >
@@ -119,7 +115,7 @@ export function PosPieceCard({
       </div>
 
       {/* Middle Specs Grid */}
-      <div className="grid grid-cols-2 gap-2 my-2.5 py-2 border-y border-surface-border/60 text-[11px] font-mono">
+      <div className="grid grid-cols-2 gap-2 my-2 py-1.5 border-y border-surface-border/60 text-[11px] font-mono">
         <div>
           <span className="text-muted-foreground text-[9px] block uppercase">
             Weight / Alloy
@@ -152,7 +148,7 @@ export function PosPieceCard({
           <span className="text-muted-foreground text-[9px] block uppercase">
             Retail Value:
           </span>
-          <span className="text-emerald-700 dark:text-emerald-400 font-bold text-xs tabular-nums">
+          <span className="text-emerald-600 dark:text-emerald-400 font-bold text-xs tabular-nums">
             ₹ {piece.totalPriceInr.toLocaleString("en-IN")}
           </span>
         </div>
@@ -166,7 +162,7 @@ export function PosPieceCard({
                 e.stopPropagation();
                 onSalonView(piece);
               }}
-              className="px-2 py-1 rounded text-[10px] font-medium bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 flex items-center gap-1 transition-colors"
+              className="px-2 py-1 rounded text-[10px] font-medium bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 flex items-center gap-1 transition-colors cursor-pointer"
             >
               <Sparkles className="w-3 h-3 text-gold" />
               <span>Salon</span>
@@ -179,9 +175,9 @@ export function PosPieceCard({
               e.stopPropagation();
               onToggleCart?.(piece);
             }}
-            className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
+            className={`px-2.5 py-1 rounded text-[10px] font-medium transition-colors cursor-pointer ${
               isInCart
-                ? "bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30"
+                ? "bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30"
                 : "bg-gold hover:bg-gold-light text-obsidian font-semibold shadow-sm"
             }`}
           >
@@ -189,6 +185,6 @@ export function PosPieceCard({
           </button>
         </div>
       </div>
-    </div>
+    </TactileCard>
   );
 }
