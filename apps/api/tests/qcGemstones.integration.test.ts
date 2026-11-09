@@ -74,6 +74,9 @@ describe("Mounted Gemstone Carat Parcel Grading API (FEAT-QC-03 / DEC-05)", () =
     await query(
       "DELETE FROM products WHERE product_code LIKE 'PRD_GEM_API_%';",
     );
+    await query(
+      "DELETE FROM gemstone_price_matrices WHERE gemstone_id IN (SELECT id FROM gemstones WHERE code LIKE 'GEM_API_%') OR organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_GEM_API');",
+    );
     await query("DELETE FROM gemstones WHERE code LIKE 'GEM_API_%';");
     await query("DELETE FROM purities WHERE code LIKE 'PUR_GEM_API_%';");
     await query("DELETE FROM materials WHERE code LIKE 'MAT_GEM_API_%';");
@@ -307,6 +310,9 @@ describe("Mounted Gemstone Carat Parcel Grading API (FEAT-QC-03 / DEC-05)", () =
       );
       await query(
         "DELETE FROM products WHERE product_code LIKE 'PRD_GEM_API_%';",
+      );
+      await query(
+        "DELETE FROM gemstone_price_matrices WHERE gemstone_id IN (SELECT id FROM gemstones WHERE code LIKE 'GEM_API_%') OR organization_id IN (SELECT id FROM organizations WHERE code = 'ORG_GEM_API');",
       );
       await query("DELETE FROM gemstones WHERE code LIKE 'GEM_API_%';");
       await query("DELETE FROM purities WHERE code LIKE 'PUR_GEM_API_%';");

@@ -36,7 +36,7 @@ describe("Gemstone Valuation Matrix API (FEAT-PRICE-03, Entity 46)", () => {
 
   async function cleanFixtures() {
     await query(
-      "DELETE FROM gemstone_price_matrices WHERE organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_GEM_API', 'ORG_GEM_API_ALT'));",
+      "DELETE FROM gemstone_price_matrices WHERE gemstone_id IN (SELECT id FROM gemstones WHERE code LIKE 'GEM_PRICE_API_%') OR organization_id IN (SELECT id FROM organizations WHERE code IN ('ORG_GEM_API', 'ORG_GEM_API_ALT'));",
     );
     await query("DELETE FROM gemstones WHERE code LIKE 'GEM_PRICE_API_%';");
     await query(
