@@ -57,6 +57,19 @@ describe("Database Configuration Unit Tests", () => {
     expect(config.database).toBe("custom_db");
   });
 
+  it("parses cloud/Neon DATABASE_URL with sslmode and default port 5432", () => {
+    const config = loadDatabaseConfig({
+      DATABASE_URL:
+        "postgresql://neondb_owner:secret_neon@ep-dry-pond-1234.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
+    });
+    expect(config.host).toBe("ep-dry-pond-1234.ap-southeast-1.aws.neon.tech");
+    expect(config.port).toBe(5432);
+    expect(config.user).toBe("neondb_owner");
+    expect(config.password).toBe("secret_neon");
+    expect(config.database).toBe("neondb");
+    expect(config.ssl).toBe(true);
+  });
+
   it("rejects invalid port numbers", () => {
     expect(() =>
       DatabaseConfigSchema.parse({

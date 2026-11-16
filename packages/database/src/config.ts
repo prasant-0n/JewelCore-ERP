@@ -16,6 +16,7 @@ export const DatabaseConfigSchema = z.object({
   idleTimeoutMillis: z.coerce.number().int().min(1000).default(30000),
   connectionTimeoutMillis: z.coerce.number().int().min(1000).default(5000),
   statementTimeoutMillis: z.coerce.number().int().min(1000).default(10000),
+  ssl: z.boolean().default(false),
 });
 
 export type DatabaseConfig = z.infer<typeof DatabaseConfigSchema>;
@@ -31,17 +32,30 @@ export function loadDatabaseConfig(
   let urlUser: string | undefined;
   let urlPassword: string | undefined;
   let urlDatabase: string | undefined;
+  let urlSsl = false;
 
   const dbUrl = env.DATABASE_URL;
   if (dbUrl) {
     try {
       const parsed = new URL(dbUrl);
       urlHost = parsed.hostname || undefined;
-      if (parsed.port) urlPort = Number(parsed.port);
+      if (parsed.port) {
+        urlPort = Number(parsed.port);
+      } else if (urlHost && urlHost !== "localhost") {
+        urlPort = 5432;
+      }
       if (parsed.username) urlUser = decodeURIComponent(parsed.username);
       if (parsed.password) urlPassword = decodeURIComponent(parsed.password);
       if (parsed.pathname && parsed.pathname.length > 1) {
         urlDatabase = parsed.pathname.slice(1);
+      }
+      if (
+        parsed.searchParams.get("sslmode") === "require" ||
+        parsed.searchParams.get("sslmode") === "verify-full" ||
+        parsed.searchParams.get("ssl") === "true" ||
+        (parsed.hostname && parsed.hostname.includes("neon.tech"))
+      ) {
+        urlSsl = true;
       }
     } catch {
       // Fallback to explicit env vars if URL is invalid
@@ -58,6 +72,7 @@ export function loadDatabaseConfig(
     idleTimeoutMillis: env.POSTGRES_IDLE_TIMEOUT_MS ?? 30000,
     connectionTimeoutMillis: env.POSTGRES_CONNECTION_TIMEOUT_MS ?? 5000,
     statementTimeoutMillis: env.POSTGRES_STATEMENT_TIMEOUT_MS ?? 10000,
+    ssl: env.POSTGRES_SSL === "true" || urlSsl,
   };
 
   return DatabaseConfigSchema.parse(rawConfig);
@@ -68,5 +83,5 @@ export function loadDatabaseConfig(
  * Safe for structured logging and health checks.
  */
 export function getSanitizedConfigString(config: DatabaseConfig): string {
-  return `postgresql://${config.user}:****@${config.host}:${config.port}/${config.database}?poolMax=${config.maxConnections}&idleTimeout=${config.idleTimeoutMillis}ms`;
+  return `postgresql://${config.user}:****@${config.host}:${config.port}/${config.database}?ssl=${config.ssl}&poolMax=${config.maxConnections}&idleTimeout=${config.idleTimeoutMillis}ms`;
 }

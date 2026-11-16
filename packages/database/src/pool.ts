@@ -40,6 +40,7 @@ export function getPool(overrideConfig?: Partial<DatabaseConfig>): Pool {
     idleTimeoutMillis: config.idleTimeoutMillis,
     connectionTimeoutMillis: config.connectionTimeoutMillis,
     statement_timeout: config.statementTimeoutMillis,
+    ssl: config.ssl ? { rejectUnauthorized: false } : undefined,
   });
 
   // Handle unexpected idle client errors
