@@ -10,6 +10,7 @@ const fontSans = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
+  preload: false,
 });
 
 const fontSerif = Playfair_Display({
@@ -17,6 +18,7 @@ const fontSerif = Playfair_Display({
   variable: "--font-serif",
   display: "swap",
   weight: ["400", "500", "600", "700", "800"],
+  preload: false,
 });
 
 const fontMono = JetBrains_Mono({
@@ -24,6 +26,7 @@ const fontMono = JetBrains_Mono({
   variable: "--font-mono",
   display: "swap",
   weight: ["400", "500", "600", "700"],
+  preload: false,
 });
 
 export const metadata: Metadata = {
