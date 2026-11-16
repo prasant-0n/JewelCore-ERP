@@ -1,0 +1,31 @@
+# JewelCore ERP - Dependabot Supply Chain & Vulnerability Automation (100% Free)
+version: 2
+updates:
+  # Monitor GitHub Actions workflow actions for security patches
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "ci(deps)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "devops"
+      - "security"
+
+  # Monitor root and monorepo workspace dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "security"

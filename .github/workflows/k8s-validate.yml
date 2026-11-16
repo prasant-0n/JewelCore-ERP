@@ -1,0 +1,39 @@
+name: ☸️ Kubernetes Manifests Schema & Lint Validation
+
+on:
+  push:
+    paths:
+      - "k8s/**"
+      - ".github/workflows/k8s-validate.yml"
+  pull_request:
+    paths:
+      - "k8s/**"
+      - ".github/workflows/k8s-validate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kubeconform-validation:
+    name: 🔍 Kubeconform Schema Validation (v1.30.0)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Kubeconform
+        run: |
+          KUBECONFORM_VERSION="v0.6.7"
+          curl -sL https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz | tar xz
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Validate All Kubernetes Manifests
+        run: |
+          kubeconform \
+            -strict \
+            -kubernetes-version 1.30.0 \
+            -schema-location default \
+            -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
+            -summary \
+            k8s/

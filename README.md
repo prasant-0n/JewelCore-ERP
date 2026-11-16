@@ -6,8 +6,9 @@
   **Mission-Critical Enterprise ERP for Precious Jewellery Manufacturing, Analytical QC, Vault Custody & Luxury Showrooms**
   
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.8%20Strict-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-  [![CI / CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088ff?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/prasanta-on/JewelCore-ERP/actions)
-  [![CodeQL](https://img.shields.io/badge/CodeQL-Security%20Passed-blueviolet?style=flat-square&logo=github&logoColor=white)](https://github.com/prasanta-on/JewelCore-ERP/security/code-scanning)
+  [![CI / CD](https://img.shields.io/github/actions/workflow/status/prasant-0n/JewelCore-ERP/ci.yml?branch=main&label=CI%2FCD&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/prasant-0n/JewelCore-ERP/actions/workflows/ci.yml)
+  [![Security](https://img.shields.io/github/actions/workflow/status/prasant-0n/JewelCore-ERP/security.yml?branch=main&label=DevSecOps&style=flat-square&logo=github&logoColor=white)](https://github.com/prasant-0n/JewelCore-ERP/actions/workflows/security.yml)
+  [![Docker GHCR](https://img.shields.io/badge/Docker-GHCR%20OCI%20Images-2496ed?style=flat-square&logo=docker&logoColor=white)](https://github.com/prasant-0n/JewelCore-ERP/pkgs/container/jewelcore-api)
   [![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=flat-square)](./LICENSE)
   [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](./CONTRIBUTING.md)
   [![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa?style=flat-square)](./CODE_OF_CONDUCT.md)
@@ -26,6 +27,7 @@
     <a href="#-architectural-workstations">Workstations</a> •
     <a href="#-statutory-indian-jewellery--tax-regulatory-engines">Compliance</a> •
     <a href="./ARCHITECTURE.md">Architecture</a> •
+    <a href="./docs/devops-guide.md"><strong>DevOps & Deployment</strong></a> •
     <a href="./CONTRIBUTING.md">Contributing</a> •
     <a href="#-quick-start">Quick Start</a> •
     <a href="#-verification--automated-tests">Testing</a>

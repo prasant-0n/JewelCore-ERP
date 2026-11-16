@@ -1,0 +1,80 @@
+name: 🚀 Continuous Deployment (Zero-Cost PaaS / Cloud)
+
+on:
+  workflow_run:
+    workflows: ["JewelCore Enterprise CI/CD Pipeline"]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: "Target deployment environment"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - "production"
+          - "staging"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: 🌐 Automated Cloud Deployment Trigger
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy Frontend to Vercel (Free Tier)
+        if: env.VERCEL_DEPLOY_HOOK != ''
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          echo "Triggering Vercel zero-downtime deployment..."
+          curl -s -X POST "$VERCEL_DEPLOY_HOOK"
+
+      - name: Deploy Backend to Render (Free Tier)
+        if: env.RENDER_API_DEPLOY_HOOK != ''
+        env:
+          RENDER_API_DEPLOY_HOOK: ${{ secrets.RENDER_API_DEPLOY_HOOK_URL }}
+        run: |
+          echo "Triggering Render API Web Service deployment..."
+          curl -s -X POST "$RENDER_API_DEPLOY_HOOK"
+
+      - name: Deploy Background Worker to Render (Free Tier)
+        if: env.RENDER_WORKER_DEPLOY_HOOK != ''
+        env:
+          RENDER_WORKER_DEPLOY_HOOK: ${{ secrets.RENDER_WORKER_DEPLOY_HOOK_URL }}
+        run: |
+          echo "Triggering Render Background Worker deployment..."
+          curl -s -X POST "$RENDER_WORKER_DEPLOY_HOOK"
+
+      - name: Generic Webhook Deployment
+        if: env.DEPLOY_WEBHOOK != ''
+        env:
+          DEPLOY_WEBHOOK: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+        run: |
+          echo "Triggering custom production deploy webhook..."
+          curl -s -X POST -H "Content-Type: application/json" \
+            -d "{\"ref\":\"${{ github.ref }}\",\"sha\":\"${{ github.sha }}\",\"repo\":\"${{ github.repository }}\"}" \
+            "$DEPLOY_WEBHOOK"
+
+      - name: Deployment Summary & Status Report
+        run: |
+          cat << 'EOF' >> $GITHUB_STEP_SUMMARY
+          ## 🚀 JewelCore ERP Continuous Deployment Report
+
+          - **Branch**: \`${{ github.ref_name }}\`
+          - **Commit**: \`${{ github.sha }}\`
+          - **Trigger**: \`${{ github.event_name }}\`
+
+          ### 📦 Free-Tier Cloud Integration Setup:
+          To connect 100% free production hosting, add any of the following repository secrets in **Settings > Secrets and variables > Actions**:
+          - \`VERCEL_DEPLOY_HOOK_URL\`: Free Next.js hosting with instant edge CDN.
+          - \`RENDER_API_DEPLOY_HOOK_URL\`: Free Docker / Node API web service.
+          - \`RENDER_WORKER_DEPLOY_HOOK_URL\`: Free background processing worker.
+          - \`DEPLOY_WEBHOOK_URL\`: Custom webhook for Oracle Cloud Free Tier or VPS Docker Compose.
+          EOF

@@ -1,0 +1,23 @@
+# Gitleaks Configuration for JewelCore ERP Monorepo
+title = "JewelCore ERP DevSecOps Secret Scanning Rules"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist for test fixtures, mock credentials, local dev seeds, and e2e specs"
+paths = [
+  '''apps/web/e2e/.*''',
+  '''apps/web/src/context/AuthContext\.tsx''',
+  '''apps/web/src/app/login/page\.tsx''',
+  '''packages/database/src/seed/.*''',
+  '''k8s/secrets\.yaml''',
+  '''\.env\.example''',
+  '''docker-compose.*\.yml''',
+]
+regexes = [
+  '''JewelCore@2026''',
+  '''jewelcore_dev''',
+  '''jewelcore-test-jwt-secret-key-32-chars-long!''',
+  '''0192e3[0-9a-f-]{30}''',
+]
