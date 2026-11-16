@@ -3827,6 +3827,429 @@ registry.registerPath({
 /**
  * Generates the complete OpenAPI 3.0 Document Specification.
  */
+
+// -------------------------------------------------------------
+// 16. Double-Entry Accounting & Statutory GST E-Invoice
+// -------------------------------------------------------------
+const PostJournalEntryInputSchema = registry.register(
+  "PostJournalEntryInput",
+  z.object({
+    journalNumber: z.string().openapi({ example: "JV-2026-1049" }),
+    narration: z.string().openapi({ example: "Bullion replenishment purchase settlement" }),
+    entries: z.array(
+      z.object({
+        accountId: z.string().uuid().openapi({ example: "0192e300-0000-7000-8000-000000000010" }),
+        debitAmount: z.number().nonnegative().openapi({ example: 450000.0 }),
+        creditAmount: z.number().nonnegative().openapi({ example: 0.0 }),
+        description: z.string().optional().openapi({ example: "Debit Bullion Asset A/C" }),
+      })
+    ),
+  })
+);
+
+const GenerateIrnInputSchema = registry.register(
+  "GenerateIrnInput",
+  z.object({
+    invoiceId: z.string().uuid().openapi({ example: "0192e300-0000-7000-8000-000000000040" }),
+  })
+);
+
+const GenerateEWayBillInputSchema = registry.register(
+  "GenerateEWayBillInput",
+  z.object({
+    invoiceId: z.string().uuid().openapi({ example: "0192e300-0000-7000-8000-000000000040" }),
+    transporterId: z.string().optional().openapi({ example: "27AAAAA0000A1Z5" }),
+    transporterName: z.string().optional().openapi({ example: "Brinks Armored Transit Ltd" }),
+    vehicleNumber: z.string().optional().openapi({ example: "MH01AB1234" }),
+  })
+);
+
+const CancelEInvoiceInputSchema = registry.register(
+  "CancelEInvoiceInput",
+  z.object({
+    invoiceId: z.string().uuid().openapi({ example: "0192e300-0000-7000-8000-000000000040" }),
+    cancelReason: z.string().openapi({ example: "1" }),
+    cancelRemarks: z.string().openapi({ example: "Customer requested order cancellation prior to dispatch" }),
+  })
+);
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/accounting/accounts",
+  tags: ["Double-Entry Accounting & Statutory GST"],
+  summary: "List complete Chart of Accounts (COA) with debit and credit balances",
+  security: [{ BearerAuth: [] }],
+  responses: {
+    200: { description: "Chart of Accounts list" },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/accounting/trial-balance",
+  tags: ["Double-Entry Accounting & Statutory GST"],
+  summary: "Compute and retrieve verified double-entry Trial Balance",
+  security: [{ BearerAuth: [] }],
+  responses: {
+    200: { description: "Verified balanced trial balance summary" },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/accounting/journals",
+  tags: ["Double-Entry Accounting & Statutory GST"],
+  summary: "List journal vouchers with balance verification",
+  security: [{ BearerAuth: [] }],
+  responses: {
+    200: { description: "List of posted journal vouchers" },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/accounting/journals",
+  tags: ["Double-Entry Accounting & Statutory GST"],
+  summary: "Post balanced double-entry journal voucher (enforces debits == credits)",
+  security: [{ BearerAuth: [] }],
+  request: {
+    body: {
+      content: { "application/json": { schema: PostJournalEntryInputSchema } },
+    },
+  },
+  responses: {
+    201: { description: "Journal voucher posted successfully" },
+    400: { description: "Unbalanced voucher or invalid account" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/accounting/gst-returns",
+  tags: ["Double-Entry Accounting & Statutory GST"],
+  summary: "Retrieve statutory GSTR-1 and GSTR-3B return summaries (HSN/SAC 7113)",
+  security: [{ BearerAuth: [] }],
+  responses: {
+    200: { description: "GSTR-1 and GSTR-3B tax return summary" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/accounting/einvoice",
+  tags: ["Double-Entry Accounting & Statutory GST"],
+  summary: "List statutory GST e-invoices with IRN and signed QR codes",
+  security: [{ BearerAuth: [] }],
+  responses: {
+    200: { description: "List of e-invoices" },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/accounting/einvoice/generate-irn",
+  tags: ["Double-Entry Accounting & Statutory GST"],
+  summary: "Generate 64-character SHA-256 IRN and B2B signed QR code via NIC GST portal",
+  security: [{ BearerAuth: [] }],
+  request: {
+    body: {
+      content: { "application/json": { schema: GenerateIrnInputSchema } },
+    },
+  },
+  responses: {
+    200: { description: "IRN generated and signed QR code issued" },
+    400: { description: "Missing mandatory statutory tax fields" },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/accounting/einvoice/generate-ewb",
+  tags: ["Double-Entry Accounting & Statutory GST"],
+  summary: "Generate 12-digit transit E-Way Bill for high-value bullion consignment",
+  security: [{ BearerAuth: [] }],
+  request: {
+    body: {
+      content: { "application/json": { schema: GenerateEWayBillInputSchema } },
+    },
+  },
+  responses: {
+    200: { description: "E-Way Bill generated successfully" },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/accounting/einvoice/cancel-irn",
+  tags: ["Double-Entry Accounting & Statutory GST"],
+  summary: "Cancel statutory IRN within 24-hour statutory window",
+  security: [{ BearerAuth: [] }],
+  request: {
+    body: {
+      content: { "application/json": { schema: CancelEInvoiceInputSchema } },
+    },
+  },
+  responses: {
+    200: { description: "IRN cancelled on NIC portal" },
+  },
+});
+
+// -------------------------------------------------------------
+// 17. Atelier Manufacturing & Karigar Work Orders
+// -------------------------------------------------------------
+const CreateKarigarInputSchema = registry.register(
+  "CreateKarigarInput",
+  z.object({
+    code: z.string().openapi({ example: "KAR-01" }),
+    name: z.string().openapi({ example: "Master Artisan Ramesh Soni" }),
+    specialization: z.string().openapi({ example: "FILIGREE_KUNDAN" }),
+    lossTolerancePct: z.number().optional().openapi({ example: 1.25 }),
+    phone: z.string().optional().openapi({ example: "+91 98200 11223" }),
+    panNumber: z.string().optional().openapi({ example: "ABCDE1234F" }),
+    address: z.string().optional().openapi({ example: "Zaveri Bazaar, Mumbai" }),
+  })
+);
+
+const CreateJobOrderInputSchema = registry.register(
+  "CreateJobOrderInput",
+  z.object({
+    orderNumber: z.string().openapi({ example: "MFG-2026-9041" }),
+    karigarId: z.string().uuid().openapi({ example: "0192e300-0000-7000-8000-000000000070" }),
+    bomId: z.string().uuid().optional().openapi({ example: "0192e300-0000-7000-8000-000000000071" }),
+    targetSkuId: z.string().uuid().openapi({ example: "0192e300-0000-7000-8000-000000000072" }),
+    issuedPureGoldGrams: z.number().positive().openapi({ example: 45.5 }),
+    issuedAlloyGrams: z.number().nonnegative().openapi({ example: 3.25 }),
+    targetGrossWeightGrams: z.number().positive().openapi({ example: 48.0 }),
+  })
+);
+
+const CreateItc04ChallanInputSchema = registry.register(
+  "CreateItc04ChallanInput",
+  z.object({
+    jobOrderId: z.string().uuid().openapi({ example: "0192e300-0000-7000-8000-000000000075" }),
+    karigarGstin: z.string().optional().openapi({ example: "27AAAAA0000A1Z5" }),
+    dispatchStoreId: z.string().uuid().openapi({ example: "0192e300-0000-7000-8000-000000000002" }),
+    challanNumber: z.string().openapi({ example: "ITC04-2026-0041" }),
+  })
+);
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/manufacturing/karigars",
+  tags: ["Atelier Manufacturing & Karigar Work Orders"],
+  summary: "List registered master karigars, artisans and loss tolerance thresholds",
+  security: [{ BearerAuth: [] }],
+  responses: { 200: { description: "Karigar directory list" } },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/manufacturing/karigars",
+  tags: ["Atelier Manufacturing & Karigar Work Orders"],
+  summary: "Register new karigar artisan profile",
+  security: [{ BearerAuth: [] }],
+  request: {
+    body: { content: { "application/json": { schema: CreateKarigarInputSchema } } },
+  },
+  responses: { 201: { description: "Karigar profile registered" } },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/manufacturing/jobs",
+  tags: ["Atelier Manufacturing & Karigar Work Orders"],
+  summary: "List atelier manufacturing job orders with stage tracking",
+  security: [{ BearerAuth: [] }],
+  responses: { 200: { description: "List of job orders" } },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/manufacturing/jobs",
+  tags: ["Atelier Manufacturing & Karigar Work Orders"],
+  summary: "Create job order and issue precious metal mass balance to artisan",
+  security: [{ BearerAuth: [] }],
+  request: {
+    body: { content: { "application/json": { schema: CreateJobOrderInputSchema } } },
+  },
+  responses: { 201: { description: "Job order created and metal issued" } },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/manufacturing/jobs/{id}",
+  tags: ["Atelier Manufacturing & Karigar Work Orders"],
+  summary: "Retrieve manufacturing job order details and metal conservation balance",
+  security: [{ BearerAuth: [] }],
+  parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+  responses: { 200: { description: "Job order details" } },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/manufacturing/challans",
+  tags: ["Atelier Manufacturing & Karigar Work Orders"],
+  summary: "List Form GST ITC-04 statutory job-work delivery challans",
+  security: [{ BearerAuth: [] }],
+  responses: { 200: { description: "List of ITC-04 delivery challans" } },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/manufacturing/challans",
+  tags: ["Atelier Manufacturing & Karigar Work Orders"],
+  summary: "Generate Form GST ITC-04 delivery challan for job-work transit",
+  security: [{ BearerAuth: [] }],
+  request: {
+    body: { content: { "application/json": { schema: CreateItc04ChallanInputSchema } } },
+  },
+  responses: { 201: { description: "ITC-04 challan generated" } },
+});
+
+// -------------------------------------------------------------
+// 18. Gold Savings Schemes & VIP Loyalty
+// -------------------------------------------------------------
+const CreateSavingsSchemeInputSchema = registry.register(
+  "CreateSavingsSchemeInput",
+  z.object({
+    code: z.string().openapi({ example: "SWARNA-11" }),
+    name: z.string().openapi({ example: "Swarna Nidhi 11-Month Gold Accumulation Scheme" }),
+    schemeType: z.enum(["FIXED_AMOUNT", "GOLD_WEIGHT_ACCUMULATION"]).openapi({ example: "FIXED_AMOUNT" }),
+    totalTenureMonths: z.number().int().min(6).max(24).openapi({ example: 11 }),
+    minInstallmentAmountInr: z.number().positive().openapi({ example: 10000.0 }),
+    bonusContributionPct: z.number().nonnegative().openapi({ example: 100.0 }),
+    makingChargeDiscountPct: z.number().nonnegative().openapi({ example: 50.0 }),
+    description: z.string().optional().openapi({ example: "Pay 11 monthly installments and receive 12th installment as bonus" }),
+  })
+);
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/schemes",
+  tags: ["Gold Savings Schemes & VIP Loyalty"],
+  summary: "List active gold savings schemes and investment plans",
+  security: [{ BearerAuth: [] }],
+  responses: { 200: { description: "List of savings scheme templates" } },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/schemes",
+  tags: ["Gold Savings Schemes & VIP Loyalty"],
+  summary: "Create savings scheme configuration template",
+  security: [{ BearerAuth: [] }],
+  request: {
+    body: { content: { "application/json": { schema: CreateSavingsSchemeInputSchema } } },
+  },
+  responses: { 201: { description: "Savings scheme created" } },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/schemes/accounts",
+  tags: ["Gold Savings Schemes & VIP Loyalty"],
+  summary: "List customer savings scheme accounts with passbook balance",
+  security: [{ BearerAuth: [] }],
+  responses: { 200: { description: "Customer scheme accounts" } },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/schemes/loyalty/{customerId}",
+  tags: ["Gold Savings Schemes & VIP Loyalty"],
+  summary: "Retrieve VIP client loyalty points, tier level, and redemption eligibility",
+  security: [{ BearerAuth: [] }],
+  parameters: [{ name: "customerId", in: "path", required: true, schema: { type: "string" } }],
+  responses: { 200: { description: "VIP loyalty profile" } },
+});
+
+// -------------------------------------------------------------
+// 19. Certificates & Compliance PDF Export Engine
+// -------------------------------------------------------------
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/certificates/piece/{id}/pdf",
+  tags: ["Certificates & Compliance PDF Engine"],
+  summary: "Generate luxury Atelier Authenticity Certificate PDF with QR and HUID",
+  security: [{ BearerAuth: [] }],
+  parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+  responses: {
+    200: {
+      description: "Authenticity Certificate PDF binary stream",
+      content: { "application/pdf": { schema: { type: "string", format: "binary" } } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/certificates/invoice/{id}/pdf",
+  tags: ["Certificates & Compliance PDF Engine"],
+  summary: "Generate statutory GST Tax Invoice PDF with B2B/B2C QR code",
+  security: [{ BearerAuth: [] }],
+  parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+  responses: {
+    200: {
+      description: "GST Tax Invoice PDF binary stream",
+      content: { "application/pdf": { schema: { type: "string", format: "binary" } } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/certificates/compliance/dossier/pdf",
+  tags: ["Certificates & Compliance PDF Engine"],
+  summary: "Generate Merkle Ledger Compliance Audit Dossier PDF",
+  security: [{ BearerAuth: [] }],
+  responses: {
+    200: {
+      description: "Audit Dossier PDF binary stream",
+      content: { "application/pdf": { schema: { type: "string", format: "binary" } } },
+    },
+  },
+});
+
+// -------------------------------------------------------------
+// 20. VIP Client Portal & Digital Asset Vault
+// -------------------------------------------------------------
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/portal/portfolio/{customerId}",
+  tags: ["VIP Client Portal & Digital Asset Vault"],
+  summary: "Retrieve VIP customer jewellery collection with live mark-to-market bullion valuation",
+  security: [{ BearerAuth: [] }],
+  parameters: [{ name: "customerId", in: "path", required: true, schema: { type: "string" } }],
+  responses: { 200: { description: "VIP portfolio items and current valuation" } },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/portal/concierge/appointments",
+  tags: ["VIP Client Portal & Digital Asset Vault"],
+  summary: "Book private VIP salon appointment with dedicated concierge",
+  security: [{ BearerAuth: [] }],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            customerId: z.string().openapi({ example: "CLI-01" }),
+            requestedSlot: z.string().openapi({ example: "2026-11-20T15:00:00Z" }),
+            preferredShowroom: z.string().openapi({ example: "Mumbai Flagship Atelier" }),
+            notes: z.string().optional().openapi({ example: "Private viewing of solitaire high jewellery collection" }),
+          }),
+        },
+      },
+    },
+  },
+  responses: { 201: { description: "Appointment booked successfully" } },
+});
+
+
 export function getOpenApiDocumentation(): Record<string, any> {
   const generator = new OpenApiGeneratorV3(registry.definitions);
   return generator.generateDocument({
