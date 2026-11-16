@@ -56,6 +56,11 @@ export const migration00045CreateAccountingGeneralLedger: MigrationDefinition = 
     CREATE INDEX IF NOT EXISTS idx_journal_lines_entry ON journal_lines(journal_entry_id);
     CREATE INDEX IF NOT EXISTS idx_journal_lines_account ON journal_lines(account_id);
 
+    -- Ensure master organization exists before seeding accounts
+    INSERT INTO organizations (id, code, name, currency, tax_identifier, is_active, created_at, updated_at)
+    VALUES ('0192e300-0000-7000-8000-000000000001', 'JEWELCORE-ATELIER', 'JewelCore Luxury Atelier Group', 'INR', 'GSTIN27AABCU9603R1ZM', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ON CONFLICT (id) DO NOTHING;
+
     -- 4. Seed Standard JewelCore Luxury Atelier Chart of Accounts
     INSERT INTO accounts (id, organization_id, account_code, account_name, account_type, sub_type)
     VALUES

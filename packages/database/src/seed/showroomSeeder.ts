@@ -12,6 +12,11 @@ export async function seedShowroomDatabase(): Promise<void> {
   // eslint-disable-next-line no-console
   console.log("[1/6] Verifying & applying physical database migrations...");
   const migrationReport = await runMigrations(allMigrations, pool);
+  if (migrationReport.status === "FAILED") {
+    throw new Error(
+      `[JewelCore ERP] Migration failed: ${migrationReport.failedMigration} - ${migrationReport.error}`,
+    );
+  }
   // eslint-disable-next-line no-console
   console.log(
     `[1/6] Migrations complete. Status: ${migrationReport.status} (Newly Applied: ${migrationReport.newlyApplied.length})`,

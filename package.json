@@ -4,8 +4,9 @@
   "private": true,
   "packageManager": "pnpm@12.15.0",
   "scripts": {
-    "build": "pnpm --filter \"@jewelcore/*\" run build",
-    "typecheck": "pnpm --filter \"@jewelcore/*\" run typecheck",
+    "build:shared": "pnpm --filter \"@jewelcore/shared\" run build",
+    "build": "pnpm --filter \"@jewelcore/shared\" run build && pnpm --filter \"@jewelcore/*\" run build",
+    "typecheck": "pnpm --filter \"@jewelcore/shared\" run build && pnpm --filter \"@jewelcore/*\" run typecheck",
     "test": "vitest run",
     "test:load": "tsx load-tests/showroom-concurrency.ts",
     "test:e2e": "pnpm --filter \"@jewelcore/web\" run test:e2e",
