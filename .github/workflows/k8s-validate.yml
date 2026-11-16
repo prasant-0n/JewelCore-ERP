@@ -36,4 +36,7 @@ jobs:
             -schema-location default \
             -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
             -summary \
-            k8s/
+            k8s/*.yaml \
+            k8s/disaster-recovery/*.yaml \
+            k8s/monitoring/prometheus-config.yaml \
+            k8s/monitoring/alertmanager-rules.yaml
