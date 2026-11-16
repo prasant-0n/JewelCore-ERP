@@ -47,6 +47,7 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
         "http://localhost:3001",
         "http://127.0.0.1:3000",
         "https://jewelcore-erp.vercel.app",
+        "https://jewel-core-erp.vercel.app",
       ];
 
   app.use(
@@ -56,7 +57,9 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
         if (!requestOrigin) return callback(null, true);
         if (
           process.env.NODE_ENV !== "production" ||
+          allowedOrigins.includes("*") ||
           allowedOrigins.includes(requestOrigin) ||
+          requestOrigin.endsWith(".vercel.app") ||
           requestOrigin.endsWith(".jewelcore.internal")
         ) {
           return callback(null, true);

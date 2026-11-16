@@ -54,9 +54,11 @@ The web application features an **Interactive Quick-Login Roster** on the login 
 
 | URL / Service | Local Development Endpoint | Production Cloud Endpoint |
 | :--- | :--- | :--- |
-| **Web Frontend (Next.js 15)** | `http://localhost:3000` | `https://jewelcore-erp.vercel.app` |
-| **REST API & Telemetry Gateway** | `http://localhost:4000/api/v1` | `https://api.jewelcore-erp.railway.app` |
-| **API Health & Telemetry Stream** | `http://localhost:4000/api/v1/health` | `https://api.jewelcore-erp.railway.app/api/v1/health` |
+| **Web Frontend (Next.js 15)** | `http://localhost:3000` | [jewel-core-erp.vercel.app](https://jewel-core-erp.vercel.app) |
+| **REST API & Telemetry Gateway** | `http://localhost:4000/api/v1` | [jewelcore-erp-dsq7.onrender.com/api/v1](https://jewelcore-erp-dsq7.onrender.com/api/v1) |
+| **API Health & Deep Probe** | `http://localhost:4000/api/v1/health` | [jewelcore-erp-dsq7.onrender.com/api/v1/health](https://jewelcore-erp-dsq7.onrender.com/api/v1/health) |
+| **Swagger UI OpenAPI Reference** | `http://localhost:4000/api-docs` | [jewelcore-erp-dsq7.onrender.com/api-docs](https://jewelcore-erp-dsq7.onrender.com/api-docs) |
+| **Scalar Interactive API Docs** | `http://localhost:4000/reference` | [jewelcore-erp-dsq7.onrender.com/reference](https://jewelcore-erp-dsq7.onrender.com/reference) |
 
 ### Enterprise Staff Roster & Access Matrix (12 Realistic Personas)
 
