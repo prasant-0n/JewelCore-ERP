@@ -23,10 +23,10 @@ jobs:
   deploy:
     name: 🌐 Automated Cloud Deployment Trigger
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Deploy Frontend to Vercel (Free Tier)
         if: env.VERCEL_DEPLOY_HOOK != ''
