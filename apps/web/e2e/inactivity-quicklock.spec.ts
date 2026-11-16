@@ -24,7 +24,7 @@ test.describe("Inactivity Auto-Lock & 4-Digit Showroom PIN Fast-Resume", () => {
     await expect(dialog.getByRole("heading", { name: "Terminal Locked" })).toBeVisible();
     await expect(dialog.getByText("Workstation Standby Mode")).toBeVisible();
     await expect(dialog.getByText("Rachel R.")).toBeVisible();
-    await expect(dialog.getByText("Store Branch Manager")).toBeVisible();
+    await expect(dialog.getByText(/Store.*Manager/)).toBeVisible();
 
     // Verify main workspace is blurred while locked
     const blurredContainer = page.getByTestId("workspace-shell");

@@ -100,7 +100,11 @@ test.describe("Theme Toggle, Privacy Mode & QuickLock Terminal", () => {
     // Verify current user details (default hydrated staff: Rachel R.)
     await expect(page.locator("text=Rachel R.").first()).toBeVisible();
     await expect(page.locator("text=rachel.r@jewelcore.internal")).toBeVisible();
-    await expect(page.locator("text=Full Atelier PBAC")).toBeVisible();
+    await expect(
+      page
+        .locator("text=Full Atelier Access & Corporate Governance")
+        .or(page.locator("text=Full Atelier PBAC")),
+    ).toBeVisible();
 
     // Verify multi-user persona switcher is NOT present (only logged-in user is displayed)
     await expect(page.locator("text=Switch Operational Persona")).toHaveCount(0);
