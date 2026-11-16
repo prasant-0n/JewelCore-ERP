@@ -5,8 +5,10 @@
   "packageManager": "pnpm@12.15.0",
   "scripts": {
     "build:shared": "pnpm --filter \"@jewelcore/shared\" run build",
-    "build": "pnpm --filter \"@jewelcore/shared\" run build && pnpm --filter \"@jewelcore/*\" run build",
-    "typecheck": "pnpm --filter \"@jewelcore/shared\" run build && pnpm --filter \"@jewelcore/*\" run typecheck",
+    "build:database": "pnpm --filter \"@jewelcore/database\" run build",
+    "build:packages": "pnpm run build:shared && pnpm run build:database",
+    "build": "pnpm run build:packages && pnpm --filter \"@jewelcore/*\" run build",
+    "typecheck": "pnpm run build:packages && pnpm --filter \"@jewelcore/*\" run typecheck",
     "test": "vitest run",
     "test:load": "tsx load-tests/showroom-concurrency.ts",
     "test:e2e": "pnpm --filter \"@jewelcore/web\" run test:e2e",

@@ -32,6 +32,9 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build Monorepo Packages
+        run: pnpm run build:packages
+
       - name: Monorepo Typecheck (0 Errors Enforced)
         run: pnpm run typecheck
 
@@ -98,8 +101,8 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Shared Package
-        run: pnpm run build:shared
+      - name: Build Monorepo Packages
+        run: pnpm run build:packages
 
       - name: Database Schema Provisioning & Multi-Tenant Seeding
         run: pnpm run db:seed
@@ -151,7 +154,7 @@ jobs:
       REDIS_URL: redis://127.0.0.1:6380
       NODE_ENV: test
       JWT_SECRET: jewelcore-test-jwt-secret-key-32-chars-long!
-      PORT: 4000
+      PORT: 3000
       NEXT_PUBLIC_API_URL: http://127.0.0.1:4000/api/v1
 
     steps:
