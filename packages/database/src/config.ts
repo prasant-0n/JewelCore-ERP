@@ -34,8 +34,15 @@ export function loadDatabaseConfig(
   let urlDatabase: string | undefined;
   let urlSsl = false;
 
-  const dbUrl = env.DATABASE_URL;
+  let dbUrl = env.DATABASE_URL?.trim();
   if (dbUrl) {
+    if (
+      (dbUrl.startsWith('"') && dbUrl.endsWith('"')) ||
+      (dbUrl.startsWith("'") && dbUrl.endsWith("'"))
+    ) {
+      dbUrl = dbUrl.slice(1, -1).trim();
+    }
+
     try {
       const parsed = new URL(dbUrl);
       urlHost = parsed.hostname || undefined;
@@ -57,8 +64,11 @@ export function loadDatabaseConfig(
       ) {
         urlSsl = true;
       }
-    } catch {
-      // Fallback to explicit env vars if URL is invalid
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(
+        `[JewelCore DB] Failed to parse DATABASE_URL: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 

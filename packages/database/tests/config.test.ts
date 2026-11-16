@@ -70,6 +70,16 @@ describe("Database Configuration Unit Tests", () => {
     expect(config.ssl).toBe(true);
   });
 
+  it("safely strips quotation marks from surrounding DATABASE_URL", () => {
+    const config = loadDatabaseConfig({
+      DATABASE_URL:
+        '"postgresql://neondb_owner:secret_neon@ep-dry-pond-1234.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"',
+    });
+    expect(config.host).toBe("ep-dry-pond-1234.ap-southeast-1.aws.neon.tech");
+    expect(config.port).toBe(5432);
+    expect(config.ssl).toBe(true);
+  });
+
   it("rejects invalid port numbers", () => {
     expect(() =>
       DatabaseConfigSchema.parse({

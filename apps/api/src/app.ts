@@ -25,6 +25,7 @@ import { createAccountingRouter } from "./modules/accounting/accountingRoutes.js
 import { createManufacturingRouter } from "./modules/manufacturing/manufacturingRoutes.js";
 import { createSchemeRouter } from "./modules/schemes/schemeRoutes.js";
 import { createDocsRouter } from "./docs/docsRoutes.js";
+import { checkConnection } from "@jewelcore/database";
 
 export function createApp(configureRoutes?: (app: Express) => void): Express {
   const app = express();
@@ -72,7 +73,15 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
   // 3b. Prometheus Metrics Scrape Endpoint
   app.get("/metrics", metricsHandler);
 
-  // 4. Base Health Check
+  // 3c. Root landing redirect to interactive API Documentation
+  app.get("/", (_req: Request, res: Response) => {
+    res.redirect(301, "/api-docs");
+  });
+  app.head("/", (_req: Request, res: Response) => {
+    res.status(200).end();
+  });
+
+  // 4. Base Health Check (Liveness Probe)
   app.get("/health", (_req: Request, res: Response) => {
     res.status(200).json({
       status: "UP",
@@ -81,12 +90,20 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
     });
   });
 
-  // 5. API v1 Health Check
-  app.get("/api/v1/health", (_req: Request, res: Response) => {
-    res.status(200).json({
-      status: "UP",
+  // 5. API v1 Health Check (Deep Readiness Probe with Database Connectivity)
+  app.get("/api/v1/health", async (_req: Request, res: Response) => {
+    const dbStatus = await checkConnection();
+    res.status(dbStatus.ok ? 200 : 503).json({
+      status: dbStatus.ok ? "UP" : "DEGRADED",
       version: "v1",
       service: "JewelCore ERP API",
+      database: {
+        connected: dbStatus.ok,
+        latencyMs: dbStatus.latencyMs,
+        version: dbStatus.version,
+        error: dbStatus.error,
+        poolStats: dbStatus.poolStats,
+      },
       timestamp: new Date().toISOString(),
     });
   });
