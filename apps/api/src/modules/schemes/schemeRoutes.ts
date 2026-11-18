@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
+import rateLimit from "express-rate-limit";
 import {
   listSchemesHandler,
   createSchemeHandler,
@@ -14,7 +14,14 @@ import {
 
 export function createSchemeRouter(): Router {
   const router = Router();
-  router.use(createModuleLimiter("schemes"));
+  const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 120,
+    standardHeaders: false,
+    legacyHeaders: true,
+    skip: () => process.env.NODE_ENV === "test",
+  });
+  router.use(limiter);
 
   // Savings Scheme Templates
   router.get("/", listSchemesHandler);

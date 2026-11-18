@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
+import rateLimit from "express-rate-limit";
 import {
   streamTelemetryHandler,
   getHardwareStatusHandler,
@@ -13,7 +13,14 @@ import {
 
 export function createTelemetryRouter(): Router {
   const router = Router();
-  router.use(createModuleLimiter("telemetry"));
+  const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 120,
+    standardHeaders: false,
+    legacyHeaders: true,
+    skip: () => process.env.NODE_ENV === "test",
+  });
+  router.use(limiter);
 
   // SSE Stream for real-time browser subscriptions
   router.get("/stream", streamTelemetryHandler);

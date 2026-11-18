@@ -37,10 +37,11 @@ import {
   revokeOrganizationDevice,
   updateOrganizationDeviceTier,
 } from "./authService.js";
+import { jwtVerify } from "jose";
 import {
-  verifyJwt,
   signAccessToken,
   signRefreshToken,
+  JWT_SECRET,
   type TokenClaims,
 } from "./authUtils.js";
 import {
@@ -147,21 +148,24 @@ export async function refreshHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    let refreshToken = req.body?.refreshToken;
-    if (!refreshToken && req.headers.cookie) {
+    let token = typeof req.body?.refreshToken === "string" ? req.body.refreshToken.trim() : "";
+    if (!token && typeof req.headers.cookie === "string") {
       const match = req.headers.cookie.match(/refreshToken=([^;]+)/);
-      if (match && match[1]) refreshToken = decodeURIComponent(match[1]);
+      if (match && match[1]) token = decodeURIComponent(match[1]).trim();
     }
 
-    if (!refreshToken) {
+    let payload: TokenClaims;
+    try {
+      const verified = await jwtVerify(token, JWT_SECRET);
+      payload = verified.payload as TokenClaims;
+    } catch {
       throw new UnauthorizedError(
         "Refresh token is required",
         "ERR_REFRESH_TOKEN_REQUIRED",
       );
     }
 
-    const claims = await verifyJwt(refreshToken);
-    const user = await getCurrentUserService(claims.userId);
+    const user = await getCurrentUserService(payload.userId);
 
     const accessToken = await signAccessToken({
       userId: user.id,

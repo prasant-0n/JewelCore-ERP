@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
+import rateLimit from "express-rate-limit";
 import {
   createOrganizationHandler,
   getOrganizationHandler,
@@ -24,7 +24,14 @@ import {
 
 export function createIamRouter(): Router {
   const router = Router();
-  router.use(createModuleLimiter("iam"));
+  const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 120,
+    standardHeaders: false,
+    legacyHeaders: true,
+    skip: () => process.env.NODE_ENV === "test",
+  });
+  router.use(limiter);
 
   // Organization administrative endpoints
   router.post("/organizations", createOrganizationHandler);

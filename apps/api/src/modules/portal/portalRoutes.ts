@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
+import rateLimit from "express-rate-limit";
 import {
   getVipPortfolioHandler,
   bookConciergeAppointmentHandler,
@@ -8,7 +8,14 @@ import {
 
 export function createPortalRouter(): Router {
   const router = Router();
-  router.use(createModuleLimiter("portal"));
+  const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 120,
+    standardHeaders: false,
+    legacyHeaders: true,
+    skip: () => process.env.NODE_ENV === "test",
+  });
+  router.use(limiter);
 
   // VIP Client Asset Portfolio & Live Mark-to-Market Valuation
   router.get("/portfolio/:customerId", getVipPortfolioHandler);

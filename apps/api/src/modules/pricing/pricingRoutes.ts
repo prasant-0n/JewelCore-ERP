@@ -1,10 +1,10 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import {
   authenticate,
   requirePermission,
 } from "../../common/authMiddleware.js";
 import { storeContextMiddleware } from "../../common/storeContextMiddleware.js";
-import { createRateLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   recordDailyMarketRateHandler,
   getLatestEffectiveRateHandler,
@@ -42,20 +42,23 @@ export function createPricingRouter(): Router {
   const router = Router();
 
   // Baseline rate limiter for all pricing endpoints
-  const pricingLimiter = createRateLimiter({
-    keyPrefix: "pricing_api",
+  const pricingLimiter = rateLimit({
+    windowMs: 60 * 1000,
     limit: 180,
-    windowSeconds: 60,
-    skipInTests: true,
+    standardHeaders: false,
+    legacyHeaders: true,
+    skip: (req) => Boolean(process.env.NODE_ENV === "test" && !req.headers["x-enforce-rate-limit"]),
   });
   router.use(pricingLimiter);
 
   // Rate limiter for public live bullion ticker endpoints (120 req/min per IP)
-  const bullionFeedLimiter = createRateLimiter({
-    keyPrefix: "bullion_feed",
+  const bullionFeedLimiter = rateLimit({
+    windowMs: 60 * 1000,
     limit: 120,
-    windowSeconds: 60,
+    standardHeaders: false,
+    legacyHeaders: true,
     message: "Bullion rate feed rate limit exceeded. Please throttle live polling interval.",
+    skip: (req) => Boolean(process.env.NODE_ENV === "test" && !req.headers["x-enforce-rate-limit"]),
   });
 
   // Public/Kiosk Live Bullion Feed Telemetry (unauthenticated for showroom floor displays & ticker widgets)

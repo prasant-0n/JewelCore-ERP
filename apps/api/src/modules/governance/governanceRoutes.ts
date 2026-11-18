@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
+import rateLimit from "express-rate-limit";
 import {
   authenticate,
   requirePermission,
@@ -17,7 +17,14 @@ import {
 
 export function createGovernanceRouter(): Router {
   const router = Router();
-  router.use(createModuleLimiter("governance"));
+  const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 120,
+    standardHeaders: false,
+    legacyHeaders: true,
+    skip: () => process.env.NODE_ENV === "test",
+  });
+  router.use(limiter);
 
   // All document & file operations require authentication
   router.use(authenticate);

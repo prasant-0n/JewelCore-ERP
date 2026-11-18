@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
+import rateLimit from "express-rate-limit";
 import {
   getPieceCertificatePdfHandler,
   getTaxInvoicePdfHandler,
@@ -11,7 +11,14 @@ import {
  */
 export function createCertificatesRouter(): Router {
   const router = Router();
-  router.use(createModuleLimiter("certificates"));
+  const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 60,
+    standardHeaders: false,
+    legacyHeaders: true,
+    skip: () => process.env.NODE_ENV === "test",
+  });
+  router.use(limiter);
 
   // 1. VIP Atelier Authenticity Certificate PDF
   router.get("/piece/:id/pdf", getPieceCertificatePdfHandler);

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
+import rateLimit from "express-rate-limit";
 import {
   authenticate,
   requirePermission,
@@ -14,7 +14,14 @@ import {
 
 export function createStockApprovalRouter(): Router {
   const router = Router();
-  router.use(createModuleLimiter("stock_approval"));
+  const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 120,
+    standardHeaders: false,
+    legacyHeaders: true,
+    skip: () => process.env.NODE_ENV === "test",
+  });
+  router.use(limiter);
 
   // Authentication and store context resolution
   router.use(authenticate);

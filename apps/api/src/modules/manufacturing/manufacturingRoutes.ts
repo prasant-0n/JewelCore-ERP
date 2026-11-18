@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
+import rateLimit from "express-rate-limit";
 import {
   listKarigarsHandler,
   createKarigarHandler,
@@ -20,7 +20,14 @@ import {
 
 export function createManufacturingRouter(): Router {
   const router = Router();
-  router.use(createModuleLimiter("manufacturing"));
+  const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 120,
+    standardHeaders: false,
+    legacyHeaders: true,
+    skip: () => process.env.NODE_ENV === "test",
+  });
+  router.use(limiter);
 
   // Karigar Directory
   router.get("/karigars", listKarigarsHandler);
