@@ -164,3 +164,19 @@ export function createRateLimiter(options: RateLimiterOptions): RequestHandler {
     next();
   };
 }
+
+/**
+ * Convenience helper to create a standard module-level rate limiter for routers.
+ */
+export function createModuleLimiter(
+  keyPrefix: string,
+  limit = 300,
+  windowSeconds = 60,
+): RequestHandler {
+  return createRateLimiter({
+    keyPrefix,
+    limit,
+    windowSeconds,
+    skipInTests: true,
+  });
+}

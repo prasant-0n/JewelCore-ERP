@@ -38,11 +38,9 @@ describe("PostgreSQL Automated Disaster Recovery & AES-256 Encryption Drill (Pat
     const dumpCmd = `PGPASSWORD="${pgPassword}" pg_dump -h "${pgHost}" -p "${pgPort}" -U "${pgUser}" -d "${pgDatabase}" --no-owner --clean | gzip > "${rawSqlGzPath}"`;
     await execFileAsync("bash", ["-c", dumpCmd]);
 
-    const stats = await fs.stat(rawSqlGzPath);
-    expect(stats.size).toBeGreaterThan(1000); // Non-empty compressed SQL dump
-
     // Calculate cryptographic SHA-256 digest
     const fileBytes = await fs.readFile(rawSqlGzPath);
+    expect(fileBytes.length).toBeGreaterThan(1000); // Non-empty compressed SQL dump
     const sha256 = crypto.createHash("sha256").update(fileBytes).digest("hex");
     expect(sha256).toMatch(/^[a-f0-9]{64}$/);
   });
@@ -67,11 +65,9 @@ describe("PostgreSQL Automated Disaster Recovery & AES-256 Encryption Drill (Pat
       `pass:${testEncryptionKey}`,
     ]);
 
-    const encStats = await fs.stat(encPath);
-    expect(encStats.size).toBeGreaterThan(0);
-
     // Verify encrypted file does not contain plain SQL headers
     const encBytes = await fs.readFile(encPath);
+    expect(encBytes.length).toBeGreaterThan(0);
     const encHeader = encBytes.subarray(0, 16).toString("utf8");
     expect(encHeader).toContain("Salted__"); // OpenSSL salted encryption envelope
   });

@@ -326,8 +326,7 @@ img48.save(ico_path_public, format='ICO', sizes=[(16, 16), (32, 32), (48, 48)])
 print("favicon.ico generated in public/ containing 16x16, 32x32, 48x48 frames.")
 `;
 
-  fs.writeFileSync("/tmp/make_ico.py", pyScript);
-  execSync("python3 /tmp/make_ico.py", { stdio: "inherit" });
+  execSync("python3 -", { input: pyScript, stdio: ["pipe", "inherit", "inherit"] });
 }
 
 rasterize().catch((err) => {

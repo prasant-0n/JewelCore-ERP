@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   authenticate,
   requirePermission,
@@ -25,6 +26,7 @@ import {
  */
 export function createRfidRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("rfid"));
 
   // All RFID endpoints require authentication
   router.use(authenticate);

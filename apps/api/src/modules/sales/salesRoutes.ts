@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   authenticate,
   requirePermission,
@@ -47,6 +48,7 @@ import { processPOSExchangeHandler } from "./salesExchangeController.js";
  */
 export function createSalesRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("sales"));
 
   // All sales endpoints require authentication
   router.use(authenticate);

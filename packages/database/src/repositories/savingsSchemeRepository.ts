@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import { getPool } from "../pool.js";
 import { uuidv7 } from "../uuidv7.js";
@@ -278,7 +279,7 @@ export async function enrollCustomerInScheme(
     throw new Error(`Savings scheme not found: ${input.schemeId}`);
   }
 
-  const randomNum = Math.floor(1000 + Math.random() * 9000);
+  const randomNum = randomInt(1000, 10000);
   const accountNumber = `SCH-${new Date().getFullYear()}-${randomNum}`;
 
   const startDate = new Date();
@@ -403,7 +404,7 @@ export async function recordSchemeInstallment(
     : 0;
 
   const installmentId = uuidv7();
-  const receiptNum = `RCP-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
+  const receiptNum = `RCP-${new Date().getFullYear()}-${randomInt(10000, 100000)}`;
   const paymentMethod = input.paymentMethod || "UPI";
   const txRef = input.transactionReference || `TXN-${Date.now()}`;
 

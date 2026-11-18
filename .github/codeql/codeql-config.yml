@@ -1,0 +1,9 @@
+name: "JewelCore CodeQL Configuration"
+
+paths-ignore:
+  - "**/tests/**"
+  - "**/e2e/**"
+  - "**/scripts/**"
+  - "**/dist/**"
+  - "**/*.test.ts"
+  - "**/*.spec.ts"

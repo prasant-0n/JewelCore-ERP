@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   authenticate,
   requirePermission,
@@ -32,6 +33,7 @@ import {
  */
 export function createTransfersRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("transfers"));
 
   // All transfer endpoints require authentication
   router.use(authenticate);

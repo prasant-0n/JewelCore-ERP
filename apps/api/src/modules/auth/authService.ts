@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import {
   type RegisterUserInput,
   type LoginInput,
@@ -474,7 +475,7 @@ export function recordIamAuditEvent(event: {
   metadata?: Record<string, unknown>;
 }): IamAuditEvent {
   const newEvent: IamAuditEvent = {
-    id: `iam_evt_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    id: `iam_evt_${Date.now()}_${randomBytes(4).toString("hex")}`,
     timestamp: new Date().toISOString(),
     action: event.action,
     category: event.category ?? IamAuditCategory.AUTHENTICATION,
@@ -536,7 +537,7 @@ export function registerUserPasskey(
 ): PasskeyRecord {
   const passkeys = getUserPasskeys(userId);
   const newPasskey: PasskeyRecord = {
-    id: `passkey_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    id: `passkey_${Date.now()}_${randomBytes(4).toString("hex")}`,
     userId,
     name: input.name,
     credentialId: input.credentialId,
@@ -769,7 +770,7 @@ export function verifyStepUpService(
     );
   }
 
-  const stepUpToken = `stepup_proof_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+  const stepUpToken = `stepup_proof_${Date.now()}_${randomBytes(8).toString("hex")}`;
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
   const verifiedAt = new Date().toISOString();
 
@@ -854,7 +855,7 @@ export function activateBreakGlassService(
   const expiresAt = new Date(now.getTime() + durationMs).toISOString();
 
   const session: BreakGlassSession = {
-    id: `bg_session_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    id: `bg_session_${Date.now()}_${randomBytes(4).toString("hex")}`,
     userId,
     actorName: "Rachel R.",
     actorRole: "Store Branch Manager",
@@ -1069,10 +1070,10 @@ export function registerOrganizationDevice(
 
   const fingerprint =
     input.deviceFingerprint ||
-    `fp_${Date.now().toString(16)}_${Math.random().toString(36).substring(2, 10)}`;
+    `fp_${Date.now().toString(16)}_${randomBytes(6).toString("hex")}`;
 
   const newDevice: WorkstationDevice = {
-    id: `dev_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    id: `dev_${Date.now()}_${randomBytes(4).toString("hex")}`,
     organizationId: orgId,
     stationCode: input.stationCode.trim().toUpperCase(),
     deviceName: input.deviceName.trim(),

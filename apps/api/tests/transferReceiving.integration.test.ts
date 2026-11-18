@@ -487,7 +487,7 @@ describe("Transfer Manifest Receiving & Disputes API (FEAT-XFR-03, Entity 62)", 
         ],
       );
       return itemId;
-    }
+    };
 
     cleanPieceId = await makeItem(`SN-RCV-CLN-${Date.now()}`, 1);
     disputePiece1Id = await makeItem(`SN-RCV-DSP1-${Date.now()}`, 2);

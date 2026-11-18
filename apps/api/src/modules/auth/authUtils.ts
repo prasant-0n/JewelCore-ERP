@@ -10,7 +10,7 @@ if (
   );
 }
 
-const JWT_SECRET = new TextEncoder().encode(
+export const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET ??
     "jewelcore_super_secret_jwt_key_at_least_32_characters_long!",
 );

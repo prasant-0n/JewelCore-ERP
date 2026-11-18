@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getSecureRandomInt } from "@/lib/cryptoRandom";
 import { AppShell } from "../../components/common/AppShell";
 import { api } from "../../lib/api";
 import {
@@ -433,7 +434,7 @@ export default function SavingsSchemePage() {
       customerId: `cust-new-${Date.now()}`,
       customerName: enrollCustomerName || "Mrs. Ananya Roy",
       customerPhone: enrollCustomerPhone || "+91 98200 44556",
-      accountNumber: `SCH-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      accountNumber: `SCH-2026-${getSecureRandomInt(1000, 10000)}`,
       monthlyInstallmentInr: monthlyInr,
       installmentsPaid: 0,
       totalDepositedInr: 0,

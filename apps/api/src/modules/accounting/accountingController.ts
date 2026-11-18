@@ -20,7 +20,6 @@ import {
   cancelEInvoiceService,
   cancelEWayBillService,
 } from "./einvoiceService.js";
-import { verifyJwt } from "../auth/authUtils.js";
 
 const DEFAULT_ORG_ID = "0192e300-0000-7000-8000-000000000001";
 
@@ -204,19 +203,8 @@ export async function generateIrnHandler(
 ): Promise<void> {
   try {
     const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    let userName = "Rachel R.";
-
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const claims = await verifyJwt(authHeader.substring(7));
-        userId = claims.userId;
-        userName = (claims as any).name || userName;
-      } catch {
-        // Fallback default
-      }
-    }
+    const userId = req.user?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const userName = (req.user as any)?.name ?? "Rachel R.";
 
     const validated = generateIrnSchema.parse(req.body);
     const invoice = generateIrnService(orgId, userId, validated, userName);
@@ -241,19 +229,8 @@ export async function generateEWayBillHandler(
 ): Promise<void> {
   try {
     const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    let userName = "Rachel R.";
-
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const claims = await verifyJwt(authHeader.substring(7));
-        userId = claims.userId;
-        userName = (claims as any).name || userName;
-      } catch {
-        // Fallback default
-      }
-    }
+    const userId = req.user?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const userName = (req.user as any)?.name ?? "Rachel R.";
 
     const validated = generateEWayBillSchema.parse(req.body);
     const invoice = generateEWayBillService(orgId, userId, validated, userName);
@@ -278,19 +255,8 @@ export async function cancelEInvoiceHandler(
 ): Promise<void> {
   try {
     const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    let userName = "Rachel R.";
-
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const claims = await verifyJwt(authHeader.substring(7));
-        userId = claims.userId;
-        userName = (claims as any).name || userName;
-      } catch {
-        // Fallback default
-      }
-    }
+    const userId = req.user?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const userName = (req.user as any)?.name ?? "Rachel R.";
 
     const validated = cancelEInvoiceSchema.parse(req.body);
     const invoice = cancelEInvoiceService(orgId, userId, validated, userName);
@@ -315,19 +281,8 @@ export async function cancelEWayBillHandler(
 ): Promise<void> {
   try {
     const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? DEFAULT_ORG_ID;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    let userName = "Rachel R.";
-
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const claims = await verifyJwt(authHeader.substring(7));
-        userId = claims.userId;
-        userName = (claims as any).name || userName;
-      } catch {
-        // Fallback default
-      }
-    }
+    const userId = req.user?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const userName = (req.user as any)?.name ?? "Rachel R.";
 
     const validated = cancelEWayBillSchema.parse(req.body);
     const invoice = cancelEWayBillService(orgId, userId, validated, userName);

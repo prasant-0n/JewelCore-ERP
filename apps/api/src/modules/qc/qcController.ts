@@ -19,9 +19,8 @@ import {
 import {
   listHuidRecords,
   registerHuidService,
-  verifyHuidService,
+  lookupHuidRegistryService,
 } from "./huidService.js";
-import { verifyJwt } from "../auth/authUtils.js";
 import {
   createQualityCheck,
   getQualityCheckById,
@@ -1069,19 +1068,8 @@ export async function registerHuidHandler(
 ): Promise<void> {
   try {
     const orgId = req.user?.orgId ?? req.storeContext?.organizationId ?? "0192e300-0001-7000-8000-000000000001";
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    let userName = "Dr. A. Joshi";
-
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const claims = await verifyJwt(authHeader.substring(7));
-        userId = claims.userId;
-        userName = (claims as any).name || userName;
-      } catch {
-        // Fallback default
-      }
-    }
+    const userId = req.user?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const userName = (req.user as any)?.name ?? "Dr. A. Joshi";
 
     const validated = registerHuidSchema.parse(req.body);
     const record = registerHuidService(orgId, userId, validated, userName);
@@ -1106,12 +1094,12 @@ export async function verifyHuidHandler(
 ): Promise<void> {
   try {
     const rawHuid = req.params.huid;
-    const huid = Array.isArray(rawHuid) ? rawHuid[0] : rawHuid;
-    if (!huid || huid.length !== 6) {
+    const huid = (typeof rawHuid === "string" ? rawHuid : Array.isArray(rawHuid) && rawHuid[0] ? rawHuid[0] : "") || "";
+    if (huid.length !== 6) {
       throw new BadRequestError("HUID parameter must be strictly 6 alphanumeric characters");
     }
 
-    const result = verifyHuidService(huid);
+    const result = lookupHuidRegistryService(huid);
 
     res.status(200).json({
       success: true,

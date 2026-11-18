@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
+import { jwtVerify } from "jose";
 import { UnauthorizedError, ForbiddenError } from "@jewelcore/shared";
-import { verifyJwt, type TokenClaims } from "../modules/auth/authUtils.js";
+import { JWT_SECRET, type TokenClaims } from "../modules/auth/authUtils.js";
 import { getUserPermissionCodes, getUserRoles } from "@jewelcore/database";
 import {
   getUserCachedPermissions,
@@ -25,24 +26,22 @@ export async function authenticate(
   _res: Response,
   next: NextFunction,
 ): Promise<void> {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
+  const authHeader = req.headers.authorization;
+  if (typeof authHeader !== "string" || !authHeader.startsWith("Bearer ")) {
+    return next(
+      new UnauthorizedError(
         "Authorization header with Bearer token is required",
-      );
-    }
+      ),
+    );
+  }
 
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
-    req.user = claims;
-    next();
-  } catch (err) {
-    if (err instanceof UnauthorizedError) {
-      next(err);
-    } else {
-      next(new UnauthorizedError("Invalid or expired authentication token"));
-    }
+  const token = authHeader.slice(7).trim();
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    req.user = payload as TokenClaims;
+    return next();
+  } catch {
+    return next(new UnauthorizedError("Invalid or expired authentication token"));
   }
 }
 

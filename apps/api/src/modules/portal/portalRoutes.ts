@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   getVipPortfolioHandler,
   bookConciergeAppointmentHandler,
@@ -7,6 +8,7 @@ import {
 
 export function createPortalRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("portal"));
 
   // VIP Client Asset Portfolio & Live Mark-to-Market Valuation
   router.get("/portfolio/:customerId", getVipPortfolioHandler);

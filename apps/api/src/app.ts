@@ -26,6 +26,7 @@ import { createManufacturingRouter } from "./modules/manufacturing/manufacturing
 import { createSchemeRouter } from "./modules/schemes/schemeRoutes.js";
 import { createDocsRouter } from "./docs/docsRoutes.js";
 import { checkConnection } from "@jewelcore/database";
+import { createRateLimiter } from "./common/rateLimiterMiddleware.js";
 
 export function createApp(configureRoutes?: (app: Express) => void): Express {
   const app = express();
@@ -110,6 +111,15 @@ export function createApp(configureRoutes?: (app: Express) => void): Express {
       timestamp: new Date().toISOString(),
     });
   });
+
+  // 5b. Global API Rate Limiter (600 req/min, DDoS / Resource Exhaustion Mitigation - CWE-770)
+  const apiLimiter = createRateLimiter({
+    keyPrefix: "api_global",
+    limit: 600,
+    windowSeconds: 60,
+    skipInTests: true,
+  });
+  app.use("/api/v1", apiLimiter);
 
   // 6. Authentication Module (Top-Level Public Security Context)
   app.use("/api/v1/auth", createAuthRouter());

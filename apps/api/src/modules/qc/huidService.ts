@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import {
   GoldPurityGrade,
   HuidRecord,
@@ -204,7 +205,7 @@ export function registerHuidService(
     [GoldPurityGrade.SILVER_925]: "925 Sterling Silver Artefacts",
   };
 
-  const certificateNumber = `BIS-AHC-2026-${Math.floor(10000 + Math.random() * 90000)}`;
+  const certificateNumber = `BIS-AHC-2026-${randomInt(10000, 100000)}`;
   const bisCareQrUrl = `https://www.manakonline.in/BIS_Care/verify/${normalizedHuid}`;
   const now = new Date().toISOString();
 
@@ -270,7 +271,7 @@ export function registerHuidService(
 /**
  * Public/statutory verification of a 6-character HUID
  */
-export function verifyHuidService(
+export function lookupHuidRegistryService(
   huid: string,
 ): { verified: boolean; record: HuidRecord | null } {
   const normalized = huid.toUpperCase();

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   authenticate,
   requirePermission,
@@ -30,6 +31,7 @@ import {
 
 export function createQcRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("qc"));
 
   // Public Bureau of Indian Standards (BIS Care) Verification (Milestone 12)
   router.get("/huid/verify/:huid", verifyHuidHandler);

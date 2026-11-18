@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   authenticate,
   requirePermission,
@@ -15,6 +16,7 @@ import {
  */
 export function createAuditRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("audit"));
 
   // All audit operations require authentication
   router.use(authenticate);

@@ -104,10 +104,9 @@ export const errorHandler: ErrorRequestHandler = (
   const instance = req.originalUrl || req.url;
   const timestamp = new Date().toISOString();
 
-  let status = 500;
-  let code = "ERR_INTERNAL_SERVER_ERROR";
-  let detail =
-    "An unexpected internal error occurred. Please contact support with the request ID.";
+  let status: number;
+  let code: string;
+  let detail: string;
   let invalidParams: Array<{ name: string; reason: string }> | undefined;
 
   // 1. Zod Validation Errors
@@ -217,6 +216,9 @@ export const errorHandler: ErrorRequestHandler = (
 
   // Structured logging of error
   const reqLogger = (req as Request & { log?: typeof logger }).log ?? logger;
+  const safeUrl = instance.replace(/[\r\n]/g, "");
+  const safeDetail = typeof detail === "string" ? detail.replace(/[\r\n]/g, "") : "";
+
   if (status >= 500) {
     reqLogger.error(
       {
@@ -224,10 +226,10 @@ export const errorHandler: ErrorRequestHandler = (
         requestId,
         status,
         code,
-        url: instance,
+        url: safeUrl,
         method: req.method,
       },
-      `Internal Server Error on ${req.method} ${instance}`,
+      "Internal Server Error",
     );
   } else {
     reqLogger.warn(
@@ -235,11 +237,11 @@ export const errorHandler: ErrorRequestHandler = (
         requestId,
         status,
         code,
-        detail,
-        url: instance,
+        detail: safeDetail,
+        url: safeUrl,
         method: req.method,
       },
-      `Client Error (${status}) on ${req.method} ${instance}: ${detail}`,
+      "Client Error",
     );
   }
 

@@ -504,7 +504,7 @@ export function computeCompartmentOccupancy(
 ): CompartmentWithOccupancy {
   const max = comp.maxItemCapacity;
   let occupancyPercentage: number | null = null;
-  let status: CompartmentOccupancyStatus = "AVAILABLE";
+  let status: CompartmentOccupancyStatus;
 
   if (max !== null && max > 0) {
     occupancyPercentage = Math.min(100, Math.round((itemCount / max) * 100));

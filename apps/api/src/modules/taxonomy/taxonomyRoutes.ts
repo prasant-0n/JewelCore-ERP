@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   authenticate,
   requirePermission,
@@ -32,6 +33,7 @@ import {
 
 export function createTaxonomyRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("taxonomy"));
 
   // All taxonomy endpoints require authentication
   router.use(authenticate);

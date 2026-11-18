@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getSecureRandomInt } from "@/lib/cryptoRandom";
 import {
   Dialog,
   DialogContent,
@@ -169,7 +170,7 @@ export function KarigarSettlementModal({
           laborMakingChargesPayableInr: job.laborChargeInr,
           netSettlementAmountInr: netLaborPayoutInr,
           settlementType,
-          debitNoteNumber: isExcessLoss ? `DBN-JW-2026-${Math.floor(1000 + Math.random() * 9000)}` : undefined,
+          debitNoteNumber: isExcessLoss ? `DBN-JW-2026-${getSecureRandomInt(1000, 10000)}` : undefined,
           supervisorPinVerified: true,
           supervisorNotes,
           settledAt: new Date().toISOString(),

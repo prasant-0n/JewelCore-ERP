@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   authenticate,
   requirePermission,
@@ -13,6 +14,7 @@ import {
 
 export function createStockApprovalRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("stock_approval"));
 
   // Authentication and store context resolution
   router.use(authenticate);

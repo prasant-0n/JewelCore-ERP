@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   authenticate,
   requirePermission,
@@ -17,6 +18,7 @@ import {
 
 export function createStorageRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("storage"));
 
   // All storage endpoints require authentication and active store context scoping (INV-11)
   router.use(authenticate);

@@ -41,6 +41,15 @@ import {
 export function createPricingRouter(): Router {
   const router = Router();
 
+  // Baseline rate limiter for all pricing endpoints
+  const pricingLimiter = createRateLimiter({
+    keyPrefix: "pricing_api",
+    limit: 180,
+    windowSeconds: 60,
+    skipInTests: true,
+  });
+  router.use(pricingLimiter);
+
   // Rate limiter for public live bullion ticker endpoints (120 req/min per IP)
   const bullionFeedLimiter = createRateLimiter({
     keyPrefix: "bullion_feed",

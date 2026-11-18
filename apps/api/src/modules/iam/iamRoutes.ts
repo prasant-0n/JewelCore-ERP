@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   createOrganizationHandler,
   getOrganizationHandler,
@@ -23,6 +24,7 @@ import {
 
 export function createIamRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("iam"));
 
   // Organization administrative endpoints
   router.post("/organizations", createOrganizationHandler);

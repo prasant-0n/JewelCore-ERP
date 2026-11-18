@@ -1745,7 +1745,7 @@ export async function evaluateIntakeWeightTolerance(
     let isWithinTolerance = false;
     let hasDeclaredWeight = false;
     let varianceDeltaGrams: number | null = null;
-    let reconciliationStatus: "MATCHED" | "DISCREPANCY" = "DISCREPANCY";
+    let reconciliationStatus: "MATCHED" | "DISCREPANCY";
     let discrepancyReason: string | null = null;
 
     if (declaredGrossWeight === null) {

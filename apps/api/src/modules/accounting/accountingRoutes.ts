@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   listAccountsHandler,
   getTrialBalanceHandler,
@@ -14,6 +15,7 @@ import {
 
 export function createAccountingRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("accounting"));
 
   // Chart of Accounts (COA)
   router.get("/accounts", listAccountsHandler);

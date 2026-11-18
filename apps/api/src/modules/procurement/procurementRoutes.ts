@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { createModuleLimiter } from "../../common/rateLimiterMiddleware.js";
 import {
   authenticate,
   requirePermission,
@@ -28,6 +29,7 @@ import {
 
 export function createProcurementRouter(): Router {
   const router = Router();
+  router.use(createModuleLimiter("procurement"));
 
   // All procurement endpoints require authentication
   router.use(authenticate);

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getSecureRandomInt } from "@/lib/cryptoRandom";
 import {
   Dialog,
   DialogContent,
@@ -68,7 +69,7 @@ export function HuidRegistrationModal({
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // No O, 0, 1, I for legibility
     let result = "JC";
     for (let i = 0; i < 4; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
+      result += chars.charAt(getSecureRandomInt(0, chars.length));
     }
     setHuid(result);
   };
@@ -130,7 +131,7 @@ export function HuidRegistrationModal({
           [GoldPurityGrade.SILVER_925]: "925 Sterling Silver Artefacts",
         };
 
-        const certNo = `BIS-AHC-2026-${Math.floor(10000 + Math.random() * 90000)}`;
+        const certNo = `BIS-AHC-2026-${getSecureRandomInt(10000, 100000)}`;
         newRecord = {
           id: `huid_rec_${Date.now()}`,
           organizationId: "0192e300-0001-7000-8000-000000000001",

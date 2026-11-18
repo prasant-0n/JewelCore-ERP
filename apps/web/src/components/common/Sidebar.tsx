@@ -122,13 +122,7 @@ export function SidebarNavList({
                   key={item.href}
                   href={item.href}
                   onClick={onItemClick}
-                  title={
-                    isCollapsed
-                      ? `${item.name}${isRestricted ? " (PBAC Restricted)" : item.badge !== undefined ? ` (${item.badge})` : ""}`
-                      : isRestricted
-                      ? access.reason
-                      : undefined
-                  }
+                  title={isCollapsed ? item.name : undefined}
                   className={cn(
                     "flex items-center rounded-md text-xs font-medium transition-all relative",
                     isCollapsed

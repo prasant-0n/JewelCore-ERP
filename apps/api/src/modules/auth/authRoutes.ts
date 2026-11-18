@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createRateLimiter } from "../../common/rateLimiterMiddleware.js";
+import { authenticate } from "../../common/authMiddleware.js";
 import {
   registerHandler,
   loginHandler,
@@ -32,7 +33,16 @@ import {
 export function createAuthRouter(): Router {
   const router = Router();
 
-  // Rate limiter for authentication login endpoint to mitigate credential stuffing & brute-force attacks
+  // Baseline rate limiter for all auth endpoints
+  const authLimiter = createRateLimiter({
+    keyPrefix: "auth_api",
+    limit: 120,
+    windowSeconds: 60,
+    skipInTests: true,
+  });
+  router.use(authLimiter);
+
+  // Stricter rate limiter for authentication login endpoint to mitigate credential stuffing & brute-force attacks
   const loginLimiter = createRateLimiter({
     keyPrefix: "auth_login",
     limit: 15, // 15 attempts per minute per IP
@@ -45,8 +55,11 @@ export function createAuthRouter(): Router {
   router.post("/login", loginLimiter, loginHandler);
   router.post("/refresh", refreshHandler);
   router.post("/logout", logoutHandler);
-  router.post("/change-password", changePasswordHandler);
   router.post("/persona-token", personaTokenHandler);
+
+  // Authenticated Security & Session Endpoints
+  router.use(authenticate);
+  router.post("/change-password", changePasswordHandler);
   router.get("/me", meHandler);
   router.get("/me/stores", myStoresHandler);
   router.get("/sessions", listSessionsHandler);

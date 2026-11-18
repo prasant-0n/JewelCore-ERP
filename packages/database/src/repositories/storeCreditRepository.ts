@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import type { Pool, PoolClient } from "pg";
 import {
   type StoreCreditAccountRecord,
@@ -131,9 +132,7 @@ export async function getOrCreateStoreCreditAccount(
 
     // 3. Create account if not present
     const accountId = uuidv7();
-    const accountNumber = `SCA-${Date.now()}-${Math.floor(Math.random() * 1000)
-      .toString()
-      .padStart(3, "0")}`;
+    const accountNumber = `SCA-${Date.now()}-${randomInt(100, 1000).toString().padStart(3, "0")}`;
 
     const insertRes = await client.query<StoreCreditAccountRow>(
       `

@@ -41,12 +41,22 @@ import {
   verifyJwt,
   signAccessToken,
   signRefreshToken,
+  type TokenClaims,
 } from "./authUtils.js";
 import {
   getUserAccessibleStores,
   getUserByEmail,
   toUserPublic,
 } from "@jewelcore/database";
+
+function getRequestClaims(req: Request): TokenClaims {
+  if (req.user) {
+    return req.user;
+  }
+  throw new UnauthorizedError(
+    "Authorization header with Bearer token is required",
+  );
+}
 
 export async function registerHandler(
   req: Request,
@@ -101,15 +111,7 @@ export async function meHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
 
     const user = await getCurrentUserService(claims.userId);
     res.status(200).json({
@@ -127,15 +129,7 @@ export async function myStoresHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
 
     const stores = await getUserAccessibleStores(claims.userId);
     res.status(200).json({
@@ -250,14 +244,7 @@ export async function listSessionsHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
     const sessions = getActiveUserSessions(claims.userId);
 
     res.status(200).json({
@@ -275,14 +262,7 @@ export async function revokeSessionHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
     const rawId = req.params.id;
     const sessionId = Array.isArray(rawId) ? rawId[0] : rawId;
     if (!sessionId) {
@@ -312,14 +292,7 @@ export async function revokeOtherSessionsHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
 
     const revokedCount = revokeOtherUserSessions(
       claims.userId,
@@ -344,14 +317,7 @@ export async function changePasswordHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
 
     const validated = changePasswordSchema.parse(req.body);
     const result = await changePasswordService(claims.userId, validated);
@@ -371,14 +337,7 @@ export async function listIamAuditEventsHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-    const token = authHeader.substring(7);
-    await verifyJwt(token);
+    getRequestClaims(req);
 
     const category = req.query.category as string | undefined;
     const severity = req.query.severity as string | undefined;
@@ -403,19 +362,9 @@ export async function recordIamAuditEventHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let actorUserId = "0192e300-0002-7000-8000-000000000001";
-    let actorEmail = "rachel@jewelcore.internal";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        actorUserId = claims.userId;
-        actorEmail = claims.email;
-      } catch {
-        // Fallback to defaults
-      }
-    }
+    const claims = req.user;
+    const actorUserId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const actorEmail = claims?.email ?? "rachel@jewelcore.internal";
 
     const validated = createIamAuditEventSchema.parse(req.body);
     const clientIp =
@@ -445,14 +394,7 @@ export async function listPasskeysHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
 
     const passkeys = getUserPasskeys(claims.userId);
 
@@ -471,14 +413,7 @@ export async function registerPasskeyHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
 
     const validated = registerPasskeySchema.parse(req.body);
     const passkey = registerUserPasskey(claims.userId, validated);
@@ -498,14 +433,7 @@ export async function revokePasskeyHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
 
     const rawId = req.params.id;
     const passkeyId = Array.isArray(rawId) ? rawId[0] : rawId;
@@ -536,17 +464,8 @@ export async function getNetworkPerimeterHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        userId = claims.userId;
-      } catch {
-        // Fallback default
-      }
-    }
+    const claims = req.user;
+    const userId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
 
     const clientIp =
       (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
@@ -570,14 +489,7 @@ export async function simulateNetworkIpHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedError(
-        "Authorization header with Bearer token is required",
-      );
-    }
-    const token = authHeader.substring(7);
-    const claims = await verifyJwt(token);
+    const claims = getRequestClaims(req);
 
     const validated = simulateNetworkIpSchema.parse(req.body);
     const profile = simulateWorkstationNetworkIp(claims.userId, validated);
@@ -597,17 +509,8 @@ export async function verifyStepUpHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        userId = claims.userId;
-      } catch {
-        // Fallback default
-      }
-    }
+    const claims = req.user;
+    const userId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
 
     const validated = stepUpVerificationSchema.parse(req.body);
     const result = verifyStepUpService(userId, validated);
@@ -627,17 +530,8 @@ export async function activateBreakGlassHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        userId = claims.userId;
-      } catch {
-        // Fallback default
-      }
-    }
+    const claims = req.user;
+    const userId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
 
     const validated = breakGlassActivationSchema.parse(req.body);
     const session = activateBreakGlassService(userId, validated);
@@ -657,17 +551,8 @@ export async function getBreakGlassStatusHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        userId = claims.userId;
-      } catch {
-        // Fallback default
-      }
-    }
+    const claims = req.user;
+    const userId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
 
     const status = getBreakGlassStatusService(userId);
 
@@ -686,17 +571,8 @@ export async function revokeBreakGlassHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        userId = claims.userId;
-      } catch {
-        // Fallback default
-      }
-    }
+    const claims = req.user;
+    const userId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
 
     const revoked = revokeBreakGlassService(userId);
 
@@ -715,19 +591,9 @@ export async function listDevicesHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    let orgId = "0192e300-0001-7000-8000-000000000001";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        userId = claims.userId;
-        orgId = claims.orgId || orgId;
-      } catch {
-        // Fallback default
-      }
-    }
+    const claims = req.user;
+    const userId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const orgId = claims?.orgId ?? "0192e300-0001-7000-8000-000000000001";
 
     const devices = getOrganizationDevices(orgId, userId);
 
@@ -746,21 +612,10 @@ export async function registerDeviceHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    let orgId = "0192e300-0001-7000-8000-000000000001";
-    let userName = "Rachel R.";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        userId = claims.userId;
-        orgId = claims.orgId || orgId;
-        userName = (claims as any).name || userName;
-      } catch {
-        // Fallback default
-      }
-    }
+    const claims = req.user;
+    const userId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const orgId = claims?.orgId ?? "0192e300-0001-7000-8000-000000000001";
+    const userName = (claims as any)?.name ?? "Rachel R.";
 
     const validated = registerWorkstationDeviceSchema.parse(req.body);
     const device = registerOrganizationDevice(orgId, userId, validated, userName);
@@ -780,21 +635,10 @@ export async function revokeDeviceHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    let orgId = "0192e300-0001-7000-8000-000000000001";
-    let userName = "Rachel R.";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        userId = claims.userId;
-        orgId = claims.orgId || orgId;
-        userName = (claims as any).name || userName;
-      } catch {
-        // Fallback default
-      }
-    }
+    const claims = req.user;
+    const userId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const orgId = claims?.orgId ?? "0192e300-0001-7000-8000-000000000001";
+    const userName = (claims as any)?.name ?? "Rachel R.";
 
     const rawId = req.params.id;
     const deviceId = Array.isArray(rawId) ? rawId[0] : rawId;
@@ -822,21 +666,10 @@ export async function updateDeviceTierHandler(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authHeader = req.headers.authorization;
-    let userId = "0192e300-0002-7000-8000-000000000001";
-    let orgId = "0192e300-0001-7000-8000-000000000001";
-    let userName = "Rachel R.";
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.substring(7);
-        const claims = await verifyJwt(token);
-        userId = claims.userId;
-        orgId = claims.orgId || orgId;
-        userName = (claims as any).name || userName;
-      } catch {
-        // Fallback default
-      }
-    }
+    const claims = req.user;
+    const userId = claims?.userId ?? "0192e300-0002-7000-8000-000000000001";
+    const orgId = claims?.orgId ?? "0192e300-0001-7000-8000-000000000001";
+    const userName = (claims as any)?.name ?? "Rachel R.";
 
     const rawId = req.params.id;
     const deviceId = Array.isArray(rawId) ? rawId[0] : rawId;
