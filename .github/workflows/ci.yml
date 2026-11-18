@@ -10,6 +10,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  checks: write
+  actions: read
+
 jobs:
   lint-and-typecheck:
     name: 🔍 TypeScript Strict Typecheck
@@ -114,6 +119,7 @@ jobs:
     name: 🎭 Playwright E2E Workstation Matrix (154 Tests)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    if: github.actor != 'dependabot[bot]'
 
     services:
       postgres:

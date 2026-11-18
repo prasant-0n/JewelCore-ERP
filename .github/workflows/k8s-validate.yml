@@ -2,10 +2,12 @@ name: ☸️ Kubernetes Manifests Schema & Lint Validation
 
 on:
   push:
+    branches: [main]
     paths:
       - "k8s/**"
       - ".github/workflows/k8s-validate.yml"
   pull_request:
+    branches: [main]
     paths:
       - "k8s/**"
       - ".github/workflows/k8s-validate.yml"
