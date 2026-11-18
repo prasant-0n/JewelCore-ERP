@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaRegister } from "@/components/common/PwaRegister";
+import { Analytics } from "@vercel/analytics/next";
 
 const fontSans = { variable: "font-sans" };
 const fontSerif = { variable: "font-serif" };
@@ -75,6 +76,7 @@ export default function RootLayout({
             <Toaster position="bottom-right" />
           </AuthProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
