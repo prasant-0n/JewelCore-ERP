@@ -40,11 +40,11 @@ interface NavSection {
 
 const NAV_SECTIONS: NavSection[] = [
   {
-    title: "OVERVIEW",
+    title: "Overview",
     items: [{ name: "Control Tower", href: "/", icon: LayoutDashboard }],
   },
   {
-    title: "INVENTORY & ATELIER",
+    title: "Inventory & Atelier",
     items: [
       { name: "Vault & Storage", href: "/storage", icon: Boxes },
       { name: "Inward Intake", href: "/procurement", icon: ArrowRightLeft },
@@ -56,7 +56,7 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    title: "COMMERCIAL & SHOWROOM",
+    title: "Commercial & Showroom",
     items: [
       { name: "Bullion & Pricing", href: "/pricing", icon: TrendingUp },
       { name: "POS Cashier", href: "/pos", icon: CreditCard },
@@ -64,20 +64,20 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    title: "LOGISTICS",
+    title: "Logistics",
     items: [
       { name: "Store Transfers", href: "/transfers", icon: Truck, badge: 2 },
     ],
   },
   {
-    title: "PRIVATE CLIENTELING",
+    title: "Private Clienteling",
     items: [
       { name: "VIP Client Portal", href: "/portal", icon: Crown },
       { name: "Gold Savings (SIP)", href: "/schemes", icon: Coins, badge: 3 },
     ],
   },
   {
-    title: "FINANCE & STATUTORY",
+    title: "Finance & Statutory",
     items: [
       { name: "Accounting & GST", href: "/accounting", icon: Landmark },
     ],
@@ -104,7 +104,7 @@ export function SidebarNavList({
       {NAV_SECTIONS.map((section, idx) => (
         <div key={section.title} className="space-y-1">
           {!isCollapsed ? (
-            <div className="px-3 text-[10px] font-mono tracking-widest text-muted-foreground/90 uppercase font-semibold truncate">
+            <div className="px-3 text-[11px] font-sans text-muted-foreground/80 font-medium truncate">
               {section.title}
             </div>
           ) : (
@@ -124,7 +124,7 @@ export function SidebarNavList({
                   onClick={onItemClick}
                   title={isCollapsed ? item.name : undefined}
                   className={cn(
-                    "flex items-center rounded-md text-xs font-medium transition-all relative",
+                    "flex items-center rounded-md text-xs font-medium transition-colors duration-150 relative",
                     isCollapsed
                       ? "justify-center p-2.5 hover:bg-surface-elevated/80"
                       : "justify-between px-3 py-2",

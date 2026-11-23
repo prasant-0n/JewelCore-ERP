@@ -759,16 +759,16 @@ export function TopHeader({
             </button>
 
             {isBullionMenuOpen && (
-              <div className="absolute top-full right-0 mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-surface border border-surface-border rounded-lg shadow-2xl p-3 z-50 space-y-3">
+              <div className="absolute top-full right-0 mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-surface border border-surface-border rounded-lg shadow-xl p-3 z-50 space-y-3">
                 <div className="flex items-center justify-between pb-2 border-b border-surface-border text-xs">
                   <div className="flex items-center space-x-1.5">
-                    <Activity className="w-4 h-4 text-gold animate-pulse" />
+                    <Activity className="w-3.5 h-3.5 text-gold" />
                     <span className="font-semibold text-foreground">
                       Live Commodity Exchange Feed
                     </span>
                   </div>
-                  <span className="text-[9px] font-mono uppercase bg-gold/10 text-gold px-2 py-0.5 rounded border border-gold/20 font-bold">
-                    MCX • REAL-TIME
+                  <span className="text-[10px] font-mono text-muted-foreground bg-surface-elevated px-1.5 py-0.5 rounded border border-surface-border font-medium">
+                    MCX Real-Time
                   </span>
                 </div>
 
@@ -830,7 +830,7 @@ export function TopHeader({
                       toast.error("Failed to sync exchange rates");
                     }
                   }}
-                  className="w-full py-1.5 text-xs font-mono font-semibold rounded bg-gold text-black hover:bg-gold-light transition-all flex items-center justify-center space-x-1.5"
+                  className="w-full py-1.5 text-xs font-mono font-medium rounded bg-gold text-neutral-950 hover:bg-gold-light transition-colors flex items-center justify-center space-x-1.5 shadow-xs"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Sync MCX Live Spot Now</span>
@@ -878,7 +878,7 @@ export function TopHeader({
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
-                isLanSecured ? "bg-status-emerald animate-pulse" : "bg-amber-400"
+                isLanSecured ? "bg-status-emerald" : "bg-amber-400"
               }`}
             />
             <Wifi className="w-3 h-3" />

@@ -5,21 +5,21 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold disabled:pointer-events-none disabled:opacity-50 select-none",
+  "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold disabled:pointer-events-none disabled:opacity-50 select-none",
   {
     variants: {
       variant: {
-        gold: "bg-gradient-to-r from-gold to-gold-dark text-black font-semibold shadow-sm hover:brightness-105 active:scale-[0.98] border border-gold/30",
+        gold: "bg-gold text-neutral-950 font-semibold shadow-xs hover:bg-gold-light border border-gold/40 active:scale-[0.99]",
         "gold-outline":
-          "border border-gold/40 text-gold bg-transparent hover:bg-gold/10 hover:border-gold active:scale-[0.98]",
+          "border border-gold/40 text-gold bg-transparent hover:bg-gold/10 hover:border-gold active:scale-[0.99]",
         secondary:
-          "bg-surface-elevated text-foreground border border-surface-border hover:bg-surface-hover hover:border-surface-border active:scale-[0.98]",
+          "bg-surface-elevated text-foreground border border-surface-border hover:bg-surface-hover hover:border-surface-border active:scale-[0.99]",
         destructive:
-          "bg-destructive text-destructive-foreground border border-destructive/30 hover:bg-destructive/90 active:scale-[0.98]",
+          "bg-destructive text-destructive-foreground border border-destructive/30 hover:bg-destructive/90 active:scale-[0.99]",
         emerald:
-          "bg-status-emerald text-white border border-status-emerald/30 hover:brightness-105 active:scale-[0.98]",
+          "bg-status-emerald text-white border border-status-emerald/30 hover:brightness-105 active:scale-[0.99]",
         outline:
-          "border border-surface-border bg-transparent text-foreground hover:bg-surface-elevated active:scale-[0.98]",
+          "border border-surface-border bg-transparent text-foreground hover:bg-surface-elevated active:scale-[0.99]",
         ghost:
           "text-muted-foreground hover:bg-surface-elevated hover:text-foreground",
         link: "text-gold underline-offset-4 hover:underline p-0 h-auto",

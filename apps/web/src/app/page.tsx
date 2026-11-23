@@ -413,20 +413,20 @@ export default function HomePage() {
           <div className="flex items-center space-x-3.5">
             <JewelCoreLogo size="md" variant="badge" />
             <div>
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground mb-1">
                 <span>
                   {currentStore.name} ({currentStore.code})
                 </span>
                 <span>•</span>
-                <span className="text-status-emerald flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-status-emerald animate-pulse" />
-                  Shift Morning-A Active
+                <span className="text-status-emerald flex items-center gap-1.5 font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
+                  Shift Morning-A
                 </span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground flex flex-wrap items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-tight text-foreground flex flex-wrap items-center gap-2.5">
                 <span>Executive Control Tower</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-gold/10 border border-gold/30 text-gold uppercase tracking-wider font-semibold">
-                  Atelier Master
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-gold/10 border border-gold/30 text-gold font-medium">
+                  Atelier Console
                 </span>
               </h1>
             </div>
@@ -462,7 +462,7 @@ export default function HomePage() {
               <Card>
                 <CardHeader className="pb-3 border-b border-surface-border flex flex-row items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
                     <CardTitle className="text-sm font-semibold">
                       Live Bullion Fixing (IBJA)
                     </CardTitle>
@@ -471,83 +471,85 @@ export default function HomePage() {
                     {rates.lastUpdated}
                   </span>
                 </CardHeader>
-                <CardContent className="pt-3 space-y-2.5">
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-surface-elevated border border-surface-border">
-                    <div>
-                      <span className="text-xs font-medium text-foreground block">
-                        Gold 24K (999)
-                      </span>
-                      <span className="text-[10px] text-muted-foreground font-mono">
-                        Per 10 Grams
-                      </span>
+                <CardContent className="pt-1 pb-2 px-3.5">
+                  <div className="divide-y divide-surface-border text-xs font-mono">
+                    <div className="flex items-center justify-between py-2.5">
+                      <div>
+                        <span className="font-sans font-medium text-foreground block">
+                          Gold 24K (999)
+                        </span>
+                        <span className="text-[10px] text-muted-foreground font-mono">
+                          Per 10 Grams
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-gold tabular-nums block">
+                          ₹{rates.gold24k.toLocaleString("en-IN")}.00
+                        </span>
+                        <span className="text-[10px] text-status-emerald flex items-center justify-end gap-0.5 font-medium">
+                          <ArrowUpRight className="w-3 h-3" />
+                          +0.42%
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-sm font-mono font-bold text-gold tabular-nums block">
-                        ₹{rates.gold24k.toLocaleString("en-IN")}.00
-                      </span>
-                      <span className="text-[10px] font-mono text-status-emerald flex items-center justify-end gap-0.5">
-                        <ArrowUpRight className="w-3 h-3" />
-                        +0.42%
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-surface-elevated border border-surface-border">
-                    <div>
-                      <span className="text-xs font-medium text-foreground block">
-                        Gold 22K (916)
-                      </span>
-                      <span className="text-[10px] text-muted-foreground font-mono">
-                        Per 10 Grams
-                      </span>
+                    <div className="flex items-center justify-between py-2.5">
+                      <div>
+                        <span className="font-sans font-medium text-foreground block">
+                          Gold 22K (916)
+                        </span>
+                        <span className="text-[10px] text-muted-foreground font-mono">
+                          Per 10 Grams
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-foreground tabular-nums block">
+                          ₹{rates.gold22k.toLocaleString("en-IN")}.00
+                        </span>
+                        <span className="text-[10px] text-status-emerald flex items-center justify-end gap-0.5 font-medium">
+                          <ArrowUpRight className="w-3 h-3" />
+                          +0.40%
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-sm font-mono font-bold text-foreground tabular-nums block">
-                        ₹{rates.gold22k.toLocaleString("en-IN")}.00
-                      </span>
-                      <span className="text-[10px] font-mono text-status-emerald flex items-center justify-end gap-0.5">
-                        <ArrowUpRight className="w-3 h-3" />
-                        +0.40%
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-surface-elevated border border-surface-border">
-                    <div>
-                      <span className="text-xs font-medium text-foreground block">
-                        Platinum 950
-                      </span>
-                      <span className="text-[10px] text-muted-foreground font-mono">
-                        Per 10 Grams
-                      </span>
+                    <div className="flex items-center justify-between py-2.5">
+                      <div>
+                        <span className="font-sans font-medium text-foreground block">
+                          Platinum 950
+                        </span>
+                        <span className="text-[10px] text-muted-foreground font-mono">
+                          Per 10 Grams
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-foreground tabular-nums block">
+                          ₹{rates.platinum950.toLocaleString("en-IN")}.00
+                        </span>
+                        <span className="text-[10px] text-muted-foreground block font-medium">
+                          0.00%
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-sm font-mono font-bold text-foreground tabular-nums block">
-                        ₹{rates.platinum950.toLocaleString("en-IN")}.00
-                      </span>
-                      <span className="text-[10px] font-mono text-muted-foreground block">
-                        0.00%
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-surface-elevated border border-surface-border">
-                    <div>
-                      <span className="text-xs font-medium text-foreground block">
-                        Silver 999
-                      </span>
-                      <span className="text-[10px] text-muted-foreground font-mono">
-                        Per 1 Kilogram
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-sm font-mono font-bold text-foreground tabular-nums block">
-                        ₹{rates.silver999.toLocaleString("en-IN")}.00
-                      </span>
-                      <span className="text-[10px] font-mono text-status-emerald flex items-center justify-end gap-0.5">
-                        <ArrowUpRight className="w-3 h-3" />
-                        +1.12%
-                      </span>
+                    <div className="flex items-center justify-between py-2.5">
+                      <div>
+                        <span className="font-sans font-medium text-foreground block">
+                          Silver 999
+                        </span>
+                        <span className="text-[10px] text-muted-foreground font-mono">
+                          Per 1 Kilogram
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-foreground tabular-nums block">
+                          ₹{rates.silver999.toLocaleString("en-IN")}.00
+                        </span>
+                        <span className="text-[10px] text-status-emerald flex items-center justify-end gap-0.5 font-medium">
+                          <ArrowUpRight className="w-3 h-3" />
+                          +1.12%
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -652,9 +654,9 @@ export default function HomePage() {
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`px-2.5 py-1 rounded-md font-medium transition-all ${
+                        className={`px-2.5 py-1 rounded-md font-medium transition-colors duration-150 ${
                           activeTab === tab
-                            ? "bg-surface text-gold shadow-sm font-semibold border border-surface-border"
+                            ? "bg-surface text-foreground shadow-xs font-semibold border border-surface-border"
                             : "text-muted-foreground hover:text-foreground"
                         }`}
                       >

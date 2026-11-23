@@ -51,7 +51,7 @@ function Badge({
         <span
           className={cn(
             "w-1.5 h-1.5 rounded-full shrink-0",
-            variant === "gold" && "bg-gold animate-pulse",
+            variant === "gold" && "bg-gold",
             variant === "emerald" && "bg-status-emerald",
             variant === "amber" && "bg-status-amber",
             variant === "rose" && "bg-status-rose",

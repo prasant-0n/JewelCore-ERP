@@ -31,14 +31,14 @@ export function WorkstationKpiCard({
   return (
     <Card
       className={cn(
-        "overflow-hidden hover:border-surface-border/80 transition-all",
+        "overflow-hidden hover:border-surface-border/80 transition-colors duration-150",
         className,
       )}
     >
       <CardContent className="p-3.5 sm:p-4">
         <div className="flex items-center justify-between gap-2 mb-2">
           <span
-            className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider truncate"
+            className="text-xs font-medium text-muted-foreground truncate"
             title={item.title}
           >
             {item.title}
