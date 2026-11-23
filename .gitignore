@@ -41,3 +41,7 @@ blob-report/
 Thumbs.db
 .neon
 .env.neon
+
+# Agent directories
+.agents/
+
