@@ -895,11 +895,14 @@ export function TopHeader({
           {/* Quick Lock Padlock */}
           <button
             onClick={onLockClick}
-            title="Quick Lock Terminal (Showroom PIN)"
+            title="Quick Lock Terminal (Alt+L or ⌥L)"
             aria-label="Quick Lock Terminal"
-            className="p-1.5 rounded-md bg-surface-elevated border border-surface-border text-muted-foreground hover:text-gold hover:border-gold/30 transition-colors shrink-0"
+            className="group relative flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-surface-elevated border border-surface-border text-muted-foreground hover:text-gold hover:border-gold/30 transition-colors shrink-0"
           >
             <Lock className="w-4 h-4" />
+            <kbd className="hidden sm:inline-block text-[9px] font-mono px-1 py-0.5 rounded bg-surface border border-surface-border text-muted-foreground group-hover:text-gold group-hover:border-gold/40 transition-colors">
+              Alt+L
+            </kbd>
           </button>
 
           {/* Notifications */}

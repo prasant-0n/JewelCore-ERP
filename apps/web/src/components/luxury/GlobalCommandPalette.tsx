@@ -28,12 +28,14 @@ import {
   Coins,
   ArrowRight,
   Sparkles,
+  Lock,
 } from "lucide-react";
 
 interface WorkstationCommand {
   id: string;
   name: string;
-  route: string;
+  route?: string;
+  action?: () => void;
   category: string;
   icon: React.ReactNode;
   shortcut?: string;
@@ -156,6 +158,17 @@ const COMMANDS: WorkstationCommand[] = [
     icon: <Crown className="w-4 h-4 text-gold" />,
     description: "Client digital vault, certificates & reservations",
   },
+  {
+    id: "cmd-lock",
+    name: "Lock Workstation Terminal",
+    action: () => {
+      window.dispatchEvent(new CustomEvent("jewelcore:lock-terminal"));
+    },
+    category: "Security",
+    icon: <Lock className="w-4 h-4 text-gold" />,
+    shortcut: "Alt L",
+    description: "Instantly lock showroom display behind PIN authorization",
+  },
 ];
 
 interface GlobalCommandPaletteProps {
@@ -196,12 +209,16 @@ export function GlobalCommandPalette({
       );
     } else if (e.key === "Enter" && filteredCommands[selectedIndex]) {
       e.preventDefault();
-      handleSelect(filteredCommands[selectedIndex].route);
+      handleSelect(filteredCommands[selectedIndex]);
     }
   };
 
-  const handleSelect = (route: string) => {
-    router.push(route);
+  const handleSelect = (cmd: WorkstationCommand) => {
+    if (cmd.action) {
+      cmd.action();
+    } else if (cmd.route) {
+      router.push(cmd.route);
+    }
     onClose();
   };
 
@@ -241,7 +258,7 @@ export function GlobalCommandPalette({
               return (
                 <div
                   key={cmd.id}
-                  onClick={() => handleSelect(cmd.route)}
+                  onClick={() => handleSelect(cmd)}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`flex items-center justify-between p-2.5 rounded-xl text-xs cursor-pointer transition-all ${
                     isSelected

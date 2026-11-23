@@ -65,6 +65,29 @@ test.describe("Theme Toggle, Privacy Mode & QuickLock Terminal", () => {
     await expect(modalTitle).not.toBeVisible({ timeout: 5000 });
   });
 
+  test("triggers QuickLock terminal modal using Alt+L keyboard shortcut and unlocks with physical keyboard PIN", async ({
+    page,
+  }) => {
+    // Wait for workstation shell
+    await expect(page.getByTestId("workspace-shell")).toBeVisible({ timeout: 10000 });
+
+    // Press Alt+L shortcut to lock terminal
+    await page.keyboard.press("Alt+KeyL");
+
+    // Verify QuickLock modal is displayed
+    const modalTitle = page.getByRole("heading", { name: "Terminal Locked" });
+    await expect(modalTitle).toBeVisible({ timeout: 5000 });
+
+    // Key in default PIN '1234' directly with physical keyboard
+    await page.keyboard.press("1");
+    await page.keyboard.press("2");
+    await page.keyboard.press("3");
+    await page.keyboard.press("4");
+
+    // Modal should automatically verify PIN and dismiss
+    await expect(modalTitle).not.toBeVisible({ timeout: 5000 });
+  });
+
   test("toggles cost privacy mode in top header", async ({ page }) => {
     // Locate the privacy toggle button
     const privacyBtn = page.locator('button[title*="Customer Privacy Mode"]');

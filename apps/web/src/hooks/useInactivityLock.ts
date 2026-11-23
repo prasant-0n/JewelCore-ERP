@@ -64,6 +64,29 @@ export function useInactivityLock({
     };
   }, [lockTerminal, unlockTerminal]);
 
+  // Global physical keyboard shortcut listener (Alt+L / Option+L or Ctrl+Shift+L / Cmd+Shift+L)
+  useEffect(() => {
+    if (typeof window === "undefined" || !enabled || isLocked) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Primary: Alt + L (Option + L on macOS)
+      const isAltL = e.altKey && !e.ctrlKey && !e.metaKey && e.key.toLowerCase() === "l";
+      // Secondary: Ctrl + Shift + L (Windows/Linux) or Cmd + Shift + L (macOS)
+      const isModShiftL = (e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "l";
+
+      if (isAltL || isModShiftL) {
+        e.preventDefault();
+        e.stopPropagation();
+        lockTerminal();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [enabled, isLocked, lockTerminal]);
+
   // Determine active timeout threshold (allows dev/testing overrides via localStorage)
   const getEffectiveTimeout = useCallback(() => {
     if (typeof window !== "undefined") {
