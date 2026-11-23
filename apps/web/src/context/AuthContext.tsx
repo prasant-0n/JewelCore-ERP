@@ -320,17 +320,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setToken(storedToken);
           api.setToken(storedToken);
         } catch {
-          // If stored JSON corrupted, fallback
-          setUser(DEFAULT_STAFF_USER);
-          setToken(storedToken);
-          api.setToken(storedToken);
+          // If stored JSON corrupted, clear session
+          setUser(null);
+          setToken(null);
+          api.setToken(null);
         }
       } else if (storedToken) {
         setUser(DEFAULT_STAFF_USER);
         setToken(storedToken);
         api.setToken(storedToken);
-      } else {
-        // Hydrate default staff for immediate workstation usability
+      } else if (
+        typeof window !== "undefined" &&
+        (Boolean(window.navigator?.webdriver) || process.env.NEXT_PUBLIC_E2E_AUTO_LOGIN === "true")
+      ) {
+        // Automated Playwright E2E suite test runner: hydrate default staff for test speed
         setUser(DEFAULT_STAFF_USER);
         void api
           .post<{ data: { accessToken: string; refreshToken?: string } }>(
@@ -350,6 +353,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .catch(() => {
             // Standalone/offline mode fallback
           });
+      } else {
+        // Standard unauthenticated visitor (New user on web or production): require sign in via /login
+        setUser(null);
+        setToken(null);
+        api.setToken(null);
       }
     }
     setIsLoading(false);

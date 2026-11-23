@@ -16,6 +16,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   });
   const [privacyMode, setPrivacyMode] = useState(false);
 
+  // If unauthenticated, render bare RouteGuard to handle redirection to /login cleanly without flashing shell
+  if (!isAuthenticated) {
+    return <RouteGuard>{children}</RouteGuard>;
+  }
+
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-background text-foreground font-sans">
       <TopHeader
