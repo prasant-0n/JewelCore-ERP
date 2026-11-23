@@ -306,7 +306,7 @@ export default function GovernanceApprovalPage() {
         text: pendingApprovalsCount > 0 ? "Holds Active" : "Clear",
         variant: pendingApprovalsCount > 0 ? "amber" : "emerald",
       },
-      icon: <KeyRound className="w-4 h-4 text-amber-500" />,
+      icon: <KeyRound className="w-4 h-4 text-status-amber" />,
     },
     {
       id: "audit-ledger",
@@ -314,7 +314,7 @@ export default function GovernanceApprovalPage() {
       value: "100% Verified",
       subValue: "SHA-256 Merkle Root Chained",
       badge: { text: "Immutable", variant: "emerald" },
-      icon: <ShieldCheck className="w-4 h-4 text-emerald-500" />,
+      icon: <ShieldCheck className="w-4 h-4 text-status-emerald" />,
     },
     {
       id: "compliance-score",
@@ -322,7 +322,7 @@ export default function GovernanceApprovalPage() {
       value: "99.98% Pass",
       subValue: "ISO 9001 & BIS Hallmarked",
       badge: { text: "Hallmarked", variant: "gold" },
-      icon: <Sparkles className="w-4 h-4 text-gold" />,
+      icon: <ShieldCheck className="w-4 h-4 text-gold" />,
     },
     {
       id: "security-discrepancies",
@@ -330,7 +330,7 @@ export default function GovernanceApprovalPage() {
       value: "0 Open Flags",
       subValue: "Real-Time Reconciled & Audited",
       badge: { text: "Zero Flags", variant: "emerald" },
-      icon: <ShieldCheck className="w-4 h-4 text-emerald-500" />,
+      icon: <ShieldCheck className="w-4 h-4 text-status-emerald" />,
     },
   ];
 
@@ -338,13 +338,10 @@ export default function GovernanceApprovalPage() {
     <AppShell>
       <div className="space-y-6">
         {/* Luxury Hero Governance Banner */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-elevated/90 via-surface-card/60 to-surface-card/90 border border-gold/20 p-6 md:p-8 backdrop-blur-xl shadow-2xl">
-          <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
-
+        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-xs">
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
                 <span className="flex items-center gap-1.5 font-medium text-foreground">
                   <JewelCoreLogo size="xs" variant="mark" />
                   JewelCore ERP
@@ -352,15 +349,15 @@ export default function GovernanceApprovalPage() {
                 <span>/</span>
                 <span>Security &amp; Compliance</span>
                 <span>/</span>
-                <span className="text-gold font-semibold">
+                <span className="text-gold font-medium">
                   Dual-Custody Audit &amp; Governance Approval Center
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl md:text-3xl font-serif font-black tracking-tight text-foreground">
+                <h1 className="text-2xl md:text-3xl font-serif font-bold tracking-tight text-foreground">
                   Multi-Signatory Quorum &amp; Cryptographic Merkle Ledger
                 </h1>
-                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
                   HSM Key Card &amp; Dual Biometrics Synced • Zero Failures
                 </Badge>
                 <Badge variant="outline" className="border-gold/30 text-gold font-mono text-[11px] px-2.5 py-1">
@@ -377,9 +374,9 @@ export default function GovernanceApprovalPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsAuditModalOpen(true)}
-                className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 font-mono text-xs"
+                className="border-status-emerald/30 text-status-emerald hover:bg-status-emerald/10 font-mono text-xs"
               >
-                <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-500" />
+                <ShieldCheck className="w-3.5 h-3.5 mr-1 text-status-emerald" />
                 <span>Audit Event Stream</span>
               </Button>
 
@@ -387,9 +384,9 @@ export default function GovernanceApprovalPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsOverrideModalOpen(true)}
-                className="hover:border-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-mono text-xs border-surface-border"
+                className="hover:border-status-rose hover:text-status-rose font-mono text-xs border-surface-border"
               >
-                <AlertTriangle className="w-3.5 h-3.5 mr-1 text-rose-500" />
+                <AlertTriangle className="w-3.5 h-3.5 mr-1 text-status-rose" />
                 <span>Emergency Override Request</span>
               </Button>
 
@@ -428,7 +425,7 @@ export default function GovernanceApprovalPage() {
               className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                <span className="text-xs font-mono text-muted-foreground font-medium">
                   {kpi.title}
                 </span>
                 <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-gold">

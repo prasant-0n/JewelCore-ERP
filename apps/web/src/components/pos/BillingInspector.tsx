@@ -259,7 +259,7 @@ export function BillingInspector({
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-gold animate-pulse" />
+              <span className="w-2.5 h-2.5 rounded-full bg-gold" />
               <CardTitle className="text-base font-bold font-mono">
                 POS Billing &amp; Settlement
               </CardTitle>
@@ -406,7 +406,7 @@ export function BillingInspector({
                     }}
                     className={`py-1.5 rounded-lg border font-bold transition-colors cursor-pointer text-center ${
                       btn === "C"
-                        ? "bg-rose-500/10 text-rose-500 border-rose-500/30 hover:bg-rose-500/20"
+                        ? "bg-status-rose/10 text-status-rose border-status-rose/30 hover:bg-status-rose/20"
                         : "bg-surface text-foreground border-surface-border hover:bg-surface-elevated hover:border-gold/40"
                     }`}
                   >

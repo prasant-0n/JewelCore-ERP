@@ -90,10 +90,10 @@ export function SalonPresentationModal({
           <div className="flex items-center space-x-3">
             <JewelCoreLogo size="md" variant="badge" />
             <div>
-              <span className="text-[10px] font-mono tracking-widest text-gold uppercase block font-semibold">
-                PRIVATE CLIENT SALON • VIP PRESENTATION
+              <span className="text-xs font-mono text-gold font-medium block">
+                Private Client Salon • VIP Presentation
               </span>
-              <DialogTitle className="text-xl font-serif font-black tracking-wide text-foreground">
+              <DialogTitle className="text-xl font-serif font-bold tracking-tight text-foreground">
                 {piece.itemName}
               </DialogTitle>
             </div>
@@ -111,57 +111,55 @@ export function SalonPresentationModal({
 
         {/* Main Showcase Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-6 items-center">
-          {/* Left Column: 3D Luxury Jewellery Showcase Pedestal */}
+          {/* Left Column: Luxury Jewellery Showcase Pedestal */}
           <div
-            className={`relative aspect-square rounded-2xl flex flex-col items-center justify-center p-6 border transition-all duration-700 shadow-2xl overflow-hidden ${
+            className={`relative aspect-square rounded-2xl flex flex-col items-center justify-center p-6 border transition-colors duration-500 overflow-hidden bg-obsidian-deep ${
               studioLighting === "ATELIER_WARM"
-                ? "bg-gradient-to-br from-amber-950/40 via-stone-900 to-black border-gold/30 shadow-[0_0_50px_rgba(212,175,55,0.15)]"
+                ? "border-gold/40 shadow-xs"
                 : studioLighting === "DAYLIGHT_5500K"
-                  ? "bg-gradient-to-br from-blue-950/40 via-stone-900 to-black border-blue-400/30 shadow-[0_0_50px_rgba(96,165,250,0.15)]"
-                  : "bg-gradient-to-br from-stone-900 via-obsidian-deep to-black border-stone-800"
+                  ? "border-status-indigo/40 shadow-xs"
+                  : "border-surface-border"
             }`}
           >
-            {/* Ambient Lighting Rays */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-gold/10 via-transparent to-transparent pointer-events-none" />
+            {/* Directional Pedestal Spotlight */}
+            <div className="absolute inset-0 bg-obsidian-deep/80 pointer-events-none" />
 
             {/* Central Luxury Gemstone / Piece Icon Illustration */}
             <div
-              className={`w-36 h-36 rounded-full flex items-center justify-center relative transition-transform duration-1000 ${
-                isRotating ? "rotate-[360deg] scale-110" : ""
+              className={`w-36 h-36 rounded-full flex items-center justify-center relative transition-transform duration-700 ${
+                isRotating ? "rotate-[360deg] scale-105" : ""
               }`}
             >
-              <div className="absolute inset-0 rounded-full border border-gold/40 animate-ping opacity-20" />
-              <div className="absolute -inset-4 rounded-full border border-gold/20 animate-pulse" />
-              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-gold/30 to-amber-900/40 border border-gold/60 flex items-center justify-center shadow-2xl backdrop-blur-md">
-                <Gem className="w-14 h-14 text-gold drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
+              <div className="w-28 h-28 rounded-full bg-surface-elevated border border-gold/40 flex items-center justify-center shadow-xs">
+                <Gem className="w-14 h-14 text-gold" />
               </div>
             </div>
 
             {/* Studio Lighting Controls Bar */}
-            <div className="absolute bottom-4 flex items-center space-x-1.5 bg-black/70 backdrop-blur-md p-1 rounded-full border border-surface-border/50 shadow-lg">
+            <div className="absolute bottom-4 flex items-center space-x-1.5 bg-surface/90 backdrop-blur-xs p-1 rounded-full border border-surface-border shadow-xs">
               <button
                 onClick={() => setStudioLighting("ATELIER_WARM")}
-                className={`px-2.5 py-1 rounded-full text-[10px] font-mono transition-all ${
+                className={`px-2.5 py-1 rounded-full text-[10px] font-mono transition-colors duration-150 ${
                   studioLighting === "ATELIER_WARM"
-                    ? "bg-gold text-obsidian font-bold shadow-sm"
-                    : "text-stone-300 hover:text-gold"
+                    ? "bg-gold text-obsidian font-bold shadow-xs"
+                    : "text-muted-foreground hover:text-gold"
                 }`}
               >
                 Atelier Warm
               </button>
               <button
                 onClick={() => setStudioLighting("DAYLIGHT_5500K")}
-                className={`px-2.5 py-1 rounded-full text-[10px] font-mono transition-all ${
+                className={`px-2.5 py-1 rounded-full text-[10px] font-mono transition-colors duration-150 ${
                   studioLighting === "DAYLIGHT_5500K"
-                    ? "bg-blue-400 text-obsidian font-bold shadow-sm"
-                    : "text-stone-300 hover:text-blue-400"
+                    ? "bg-status-indigo text-white font-bold shadow-xs"
+                    : "text-muted-foreground hover:text-status-indigo"
                 }`}
               >
                 Daylight 5500K
               </button>
               <button
                 onClick={handleRotateToggle}
-                className="p-1 rounded-full text-gold hover:text-gold-light transition-colors"
+                className="p-1 rounded-full text-gold hover:text-gold-light transition-colors duration-150"
                 title="Rotate Piece"
               >
                 <RotateCw className="w-3.5 h-3.5" />
@@ -211,7 +209,7 @@ export function SalonPresentationModal({
               )}
               <div className="flex justify-between items-center text-xs">
                 <span className="text-muted-foreground">XRF Spectrometry Assurance:</span>
-                <span className="font-mono text-emerald-400 font-medium">99.98% Purity Pass</span>
+                <span className="font-mono text-status-emerald font-medium">99.98% Purity Pass</span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-muted-foreground">Hallmark Registration:</span>
@@ -254,7 +252,7 @@ export function SalonPresentationModal({
         {/* Footer Note */}
         <div className="border-t border-surface-border/60 pt-3 flex items-center justify-between text-[11px] text-muted-foreground">
           <div className="flex items-center space-x-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-status-emerald" />
             <span>Cryptographically anchored in JewelCore Merkle Ledger</span>
           </div>
 

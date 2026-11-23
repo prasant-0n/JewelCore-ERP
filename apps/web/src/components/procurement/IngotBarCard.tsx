@@ -42,9 +42,9 @@ export function IngotBarCard({
   return (
     <div
       onClick={() => onSelect?.(ingot)}
-      className={`relative rounded-xl p-3.5 cursor-pointer transition-all duration-200 select-none flex flex-col justify-between ${
+      className={`relative rounded-xl p-3.5 cursor-pointer transition-colors duration-150 select-none flex flex-col justify-between ${
         isSelected
-          ? "bg-surface-elevated border-2 border-gold shadow-[0_0_18px_rgba(212,175,55,0.22)]"
+          ? "bg-surface-elevated border-2 border-gold"
           : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/60"
       }`}
     >
@@ -70,8 +70,8 @@ export function IngotBarCard({
         <span
           className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-medium ${
             toleranceStatus === "TOLERANCE_OK"
-              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
-              : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+              ? "bg-status-emerald/10 text-status-emerald border border-status-emerald/30"
+              : "bg-status-amber/10 text-status-amber border border-status-amber/30"
           }`}
         >
           {toleranceStatus === "TOLERANCE_OK"
@@ -90,7 +90,7 @@ export function IngotBarCard({
             <div className="font-mono text-xs font-bold text-foreground tabular-nums">
               {grossWeightGrams.toFixed(3)} g
             </div>
-            <div className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-medium">
+            <div className="text-[10px] font-mono text-status-emerald font-medium">
               {varianceGrams >= 0
                 ? `+${varianceGrams.toFixed(3)}g`
                 : `${varianceGrams.toFixed(3)}g`}{" "}
@@ -102,7 +102,7 @@ export function IngotBarCard({
             </div>
           </div>
         </div>
-        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+        <CheckCircle2 className="w-4 h-4 text-status-emerald" />
       </div>
 
       {/* Bottom Purity Progress Bar */}

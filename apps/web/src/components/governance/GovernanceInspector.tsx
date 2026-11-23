@@ -255,7 +255,7 @@ export function GovernanceInspector({
                 <div className="text-foreground font-semibold mt-0.5">
                   {keyholder1Name} (#CS-401)
                 </div>
-                <div className="text-[10px] text-emerald-500 mt-0.5">
+                <div className="text-[10px] text-status-emerald mt-0.5">
                   Signed Biometric Token: {keyholder1SignedAt}
                 </div>
               </div>
@@ -272,7 +272,7 @@ export function GovernanceInspector({
                 <div className="text-foreground font-semibold mt-0.5">
                   {keyholder2Name} (#CCO-102)
                 </div>
-                <div className="text-[10px] text-amber-500 mt-0.5">
+                <div className="text-[10px] text-status-amber mt-0.5">
                   {keyholder2Status === "SIGNED"
                     ? "SmartCard PIN Verified"
                     : "Awaiting Physical SmartCard Insertion"}
@@ -320,7 +320,7 @@ export function GovernanceInspector({
 
             <div className="flex items-center justify-between text-muted-foreground border-t border-surface-border/60 pt-1.5">
               <span>Session Timeout Countdown:</span>
-              <span className="text-amber-500 font-bold">
+              <span className="text-status-amber font-bold">
                 Auto-cancels in 14m 28s
               </span>
             </div>
@@ -330,13 +330,13 @@ export function GovernanceInspector({
         {/* Merkle Proof Detailed Modal/Card */}
         {merkleViewActive && (
           <div className="p-3 bg-surface-elevated/60 border border-gold/40 rounded-xl space-y-1.5 text-xs font-mono animate-in fade-in duration-150">
-            <div className="text-[10px] text-gold font-bold uppercase tracking-wider">
+            <div className="text-xs text-gold font-medium">
               Merkle Audit Leaf Cryptographic Chain:
             </div>
             <div className="text-[10px] text-muted-foreground break-all bg-background p-2 rounded border border-surface-border">
               Leaf Hash: {merkleProofHash}
             </div>
-            <div className="text-[9px] text-emerald-500 font-semibold">
+            <div className="text-xs text-status-emerald font-semibold">
               Chained into Root Block #89,120 (Verified by 3 Local HSMs)
             </div>
           </div>

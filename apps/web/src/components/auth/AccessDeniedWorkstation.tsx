@@ -32,21 +32,18 @@ export function AccessDeniedWorkstation({
   return (
     <div className="min-h-[75vh] flex items-center justify-center p-4">
       <div className="w-full max-w-xl bg-surface border border-surface-border rounded-xl shadow-2xl p-6 sm:p-8 relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        {/* Ambient Top Glow */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-status-amber to-transparent opacity-80" />
-
         {/* Header Icon & Security Badge */}
         <div className="flex flex-col items-center text-center">
           <div className="relative mb-4">
-            <div className="w-16 h-16 rounded-2xl bg-status-amberBg border border-status-amber/40 flex items-center justify-center text-status-amber shadow-lg">
+            <div className="w-16 h-16 rounded-2xl bg-status-amberBg border border-status-amber/40 flex items-center justify-center text-status-amber shadow-xs">
               <ShieldAlert className="w-8 h-8" />
             </div>
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-surface border border-surface-border flex items-center justify-center text-muted-foreground shadow">
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-surface border border-surface-border flex items-center justify-center text-muted-foreground shadow-xs">
               <Lock className="w-3.5 h-3.5 text-status-amber" />
             </div>
           </div>
 
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono uppercase tracking-wider bg-status-amberBg text-status-amber border border-status-amber/30 mb-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono bg-status-amberBg text-status-amber border border-status-amber/30 mb-2">
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>PBAC Access Control Policy</span>
           </div>
@@ -62,24 +59,24 @@ export function AccessDeniedWorkstation({
         </div>
 
         {/* Security Audit Details Card */}
-        <div className="mt-6 rounded-lg bg-surface-elevated/70 border border-surface-border p-4 space-y-3 font-mono text-xs">
+        <div className="mt-6 rounded-lg bg-surface-elevated border border-surface-border p-4 space-y-3 font-mono text-xs">
           <div className="flex items-center justify-between pb-2 border-b border-surface-border text-muted-foreground">
-            <span className="text-[11px] uppercase tracking-wider">Target Workstation:</span>
+            <span className="text-xs">Target Workstation:</span>
             <span className="text-foreground font-semibold">
               {policy?.name || "Restricted Domain"} ({policy?.route})
             </span>
           </div>
 
           <div className="flex items-center justify-between pb-2 border-b border-surface-border text-muted-foreground">
-            <span className="text-[11px] uppercase tracking-wider">Your Assigned Role:</span>
+            <span className="text-xs">Your Assigned Role:</span>
             <span className="text-gold font-medium">
               {user?.role || "Unassigned Operational Staff"}
             </span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-muted-foreground">
-            <span className="text-[11px] uppercase tracking-wider shrink-0">Authorized Quorum:</span>
-            <span className="text-foreground/90 font-medium text-right sm:max-w-[320px] text-[11px]">
+            <span className="text-xs shrink-0">Authorized Quorum:</span>
+            <span className="text-foreground/90 font-medium text-right sm:max-w-[320px] text-xs">
               {requiredRolesFormatted || "Store Branch Manager, System Administrator"}
             </span>
           </div>

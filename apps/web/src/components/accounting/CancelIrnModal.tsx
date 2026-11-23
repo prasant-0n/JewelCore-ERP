@@ -105,12 +105,12 @@ export function CancelIrnModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         data-testid="cancel-irn-modal"
-        className="max-w-md bg-surface border border-rose-600/40 text-foreground shadow-2xl p-0 overflow-hidden"
+        className="max-w-md bg-surface border border-surface-border text-foreground shadow-2xl p-0 overflow-hidden"
       >
         {/* Header */}
-        <div className="p-5 border-b border-rose-950/60 bg-gradient-to-r from-rose-950/30 to-surface-elevated">
+        <div className="p-5 border-b border-surface-border bg-surface-elevated">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-status-rose/10 border border-status-rose/30 flex items-center justify-center text-status-rose shrink-0">
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
@@ -120,7 +120,7 @@ export function CancelIrnModal({
                   NIC 24H GATE
                 </Badge>
               </DialogTitle>
-              <DialogDescription className="text-xs text-rose-400/80 mt-0.5">
+              <DialogDescription className="text-xs text-status-rose mt-0.5">
                 Rule 48(4) • Statutory IRN Cancellation within 24-hour window
               </DialogDescription>
             </div>
@@ -129,8 +129,8 @@ export function CancelIrnModal({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-5 space-y-4 text-xs font-mono">
-          <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+          <div className="p-3 rounded-lg bg-status-rose/10 border border-status-rose/25 text-status-rose text-xs flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-status-rose shrink-0 mt-0.5" />
             <span>
               Warning: Once an IRN is cancelled on the NIC portal, it cannot be re-activated. Any active E-Way Bill linked to this invoice will also be cancelled.
             </span>

@@ -57,7 +57,7 @@ export function Itc04ChallanModal({
         className="max-w-2xl bg-surface border border-gold/40 text-foreground shadow-2xl p-0 overflow-hidden"
       >
         {/* Header Banner */}
-        <div className="p-6 border-b border-surface-border bg-gradient-to-r from-obsidian via-surface-elevated to-obsidian relative">
+        <div className="p-6 border-b border-surface-border bg-surface-elevated relative">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-lg bg-gold/15 border border-gold/40 flex items-center justify-center text-gold shrink-0 shadow-md">

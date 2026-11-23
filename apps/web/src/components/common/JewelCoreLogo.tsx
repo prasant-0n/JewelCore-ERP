@@ -28,7 +28,7 @@ export function JewelCoreLogo({
       viewBox="16 16 96 96"
       width={pxSize}
       height={pxSize}
-      className="flex-shrink-0 drop-shadow-[0_1px_4px_rgba(212,175,55,0.25)]"
+      className="flex-shrink-0"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       aria-label="JewelCore Atelier Logo Mark"

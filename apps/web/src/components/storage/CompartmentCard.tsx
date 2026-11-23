@@ -52,19 +52,14 @@ export function CompartmentCard({
     <div
       data-testid={`compartment-card-${code}`}
       onClick={() => onSelect?.(compartment)}
-      className={`group relative p-3 rounded-lg cursor-pointer transition-all duration-200 select-none ${
+      className={`group relative p-3 rounded-lg cursor-pointer transition-colors duration-150 select-none ${
         isSelected
-          ? "bg-surface-elevated border-2 border-gold shadow-[0_0_15px_rgba(212,175,55,0.18)]"
+          ? "bg-surface-elevated border-2 border-gold border-l-4 border-l-gold"
           : isVacant
             ? "bg-surface/50 border border-dashed border-surface-border hover:border-gold/40 hover:bg-surface"
             : "bg-surface border border-surface-border hover:border-gold/50 hover:bg-surface-elevated"
       }`}
     >
-      {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-gold text-black text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
-          Selected
-        </div>
-      )}
 
       {/* Top Header Row: Code & Status */}
       <div className="flex items-center justify-between gap-1.5">

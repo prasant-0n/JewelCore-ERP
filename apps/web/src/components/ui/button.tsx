@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        gold: "bg-gold text-neutral-950 font-semibold shadow-xs hover:bg-gold-light border border-gold/40 active:scale-[0.99]",
+        gold: "bg-gold text-obsidian font-semibold shadow-xs hover:bg-gold-light border border-gold/40 active:scale-[0.99]",
         "gold-outline":
           "border border-gold/40 text-gold bg-transparent hover:bg-gold/10 hover:border-gold active:scale-[0.99]",
         secondary:

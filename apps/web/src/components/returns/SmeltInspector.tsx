@@ -134,7 +134,7 @@ export function SmeltInspector({
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-status-rose animate-pulse" />
+              <span className="w-2.5 h-2.5 rounded-full bg-status-rose" />
               <CardTitle className="text-base font-bold font-mono">
                 {itemCode} • Melt Assay
               </CardTitle>

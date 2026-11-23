@@ -379,16 +379,14 @@ export default function VipPortalPage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-16">
         {/* Top Luxury Banner & VIP Selector */}
-        <div className="relative rounded-2xl bg-gradient-to-r from-surface-elevated/95 via-surface to-surface-card border border-gold/30 dark:border-gold/20 p-6 sm:p-7 shadow-sm overflow-hidden backdrop-blur-md">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gold/15 via-transparent to-transparent pointer-events-none" />
-
+        <div className="relative rounded-2xl border border-surface-border bg-surface-card p-6 sm:p-7 shadow-xs overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest font-semibold">
-                <Crown className="w-4 h-4 text-gold animate-pulse" />
+              <div className="flex items-center space-x-2 text-xs font-mono text-gold font-medium">
+                <Crown className="w-4 h-4 text-gold" />
                 <span>Private Client Sanctuary • Digital Asset Vault</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-serif font-black tracking-wide text-foreground">
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-wide text-foreground">
                 {portfolio?.customer.name || selectedVip.name}
               </h1>
               <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -623,7 +621,7 @@ export default function VipPortalPage() {
                     </div>
 
                     {/* Mark-to-Market Valuation */}
-                    <div className="p-3.5 rounded-xl bg-gradient-to-r from-surface-elevated via-surface to-surface-card border border-surface-border space-y-1.5">
+                    <div className="p-3.5 rounded-xl bg-surface-elevated border border-surface-border space-y-1.5">
                       <div className="flex justify-between items-center text-xs font-mono">
                         <span className="text-muted-foreground">Original Purchase:</span>
                         <span className="text-foreground font-medium">
@@ -680,7 +678,7 @@ export default function VipPortalPage() {
             {/* Booking Form (1 Column) */}
             <Card className="p-6 bg-surface-card border-surface-border rounded-2xl space-y-5">
               <div>
-                <div className="flex items-center space-x-2 text-gold text-xs font-mono uppercase tracking-wider font-semibold">
+                <div className="flex items-center space-x-2 text-gold text-xs font-mono font-medium">
                   <Sparkles className="w-3.5 h-3.5 text-gold" />
                   <span>VIP Atelier Concierge</span>
                 </div>
@@ -694,7 +692,7 @@ export default function VipPortalPage() {
 
               <form onSubmit={handleBookAppointment} className="space-y-4 text-xs font-mono">
                 <div>
-                  <label className="block text-muted-foreground mb-1.5 uppercase tracking-wider text-[10px]">
+                  <label className="block text-muted-foreground mb-1.5 text-xs font-mono font-medium">
                     Service Category
                   </label>
                   <select
@@ -710,7 +708,7 @@ export default function VipPortalPage() {
                 </div>
 
                 <div>
-                  <label className="block text-muted-foreground mb-1.5 uppercase tracking-wider text-[10px]">
+                  <label className="block text-muted-foreground mb-1.5 text-xs font-mono font-medium">
                     Atelier Boutique Suite
                   </label>
                   <select
@@ -725,7 +723,7 @@ export default function VipPortalPage() {
                 </div>
 
                 <div>
-                  <label className="block text-muted-foreground mb-1.5 uppercase tracking-wider text-[10px]">
+                  <label className="block text-muted-foreground mb-1.5 text-xs font-mono font-medium">
                     Preferred Date &amp; Time
                   </label>
                   <Input
@@ -738,7 +736,7 @@ export default function VipPortalPage() {
                 </div>
 
                 <div>
-                  <label className="block text-muted-foreground mb-1.5 uppercase tracking-wider text-[10px]">
+                  <label className="block text-muted-foreground mb-1.5 text-xs font-mono font-medium">
                     Special Requests or Pieces for Service
                   </label>
                   <textarea

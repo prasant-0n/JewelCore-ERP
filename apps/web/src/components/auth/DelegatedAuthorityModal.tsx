@@ -135,10 +135,10 @@ export function DelegatedAuthorityModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md sm:max-w-lg p-6 bg-surface/98 border-surface-border backdrop-blur-xl shadow-2xl">
+      <DialogContent className="max-w-md sm:max-w-lg p-6 bg-surface border-surface-border shadow-2xl">
         <DialogHeader className="text-left pb-2 border-b border-surface-border">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-500 shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-status-amber/10 border border-status-amber/30 flex items-center justify-center text-status-amber shrink-0">
               <Zap className="w-4 h-4" />
             </div>
             <div>
@@ -155,13 +155,13 @@ export function DelegatedAuthorityModal({
         {isDelegationActive ? (
           /* Active Delegation Banner & Relinquish View */
           <div className="mt-4 space-y-4">
-            <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 via-surface to-surface border border-amber-500/40 shadow-sm">
+            <div className="p-4 rounded-xl bg-surface-elevated/40 border border-status-amber/30 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500 border border-amber-500/40">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-status-amber/15 text-status-amber border border-status-amber/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-amber" />
                   ELEVATED CLEARANCE ACTIVE
                 </span>
-                <span className="text-xs font-mono font-bold text-amber-500 flex items-center gap-1">
+                <span className="text-xs font-mono font-bold text-status-amber flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" />
                   {timeRemaining}
                 </span>
@@ -227,14 +227,14 @@ export function DelegatedAuthorityModal({
                     onClick={() => setSelectedRole(r.title)}
                     className={`w-full p-2.5 rounded-lg border text-left transition-all text-xs ${
                       selectedRole === r.title
-                        ? "border-amber-500/60 bg-amber-500/10 text-foreground"
-                        : "border-surface-border bg-surface-elevated hover:border-surface-hover text-muted-foreground"
+                        ? "border-status-amber/50 bg-status-amber/10 text-foreground"
+                        : "border-surface-border bg-surface-elevated hover:border-surface-borderMuted text-muted-foreground"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-foreground">{r.title}</span>
                       {selectedRole === r.title && (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-amber-500" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-status-amber" />
                       )}
                     </div>
                     <span className="block text-[10px] text-muted-foreground mt-0.5">
@@ -258,8 +258,8 @@ export function DelegatedAuthorityModal({
                     onClick={() => setSelectedDuration(d.value)}
                     className={`p-2 rounded-lg border text-center text-xs font-mono transition-all ${
                       selectedDuration === d.value
-                        ? "border-amber-500/60 bg-amber-500/10 text-amber-500 font-bold"
-                        : "border-surface-border bg-surface-elevated text-muted-foreground hover:border-surface-hover"
+                        ? "border-status-amber/50 bg-status-amber/10 text-status-amber font-bold"
+                        : "border-surface-border bg-surface-elevated text-muted-foreground hover:border-surface-borderMuted"
                     }`}
                   >
                     {d.label}
@@ -283,7 +283,7 @@ export function DelegatedAuthorityModal({
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Reason for temporary privilege escalation"
-                className="w-full p-2 text-xs bg-surface-elevated border border-surface-border rounded-lg text-foreground focus:border-amber-500/60 focus:outline-none resize-none"
+                className="w-full p-2 text-xs bg-surface-elevated border border-surface-border rounded-lg text-foreground focus:border-gold/60 focus:outline-none resize-none"
               />
             </div>
 
@@ -294,7 +294,7 @@ export function DelegatedAuthorityModal({
                   htmlFor="supervisor-pin"
                   className="block text-xs font-medium text-foreground flex items-center gap-1"
                 >
-                  <Lock className="w-3 h-3 text-amber-500" />
+                  <Lock className="w-3 h-3 text-gold" />
                   <span>Supervisor Dual-Key PIN (Co-Signature)</span>
                 </label>
                 <span className="text-[10px] font-mono text-muted-foreground">
@@ -309,7 +309,7 @@ export function DelegatedAuthorityModal({
                 value={supervisorPin}
                 onChange={(e) => setSupervisorPin(e.target.value.replace(/\D/g, ""))}
                 placeholder="••••"
-                className="w-full h-9 px-3 text-center text-sm font-mono tracking-widest bg-surface-elevated border border-surface-border focus:border-amber-500/60 focus:outline-none rounded-lg text-foreground"
+                className="w-full h-9 px-3 text-center text-sm font-mono tracking-widest bg-surface-elevated border border-surface-border focus:border-gold/60 focus:outline-none rounded-lg text-foreground"
               />
             </div>
 
@@ -317,7 +317,7 @@ export function DelegatedAuthorityModal({
             <button
               type="submit"
               disabled={supervisorPin.length !== 4}
-              className="w-full h-10 mt-2 bg-gradient-to-r from-amber-500 via-gold to-amber-500 text-obsidian font-semibold text-xs rounded-lg flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.99] transition-all shadow-md disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full h-10 mt-2 bg-gold hover:bg-gold-light text-primary-foreground font-semibold text-xs rounded-lg flex items-center justify-center gap-2 active:scale-[0.99] transition-all shadow-xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
               <UserCheck className="w-3.5 h-3.5" />
               <span>Authorize Time-Bound Delegation (Dual-Key Signed)</span>

@@ -168,7 +168,7 @@ export function AuditTrailModal({ isOpen, onClose }: AuditTrailModalProps) {
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500">
+            <div className="w-8 h-8 rounded-lg bg-status-emerald/15 border border-status-emerald/30 flex items-center justify-center text-status-emerald">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>

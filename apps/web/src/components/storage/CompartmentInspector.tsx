@@ -169,7 +169,7 @@ export function CompartmentInspector({
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-gold animate-pulse" />
+              <span className="w-2.5 h-2.5 rounded-full bg-gold" />
               <CardTitle className="text-base font-semibold font-mono">
                 {code}
               </CardTitle>
@@ -257,7 +257,7 @@ export function CompartmentInspector({
       {/* Stored Items Micro-Manifest */}
       <div className="flex-1 flex flex-col min-h-0">
         <div className="px-4 py-2 bg-obsidian-deep border-b border-surface-border flex items-center justify-between">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-medium">
+          <span className="text-xs font-mono text-muted-foreground font-medium">
             Stored Items Manifest ({occupiedItemCount} Pieces)
           </span>
           <span className="text-[10px] font-mono text-status-emerald flex items-center gap-1">

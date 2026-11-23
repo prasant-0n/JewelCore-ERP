@@ -35,7 +35,7 @@ export function MetrologyGauge({
     if (status === "passing") return "bg-status-emerald";
     if (status === "failing") return "bg-status-rose";
     if (status === "warning") return "bg-status-amber";
-    return "bg-gradient-to-r from-gold to-gold-dark";
+    return "bg-gold";
   };
 
   return (

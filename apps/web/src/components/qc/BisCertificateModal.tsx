@@ -56,7 +56,7 @@ export function BisCertificateModal({
         className="max-w-2xl bg-surface border border-gold/40 text-foreground shadow-2xl p-0 overflow-hidden"
       >
         {/* Certificate Header Banner */}
-        <div className="p-6 border-b border-surface-border bg-gradient-to-r from-obsidian via-surface-elevated to-obsidian relative">
+        <div className="p-6 border-b border-surface-border bg-surface-elevated relative">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               {/* BIS Triangular Hallmark Emblem */}
@@ -91,7 +91,7 @@ export function BisCertificateModal({
         <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
           {/* Central 6-Character HUID Stamp Box */}
           <div className="p-6 rounded-xl bg-surface-elevated/80 border-2 border-dashed border-gold/50 flex flex-col items-center justify-center text-center space-y-2 relative shadow-inner">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+            <span className="text-xs font-mono text-muted-foreground font-medium">
               Statutory 6-Character Hallmark Unique Identification
             </span>
             <div

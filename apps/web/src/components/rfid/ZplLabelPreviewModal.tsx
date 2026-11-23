@@ -163,12 +163,12 @@ export function ZplLabelPreviewModal({
 
           {/* Realistic Dumbbell Label Simulation */}
           <div className="space-y-1.5">
-            <div className="text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider flex items-center justify-between">
+            <div className="text-xs font-mono font-medium text-muted-foreground flex items-center justify-between">
               <span>Physical Tag Layout Preview</span>
               <span className="text-[10px] text-gold">1:1 High-Resolution Thermal Foil</span>
             </div>
 
-            <div className="bg-neutral-900 border-2 border-dashed border-gold/40 rounded-xl p-4 flex items-center justify-center">
+            <div className="bg-surface-elevated border-2 border-dashed border-gold/40 rounded-xl p-4 flex items-center justify-center">
               {/* Dumbbell Tag Contour */}
               <div className="w-full max-w-[560px] h-36 bg-[#fdfbf7] dark:bg-white text-black rounded-lg p-3 shadow-lg border-2 border-neutral-300 flex items-center justify-between select-none relative overflow-hidden">
                 {/* Left Wing (Barcode & SKU) */}
@@ -264,7 +264,7 @@ export function ZplLabelPreviewModal({
               >
                 {copied ? (
                   <>
-                    <Check className="w-3 h-3 mr-1 text-emerald-400" />
+                    <Check className="w-3 h-3 mr-1 text-status-emerald" />
                     Copied
                   </>
                 ) : (
@@ -275,7 +275,7 @@ export function ZplLabelPreviewModal({
                 )}
               </Button>
             </div>
-            <pre className="p-3 bg-obsidian-deep border border-surface-border rounded-lg font-mono text-[11px] text-emerald-400 overflow-x-auto max-h-36 leading-relaxed">
+            <pre className="p-3 bg-surface border border-surface-border rounded-lg font-mono text-xs text-status-emerald overflow-x-auto max-h-36 leading-relaxed">
               {zplCode}
             </pre>
           </div>

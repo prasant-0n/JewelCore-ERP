@@ -63,7 +63,7 @@ export function PieceInspectorDrawer({
                 <Gem className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
+                <span className="text-[10px] font-mono text-muted-foreground block">
                   Serialized Asset Lineage
                 </span>
                 <SheetTitle className="text-base font-semibold text-foreground">
@@ -93,7 +93,7 @@ export function PieceInspectorDrawer({
 
           {/* 4-Dimension Audit State Matrix */}
           <div className="p-3.5 rounded-lg bg-surface-elevated border border-surface-border space-y-2.5">
-            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider block">
+            <span className="text-[10px] font-mono text-muted-foreground block">
               Governance & State Matrix (INV-01)
             </span>
             <div className="grid grid-cols-2 gap-2 text-xs font-mono">

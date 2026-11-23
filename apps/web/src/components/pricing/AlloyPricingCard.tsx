@@ -6,7 +6,7 @@ import {
   Scale,
   CheckCircle2,
   ShieldCheck,
-  Sparkles,
+  Activity,
   AlertCircle,
 } from "lucide-react";
 
@@ -43,14 +43,14 @@ export function AlloyPricingCard({
   return (
     <div
       onClick={() => onSelect?.(alloy)}
-      className={`relative rounded-xl p-3.5 cursor-pointer transition-all duration-200 select-none flex flex-col justify-between ${
+      className={`relative rounded-xl p-3.5 cursor-pointer transition-colors duration-150 select-none flex flex-col justify-between ${
         isSelected
-          ? "bg-surface-elevated border-2 border-gold shadow-[0_0_18px_rgba(212,175,55,0.22)]"
+          ? "bg-surface-elevated ring-1 ring-gold border border-gold"
           : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/60"
       }`}
     >
       {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
+        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-semibold px-1.5 py-0.5 rounded shadow-xs">
           Selected
         </div>
       )}
@@ -86,8 +86,8 @@ export function AlloyPricingCard({
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
             isLocked
-              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
-              : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+              ? "bg-status-emerald/10 text-status-emerald border border-status-emerald/30"
+              : "bg-status-amber/10 text-status-amber border border-status-amber/30"
           }`}
         >
           {isLocked ? (
@@ -97,7 +97,7 @@ export function AlloyPricingCard({
             </>
           ) : (
             <>
-              <Sparkles className="w-2.5 h-2.5" />
+              <Activity className="w-2.5 h-2.5" />
               <span>ACTIVE</span>
             </>
           )}
@@ -107,7 +107,7 @@ export function AlloyPricingCard({
       {/* Price Grid */}
       <div className="my-2.5 py-2 border-y border-surface-border/60 space-y-1.5 text-[11px] font-mono">
         <div className="flex items-center justify-between">
-          <span className="text-muted-foreground text-[10px] uppercase">
+          <span className="text-muted-foreground text-[10px]">
             Spot Base Fix:
           </span>
           <span className="text-foreground font-bold tabular-nums">
@@ -116,7 +116,7 @@ export function AlloyPricingCard({
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-muted-foreground text-[10px] uppercase">
+          <span className="text-muted-foreground text-[10px]">
             Making Charge:
           </span>
           <span className="text-gold font-semibold tabular-nums">
@@ -127,7 +127,7 @@ export function AlloyPricingCard({
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-muted-foreground text-[10px] uppercase">
+          <span className="text-muted-foreground text-[10px]">
             Wastage Tolerance:
           </span>
           <span className="text-foreground font-medium tabular-nums">
@@ -141,7 +141,7 @@ export function AlloyPricingCard({
         <span className="text-muted-foreground text-[9px] uppercase">
           Retail Benchmark:
         </span>
-        <span className="text-emerald-700 dark:text-emerald-400 font-bold text-xs tabular-nums">
+        <span className="text-status-emerald font-bold text-xs tabular-nums">
           ₹ {alloy.calculatedRetailPerGram.toFixed(2)} / g
         </span>
       </div>

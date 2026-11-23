@@ -33,11 +33,11 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
   // Hydration loading state
   if (isLoading) {
     return (
-      <div className="h-screen w-screen flex flex-col items-center justify-center bg-obsidian-deep text-foreground">
-        <div className="flex flex-col items-center space-y-4 animate-pulse">
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-background text-foreground">
+        <div className="flex flex-col items-center space-y-4">
           <JewelCoreLogo size="lg" variant="badge" />
           <div className="flex items-center space-x-2 text-xs font-mono text-muted-foreground">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-gold" />
             <span>Verifying Workstation PBAC Quorum...</span>
           </div>
         </div>

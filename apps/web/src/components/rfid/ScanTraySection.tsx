@@ -50,12 +50,12 @@ export function ScanTraySection({
         onClick={() => setIsOpen(!isOpen)}
         className={`px-5 py-3.5 border-b flex flex-wrap items-center justify-between gap-3 cursor-pointer select-none transition-colors ${
           hasDiscrepancy
-            ? "bg-rose-950/20 border-rose-500/30 hover:bg-rose-950/30"
+            ? "bg-status-rose/10 border-status-rose/30 hover:bg-status-rose/15"
             : "bg-surface-elevated/70 hover:bg-surface-elevated border-surface-border"
         }`}
       >
         <div className="flex items-center space-x-3">
-          <span className={hasDiscrepancy ? "text-rose-500" : "text-gold"}>
+          <span className={hasDiscrepancy ? "text-status-rose" : "text-gold"}>
             {isOpen ? (
               <ChevronDown className="w-5 h-5" />
             ) : (
@@ -77,7 +77,7 @@ export function ScanTraySection({
               <span
                 className={`font-semibold ${
                   hasDiscrepancy
-                    ? "text-rose-700 dark:text-rose-400"
+                    ? "text-status-rose"
                     : "text-foreground"
                 }`}
               >
@@ -91,15 +91,15 @@ export function ScanTraySection({
               <span
                 className={`flex items-center gap-1 font-medium ${
                   hasDiscrepancy
-                    ? "text-rose-700 dark:text-rose-400"
-                    : "text-emerald-700 dark:text-emerald-400"
+                    ? "text-status-rose"
+                    : "text-status-emerald"
                 }`}
               >
                 <span
                   className={`w-1.5 h-1.5 rounded-full ${
                     hasDiscrepancy
-                      ? "bg-rose-500 animate-ping"
-                      : "bg-emerald-500 animate-pulse"
+                      ? "bg-status-rose"
+                      : "bg-status-emerald"
                   }`}
                 />
                 {hasDiscrepancy ? "Discrepancy Flagged" : "Live Mesh Synced"}
@@ -113,8 +113,8 @@ export function ScanTraySection({
           <span
             className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium border ${
               hasDiscrepancy
-                ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30 font-semibold"
-                : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                ? "bg-status-rose/15 text-status-rose border-status-rose/30 font-semibold"
+                : "bg-status-emerald/10 text-status-emerald border border-status-emerald/30"
             }`}
           >
             {hasDiscrepancy
@@ -128,11 +128,11 @@ export function ScanTraySection({
       {isOpen && (
         <div className="p-5 bg-surface-elevated/40">
           <div className="flex items-center justify-between mb-3 text-xs font-mono">
-            <span className="text-muted-foreground uppercase text-[10px] tracking-wider font-medium">
+            <span className="text-muted-foreground text-[10px] font-medium">
               Array Sensors Active ({tray.pieces.length} Tagged Items)
             </span>
-            <span className="text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center gap-1 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-status-emerald text-[10px] flex items-center gap-1 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
               Multiplexing 48 Sw/sec
             </span>
           </div>

@@ -84,22 +84,22 @@ export function GovernanceSection({
                 {totalGrossWeight.toFixed(3)} g Load
               </span>
               <span>•</span>
-              <span className="text-emerald-700 dark:text-emerald-400 font-bold tabular-nums">
+              <span className="text-status-emerald font-bold tabular-nums">
                 ₹ {totalValuation.toLocaleString("en-IN")} Total Val
               </span>
               <span>•</span>
               <span
                 className={`flex items-center gap-1 font-medium ${
                   pendingCount > 0
-                    ? "text-amber-700 dark:text-amber-400"
-                    : "text-emerald-700 dark:text-emerald-400"
+                    ? "text-status-amber"
+                    : "text-status-emerald"
                 }`}
               >
                 <span
                   className={`w-1.5 h-1.5 rounded-full ${
                     pendingCount > 0
-                      ? "bg-amber-500 animate-pulse"
-                      : "bg-emerald-500"
+                      ? "bg-status-amber"
+                      : "bg-status-emerald"
                   }`}
                 />
                 {pendingCount > 0
@@ -115,8 +115,8 @@ export function GovernanceSection({
           <span
             className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium border ${
               pendingCount > 0
-                ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 font-semibold"
-                : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                ? "bg-status-amber/15 text-status-amber border-status-amber/30 font-semibold"
+                : "bg-status-emerald/10 text-status-emerald border border-status-emerald/30"
             }`}
           >
             {batch.thresholdCategory}
@@ -128,11 +128,11 @@ export function GovernanceSection({
       {isOpen && (
         <div className="p-5 bg-surface-elevated/40">
           <div className="flex items-center justify-between mb-3 text-xs font-mono">
-            <span className="text-muted-foreground uppercase text-[10px] tracking-wider font-medium">
+            <span className="text-muted-foreground text-xs font-medium">
               Dual-Sign Custody Queue ({batch.items.length} High-Value Requests)
             </span>
-            <span className="text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center gap-1 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-status-emerald text-xs flex items-center gap-1 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
               HSM v4.2.8 Cryptographic Keystore Active
             </span>
           </div>

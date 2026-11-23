@@ -49,11 +49,11 @@ export function CartSection({
   );
 
   return (
-    <div className="border border-surface-border rounded-xl bg-surface-card overflow-hidden mb-4 shadow-sm transition-all">
+    <div className="border border-surface-border rounded-xl bg-surface-card overflow-hidden mb-4 shadow-xs transition-colors duration-150">
       {/* Section Header Banner */}
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="px-5 py-3.5 bg-surface-elevated/70 hover:bg-surface-elevated border-b border-surface-border flex flex-wrap items-center justify-between gap-3 cursor-pointer select-none transition-colors"
+        className="px-5 py-3.5 bg-surface-elevated/70 hover:bg-surface-elevated border-b border-surface-border flex flex-wrap items-center justify-between gap-3 cursor-pointer select-none transition-colors duration-150"
       >
         <div className="flex items-center space-x-3">
           <span className="text-gold">
@@ -81,12 +81,12 @@ export function CartSection({
                 {totalGrossWeight.toFixed(3)} g Gross
               </span>
               <span>•</span>
-              <span className="text-emerald-700 dark:text-emerald-400 font-bold tabular-nums">
+              <span className="text-status-emerald font-bold tabular-nums">
                 ₹ {totalValue.toLocaleString("en-IN")}
               </span>
               <span>•</span>
-              <span className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-status-emerald flex items-center gap-1 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
                 {group.status === "CART_SECURED"
                   ? "Cart Secured"
                   : "Live Vitrine"}
@@ -97,7 +97,7 @@ export function CartSection({
 
         {/* Right Status Badge */}
         <div className="flex items-center space-x-3">
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
             {group.pieces.length} Units Assigned
           </span>
         </div>
@@ -107,11 +107,11 @@ export function CartSection({
       {isOpen && (
         <div className="p-5 bg-surface-elevated/40">
           <div className="flex items-center justify-between mb-3 text-xs font-mono">
-            <span className="text-muted-foreground uppercase text-[10px] tracking-wider font-medium">
+            <span className="text-muted-foreground text-xs font-medium">
               Jewellery Units in Section ({group.pieces.length} Active Items)
             </span>
-            <span className="text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center gap-1 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-status-emerald text-xs flex items-center gap-1 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
               RFID EPC Near-Field Live
             </span>
           </div>

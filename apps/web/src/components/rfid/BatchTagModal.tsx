@@ -264,8 +264,8 @@ export function BatchTagModal({
           {/* Batch Selection Table */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-mono text-muted-foreground uppercase tracking-wider">
-                Select Pieces for Tag Commissioning ({selectedCount} of {items.length} selected):
+              <span className="font-mono text-muted-foreground text-xs font-medium">
+                Select pieces for tag commissioning ({selectedCount} of {items.length} selected):
               </span>
               <Button
                 variant="ghost"

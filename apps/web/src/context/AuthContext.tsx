@@ -218,7 +218,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         return session;
       } catch (err: any) {
-        if (err instanceof ApiProblemError) {
+        if (
+          err instanceof ApiProblemError &&
+          (err.problem?.code === "ERR_BREAK_GLASS_INVALID_KEY" ||
+            err.problem?.detail?.includes("invalid emergency master passphrase"))
+        ) {
           const errorMsg =
             err.problem?.detail ||
             err.problem?.title ||

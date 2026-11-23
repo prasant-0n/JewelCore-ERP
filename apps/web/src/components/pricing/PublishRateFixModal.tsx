@@ -204,7 +204,7 @@ export function PublishRateFixModal({
         <DialogHeader className="border-b border-surface-border pb-3">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-lg bg-gold/15 border border-gold/30 flex items-center justify-center text-gold">
-              <Radio className="w-4 h-4 animate-pulse" />
+              <Radio className="w-4 h-4" />
             </div>
             <div>
               <DialogTitle className="text-base font-bold font-mono">
@@ -371,7 +371,7 @@ export function PublishRateFixModal({
                   {stepUpToken ? (
                     <ShieldCheck className="w-4 h-4 text-status-emerald" />
                   ) : (
-                    <ShieldAlert className="w-4 h-4 text-gold animate-pulse" />
+                    <ShieldAlert className="w-4 h-4 text-gold" />
                   )}
                   <div>
                     <span className="font-semibold text-foreground">

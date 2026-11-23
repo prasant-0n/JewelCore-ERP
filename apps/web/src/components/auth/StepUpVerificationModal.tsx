@@ -163,14 +163,14 @@ export function StepUpVerificationModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         data-testid="step-up-modal"
-        className="max-w-xl bg-obsidian-card border-gold/30 text-foreground p-0 overflow-hidden shadow-2xl"
+        className="max-w-xl bg-surface border border-surface-border text-foreground p-0 overflow-hidden shadow-2xl"
       >
         {/* Header with High-Assurance Gold Shield Banner */}
-        <div className="relative bg-gradient-to-r from-obsidian-surface via-obsidian-elevated to-obsidian-surface p-6 border-b border-gold/20">
+        <div className="p-6 border-b border-surface-border bg-surface-elevated/40">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl bg-gold/15 border border-gold/40 flex items-center justify-center text-gold shadow-inner">
-                <ShieldAlert className="w-5 h-5 text-gold animate-pulse" />
+                <ShieldAlert className="w-5 h-5 text-gold" />
               </div>
               <div>
                 <DialogTitle className="text-base font-serif font-bold text-foreground flex items-center gap-2">
@@ -189,9 +189,9 @@ export function StepUpVerificationModal({
 
         {/* Operation Context Card */}
         <div className="p-6 space-y-5">
-          <div className="p-4 rounded-xl bg-obsidian-surface/80 border border-surface-border space-y-2.5">
+          <div className="p-4 rounded-xl bg-surface-elevated/40 border border-surface-border space-y-2.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-mono text-muted-foreground uppercase tracking-wider text-[11px]">
+              <span className="font-mono text-muted-foreground text-[11px]">
                 Target Operation:
               </span>
               <span className="font-mono font-semibold text-gold bg-gold/10 px-2 py-0.5 rounded border border-gold/20">
@@ -200,7 +200,7 @@ export function StepUpVerificationModal({
             </div>
 
             <div className="flex items-center justify-between text-xs">
-              <span className="font-mono text-muted-foreground uppercase tracking-wider text-[11px]">
+              <span className="font-mono text-muted-foreground text-[11px]">
                 Protected Resource:
               </span>
               <span className="font-mono text-foreground font-medium truncate max-w-[280px]">
@@ -210,7 +210,7 @@ export function StepUpVerificationModal({
 
             {resourceValue > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="font-mono text-muted-foreground uppercase tracking-wider text-[11px]">
+                <span className="font-mono text-muted-foreground text-[11px]">
                   Declared Valuation:
                 </span>
                 <span className="font-mono font-bold text-status-emerald">
@@ -229,9 +229,9 @@ export function StepUpVerificationModal({
 
           {/* Emergency Break-Glass Active Bypass Banner */}
           {breakGlassSession?.isActive && (
-            <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-600/50 flex items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2 text-rose-300">
-                <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
+            <div className="p-3 rounded-lg bg-status-rose/10 border border-status-rose/30 flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-status-rose">
+                <ShieldAlert className="w-4 h-4 text-status-rose shrink-0" />
                 <span>
                   Emergency Break-Glass Active: <strong>{breakGlassSession.incidentRef}</strong>
                 </span>
@@ -249,7 +249,7 @@ export function StepUpVerificationModal({
                     description: `Authorized under Incident Ref ${breakGlassSession.incidentRef}. Incident recorded in audit ledger.`,
                   });
                 }}
-                className="h-7 text-xs bg-rose-600 hover:bg-rose-500 text-stone-100 font-semibold shrink-0"
+                className="h-7 text-xs bg-status-rose hover:opacity-90 text-white font-semibold shrink-0"
               >
                 Instant Bypass
               </Button>
@@ -257,7 +257,7 @@ export function StepUpVerificationModal({
           )}
 
           {/* Verification Method Selection Tabs */}
-          <div className="grid grid-cols-3 gap-2 p-1 bg-obsidian-deep/80 rounded-lg border border-surface-border">
+          <div className="grid grid-cols-3 gap-2 p-1 bg-surface-elevated/60 rounded-lg border border-surface-border">
             <button
               type="button"
               data-testid="tab-passkey"
@@ -267,7 +267,7 @@ export function StepUpVerificationModal({
               }}
               className={`flex flex-col items-center justify-center p-2.5 rounded text-xs font-medium transition-all ${
                 selectedMethod === StepUpMethod.WEBAUTHN_PASSKEY
-                  ? "bg-gold/20 text-gold border border-gold/40 shadow-sm"
+                  ? "bg-gold/15 text-gold border border-gold/40 shadow-xs"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated/40"
               }`}
             >
@@ -284,7 +284,7 @@ export function StepUpVerificationModal({
               }}
               className={`flex flex-col items-center justify-center p-2.5 rounded text-xs font-medium transition-all ${
                 selectedMethod === StepUpMethod.SUPERVISOR_QUORUM
-                  ? "bg-gold/20 text-gold border border-gold/40 shadow-sm"
+                  ? "bg-gold/15 text-gold border border-gold/40 shadow-xs"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated/40"
               }`}
             >
@@ -301,7 +301,7 @@ export function StepUpVerificationModal({
               }}
               className={`flex flex-col items-center justify-center p-2.5 rounded text-xs font-medium transition-all ${
                 selectedMethod === StepUpMethod.SECURITY_PIN
-                  ? "bg-gold/20 text-gold border border-gold/40 shadow-sm"
+                  ? "bg-gold/15 text-gold border border-gold/40 shadow-xs"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface-elevated/40"
               }`}
             >
@@ -326,9 +326,9 @@ export function StepUpVerificationModal({
 
           {/* Verification Method Contents */}
           {selectedMethod === StepUpMethod.WEBAUTHN_PASSKEY && (
-            <div className="p-4 rounded-xl border border-surface-border bg-obsidian-surface/60 text-center space-y-4">
+            <div className="p-4 rounded-xl border border-surface-border bg-surface-elevated/30 text-center space-y-4">
               <div className="w-12 h-12 mx-auto rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-gold">
-                <Fingerprint className="w-6 h-6 animate-pulse" />
+                <Fingerprint className="w-6 h-6" />
               </div>
               <div>
                 <h4 className="text-sm font-medium text-foreground">Hardware Passkey or Biometric Assertion</h4>
@@ -361,16 +361,16 @@ export function StepUpVerificationModal({
           )}
 
           {selectedMethod === StepUpMethod.SUPERVISOR_QUORUM && (
-            <div className="p-4 rounded-xl border border-surface-border bg-obsidian-surface/60 space-y-4">
+            <div className="p-4 rounded-xl border border-surface-border bg-surface-elevated/30 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                <label className="text-xs font-mono text-muted-foreground">
                   Co-Signing Supervisor:
                 </label>
                 <select
                   data-testid="supervisor-select"
                   value={supervisor}
                   onChange={(e) => setSupervisor(e.target.value)}
-                  className="w-full bg-obsidian-deep border border-surface-border rounded-md px-3 py-2 text-xs text-foreground focus:outline-none focus:border-gold"
+                  className="w-full bg-surface border border-surface-border rounded-md px-3 py-2 text-xs text-foreground focus:outline-none focus:border-gold"
                 >
                   {SUPERVISOR_ROSTER.map((sup) => (
                     <option key={sup.id} value={sup.name}>
@@ -382,7 +382,7 @@ export function StepUpVerificationModal({
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  <label className="text-xs font-mono text-muted-foreground">
                     Supervisor Authorization PIN:
                   </label>
                   <span className="text-[10px] font-mono text-muted-foreground">
@@ -396,7 +396,7 @@ export function StepUpVerificationModal({
                   placeholder="••••"
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
-                  className="font-mono text-center tracking-widest text-lg bg-obsidian-deep border-surface-border"
+                  className="font-mono text-center tracking-widest text-lg bg-surface border-surface-border text-foreground"
                 />
               </div>
 
@@ -416,10 +416,10 @@ export function StepUpVerificationModal({
           )}
 
           {selectedMethod === StepUpMethod.SECURITY_PIN && (
-            <div className="p-4 rounded-xl border border-surface-border bg-obsidian-surface/60 space-y-4">
+            <div className="p-4 rounded-xl border border-surface-border bg-surface-elevated/30 space-y-4">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                  <label className="text-xs font-mono text-muted-foreground">
                     Operator Security PIN:
                   </label>
                   <span className="text-[10px] font-mono text-muted-foreground">
@@ -433,7 +433,7 @@ export function StepUpVerificationModal({
                   placeholder="••••"
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
-                  className="font-mono text-center tracking-widest text-lg bg-obsidian-deep border-surface-border"
+                  className="font-mono text-center tracking-widest text-lg bg-surface border-surface-border text-foreground"
                 />
               </div>
 
@@ -454,7 +454,7 @@ export function StepUpVerificationModal({
         </div>
 
         {/* Modal Footer */}
-        <DialogFooter className="px-6 py-3 bg-obsidian-deep/80 border-t border-surface-border flex items-center justify-between sm:justify-between">
+        <DialogFooter className="px-6 py-3 bg-surface-elevated/40 border-t border-surface-border flex items-center justify-between sm:justify-between">
           <span className="text-[11px] font-mono text-muted-foreground flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-gold" />
             NIST SP 800-63B Step-Up Verified

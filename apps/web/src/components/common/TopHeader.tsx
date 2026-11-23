@@ -386,36 +386,37 @@ export function TopHeader({
       {breakGlassSession?.isActive && (
         <div
           data-testid="break-glass-top-banner"
-          className="bg-rose-950 border-b border-rose-600/70 px-3 py-1.5 flex items-center justify-between text-xs text-rose-200 z-50 sticky top-0 shadow-lg shadow-rose-950/50"
+          className="bg-surface-card border-b-2 border-status-rose px-3 py-1.5 flex items-center justify-between text-xs text-foreground z-50 sticky top-0 shadow-sm"
         >
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping shrink-0" />
-            <span className="font-bold text-rose-300 font-mono tracking-wide uppercase flex items-center gap-1.5">
-              <span>🚨 BREAK-GLASS EMERGENCY CLEARANCE ACTIVE</span>
-              <span className="text-[10px] bg-rose-500/20 px-1.5 py-0.5 rounded border border-rose-500/40">
+            <span className="w-2 h-2 rounded-full bg-status-rose shrink-0" />
+            <span className="font-bold text-status-rose font-mono tracking-wide uppercase flex items-center gap-1.5">
+              <ShieldAlert className="w-4 h-4 shrink-0" />
+              <span>BREAK-GLASS EMERGENCY CLEARANCE ACTIVE</span>
+              <span className="text-[10px] bg-status-rose/10 text-status-rose px-1.5 py-0.5 rounded border border-status-rose/30">
                 {breakGlassSession.incidentRef}
               </span>
             </span>
-            <span className="hidden md:inline text-rose-300/80 font-mono text-[11px]">
+            <span className="hidden md:inline text-muted-foreground font-mono text-[11px]">
               • High-Assurance Quorum Bypassed • NIST SP 800-53
             </span>
           </div>
 
           <div className="flex items-center gap-2.5">
-            <div className="font-mono text-rose-300 bg-rose-900/60 px-2 py-0.5 rounded border border-rose-500/30 text-xs font-semibold">
-              ⏱ {breakGlassRemaining}
+            <div className="font-mono text-status-rose bg-status-rose/10 px-2 py-0.5 rounded border border-status-rose/30 text-xs font-semibold">
+              {breakGlassRemaining}
             </div>
             <button
               type="button"
               onClick={() => setIsBreakGlassOpen(true)}
-              className="text-[11px] underline text-rose-300 hover:text-rose-100 mr-1"
+              className="text-[11px] underline text-muted-foreground hover:text-foreground mr-1 transition-colors"
             >
               Details
             </button>
             <button
               type="button"
               onClick={() => void revokeBreakGlass()}
-              className="px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-600 hover:bg-rose-500 text-stone-100 transition-colors"
+              className="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-status-rose hover:bg-status-rose/90 text-white transition-colors"
             >
               Relinquish
             </button>
@@ -480,7 +481,7 @@ export function TopHeader({
               title="Switch Active Store & Multi-Tenant Inventory Context"
               aria-label="Switch Active Store"
             >
-              <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse shrink-0" />
+              <span className="w-2 h-2 rounded-full bg-status-emerald shrink-0" />
               <span className="text-foreground font-medium hidden xl:inline truncate max-w-[130px]">
                 {currentStore.name}
               </span>
@@ -492,7 +493,7 @@ export function TopHeader({
 
             {isStoreOpen && (
               <div className="absolute top-full left-0 mt-1.5 w-72 max-w-[calc(100vw-1.5rem)] bg-surface border border-surface-border rounded-lg shadow-2xl py-1 z-50">
-                <div className="px-3 py-1.5 text-[10px] uppercase font-mono text-muted-foreground border-b border-surface-border flex items-center justify-between">
+                <div className="px-3 py-1.5 text-xs font-mono text-muted-foreground border-b border-surface-border flex items-center justify-between">
                   <span>Branch Store &amp; Vault Hubs</span>
                   <span className="text-gold font-bold">3 Online</span>
                 </div>
@@ -538,10 +539,10 @@ export function TopHeader({
             <button
               type="button"
               onClick={() => setIsDelegationModalOpen(true)}
-              className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/50 text-amber-500 hover:bg-amber-500/25 transition-all text-xs font-mono font-bold shrink-0 animate-pulse"
+              className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-status-amber/15 border border-status-amber/40 text-status-amber hover:bg-status-amber/25 transition-colors text-xs font-mono font-semibold shrink-0"
               title={`Acting as ${user.delegation.elevatedRole}. Click to manage delegation.`}
             >
-              <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <Zap className="w-3.5 h-3.5 text-status-amber shrink-0" />
               <span>ELEVATED: {user.delegation.elevatedRole}</span>
             </button>
           )}
@@ -610,7 +611,7 @@ export function TopHeader({
                 {/* Header */}
                 <div className="flex items-center justify-between pb-2 border-b border-surface-border text-xs">
                   <div className="flex items-center space-x-1.5">
-                    <Activity className="w-4 h-4 text-status-emerald animate-pulse" />
+                    <Activity className="w-4 h-4 text-status-emerald" />
                     <span className="font-semibold text-foreground">Hardware Telemetry Mesh</span>
                   </div>
                   <span className="text-[10px] font-mono uppercase text-status-emerald bg-status-emerald/10 px-2 py-0.5 rounded border border-status-emerald/20 font-bold">
@@ -720,18 +721,11 @@ export function TopHeader({
               className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1 rounded-full bg-surface-elevated border border-surface-border hover:border-gold/40 text-xs font-mono transition-all shrink-0"
               title="Inspect Live MCX/LBMA Spot Ticker & Trigger Exchange Ingestion"
             >
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span
-                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                    isConnected ? "bg-status-emerald" : "bg-gold"
-                  }`}
-                />
-                <span
-                  className={`relative inline-flex rounded-full h-2 w-2 ${
-                    isConnected ? "bg-status-emerald" : "bg-gold"
-                  }`}
-                />
-              </span>
+              <span
+                className={`inline-flex rounded-full h-2 w-2 shrink-0 ${
+                  isConnected ? "bg-status-emerald" : "bg-gold"
+                }`}
+              />
               <span className="hidden xl:inline px-1 py-0.2 rounded bg-surface border border-surface-border text-[9px] text-muted-foreground uppercase font-bold shrink-0">
                 {bullionData.exchange?.includes("LBMA") ? "LBMA" : "MCX"}
               </span>
@@ -830,7 +824,7 @@ export function TopHeader({
                       toast.error("Failed to sync exchange rates");
                     }
                   }}
-                  className="w-full py-1.5 text-xs font-mono font-medium rounded bg-gold text-neutral-950 hover:bg-gold-light transition-colors flex items-center justify-center space-x-1.5 shadow-xs"
+                  className="w-full py-1.5 text-xs font-mono font-medium rounded bg-gold text-obsidian hover:bg-gold-light transition-colors flex items-center justify-center space-x-1.5 shadow-xs"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Sync MCX Live Spot Now</span>
@@ -870,15 +864,15 @@ export function TopHeader({
             onClick={() => setIsNetworkModalOpen(true)}
             title={`Showroom LAN Perimeter: ${isLanSecured ? "Secured (192.168.1.102)" : "Off-Premises WAN"}`}
             aria-label="Network Perimeter Status"
-            className={`hidden md:flex items-center space-x-1.5 px-2 py-1 rounded-md text-[10px] font-mono border transition-colors shrink-0 ${
+            className={`hidden md:flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono border transition-colors duration-150 shrink-0 ${
               isLanSecured
                 ? "bg-status-emerald/10 text-status-emerald border-status-emerald/30 hover:bg-status-emerald/20"
-                : "bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20"
+                : "bg-status-amber/10 text-status-amber border-status-amber/30 hover:bg-status-amber/20"
             }`}
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
-                isLanSecured ? "bg-status-emerald" : "bg-amber-400"
+                isLanSecured ? "bg-status-emerald" : "bg-status-amber"
               }`}
             />
             <Wifi className="w-3 h-3" />
@@ -928,7 +922,7 @@ export function TopHeader({
               title="Switch User Identity & Active Operator Profile"
               aria-label="Active Operator Profile"
             >
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-[11px] font-bold text-obsidian shrink-0">
+              <div className="w-7 h-7 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center text-[11px] font-bold text-gold shrink-0">
                 {activeUserInitials}
               </div>
               <div className="hidden xl:block max-w-[120px]">
@@ -947,16 +941,16 @@ export function TopHeader({
                 {/* Active Operator Card Header */}
                 <div className="px-3.5 pb-2.5 border-b border-surface-border">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground">
+                    <span className="text-[10px] font-mono text-muted-foreground">
                       Active Operator Profile
                     </span>
                     <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
-                      <span className="w-1.5 h-1.5 rounded-full bg-status-emerald animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
                       Authenticated
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-xs font-bold text-obsidian shrink-0 shadow-sm">
+                    <div className="w-9 h-9 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center text-xs font-bold text-gold shrink-0 shadow-sm">
                       {activeUserInitials}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -974,21 +968,21 @@ export function TopHeader({
                 </div>
 
                 {/* Session & Workstation Details */}
-                <div className="px-3.5 py-2.5 text-[11px] space-y-1.5 font-mono border-b border-surface-border bg-surface-elevated/40">
+                <div className="px-3.5 py-2.5 text-xs space-y-1.5 font-mono border-b border-surface-border bg-surface-elevated/40">
                   <div className="flex items-center justify-between text-muted-foreground">
-                    <span className="text-[10px] uppercase tracking-wider">Station Branch:</span>
+                    <span className="text-xs">Station Branch:</span>
                     <span className="text-foreground font-medium truncate max-w-[150px] text-right">
                       {currentStore.code} ({currentStore.name})
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-muted-foreground">
-                    <span className="text-[10px] uppercase tracking-wider">Department:</span>
+                    <span className="text-xs">Department:</span>
                     <span className="text-gold font-medium">
                       {activeUserDepartment}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-muted-foreground">
-                    <span className="text-[10px] uppercase tracking-wider">Access Scope:</span>
+                    <span className="text-xs">Access Scope:</span>
                     <span
                       className="text-foreground font-medium truncate max-w-[160px] text-right"
                       title={activeUserScope}
@@ -997,7 +991,7 @@ export function TopHeader({
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-muted-foreground">
-                    <span className="text-[10px] uppercase tracking-wider">Cryptography:</span>
+                    <span className="text-xs">Cryptography:</span>
                     <span className="text-status-emerald font-medium flex items-center gap-1">
                       <Shield className="w-3 h-3 text-status-emerald" />
                       Argon2id Verified
@@ -1016,15 +1010,15 @@ export function TopHeader({
                     className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
                   >
                     <div className="flex items-center space-x-2">
-                      <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                      <Zap className="w-3.5 h-3.5 text-status-amber shrink-0" />
                       <span>{isPrivilegedOfficer ? "Delegated Authority Quorum" : "Delegated Authority"}</span>
                     </div>
                     {user?.delegation && new Date(user.delegation.expiresAt) > new Date() ? (
-                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-amber-500/20 text-amber-500 border border-amber-500/40 font-bold">
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-amber/20 text-status-amber border border-status-amber/40 font-bold">
                         Elevated
                       </span>
                     ) : isPrivilegedOfficer ? (
-                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">
+                      <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-amber/10 text-status-amber border border-status-amber/30 font-semibold">
                         Supervisor
                       </span>
                     ) : (
@@ -1168,8 +1162,8 @@ export function TopHeader({
                         isLanSecured
                           ? "bg-status-emerald/10 text-status-emerald border-status-emerald/30"
                           : isPrivilegedOfficer
-                          ? "bg-sky-500/10 text-sky-400 border-sky-500/30"
-                          : "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                          ? "bg-status-indigo/10 text-status-indigo border-status-indigo/30"
+                          : "bg-status-amber/10 text-status-amber border-status-amber/30"
                       }`}
                     >
                       {isLanSecured
@@ -1213,15 +1207,15 @@ export function TopHeader({
                       className="w-full px-2.5 py-1.5 text-left text-xs flex items-center justify-between text-foreground hover:bg-surface-elevated rounded-md transition-colors font-medium group"
                     >
                       <div className="flex items-center space-x-2">
-                        <ShieldAlert className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                        <ShieldAlert className="w-3.5 h-3.5 text-status-rose shrink-0" />
                         <span>Break-Glass Emergency</span>
                       </div>
                       {breakGlassSession?.isActive ? (
-                        <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-rose-500/20 text-rose-400 border border-rose-500/40 font-bold animate-pulse">
+                        <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-rose/20 text-status-rose border border-status-rose/40 font-bold">
                           Active
                         </span>
                       ) : (
-                        <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold">
+                        <span className="px-1.5 py-0.5 text-[9px] font-mono rounded bg-status-rose/10 text-status-rose border border-status-rose/20 font-semibold">
                           NIST 800-53
                         </span>
                       )}

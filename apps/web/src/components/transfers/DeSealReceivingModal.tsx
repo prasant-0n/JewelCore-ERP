@@ -338,7 +338,7 @@ export function DeSealReceivingModal({
                 className={`p-2.5 rounded-lg border text-xs font-mono flex items-center justify-between ${
                   isWeightDiscrepant
                     ? "bg-destructive/10 border-destructive/30 text-destructive"
-                    : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                    : "bg-status-emerald/10 border-status-emerald/30 text-status-emerald"
                 }`}
               >
                 <span>
@@ -368,7 +368,7 @@ export function DeSealReceivingModal({
               <label
                 className={`p-3 rounded-lg border cursor-pointer transition-all flex flex-col justify-between ${
                   sealCondition === "VERIFIED_INTACT"
-                    ? "bg-emerald-500/15 border-emerald-500/60 text-emerald-300"
+                    ? "bg-status-emerald/15 border-status-emerald/60 text-status-emerald"
                     : "bg-surface-elevated border-surface-border text-muted-foreground hover:border-surface-border/80"
                 }`}
               >
@@ -414,7 +414,7 @@ export function DeSealReceivingModal({
               <label
                 className={`p-3 rounded-lg border cursor-pointer transition-all flex flex-col justify-between ${
                   sealCondition === "DAMAGED"
-                    ? "bg-amber-500/15 border-amber-500/60 text-amber-300"
+                    ? "bg-status-amber/15 border-status-amber/60 text-status-amber"
                     : "bg-surface-elevated border-surface-border text-muted-foreground hover:border-surface-border/80"
                 }`}
               >
@@ -486,8 +486,8 @@ export function DeSealReceivingModal({
 
               {/* Escort / Security Witness */}
               <div className="p-3 bg-surface-elevated border border-surface-border/80 rounded-lg space-y-2">
-                <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="text-xs text-status-emerald font-semibold flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-status-emerald" />
                   Key 2 • Security Escort Witness
                 </div>
 

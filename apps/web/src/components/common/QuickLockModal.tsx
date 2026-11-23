@@ -172,13 +172,13 @@ export function QuickLockModal({ isOpen, onUnlock }: QuickLockModalProps) {
       <DialogContent
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
-        className="max-w-xs sm:max-w-md flex flex-col items-center text-center p-6 sm:p-7 border-surface-border bg-surface/95 backdrop-blur-2xl shadow-2xl [&>button[class*='absolute']]:hidden"
+        className="max-w-xs sm:max-w-md flex flex-col items-center text-center p-6 sm:p-7 border border-surface-border bg-surface shadow-2xl [&>button[class*='absolute']]:hidden"
       >
         {/* Brand & Security Status Badge */}
         <div className="relative mb-3">
           <JewelCoreLogo size="lg" variant="badge" />
           <div
-            className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border flex items-center justify-center backdrop-blur-md shadow-lg transition-colors ${
+            className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border flex items-center justify-center shadow-xs transition-colors ${
               isSuccess
                 ? "bg-status-emerald/20 border-status-emerald text-status-emerald"
                 : cooldownRemaining > 0
@@ -197,11 +197,11 @@ export function QuickLockModal({ isOpen, onUnlock }: QuickLockModalProps) {
         </div>
 
         <DialogHeader className="items-center text-center pb-0 border-none">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono tracking-wider uppercase mb-1 bg-gold/10 border border-gold/30 text-gold">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono mb-1 bg-gold/10 border border-gold/30 text-gold">
+            <span className="w-1.5 h-1.5 rounded-full bg-gold" />
             Workstation Standby Mode
           </div>
-          <DialogTitle className="text-base font-semibold tracking-wide uppercase text-foreground">
+          <DialogTitle className="text-base font-semibold tracking-wide text-foreground">
             Terminal Locked
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground mt-0.5 max-w-xs">
@@ -210,9 +210,9 @@ export function QuickLockModal({ isOpen, onUnlock }: QuickLockModalProps) {
         </DialogHeader>
 
         {/* Active Operator Banner */}
-        <div className="w-full mt-3 p-2.5 rounded-xl bg-surface-elevated/70 border border-surface-border flex items-center justify-between text-left">
+        <div className="w-full mt-3 p-2.5 rounded-xl bg-surface-elevated border border-surface-border flex items-center justify-between text-left">
           <div className="flex items-center space-x-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-xs font-bold text-obsidian shrink-0">
+            <div className="w-8 h-8 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center text-xs font-semibold text-gold shrink-0">
               {operatorInitials}
             </div>
             <div className="min-w-0">

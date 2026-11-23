@@ -98,7 +98,7 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md sm:max-w-lg p-6 bg-surface/98 border-surface-border backdrop-blur-xl shadow-2xl">
+      <DialogContent className="max-w-md sm:max-w-lg p-6 bg-surface border-surface-border shadow-2xl">
         <DialogHeader className="text-left pb-2 border-b border-surface-border">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/40 flex items-center justify-center text-gold">
@@ -118,7 +118,7 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
         {/* Status Pill & User Card */}
         <div className="mt-2 p-3 rounded-xl bg-surface-elevated/70 border border-surface-border flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-status-emerald animate-pulse" />
+            <div className="w-2.5 h-2.5 rounded-full bg-status-emerald" />
             <div>
               <span className="block text-xs font-semibold text-foreground">
                 {user?.firstName} {user?.lastName} ({user?.role || "Operator"})

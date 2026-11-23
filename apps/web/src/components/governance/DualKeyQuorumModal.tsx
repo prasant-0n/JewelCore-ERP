@@ -237,7 +237,7 @@ export function DualKeyQuorumModal({
         <div className="mt-3 p-4 rounded-xl bg-surface-elevated/70 border border-surface-border space-y-3 font-mono text-xs">
           <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-surface-border">
             <div>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground block">
+              <span className="text-[10px] text-muted-foreground block">
                 Target Operation:
               </span>
               <span className="font-semibold text-foreground text-sm font-sans block">
@@ -250,7 +250,7 @@ export function DualKeyQuorumModal({
               )}
             </div>
             <div className="text-right shrink-0">
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground block">
+              <span className="text-[10px] text-muted-foreground block">
                 Valuation:
               </span>
               <span className="text-base font-bold text-gold tabular-nums">

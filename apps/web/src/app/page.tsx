@@ -608,7 +608,7 @@ export default function HomePage() {
                         className="w-full justify-between text-xs h-auto py-2.5 hover:border-gold/50"
                       >
                         <span className="flex items-center space-x-2">
-                          <ShoppingCart className="w-3.5 h-3.5 text-emerald-400" />
+                          <ShoppingCart className="w-3.5 h-3.5 text-status-emerald" />
                           <span>Open POS Salon Checkout</span>
                         </span>
                         <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />

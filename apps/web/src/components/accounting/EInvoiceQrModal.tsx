@@ -184,7 +184,7 @@ export function EInvoiceQrModal({
                   <span className="text-[10px] uppercase text-muted-foreground block">
                     Tax Amount (GST 3%)
                   </span>
-                  <span className="text-emerald-700 dark:text-emerald-400 font-bold">
+                  <span className="text-status-emerald font-bold">
                     ₹ {(invoice.cgstAmountInr + invoice.sgstAmountInr + invoice.igstAmountInr).toLocaleString("en-IN")}
                   </span>
                 </div>
@@ -268,7 +268,7 @@ export function EInvoiceQrModal({
               <div className="text-foreground font-semibold">
                 ₹ {invoice.taxableAmountInr.toLocaleString("en-IN")}
               </div>
-              <div className="text-emerald-700 dark:text-emerald-400 font-semibold">
+              <div className="text-status-emerald font-semibold">
                 {invoice.gstRate}%
               </div>
             </div>

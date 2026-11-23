@@ -480,17 +480,15 @@ export default function SavingsSchemePage() {
     <AppShell>
       <div className="space-y-6 max-w-[1600px] mx-auto pb-16">
         {/* Luxury Gold Savings Atmospheric Banner */}
-        <div className="relative rounded-2xl bg-gradient-to-r from-surface-elevated/95 via-surface to-surface-card border border-gold/30 dark:border-gold/20 p-6 sm:p-7 shadow-sm overflow-hidden backdrop-blur-md">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gold/15 via-transparent to-transparent pointer-events-none" />
-
+        <div className="relative rounded-2xl border border-surface-border bg-surface-card p-6 sm:p-7 shadow-xs overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest font-semibold">
-                <Coins className="w-4 h-4 text-gold animate-pulse" />
+              <div className="flex items-center space-x-2 text-xs font-mono text-gold font-medium">
+                <Coins className="w-4 h-4 text-gold" />
                 <span>Bullion Treasury &amp; Wealth Accumulation Engine</span>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-serif font-black tracking-tight text-foreground">
+                <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-foreground">
                   Gold Savings Scheme (SIP) &amp; VIP Loyalty
                 </h1>
                 <Badge variant="gold" className="text-xs font-mono font-bold">
@@ -509,7 +507,7 @@ export default function SavingsSchemePage() {
               <Button
                 variant="gold"
                 onClick={() => setIsEnrollModalOpen(true)}
-                className="font-semibold text-xs h-9 gap-1.5 shadow-md hover:shadow-lg transition-all"
+                className="font-semibold text-xs h-9 gap-1.5 transition-colors duration-150"
               >
                 <Plus className="h-4 w-4" />
                 <span>Enroll New Patron Plan</span>
@@ -522,7 +520,7 @@ export default function SavingsSchemePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Active Plan Subscribers
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
@@ -541,7 +539,7 @@ export default function SavingsSchemePage() {
 
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Monthly Recurring Deposit Inflow
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
@@ -560,11 +558,11 @@ export default function SavingsSchemePage() {
 
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Customer Gold Reserve Locked
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
-                <Sparkles className="h-4 w-4 text-gold" />
+                <Scale className="h-4 w-4 text-gold" />
               </div>
             </div>
             <div className="mt-2 text-2xl font-mono font-bold text-gold tracking-tight tabular-nums">
@@ -579,7 +577,7 @@ export default function SavingsSchemePage() {
 
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Matured Ready for Redemption
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
@@ -820,10 +818,10 @@ export default function SavingsSchemePage() {
                         <div
                           className={`h-full transition-all rounded-full ${
                             acc.status === "MATURED"
-                              ? "bg-gradient-to-r from-gold to-gold-dark"
+                              ? "bg-gold"
                               : acc.status === "REDEEMED"
                                 ? "bg-muted-foreground"
-                                : "bg-gradient-to-r from-amber-500 via-gold to-gold-dark"
+                                : "bg-gold"
                           }`}
                           style={{ width: `${progressPct}%` }}
                         />
@@ -990,7 +988,7 @@ export default function SavingsSchemePage() {
         {activeTab === "kyc" && (
           <Card className="bg-surface-card border-surface-border p-6 rounded-2xl shadow-sm space-y-4">
             <div className="space-y-1">
-              <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest font-semibold">
+              <div className="flex items-center space-x-2 text-xs font-mono text-gold font-medium">
                 <ShieldCheck className="w-4 h-4 text-gold" />
                 <span>PMLA &amp; Statutory Nominee Ledger</span>
               </div>
@@ -1123,7 +1121,7 @@ export default function SavingsSchemePage() {
               </div>
 
               <div className="bg-surface-elevated/70 p-4 rounded-xl border border-surface-border space-y-3">
-                <span className="text-[11px] font-bold text-gold uppercase tracking-wider block font-mono">
+                <span className="text-xs font-semibold text-gold block font-mono">
                   Statutory Nominee Registration
                 </span>
                 <div className="grid grid-cols-2 gap-3">

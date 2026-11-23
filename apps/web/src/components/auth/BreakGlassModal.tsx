@@ -132,30 +132,30 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         data-testid="break-glass-modal"
-        className="max-w-xl max-h-[90vh] flex flex-col bg-stone-950 text-stone-100 border border-rose-600/40 shadow-2xl p-0 overflow-hidden"
+        className="max-w-xl max-h-[90vh] flex flex-col bg-surface text-foreground border border-status-rose/40 shadow-2xl p-0 overflow-hidden"
       >
         {/* Header */}
-        <div className="p-5 border-b border-rose-950/60 bg-gradient-to-r from-rose-950/40 via-stone-900/80 to-stone-950 shrink-0">
+        <div className="p-5 border-b border-surface-border bg-status-rose/5 shrink-0">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/40 flex items-center justify-center text-rose-500 shrink-0 animate-pulse">
+              <div className="w-10 h-10 rounded-lg bg-status-rose/10 border border-status-rose/30 flex items-center justify-center text-status-rose shrink-0">
                 <ShieldAlert className="w-5 h-5" />
               </div>
               <div>
-                <DialogTitle className="text-base font-semibold text-stone-100 flex items-center gap-2">
+                <DialogTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <span>Break-Glass Emergency Protocol</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-rose-500/20 text-rose-400 border border-rose-500/40">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-status-rose/15 text-status-rose border border-status-rose/30">
                     NIST SP 800-53
                   </span>
                 </DialogTitle>
-                <DialogDescription className="text-xs text-rose-400/80 mt-0.5">
-                  High-Assurance Emergency Elevation & Quorum Bypass Gate
+                <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                  High-Assurance Emergency Elevation &amp; Quorum Bypass Gate
                 </DialogDescription>
               </div>
             </div>
 
             {breakGlassSession?.isActive && (
-              <Badge className="bg-rose-500/20 text-rose-400 border-rose-500/40 text-[11px] font-mono animate-pulse">
+              <Badge className="bg-status-rose/15 text-status-rose border-status-rose/30 text-[11px] font-mono font-semibold">
                 ACTIVE
               </Badge>
             )}
@@ -167,48 +167,48 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
           {breakGlassSession?.isActive ? (
             /* ACTIVE CLEARANCE VIEW */
             <div className="space-y-4">
-              <div className="p-4 rounded-xl bg-rose-950/30 border border-rose-600/50 space-y-3">
+              <div className="p-4 rounded-xl bg-status-rose/10 border border-status-rose/30 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-rose-400 font-semibold text-sm">
-                    <Flame className="w-4 h-4 text-rose-500 animate-bounce" />
+                  <div className="flex items-center gap-2 text-status-rose font-semibold text-sm">
+                    <Flame className="w-4 h-4 text-status-rose" />
                     <span>EMERGENCY CLEARANCE IN PROGRESS</span>
                   </div>
-                  <div className="text-xs font-mono px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
+                  <div className="text-xs font-mono px-2.5 py-1 rounded bg-status-rose/20 text-status-rose border border-status-rose/40 font-bold">
                     {remainingTime} REMAINING
                   </div>
                 </div>
 
-                <p className="text-xs text-stone-300 leading-relaxed">
+                <p className="text-xs text-foreground/90 leading-relaxed">
                   All high-assurance verification gates and dual-control quorum requirements are ephemerally bypassed. Actions are forensically recorded under Incident Reference:{" "}
-                  <strong className="text-rose-400 font-mono">
+                  <strong className="text-status-rose font-mono">
                     {breakGlassSession.incidentRef}
                   </strong>
                   .
                 </p>
 
-                <div className="pt-2 border-t border-rose-900/40 grid grid-cols-2 gap-2 text-[11px] font-mono">
+                <div className="pt-2 border-t border-status-rose/20 grid grid-cols-2 gap-2 text-[11px] font-mono">
                   <div>
-                    <span className="text-stone-400">Authorized Operator:</span>
-                    <p className="text-stone-200 font-semibold">
+                    <span className="text-muted-foreground">Authorized Operator:</span>
+                    <p className="text-foreground font-semibold">
                       {breakGlassSession.actorName} ({breakGlassSession.actorRole})
                     </p>
                   </div>
                   <div>
-                    <span className="text-stone-400">Granted Duration:</span>
-                    <p className="text-stone-200 font-semibold">
+                    <span className="text-muted-foreground">Granted Duration:</span>
+                    <p className="text-foreground font-semibold">
                       {breakGlassSession.durationMinutes} Minutes TTL
                     </p>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-stone-400">Operational Reason:</span>
-                    <p className="text-stone-200 mt-0.5 italic">
+                    <span className="text-muted-foreground">Operational Reason:</span>
+                    <p className="text-foreground/90 mt-0.5 italic">
                       &quot;{breakGlassSession.reason}&quot;
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-stone-900/60 border border-stone-800 text-xs text-stone-400 flex items-center justify-between">
+              <div className="p-3 rounded-lg bg-surface-elevated/40 border border-surface-border text-xs text-muted-foreground flex items-center justify-between">
                 <span>Relinquish emergency access to restore baseline PBAC constraints:</span>
                 <Button
                   type="button"
@@ -216,7 +216,7 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
                   variant="destructive"
                   onClick={handleRelinquish}
                   disabled={isSubmitting}
-                  className="bg-rose-600 hover:bg-rose-500 text-stone-100 font-semibold text-xs"
+                  className="bg-status-rose hover:opacity-90 text-white font-semibold text-xs"
                 >
                   <XCircle className="w-3.5 h-3.5 mr-1.5" />
                   <span>Relinquish Emergency Clearance</span>
@@ -227,10 +227,10 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
             /* ACTIVATION FORM */
             <form onSubmit={handleActivate} className="space-y-4">
               {/* Warning Notice */}
-              <div className="p-3.5 rounded-lg bg-rose-950/20 border border-rose-600/30 space-y-1.5 text-xs text-rose-300/90 leading-relaxed">
-                <div className="flex items-center gap-1.5 font-semibold text-rose-400">
+              <div className="p-3.5 rounded-lg bg-status-rose/10 border border-status-rose/30 space-y-1.5 text-xs text-foreground/90 leading-relaxed">
+                <div className="flex items-center gap-1.5 font-semibold text-status-rose">
                   <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>SOC-2 & NIST SP 800-53 Compliance Warning</span>
+                  <span>SOC-2 &amp; NIST SP 800-53 Compliance Warning</span>
                 </div>
                 <p>
                   Triggering this emergency override immediately broadcasts an encrypted incident notification to the Board Audit Committee and disables high-assurance quorum for the specified window.
@@ -240,7 +240,7 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
               {/* Incident Ref & Duration */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-mono text-stone-300 block">
+                  <label className="text-[11px] font-mono text-muted-foreground block">
                     Incident Tracking Reference:
                   </label>
                   <Input
@@ -248,13 +248,13 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
                     value={incidentRef}
                     onChange={(e) => setIncidentRef(e.target.value)}
                     placeholder="INC-2026-9041"
-                    className="h-9 text-xs bg-stone-900 border-stone-800 focus:border-rose-500/50 text-stone-100 font-mono"
+                    className="h-9 text-xs bg-surface border-surface-border focus:border-status-rose/50 text-foreground font-mono"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-mono text-stone-300 block">
+                  <label className="text-[11px] font-mono text-muted-foreground block">
                     Emergency Clearance Window (TTL):
                   </label>
                   <div className="grid grid-cols-4 gap-1.5">
@@ -265,8 +265,8 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
                         onClick={() => setDurationMinutes(mins)}
                         className={`h-9 rounded-md text-xs font-mono font-medium border transition-all ${
                           durationMinutes === mins
-                            ? "bg-rose-500/20 border-rose-500/60 text-rose-300"
-                            : "bg-stone-900 border-stone-800 text-stone-400 hover:border-stone-700"
+                            ? "bg-status-rose/15 border-status-rose/50 text-status-rose font-semibold"
+                            : "bg-surface border-surface-border text-muted-foreground hover:border-surface-borderMuted"
                         }`}
                       >
                         {mins}m
@@ -278,22 +278,22 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
 
               {/* Justification Textarea */}
               <div className="space-y-1.5">
-                <label className="text-[11px] font-mono text-stone-300 block">
-                  Operational Justification & Crisis Root Cause (min 15 chars):
+                <label className="text-[11px] font-mono text-muted-foreground block">
+                  Operational Justification &amp; Crisis Root Cause (min 15 chars):
                 </label>
                 <textarea
                   rows={2}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="State the crisis reason (e.g. Hardware Biometric Reader Malfunction)..."
-                  className="w-full text-xs bg-stone-900 border border-stone-800 rounded-lg p-2.5 text-stone-100 focus:border-rose-500/50 focus:outline-none placeholder:text-stone-500 leading-relaxed"
+                  className="w-full text-xs bg-surface border border-surface-border rounded-lg p-2.5 text-foreground focus:border-status-rose/50 focus:outline-none placeholder:text-muted-foreground leading-relaxed"
                   required
                 />
               </div>
 
               {/* Master Emergency Passphrase */}
               <div className="space-y-1.5">
-                <label className="text-[11px] font-mono text-stone-300 block">
+                <label className="text-[11px] font-mono text-muted-foreground block">
                   Master Emergency Cryptographic Key:
                 </label>
                 <div className="relative">
@@ -302,13 +302,13 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
                     value={masterPassphrase}
                     onChange={(e) => setMasterPassphrase(e.target.value)}
                     placeholder="Enter Master Passphrase (e.g. JEWELCORE-BREAK-GLASS-2026)"
-                    className="h-9 text-xs bg-stone-900 border-stone-800 focus:border-rose-500/50 text-stone-100 pr-10 font-mono"
+                    className="h-9 text-xs bg-surface border-surface-border focus:border-status-rose/50 text-foreground pr-10 font-mono"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-200"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showPassword ? (
                       <EyeOff className="w-3.5 h-3.5" />
@@ -320,27 +320,27 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
               </div>
 
               {/* Acknowledgment Checkbox */}
-              <label className="flex items-start gap-2.5 p-3 rounded-lg bg-stone-900/60 border border-stone-800 cursor-pointer">
+              <label className="flex items-start gap-2.5 p-3 rounded-lg bg-surface-elevated/40 border border-surface-border cursor-pointer">
                 <input
                   type="checkbox"
                   checked={acknowledged}
                   onChange={(e) => setAcknowledged(e.target.checked)}
-                  className="mt-0.5 rounded border-stone-700 text-rose-500 focus:ring-rose-500 bg-stone-950"
+                  className="mt-0.5 rounded border-surface-border text-status-rose focus:ring-status-rose/30 bg-surface accent-status-rose"
                   required
                 />
-                <span className="text-xs text-stone-300 leading-snug">
+                <span className="text-xs text-foreground leading-snug">
                   I formally acknowledge that this emergency override is immutable, forensically recorded in the Merkle audit stream, and subject to mandatory executive review.
                 </span>
               </label>
 
               {/* Actions */}
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-stone-800">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-surface-border">
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={onClose}
-                  className="h-8 text-xs text-stone-400 hover:text-stone-200"
+                  className="h-8 text-xs text-muted-foreground hover:text-foreground"
                 >
                   Cancel
                 </Button>
@@ -348,7 +348,7 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
                   type="submit"
                   size="sm"
                   disabled={isSubmitting || !masterPassphrase || !acknowledged}
-                  className="h-8 text-xs bg-rose-600 hover:bg-rose-500 text-stone-100 font-semibold gap-1.5 shadow-lg shadow-rose-900/30"
+                  className="h-8 text-xs bg-status-rose hover:opacity-90 text-white font-semibold gap-1.5 shadow-xs"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   <span>{isSubmitting ? "Verifying..." : "Authorize Emergency Clearance"}</span>
@@ -359,9 +359,9 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-3 bg-stone-900/80 border-t border-stone-800 flex items-center justify-between shrink-0 text-xs text-stone-400">
-          <div className="flex items-center gap-1.5 text-[11px] font-mono text-rose-400">
-            <Lock className="w-3 h-3 text-rose-500" />
+        <div className="p-3 bg-surface-elevated/40 border-t border-surface-border flex items-center justify-between shrink-0 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-[11px] font-mono text-status-rose">
+            <Lock className="w-3 h-3 text-status-rose" />
             <span>NIST SP 800-53 AU-2 / AC-2(2) Emergency Gate</span>
           </div>
 
@@ -369,7 +369,7 @@ export function BreakGlassModal({ isOpen, onClose }: BreakGlassModalProps) {
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="h-7 text-xs text-stone-400 hover:text-stone-100 hover:bg-stone-800"
+            className="h-7 text-xs text-muted-foreground hover:text-foreground hover:bg-surface-elevated"
           >
             Close
           </Button>

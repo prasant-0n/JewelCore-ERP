@@ -276,7 +276,7 @@ export function BisHuidRegistryModal({
                 AHC Gateway Status
               </span>
               <div className="text-sm font-bold text-status-emerald mt-1.5 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-status-emerald" />
                 <span>AHC ONLINE</span>
               </div>
               <span className="text-[10px] text-muted-foreground block mt-0.5">

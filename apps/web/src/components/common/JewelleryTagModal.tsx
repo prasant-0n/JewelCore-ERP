@@ -193,8 +193,8 @@ export function JewelleryTagModal({
         <div className="bg-obsidian-deep p-6 sm:p-8 rounded-xl border border-surface-border flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
           <div className="w-full flex items-center justify-between text-xs text-muted-foreground mb-4">
             <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse" />
-              <span className="text-[11px] font-mono text-neutral-300 font-medium">
+              <span className="w-2 h-2 rounded-full bg-status-emerald" />
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 {tagPreset === "FLAGSHIP_68x16"
                   ? "Tag Dimension: 68mm × 16mm Flagship Boutique Butterfly (Cartier / Bvlgari Standard)"
                   : tagPreset === "RAT_TAIL_45x20"
@@ -228,7 +228,7 @@ export function JewelleryTagModal({
               <div className="w-[45%] h-full flex flex-col justify-between pr-3 border-r-2 border-dashed border-stone-300">
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black tracking-wider uppercase text-amber-950 font-serif">
+                    <span className="text-[10px] font-black tracking-wider uppercase text-obsidian font-serif">
                       JEWELCORE ATELIER
                     </span>
                     <span className="text-[8px] font-mono font-bold bg-amber-100 text-amber-950 px-1 py-0.5 rounded border border-amber-300">
@@ -267,7 +267,7 @@ export function JewelleryTagModal({
               {/* Center Narrow Bridge / Ring String Channel */}
               <div className="w-[8%] flex flex-col items-center justify-center text-stone-400 shrink-0">
                 <div className="w-2 h-2 rounded-full border-2 border-stone-400 mb-1 bg-stone-100" />
-                <span className="text-[7px] font-mono uppercase tracking-widest rotate-90 whitespace-nowrap text-stone-500 font-bold">
+                <span className="text-[7px] font-mono rotate-90 whitespace-nowrap text-stone-500 font-bold">
                   BRIDGE
                 </span>
                 <div className="w-2 h-2 rounded-full border-2 border-stone-400 mt-1 bg-stone-100" />
@@ -325,7 +325,7 @@ export function JewelleryTagModal({
                     errorCorrectionLevel="H"
                     centerLogo="jewelcore"
                   />
-                  <div className="flex items-center gap-0.5 text-[7px] font-mono font-bold uppercase tracking-wider text-neutral-600 mt-0.5 group-hover/qr:text-gold transition-colors">
+                  <div className="flex items-center gap-0.5 text-[7px] font-mono font-bold text-neutral-600 mt-0.5 group-hover/qr:text-gold transition-colors">
                     <ZoomIn className="w-2.5 h-2.5" />
                     <span>BIS &amp; IRN</span>
                   </div>
@@ -345,7 +345,7 @@ export function JewelleryTagModal({
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" /> BIS IS 1417:2016 Certified
+              <CheckCircle2 className="w-3.5 h-3.5 text-status-indigo" /> BIS IS 1417:2016 Certified
             </span>
           </div>
         </div>
@@ -388,7 +388,7 @@ export function JewelleryTagModal({
               </div>
 
               <div className="flex-1 space-y-3 text-xs font-mono w-full">
-                <div className="p-3 rounded-lg bg-obsidian-deep border border-surface-border space-y-1.5">
+                <div className="p-3 rounded-lg bg-surface border border-surface-border space-y-1.5">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Serial Number:</span>
                     <span className="font-bold text-foreground">{activeTag.serialNumber}</span>
@@ -403,7 +403,7 @@ export function JewelleryTagModal({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Statutory BIS HUID:</span>
-                    <span className="text-emerald-400 font-bold">{activeTag.hallmarkId || "PENDING"}</span>
+                    <span className="text-status-emerald font-bold">{activeTag.hallmarkId || "PENDING"}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Retail Valuation MRP:</span>
@@ -418,7 +418,7 @@ export function JewelleryTagModal({
                     onClick={handleCopyPayload}
                     className="flex-1 text-xs gap-1.5"
                   >
-                    {copiedPayload ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedPayload ? <Check className="w-3.5 h-3.5 text-status-emerald" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedPayload ? "Copied" : "Copy Raw Decoded Payload"}</span>
                   </Button>
                   <Button

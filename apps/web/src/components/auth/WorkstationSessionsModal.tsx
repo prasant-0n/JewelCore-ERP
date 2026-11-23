@@ -180,7 +180,7 @@ export function WorkstationSessionsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md sm:max-w-2xl p-6 bg-surface/98 border-surface-border backdrop-blur-xl shadow-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md sm:max-w-2xl p-6 bg-surface border-surface-border shadow-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-left pb-2 border-b border-surface-border">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/40 flex items-center justify-center text-gold shrink-0">
@@ -201,7 +201,7 @@ export function WorkstationSessionsModal({
         <div className="mt-3 p-3.5 rounded-xl bg-surface-elevated/80 border border-surface-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono bg-status-emerald/10 text-status-emerald border border-status-emerald/30 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-status-emerald" />
               <span>{sessions.length} Active Workstation{sessions.length === 1 ? "" : "s"}</span>
             </div>
             <span className="text-xs text-muted-foreground hidden sm:inline">•</span>

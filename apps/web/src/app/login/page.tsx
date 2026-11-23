@@ -492,7 +492,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-10 mt-2 bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian font-semibold text-xs rounded-lg flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.99] transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full h-10 mt-2 bg-gold hover:bg-gold-light text-obsidian font-semibold text-xs rounded-lg flex items-center justify-center gap-2 active:scale-[0.99] transition-colors shadow-xs disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isLoading ? (
                   <>
@@ -513,7 +513,7 @@ export default function LoginPage() {
               {/* Operator Verification Badge */}
               <div className="p-2.5 rounded-xl bg-surface-elevated/70 border border-surface-border flex items-center justify-between">
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-gold/30 to-gold/80 border border-gold/50 flex items-center justify-center text-[10px] font-bold text-obsidian">
+                  <div className="w-7 h-7 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center text-[10px] font-semibold text-gold">
                     {email.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
@@ -617,7 +617,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-10 mt-1 bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian font-semibold text-xs rounded-lg flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.99] transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full h-10 mt-1 bg-gold hover:bg-gold-light text-obsidian font-semibold text-xs rounded-lg flex items-center justify-center gap-2 active:scale-[0.99] transition-colors shadow-xs disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isLoading ? (
                   <>
@@ -711,7 +711,7 @@ export default function LoginPage() {
                     <span className="block text-[9px] text-muted-foreground font-mono truncate leading-tight">
                       {staff.role}
                     </span>
-                    <span className="block text-[8px] text-gold/70 font-mono mt-0.5 uppercase tracking-wider">
+                    <span className="block text-[8px] text-gold/80 font-mono mt-0.5 capitalize">
                       {staff.department}
                     </span>
                   </button>

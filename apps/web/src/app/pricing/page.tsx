@@ -417,11 +417,10 @@ export default function PricingMasterPage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
         {/* Atmospheric Luxury Hero Header Banner */}
-        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-sm">
-          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-80 h-80 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-xs">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
                 <span>Flagship Mumbai (INV-11)</span>
                 <span>&gt;</span>
                 <span className="text-gold font-medium">Bullion Fixing &amp; Dynamic Pricing Engine</span>
@@ -473,7 +472,7 @@ export default function PricingMasterPage() {
                 size="sm"
                 data-testid="broadcast-spot-fix-btn"
                 onClick={handleBroadcast}
-                className="font-mono text-xs shadow-md hover:shadow-lg transition-all"
+                className="font-mono text-xs transition-colors duration-150"
               >
                 <Radio className="w-3.5 h-3.5 mr-1" />
                 <span>Broadcast Spot Fix</span>
@@ -483,7 +482,7 @@ export default function PricingMasterPage() {
         </div>
 
         {/* Live Commodity Exchange Ingestion Banner (Pathway C) */}
-        <Card className="p-4 bg-surface-card border border-surface-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+        <Card className="p-4 bg-surface-card border border-surface-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
           <div className="flex items-start sm:items-center space-x-3">
             <div className="p-2 rounded-lg bg-gold/10 border border-gold/20 text-gold flex-shrink-0">
               <TrendingUp className="w-4 h-4" />
@@ -518,7 +517,7 @@ export default function PricingMasterPage() {
               size="sm"
               disabled={isSyncingFeed}
               onClick={handleSyncExchange}
-              className="text-xs font-mono shadow-sm"
+              className="text-xs font-mono shadow-xs"
             >
               <RefreshCw
                 className={`w-3.5 h-3.5 mr-1.5 ${
@@ -532,12 +531,12 @@ export default function PricingMasterPage() {
 
         {/* 4 Tactile Precision KPI Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 transition-colors duration-150">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-medium text-muted-foreground font-sans">
                 MCX 24K Gold Spot
               </span>
-              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+              <div className="p-1.5 rounded-lg bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
                 <TrendingUp className="h-4 w-4" />
               </div>
             </div>
@@ -551,9 +550,9 @@ export default function PricingMasterPage() {
             </div>
           </Card>
 
-          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 transition-colors duration-150">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-medium text-muted-foreground font-sans">
                 22K Benchmark (Au 916)
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
@@ -569,9 +568,9 @@ export default function PricingMasterPage() {
             </div>
           </Card>
 
-          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 transition-colors duration-150">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-medium text-muted-foreground font-sans">
                 Active Margin Rules
               </span>
               <div className="p-1.5 rounded-lg bg-surface-elevated text-foreground border border-surface-border">
@@ -587,12 +586,12 @@ export default function PricingMasterPage() {
             </div>
           </Card>
 
-          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
+          <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 transition-colors duration-150">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-medium text-muted-foreground font-sans">
                 Treasury Hedging Cover
               </span>
-              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+              <div className="p-1.5 rounded-lg bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
                 <ShieldCheck className="h-4 w-4" />
               </div>
             </div>
@@ -640,7 +639,7 @@ export default function PricingMasterPage() {
                   <button
                     key={id}
                     onClick={() => setFilterState(id)}
-                    className={`px-3 py-1 rounded-lg font-mono text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    className={`px-3 py-1 rounded-lg font-mono text-[11px] font-medium transition-colors duration-150 whitespace-nowrap cursor-pointer ${
                       filterState === id
                         ? "bg-gold text-obsidian font-bold shadow-xs"
                         : "text-muted-foreground hover:text-foreground"

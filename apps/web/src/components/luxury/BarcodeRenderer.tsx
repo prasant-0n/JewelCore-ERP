@@ -158,7 +158,7 @@ export function BarcodeRenderer({
   if (hasError) {
     return (
       <div
-        className={`inline-flex items-center gap-1.5 px-2 py-1 bg-amber-500/10 border border-amber-500/30 rounded text-amber-700 dark:text-amber-400 text-xs font-mono ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2 py-1 bg-status-amber/10 border border-status-amber/30 rounded text-status-amber text-xs font-mono ${className}`}
         title={errorMessage}
       >
         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
@@ -179,19 +179,19 @@ export function BarcodeRenderer({
       </div>
 
       {showToolbar && (
-        <div className="absolute top-1 right-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-neutral-900/80 backdrop-blur-xs rounded px-1 py-0.5 shadow-md">
+        <div className="absolute top-1 right-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-surface border border-surface-border rounded px-1 py-0.5 shadow-xs">
           <button
             type="button"
             onClick={handleCopy}
-            className="p-1 text-white hover:text-amber-400 transition-colors"
+            className="p-1 text-muted-foreground hover:text-gold transition-colors"
             title="Copy barcode value"
           >
-            {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+            {copied ? <Check className="w-3 h-3 text-status-emerald" /> : <Copy className="w-3 h-3" />}
           </button>
           <button
             type="button"
             onClick={handleDownloadSvg}
-            className="p-1 text-white hover:text-amber-400 transition-colors"
+            className="p-1 text-muted-foreground hover:text-gold transition-colors"
             title="Download vector SVG"
           >
             <Download className="w-3 h-3" />

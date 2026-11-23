@@ -103,7 +103,7 @@ export function TagMetrologyInspector({
           <div>
             <div className="flex items-center space-x-2">
               <span
-                className={`w-2.5 h-2.5 rounded-full ${isMissing ? "bg-status-rose animate-ping" : "bg-gold animate-pulse"}`}
+                className={`w-2.5 h-2.5 rounded-full ${isMissing ? "bg-status-rose" : "bg-gold"}`}
               />
               <CardTitle className="text-base font-bold font-mono">
                 {item.serialNumber}
@@ -154,7 +154,7 @@ export function TagMetrologyInspector({
           </div>
           <div className="w-full bg-obsidian-deep h-1.5 rounded-full overflow-hidden border border-surface-border">
             <div
-              className={`h-full rounded-full transition-all duration-300 ${isMissing ? "bg-status-rose" : "bg-gradient-to-r from-gold to-gold-dark"}`}
+              className={`h-full rounded-full transition-all duration-300 ${isMissing ? "bg-status-rose" : "bg-gold"}`}
               style={{ width: `${signalPercent}%` }}
             />
           </div>

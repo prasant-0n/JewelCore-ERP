@@ -324,7 +324,7 @@ export function DeviceBindingModal({ isOpen, onClose }: DeviceBindingModalProps)
                 </div>
                 <div>
                   <span className="text-muted-foreground block">Resident Key Enforced:</span>
-                  <span className="text-emerald-400 font-medium">
+                  <span className="text-status-emerald font-medium">
                     ✓ FIDO2 Resident Key Active
                   </span>
                 </div>
@@ -349,16 +349,16 @@ export function DeviceBindingModal({ isOpen, onClose }: DeviceBindingModalProps)
               <Badge variant="emerald">100% Attested</Badge>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 pt-1 text-[11px] text-muted-foreground">
-              <span className="flex items-center gap-1 text-emerald-400">
+              <span className="flex items-center gap-1 text-status-emerald">
                 <CheckCircle2 className="w-3 h-3" /> Hardware TPM/SEP cryptographic chip bound
               </span>
-              <span className="flex items-center gap-1 text-emerald-400">
+              <span className="flex items-center gap-1 text-status-emerald">
                 <CheckCircle2 className="w-3 h-3" /> WebAuthn discoverable resident credentials
               </span>
-              <span className="flex items-center gap-1 text-emerald-400">
+              <span className="flex items-center gap-1 text-status-emerald">
                 <CheckCircle2 className="w-3 h-3" /> Showroom LAN Subnet 192.168.1.0/24 verified
               </span>
-              <span className="flex items-center gap-1 text-emerald-400">
+              <span className="flex items-center gap-1 text-status-emerald">
                 <CheckCircle2 className="w-3 h-3" /> Physical presence touch challenge attested
               </span>
             </div>
@@ -549,9 +549,9 @@ export function DeviceBindingModal({ isOpen, onClose }: DeviceBindingModalProps)
                     <div className="space-y-1 min-w-0">
                       <div className="flex items-center gap-2">
                         {device.trustTier === DeviceTrustTier.TIER_3_SALON_TABLET ? (
-                          <Tablet className="w-4 h-4 text-cyan-400 shrink-0" />
+                          <Tablet className="w-4 h-4 text-status-indigo shrink-0" />
                         ) : device.trustTier === DeviceTrustTier.TIER_4_MOBILE_FIELD ? (
-                          <Smartphone className="w-4 h-4 text-amber-400 shrink-0" />
+                          <Smartphone className="w-4 h-4 text-status-amber shrink-0" />
                         ) : (
                           <Monitor className="w-4 h-4 text-gold shrink-0" />
                         )}

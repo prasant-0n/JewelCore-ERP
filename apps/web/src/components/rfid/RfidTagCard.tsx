@@ -46,20 +46,14 @@ export function RfidTagCard({
   return (
     <div
       onClick={() => onSelect?.(item)}
-      className={`relative rounded-xl p-3.5 cursor-pointer transition-all duration-200 select-none flex flex-col justify-between ${
+      className={`relative rounded-xl p-3.5 cursor-pointer transition-colors duration-150 select-none flex flex-col justify-between ${
         isSelected
-          ? "bg-surface-elevated border-2 border-gold shadow-[0_0_18px_rgba(212,175,55,0.22)]"
+          ? "bg-surface-elevated border-2 border-gold border-l-4 border-l-gold"
           : isMissing
-            ? "bg-rose-950/15 border border-rose-500/30 hover:border-rose-500/60"
+            ? "bg-status-rose/10 border border-status-rose/30 hover:border-status-rose/60"
             : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/60"
       }`}
     >
-      {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
-          Selected
-        </div>
-      )}
-
       {/* Top Header: EPC Tag & Presence Badge */}
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1 pr-1.5">
@@ -67,9 +61,9 @@ export function RfidTagCard({
             <Radio
               className={`w-3.5 h-3.5 shrink-0 ${
                 isMissing
-                  ? "text-rose-600 dark:text-rose-400"
+                  ? "text-status-rose"
                   : isSelected
-                    ? "text-gold animate-pulse"
+                    ? "text-gold"
                     : "text-muted-foreground"
               }`}
             />
@@ -78,7 +72,7 @@ export function RfidTagCard({
                 isSelected
                   ? "text-gold"
                   : isMissing
-                    ? "text-rose-700 dark:text-rose-300"
+                    ? "text-status-rose"
                     : "text-foreground group-hover:text-gold"
               }`}
               title={item.epcTag}
@@ -100,10 +94,10 @@ export function RfidTagCard({
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
             item.status === "VERIFIED"
-              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+              ? "bg-status-emerald/10 text-status-emerald border border-status-emerald/30"
               : item.status === "MISSING"
-                ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 animate-pulse font-semibold"
-                : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                ? "bg-status-rose/15 text-status-rose border border-status-rose/30 font-semibold"
+                : "bg-status-amber/10 text-status-amber border border-status-amber/30"
           }`}
         >
           {item.status === "VERIFIED" ? (
@@ -153,15 +147,15 @@ export function RfidTagCard({
       <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground">
         <div className="flex items-center space-x-1">
           {isMissing ? (
-            <WifiOff className="w-3 h-3 text-rose-600 dark:text-rose-400" />
+            <WifiOff className="w-3 h-3 text-status-rose" />
           ) : (
-            <Wifi className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+            <Wifi className="w-3 h-3 text-status-emerald" />
           )}
           <span
             className={
               isMissing
-                ? "text-rose-700 dark:text-rose-400 font-semibold"
-                : "text-emerald-700 dark:text-emerald-400 font-medium"
+                ? "text-status-rose font-semibold"
+                : "text-status-emerald font-medium"
             }
           >
             {isMissing ? "No Response" : `${item.rssiDbm} dBm`}

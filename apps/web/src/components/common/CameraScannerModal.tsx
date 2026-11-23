@@ -230,7 +230,7 @@ export function CameraScannerModal({
             />
           ) : (
             <div className="text-center p-6 space-y-2">
-              <div className="w-12 h-12 mx-auto rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-gold animate-pulse">
+              <div className="w-12 h-12 mx-auto rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-gold">
                 <ScanLine className="w-6 h-6" />
               </div>
               <p className="text-xs text-muted-foreground max-w-[240px] mx-auto">
@@ -247,17 +247,17 @@ export function CameraScannerModal({
             <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-2 border-l-2 border-gold rounded-bl-sm" />
             <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-2 border-r-2 border-gold rounded-br-sm" />
 
-            {/* Pulsing Horizontal Laser Scanline */}
-            <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent shadow-[0_0_8px_#D4AF37] animate-bounce" />
+            {/* Precision Optical Alignment Line */}
+            <div className="w-full h-px bg-gold/50" />
 
-            <div className="absolute bottom-2 text-[10px] font-mono text-gold/80 bg-black/60 px-2 py-0.5 rounded backdrop-blur-sm">
+            <div className="absolute bottom-2 text-[10px] font-mono text-gold/90 bg-surface/90 border border-surface-border px-2 py-0.5 rounded">
               ALIGN BARCODE OR QR IN FRAME
             </div>
           </div>
 
           {/* Quick HUD Overlays */}
-          <div className="absolute top-3 left-3 flex items-center space-x-1.5 text-[10px] font-mono text-white/80 bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
+          <div className="absolute top-3 left-3 flex items-center space-x-1.5 text-[10px] font-mono text-foreground bg-surface/90 border border-surface-border px-2 py-1 rounded">
+            <span className="w-1.5 h-1.5 rounded-full bg-status-emerald inline-block" />
             <span>HD 60FPS • MACRO AF</span>
           </div>
 
@@ -266,7 +266,7 @@ export function CameraScannerModal({
             {hasTorch && (
               <button
                 onClick={toggleTorch}
-                className="p-1.5 rounded-lg bg-black/60 text-white hover:text-gold transition-colors"
+                className="p-1.5 rounded-lg bg-surface/90 border border-surface-border text-foreground hover:text-gold transition-colors"
                 title="Toggle Torch / Flash"
               >
                 {isTorchOn ? <Zap className="w-4 h-4 text-gold" /> : <ZapOff className="w-4 h-4" />}
@@ -274,7 +274,7 @@ export function CameraScannerModal({
             )}
             <button
               onClick={toggleFacingMode}
-              className="p-1.5 rounded-lg bg-black/60 text-white hover:text-gold transition-colors"
+              className="p-1.5 rounded-lg bg-surface/90 border border-surface-border text-foreground hover:text-gold transition-colors"
               title="Switch Camera (Front/Rear)"
             >
               <RotateCcw className="w-4 h-4" />
@@ -284,9 +284,9 @@ export function CameraScannerModal({
 
         {/* Quick-Scan Showroom Simulator Chips */}
         <div className="space-y-2 pt-2">
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-            <span className="font-semibold uppercase tracking-wider text-gold flex items-center gap-1">
-              <Sparkles className="w-3 h-3" /> Quick Field RFID / Barcode Trays
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span className="font-medium text-xs text-gold flex items-center gap-1.5">
+              <ScanLine className="w-3.5 h-3.5 text-gold" /> Quick Field RFID / Barcode Trays
             </span>
             <span className="text-[10px] font-mono">Click to scan instantly</span>
           </div>

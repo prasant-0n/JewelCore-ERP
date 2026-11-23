@@ -327,7 +327,7 @@ export function PrintableTaxInvoiceModal({
                 </div>
 
                 <div className="text-right flex flex-col items-end">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-stone-500 block">
+                  <span className="text-[10px] font-mono text-stone-500 block">
                     ORIGINAL FOR RECIPIENT
                   </span>
                   <p className="text-sm font-black font-mono text-stone-900 mt-0.5">

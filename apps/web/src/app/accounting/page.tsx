@@ -278,24 +278,21 @@ export default function AccountingLedgerPage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-16">
         {/* Luxury Hero Financial Banner */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-elevated/90 via-surface-card/60 to-surface-card/90 border border-gold/20 p-6 md:p-8 backdrop-blur-xl shadow-2xl">
-          <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
-
+        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-xs">
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
                 <span>Financial Governance</span>
                 <span>/</span>
-                <span className="text-gold font-semibold">
+                <span className="text-gold font-medium">
                   Double-Entry Accounting &amp; Statutory GST Ledger
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl md:text-3xl font-serif font-black tracking-tight text-foreground">
+                <h1 className="text-2xl md:text-3xl font-serif font-bold tracking-tight text-foreground">
                   General Ledger, Chart of Accounts &amp; GST Returns
                 </h1>
-                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
                   FY 2026-27 Books Online • Balanced
                 </Badge>
                 <Badge variant="secondary" className="font-mono text-xs border border-surface-border">
@@ -326,7 +323,7 @@ export default function AccountingLedgerPage() {
           {/* Card 1: Asset Reserves */}
           <Card className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Bullion &amp; Cash Reserves
               </span>
               <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-gold">
@@ -347,10 +344,10 @@ export default function AccountingLedgerPage() {
           {/* Card 2: Net Sales Turnover */}
           <Card className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Net Sales Turnover
               </span>
-              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-blue-400">
+              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-status-indigo">
                 <TrendingUp className="w-4 h-4" />
               </div>
             </div>
@@ -358,7 +355,7 @@ export default function AccountingLedgerPage() {
               ₹ {((gstData?.gstr1Summary.totalTaxableTurnoverInr || 8450000) / 100000).toFixed(2)} Lakh
             </div>
             <div className="flex items-center justify-between mt-2 pt-2 border-t border-surface-border/40 text-xs">
-              <span className="text-emerald-700 dark:text-emerald-400 font-mono font-medium">Form GSTR-1</span>
+              <span className="text-status-emerald font-mono font-medium">Form GSTR-1</span>
               <Badge variant="emerald" className="font-mono text-[10px] px-1.5 py-0.5">
                 Taxable Outward
               </Badge>
@@ -368,10 +365,10 @@ export default function AccountingLedgerPage() {
           {/* Card 3: Output GST Liability */}
           <Card className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Output GST Liability (3%)
               </span>
-              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-amber-500">
+              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-status-amber">
                 <Building className="w-4 h-4" />
               </div>
             </div>
@@ -389,14 +386,14 @@ export default function AccountingLedgerPage() {
           {/* Card 4: Net Tax to Pay */}
           <Card className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Net Tax Payable (GSTR-3B)
               </span>
-              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-emerald-400">
+              <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-status-emerald">
                 <ShieldCheck className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-2xl font-serif font-black text-emerald-700 dark:text-emerald-400">
+            <div className="text-2xl font-serif font-black text-status-emerald">
               ₹ {((gstData?.gstr3bSummary.netTaxPayableInr || 163500) / 100000).toFixed(2)} Lakh
             </div>
             <div className="flex items-center justify-between mt-2 pt-2 border-t border-surface-border/40 text-xs">
@@ -464,7 +461,7 @@ export default function AccountingLedgerPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between text-xs font-mono text-muted-foreground">
               <span>Double-entry balanced audit stream • Dual-entry verification</span>
-              <span className="text-emerald-700 dark:text-emerald-400 font-medium">100% Balanced Debits &amp; Credits</span>
+              <span className="text-status-emerald font-medium">100% Balanced Debits &amp; Credits</span>
             </div>
 
             <div className="space-y-4">
@@ -516,7 +513,7 @@ export default function AccountingLedgerPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs font-mono">
                       <thead>
-                        <tr className="text-muted-foreground border-b border-surface-border/40 text-[10px] uppercase tracking-wider">
+                        <tr className="text-muted-foreground border-b border-surface-border/40 text-xs font-medium">
                           <th className="py-1.5 pr-4">Account Code</th>
                           <th className="py-1.5 pr-4">Account Title</th>
                           <th className="py-1.5 pr-4">Description</th>
@@ -530,10 +527,10 @@ export default function AccountingLedgerPage() {
                             <td className="py-1.5 pr-4 font-bold text-gold">{line.accountCode || line.accountId}</td>
                             <td className="py-1.5 pr-4 text-foreground">{line.accountName || "Account Ledger"}</td>
                             <td className="py-1.5 pr-4 text-muted-foreground truncate max-w-[280px]">{line.description || "-"}</td>
-                            <td className="py-1.5 pr-4 text-right font-semibold text-emerald-700 dark:text-emerald-400">
+                            <td className="py-1.5 pr-4 text-right font-semibold text-status-emerald">
                               {line.lineType === "DEBIT" ? line.amountInr.toLocaleString("en-IN") : "-"}
                             </td>
-                            <td className="py-1.5 text-right font-semibold text-blue-700 dark:text-blue-400">
+                            <td className="py-1.5 text-right font-semibold text-status-indigo">
                               {line.lineType === "CREDIT" ? line.amountInr.toLocaleString("en-IN") : "-"}
                             </td>
                           </tr>
@@ -571,7 +568,7 @@ export default function AccountingLedgerPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono">
                   <thead>
-                    <tr className="text-muted-foreground border-b border-surface-border text-[10px] uppercase tracking-wider">
+                    <tr className="text-muted-foreground border-b border-surface-border text-xs font-medium">
                       <th className="py-2 pr-3">Code</th>
                       <th className="py-2 pr-4">Account Name</th>
                       <th className="py-2 pr-3">Category</th>
@@ -588,20 +585,20 @@ export default function AccountingLedgerPage() {
                         <td className="py-2 pr-4 font-semibold text-foreground">{acc.accountName}</td>
                         <td className="py-2 pr-3">
                           <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
-                            acc.accountType === "ASSET" ? "bg-blue-500/10 text-blue-400" :
-                            acc.accountType === "LIABILITY" ? "bg-amber-500/10 text-amber-400" :
-                            acc.accountType === "REVENUE" ? "bg-emerald-500/10 text-emerald-400" :
-                            acc.accountType === "EXPENSE" ? "bg-rose-500/10 text-rose-400" :
-                            "bg-purple-500/10 text-purple-400"
+                            acc.accountType === "ASSET" ? "bg-status-indigo/10 text-status-indigo" :
+                            acc.accountType === "LIABILITY" ? "bg-status-amber/10 text-status-amber" :
+                            acc.accountType === "REVENUE" ? "bg-status-emerald/10 text-status-emerald" :
+                            acc.accountType === "EXPENSE" ? "bg-status-rose/10 text-status-rose" :
+                            "bg-gold/10 text-gold"
                           }`}>
                             {acc.accountType}
                           </span>
                         </td>
                         <td className="py-2 pr-3 text-muted-foreground text-[10px]">{acc.subType}</td>
-                        <td className="py-2 pr-4 text-right text-emerald-700 dark:text-emerald-400 font-semibold">
+                        <td className="py-2 pr-4 text-right text-status-emerald font-semibold">
                           {acc.debitBalanceInr ? acc.debitBalanceInr.toLocaleString("en-IN") : "-"}
                         </td>
-                        <td className="py-2 pr-4 text-right text-blue-700 dark:text-blue-400 font-semibold">
+                        <td className="py-2 pr-4 text-right text-status-indigo font-semibold">
                           {acc.creditBalanceInr ? acc.creditBalanceInr.toLocaleString("en-IN") : "-"}
                         </td>
                         <td className="py-2 text-right font-bold text-foreground">
@@ -626,13 +623,13 @@ export default function AccountingLedgerPage() {
                 <div className="flex items-center space-x-6 text-right">
                   <div>
                     <span className="text-[10px] uppercase text-muted-foreground block">Total Debits</span>
-                    <span className="font-bold text-emerald-700 dark:text-emerald-400 text-sm">
+                    <span className="font-bold text-status-emerald text-sm">
                       ₹ {totalDebitSum.toLocaleString("en-IN")}
                     </span>
                   </div>
                   <div>
                     <span className="text-[10px] uppercase text-muted-foreground block">Total Credits</span>
-                    <span className="font-bold text-blue-700 dark:text-blue-400 text-sm">
+                    <span className="font-bold text-status-indigo text-sm">
                       ₹ {totalCreditSum.toLocaleString("en-IN")}
                     </span>
                   </div>
@@ -672,7 +669,7 @@ export default function AccountingLedgerPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono">
                   <thead>
-                    <tr className="text-muted-foreground border-b border-surface-border text-[10px] uppercase tracking-wider">
+                    <tr className="text-muted-foreground border-b border-surface-border text-xs font-medium">
                       <th className="py-2 pr-3">HSN Code</th>
                       <th className="py-2 pr-4">Description</th>
                       <th className="py-2 pr-3 text-right">Taxable Turnover (₹)</th>
@@ -690,10 +687,10 @@ export default function AccountingLedgerPage() {
                           ₹ {hsn.taxableValueInr.toLocaleString("en-IN")}
                         </td>
                         <td className="py-2 pr-3 text-right text-muted-foreground">{hsn.gstRate}%</td>
-                        <td className="py-2 pr-3 text-right text-emerald-700 dark:text-emerald-400 font-semibold">
+                        <td className="py-2 pr-3 text-right text-status-emerald font-semibold">
                           ₹ {(hsn.taxAmountInr / 2).toLocaleString("en-IN")}
                         </td>
-                        <td className="py-2 text-right text-emerald-700 dark:text-emerald-400 font-semibold">
+                        <td className="py-2 text-right text-status-emerald font-semibold">
                           ₹ {(hsn.taxAmountInr / 2).toLocaleString("en-IN")}
                         </td>
                       </tr>
@@ -737,7 +734,7 @@ export default function AccountingLedgerPage() {
                   <span className="text-[10px] uppercase text-muted-foreground block font-bold">
                     Eligible Input Tax Credit (ITC)
                   </span>
-                  <span className="text-blue-700 dark:text-blue-400 font-bold text-lg">
+                  <span className="text-status-indigo font-bold text-lg">
                     - ₹ {(gstData?.gstr3bSummary.eligibleItcInr || 90000).toLocaleString("en-IN")}
                   </span>
                   <span className="text-muted-foreground text-[10px] block">
@@ -749,7 +746,7 @@ export default function AccountingLedgerPage() {
                   <span className="text-[10px] uppercase text-muted-foreground block font-bold">
                     Net Cash Payable (Electronic Ledger)
                   </span>
-                  <span className="text-emerald-700 dark:text-emerald-400 font-bold text-lg">
+                  <span className="text-status-emerald font-bold text-lg">
                     ₹ {(gstData?.gstr3bSummary.netTaxPayableInr || 163500).toLocaleString("en-IN")}
                   </span>
                   <span className="text-muted-foreground text-[10px] block">
@@ -768,7 +765,7 @@ export default function AccountingLedgerPage() {
         <Dialog open={isVoucherModalOpen} onOpenChange={setIsVoucherModalOpen}>
           <DialogContent className="max-w-lg p-6 bg-surface border-surface-border text-foreground shadow-2xl">
             <DialogHeader className="border-b border-surface-border pb-3">
-              <div className="flex items-center space-x-2 text-gold text-xs font-mono uppercase tracking-wider">
+              <div className="flex items-center space-x-2 text-gold text-xs font-mono font-medium">
                 <Landmark className="w-4 h-4 text-gold" />
                 <span>Double-Entry General Ledger</span>
               </div>
@@ -847,7 +844,7 @@ export default function AccountingLedgerPage() {
               {/* Real-time Balanced Indicator */}
               <div className="p-3 rounded-lg bg-surface-elevated border border-surface-border flex items-center justify-between">
                 <span className="text-[11px] text-muted-foreground">Double-Entry Status:</span>
-                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                <span className="text-xs font-bold text-status-emerald flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   Balanced (₹{parseFloat(voucherAmount || "0").toLocaleString("en-IN")} Dr = Cr)
                 </span>

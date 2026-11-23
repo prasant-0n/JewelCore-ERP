@@ -133,7 +133,7 @@ export function AssayInspector({
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-gold animate-pulse" />
+              <span className="w-2.5 h-2.5 rounded-full bg-gold" />
               <CardTitle className="text-base font-bold font-mono">
                 Assay Testing {itemCode}
               </CardTitle>

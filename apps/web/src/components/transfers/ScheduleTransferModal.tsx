@@ -228,7 +228,7 @@ export function ScheduleTransferModal({
                 type="number"
                 value={specieValuationInr}
                 onChange={(e) => setSpecieValuationInr(e.target.value)}
-                className="bg-surface-elevated border-surface-border font-mono text-emerald-500 font-semibold"
+                className="bg-surface-elevated border-surface-border font-mono text-status-emerald font-semibold"
                 required
               />
             </div>

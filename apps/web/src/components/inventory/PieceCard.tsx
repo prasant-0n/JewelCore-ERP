@@ -90,23 +90,21 @@ export function PieceCard({
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
             custodyState === "VAULT"
-              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+              ? "bg-status-emerald/15 text-status-emerald border border-status-emerald/30"
               : custodyState === "DISPLAY"
-                ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30"
+                ? "bg-status-indigo/15 text-status-indigo border border-status-indigo/30"
                 : custodyState === "TRANSIT"
-                  ? "bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30"
-                  : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                  ? "bg-gold/15 text-gold border border-gold/30"
+                  : "bg-status-amber/15 text-status-amber border border-status-amber/30"
           }`}
         >
           <span
             className={`w-1.5 h-1.5 rounded-full ${
               custodyState === "VAULT"
-                ? "bg-emerald-500 animate-pulse"
+                ? "bg-status-emerald"
                 : custodyState === "DISPLAY"
-                  ? "bg-cyan-500"
-                  : custodyState === "TRANSIT"
-                    ? "bg-blue-500"
-                    : "bg-amber-500"
+                  ? "bg-status-indigo"
+                  : "bg-gold"
             }`}
           />
           {custodyState}
@@ -136,7 +134,7 @@ export function PieceCard({
             </div>
           </div>
         </div>
-        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+        <CheckCircle2 className="w-4 h-4 text-status-emerald" />
       </div>
 
       {/* Bottom Purity / Hallmarking Progress */}

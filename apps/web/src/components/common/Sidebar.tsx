@@ -178,6 +178,7 @@ export function SidebarNavList({
 
                   {!isCollapsed && !isRestricted && item.badge !== undefined && (
                     <span
+                      aria-hidden="true"
                       className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-semibold shrink-0 ${
                         isActive
                           ? "bg-gold/20 text-gold"

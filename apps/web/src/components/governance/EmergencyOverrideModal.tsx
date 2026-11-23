@@ -92,17 +92,17 @@ export function EmergencyOverrideModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg border-rose-500/30 bg-surface-card text-foreground">
+      <DialogContent className="max-w-lg border-status-rose/30 bg-surface-card text-foreground">
         <DialogHeader>
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-500">
+            <div className="w-8 h-8 rounded-lg bg-status-rose/10 border border-status-rose/30 flex items-center justify-center text-status-rose">
               <ShieldAlert className="w-4 h-4" />
             </div>
             <div>
               <DialogTitle className="text-base font-bold text-foreground font-mono">
                 High-Security Emergency Vault Override
               </DialogTitle>
-              <DialogDescription className="text-xs text-rose-500/80 font-mono">
+              <DialogDescription className="text-xs text-status-rose font-mono">
                 Mandatory Dual Director Cryptographic Authorization
               </DialogDescription>
             </div>
@@ -111,10 +111,11 @@ export function EmergencyOverrideModal({
 
         {/* Modal Form */}
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-          <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs text-amber-600 dark:text-amber-200/90 leading-relaxed font-mono">
-            ⚠️ Warning: Triggering this emergency override immediately
-            broadcasts an encrypted SMS and email alert to the Board of
-            Directors and logs the incident to the immutable audit ledger.
+          <div className="p-3 rounded-lg bg-status-amber/10 border border-status-amber/25 text-xs text-status-amber leading-relaxed font-mono flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-status-amber" />
+            <span>
+              Warning: Triggering this emergency override immediately broadcasts an encrypted SMS and email alert to the Board of Directors and logs the incident to the immutable audit ledger.
+            </span>
           </div>
 
           {/* Target Safe */}

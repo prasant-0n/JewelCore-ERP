@@ -82,7 +82,7 @@ export function ChangePasswordModal({
       case 1:
         return { text: "Weak", color: "text-status-rose", bg: "bg-status-rose" };
       case 2:
-        return { text: "Fair", color: "text-amber-500", bg: "bg-amber-500" };
+        return { text: "Fair", color: "text-status-amber", bg: "bg-status-amber" };
       case 3:
         return { text: "Strong", color: "text-gold", bg: "bg-gold" };
       case 4:
@@ -148,7 +148,7 @@ export function ChangePasswordModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md sm:max-w-lg p-6 bg-surface/98 border-surface-border backdrop-blur-xl shadow-2xl">
+      <DialogContent className="max-w-md sm:max-w-lg p-6 bg-surface border-surface-border shadow-2xl">
         <DialogHeader className="text-left pb-2 border-b border-surface-border">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/40 flex items-center justify-center text-gold shrink-0">
@@ -365,7 +365,7 @@ export function ChangePasswordModal({
           <button
             type="submit"
             disabled={!isValid || isLoading}
-            className="w-full h-10 mt-3 bg-gradient-to-r from-gold via-gold-light to-gold text-obsidian font-semibold text-xs rounded-lg flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.99] transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full h-10 mt-3 bg-gold hover:bg-gold-light text-obsidian font-semibold text-xs rounded-lg flex items-center justify-center gap-2 active:scale-[0.99] transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isLoading ? (
               <>

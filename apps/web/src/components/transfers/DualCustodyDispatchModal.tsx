@@ -292,7 +292,7 @@ export function DualCustodyDispatchModal({
                   />
                   <Scale className="w-3.5 h-3.5 absolute right-3 top-2.5 text-gold" />
                 </div>
-                <span className="text-[10px] text-emerald-400 font-mono mt-1 block">
+                <span className="text-xs text-status-emerald font-mono mt-1 block">
                   ✓ Scale Calibrated ±0.01g analytical precision
                 </span>
               </div>
@@ -326,8 +326,8 @@ export function DualCustodyDispatchModal({
 
               {/* Checker (Key 2) */}
               <div className="p-3 bg-surface-elevated border border-surface-border/80 rounded-lg space-y-2">
-                <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="text-xs text-status-emerald font-semibold flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-status-emerald" />
                   Key 2 • Armed Escort Supervisor (Checker)
                 </div>
 

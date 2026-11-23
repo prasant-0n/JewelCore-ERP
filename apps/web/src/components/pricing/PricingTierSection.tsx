@@ -69,8 +69,8 @@ export function PricingTierSection({
                 {group.description}
               </span>
               <span>•</span>
-              <span className="text-emerald-700 dark:text-emerald-400 flex items-center gap-1 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-status-emerald flex items-center gap-1 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
                 Live Peg Active
               </span>
             </div>
@@ -79,7 +79,7 @@ export function PricingTierSection({
 
         {/* Right Status Badge */}
         <div className="flex items-center space-x-3">
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
             {group.activeCount} Purity Tiers Synced
           </span>
         </div>
@@ -89,11 +89,11 @@ export function PricingTierSection({
       {isOpen && (
         <div className="p-5 bg-surface-elevated/40">
           <div className="flex items-center justify-between mb-3 text-xs font-mono">
-            <span className="text-muted-foreground uppercase text-[10px] tracking-wider font-medium">
+            <span className="text-muted-foreground text-xs font-medium">
               Alloy Quotation Matrix ({group.alloys.length} Formulas Active)
             </span>
-            <span className="text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center gap-1 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-status-emerald text-xs flex items-center gap-1 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
               MCX WebSocket Latency 14ms
             </span>
           </div>

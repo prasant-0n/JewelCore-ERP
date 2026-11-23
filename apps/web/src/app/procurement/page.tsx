@@ -237,26 +237,23 @@ export default function ProcurementPage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
         {/* Luxury Hero Procurement Banner */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-elevated/90 via-surface-card/60 to-surface-card/90 border border-gold/20 p-6 md:p-8 backdrop-blur-xl shadow-2xl">
-          <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
-
+        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-xs">
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
                 <span>Flagship Mumbai (INV-11)</span>
                 <span>/</span>
                 <span>Raw Materials Intake</span>
                 <span>/</span>
-                <span className="text-gold font-semibold">
+                <span className="text-gold font-medium">
                   Inward Procurement &amp; Bullion Ingestion
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl md:text-3xl font-serif font-black tracking-tight text-foreground">
+                <h1 className="text-2xl md:text-3xl font-serif font-bold tracking-tight text-foreground">
                   Inward Procurement &amp; Ingot Intake Directory
                 </h1>
-                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
                   Mettler Toledo RS-232 Scale Sync • 0.001g Calibrated
                 </Badge>
                 <Badge variant="outline" className="border-gold/30 text-gold font-mono text-[11px] px-2.5 py-1">
@@ -299,7 +296,7 @@ export default function ProcurementPage() {
               className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                <span className="text-xs font-mono text-muted-foreground font-medium">
                   {kpi.title}
                 </span>
                 <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-gold">

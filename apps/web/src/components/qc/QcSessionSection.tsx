@@ -59,7 +59,7 @@ export function QcSessionSection({
                 {session.sessionNumber}: {session.batchName}
               </span>
               {session.isIsoCertified && (
-                <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-[9px] font-mono uppercase font-semibold">
+                <span className="px-1.5 py-0.5 rounded bg-status-emerald/10 border border-status-emerald/30 text-status-emerald text-[9px] font-mono uppercase font-semibold">
                   ISO 17025 Certified
                 </span>
               )}
@@ -73,7 +73,7 @@ export function QcSessionSection({
               </span>
               <span>•</span>
               <span className="text-gold flex items-center gap-1 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-gold" />
                 {session.instrumentModel}
               </span>
             </div>
@@ -85,10 +85,10 @@ export function QcSessionSection({
           <span
             className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium ${
               session.status === "UNDER_INSPECTION"
-                ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                ? "bg-status-amber/10 text-status-amber border border-status-amber/30"
                 : session.status === "PASSED"
-                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
-                  : "bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/30"
+                  ? "bg-status-emerald/10 text-status-emerald border border-status-emerald/30"
+                  : "bg-status-rose/10 text-status-rose border border-status-rose/30"
             }`}
           >
             {session.status === "UNDER_INSPECTION"
@@ -104,12 +104,12 @@ export function QcSessionSection({
       {isOpen && (
         <div className="p-5 bg-surface-elevated/40">
           <div className="flex items-center justify-between mb-3 text-xs font-mono">
-            <span className="text-muted-foreground uppercase text-[10px] tracking-wider font-medium">
+            <span className="text-muted-foreground text-xs font-medium">
               Items in QC Fixture Tray ({session.items.length} Loaded on
               Spectrometer Stage)
             </span>
-            <span className="text-emerald-700 dark:text-emerald-400 text-[10px] flex items-center gap-1 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="text-status-emerald text-xs flex items-center gap-1 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-emerald" />
               Thermo Niton XL5 Plus Active
             </span>
           </div>

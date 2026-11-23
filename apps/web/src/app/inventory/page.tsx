@@ -298,11 +298,10 @@ export default function InventoryMasterPage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
         {/* Atmospheric Luxury Hero Header Banner */}
-        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-sm">
-          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-80 h-80 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-xs">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
                 <span>Flagship Mumbai (INV-11)</span>
                 <span>&gt;</span>
                 <span className="text-gold font-medium">Vault &amp; Finished Goods Custody</span>
@@ -328,7 +327,7 @@ export default function InventoryMasterPage() {
                 variant="gold"
                 size="sm"
                 onClick={() => setIsBirthModalOpen(true)}
-                className="font-semibold text-xs h-9 gap-1.5 shadow-md hover:shadow-lg transition-all font-mono"
+                className="font-semibold text-xs h-9 gap-1.5 transition-colors duration-150 font-mono"
               >
                 <Plus className="h-4 w-4" />
                 <span>Birth Serialized Piece</span>
@@ -341,7 +340,7 @@ export default function InventoryMasterPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Total Live Inventory Pieces
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
@@ -360,10 +359,10 @@ export default function InventoryMasterPage() {
 
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Gross Stock Valuation
               </span>
-              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+              <div className="p-1.5 rounded-lg bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
                 <Gem className="h-4 w-4" />
               </div>
             </div>
@@ -378,7 +377,7 @@ export default function InventoryMasterPage() {
 
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Total Gold Weight
               </span>
               <div className="p-1.5 rounded-lg bg-surface-elevated text-foreground border border-surface-border">
@@ -396,7 +395,7 @@ export default function InventoryMasterPage() {
 
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Showroom Display Active
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
@@ -566,16 +565,16 @@ export default function InventoryMasterPage() {
                                 <span
                                   className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-medium ${
                                     p.custodyState === "VAULT"
-                                      ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                                      ? "bg-emerald-500/15 text-status-emerald border border-emerald-500/30"
                                       : p.custodyState === "DISPLAY"
-                                      ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30"
-                                      : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                                      ? "bg-cyan-500/15 text-status-indigo border border-cyan-500/30"
+                                      : "bg-amber-500/15 text-status-amber border border-amber-500/30"
                                   }`}
                                 >
                                   {p.custodyState}
                                 </span>
                               </TableCell>
-                              <TableCell className="text-right tabular-nums text-emerald-600 dark:text-emerald-400 font-bold">
+                              <TableCell className="text-right tabular-nums text-status-emerald font-bold">
                                 ₹ {p.priceInr.toLocaleString("en-IN")}
                               </TableCell>
                             </TableRow>

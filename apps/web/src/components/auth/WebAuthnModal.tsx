@@ -204,23 +204,23 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         data-testid="webauthn-passkeys-modal"
-        className="max-w-xl max-h-[90vh] flex flex-col bg-stone-950 text-stone-100 border border-amber-900/40 shadow-2xl p-0 overflow-hidden"
+        className="max-w-xl max-h-[90vh] flex flex-col bg-surface text-foreground border border-surface-border shadow-2xl p-0 overflow-hidden"
       >
         {/* Header */}
-        <div className="p-5 border-b border-stone-800 bg-stone-900/60 shrink-0">
+        <div className="p-5 border-b border-surface-border bg-surface-elevated/40 shrink-0">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-gold/10 border border-gold/30 flex items-center justify-center text-gold shrink-0">
                 <Fingerprint className="w-5 h-5" />
               </div>
               <div>
-                <DialogTitle className="text-base font-semibold text-stone-100 flex items-center gap-2">
+                <DialogTitle className="text-base font-semibold text-foreground flex items-center gap-2">
                   <span>Biometric & Hardware Passkeys</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-gold/10 text-gold border border-gold/30">
                     FIDO2 / WebAuthn
                   </span>
                 </DialogTitle>
-                <DialogDescription className="text-xs text-stone-400 mt-0.5">
+                <DialogDescription className="text-xs text-muted-foreground mt-0.5">
                   Physical security tokens and biometric authenticators enrolled for passwordless workstation access and quorum approvals.
                 </DialogDescription>
               </div>
@@ -229,7 +229,7 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
             <Button
               size="sm"
               onClick={() => setIsRegistering(!isRegistering)}
-              className="h-8 text-xs bg-amber-500 hover:bg-amber-400 text-stone-950 font-semibold gap-1.5 shrink-0"
+              className="h-8 text-xs bg-gold hover:bg-gold-light text-primary-foreground font-semibold gap-1.5 shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>{isRegistering ? "View Keys" : "Enroll Key"}</span>
@@ -242,12 +242,12 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
           {isRegistering ? (
             /* Enrollment Form */
             <form onSubmit={handleRegisterPasskey} className="space-y-4">
-              <div className="p-3.5 rounded-lg bg-stone-900/80 border border-amber-900/30 space-y-3">
-                <div className="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+              <div className="p-3.5 rounded-lg bg-surface-elevated/50 border border-surface-border space-y-3">
+                <div className="text-xs font-semibold text-gold flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Enroll New Physical Security Authenticator</span>
                 </div>
-                <p className="text-xs text-stone-400 leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   Connect your physical hardware security key (YubiKey, Nitrokey) or activate on-device biometrics (Apple TouchID, Windows Hello) to register a tamper-proof cryptographic credential.
                 </p>
 
@@ -258,15 +258,15 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
                     onClick={() => setAuthenticatorType("usb")}
                     className={`p-3 rounded-md border text-left transition-all ${
                       authenticatorType === "usb"
-                        ? "bg-amber-500/10 border-amber-500/50 text-stone-100"
-                        : "bg-stone-900 border-stone-800 text-stone-400 hover:border-stone-700"
+                        ? "bg-gold/15 border-gold/50 text-foreground font-medium"
+                        : "bg-surface border-surface-border text-muted-foreground hover:border-surface-borderMuted"
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <Usb className="w-4 h-4 text-amber-400" />
+                      <Usb className="w-4 h-4 text-gold" />
                       <span className="text-xs font-semibold">Hardware USB / NFC</span>
                     </div>
-                    <p className="text-[10px] text-stone-400 mt-1">YubiKey 5 Series, Feitian, SoloKeys</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">YubiKey 5 Series, Feitian, SoloKeys</p>
                   </button>
 
                   <button
@@ -274,21 +274,21 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
                     onClick={() => setAuthenticatorType("internal")}
                     className={`p-3 rounded-md border text-left transition-all ${
                       authenticatorType === "internal"
-                        ? "bg-amber-500/10 border-amber-500/50 text-stone-100"
-                        : "bg-stone-900 border-stone-800 text-stone-400 hover:border-stone-700"
+                        ? "bg-gold/15 border-gold/50 text-foreground font-medium"
+                        : "bg-surface border-surface-border text-muted-foreground hover:border-surface-borderMuted"
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <Fingerprint className="w-4 h-4 text-amber-400" />
+                      <Fingerprint className="w-4 h-4 text-gold" />
                       <span className="text-xs font-semibold">Platform Biometrics</span>
                     </div>
-                    <p className="text-[10px] text-stone-400 mt-1">Apple TouchID / FaceID, Windows Hello</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">Apple TouchID / FaceID, Windows Hello</p>
                   </button>
                 </div>
 
                 {/* Key Label Input */}
                 <div className="space-y-1.5 pt-1">
-                  <label className="text-[11px] font-mono text-stone-300">
+                  <label className="text-[11px] font-mono text-muted-foreground">
                     Authenticator Label / Nickname:
                   </label>
                   <Input
@@ -296,7 +296,7 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
                     value={newKeyName}
                     onChange={(e) => setNewKeyName(e.target.value)}
                     placeholder="e.g. Vault Key 02, VIP Salon TouchID"
-                    className="h-9 text-xs bg-stone-950 border-stone-800 focus:border-amber-500/50 text-stone-100 placeholder:text-stone-500"
+                    className="h-9 text-xs bg-surface border-surface-border focus:border-gold/50 text-foreground placeholder:text-muted-foreground"
                     autoFocus
                   />
                 </div>
@@ -308,7 +308,7 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsRegistering(false)}
-                  className="h-8 text-xs text-stone-400 hover:text-stone-200"
+                  className="h-8 text-xs text-muted-foreground hover:text-foreground"
                 >
                   Cancel
                 </Button>
@@ -316,7 +316,7 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
                   type="submit"
                   size="sm"
                   disabled={isLoading || !newKeyName.trim()}
-                  className="h-8 text-xs bg-amber-500 hover:bg-amber-400 text-stone-950 font-semibold gap-1.5"
+                  className="h-8 text-xs bg-gold hover:bg-gold-light text-primary-foreground font-semibold gap-1.5"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>Complete Hardware Registration</span>
@@ -326,20 +326,20 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
           ) : (
             /* Enrolled Passkeys List */
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs text-stone-400 px-1">
-                <span className="font-mono text-[11px] uppercase tracking-wider">
+              <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                <span className="font-mono text-[11px]">
                   Enrolled Authenticators ({passkeys.length})
                 </span>
-                <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                <span className="text-[10px] text-status-emerald font-mono flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   FIDO2 / WebAuthn Compliant
                 </span>
               </div>
 
               {passkeys.length === 0 ? (
-                <div className="py-8 text-center bg-stone-900/30 rounded-lg border border-stone-800">
-                  <KeyRound className="w-8 h-8 text-stone-600 mx-auto mb-2" />
-                  <p className="text-xs text-stone-400">No hardware passkeys enrolled yet.</p>
+                <div className="py-8 text-center bg-surface-elevated/30 rounded-lg border border-surface-border">
+                  <KeyRound className="w-8 h-8 text-muted-foreground/50 mx-auto mb-2" />
+                  <p className="text-xs text-muted-foreground">No hardware passkeys enrolled yet.</p>
                 </div>
               ) : (
                 passkeys.map((passkey) => {
@@ -349,10 +349,10 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
                   return (
                     <div
                       key={passkey.id}
-                      className="p-3.5 rounded-lg bg-stone-900/50 hover:bg-stone-900/80 border border-stone-800/80 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                      className="p-3.5 rounded-lg bg-surface-elevated/40 hover:bg-surface-elevated/80 border border-surface-border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-9 h-9 rounded-md bg-stone-800/80 border border-stone-700/60 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+                        <div className="w-9 h-9 rounded-md bg-surface border border-surface-border flex items-center justify-center text-gold shrink-0 mt-0.5">
                           {isInternal ? (
                             <Fingerprint className="w-4 h-4" />
                           ) : (
@@ -362,15 +362,15 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
 
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-semibold text-stone-100">
+                            <span className="text-xs font-semibold text-foreground">
                               {passkey.name}
                             </span>
-                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-stone-800 text-stone-400 border border-stone-700/50">
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-surface text-muted-foreground border border-surface-border">
                               {passkey.transports.join(" / ").toUpperCase()}
                             </span>
                           </div>
 
-                          <div className="text-[11px] font-mono text-stone-400 flex items-center gap-2 flex-wrap">
+                          <div className="text-[11px] font-mono text-muted-foreground flex items-center gap-2 flex-wrap">
                             <span>ID: {passkey.credentialId.slice(0, 16)}...</span>
                             <span>•</span>
                             <span>
@@ -394,10 +394,10 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
                           size="sm"
                           onClick={() => handleTestPasskey(passkey)}
                           disabled={isTesting}
-                          className="h-7 text-[11px] bg-stone-900 border-stone-700 hover:bg-stone-800 text-stone-200 gap-1"
+                          className="h-7 text-[11px] bg-surface-elevated border-surface-border hover:bg-surface-hover text-foreground gap-1"
                           title="Simulate hardware touch assertion test"
                         >
-                          <RotateCw className={`w-3 h-3 ${isTesting ? "animate-spin text-amber-400" : ""}`} />
+                          <RotateCw className={`w-3 h-3 ${isTesting ? "animate-spin text-gold" : ""}`} />
                           <span>{isTesting ? "Verifying..." : "Test Touch"}</span>
                         </Button>
 
@@ -405,7 +405,7 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleRevokePasskey(passkey.id, passkey.name)}
-                          className="h-7 w-7 p-0 text-stone-500 hover:text-red-400 hover:bg-red-950/30"
+                          className="h-7 w-7 p-0 text-muted-foreground hover:text-status-rose hover:bg-status-rose/10"
                           title={`Revoke ${passkey.name}`}
                           aria-label={`Revoke ${passkey.name}`}
                         >
@@ -421,9 +421,9 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-3 bg-stone-900/60 border-t border-stone-800 flex items-center justify-between shrink-0 text-xs text-stone-400">
-          <div className="flex items-center gap-1.5 text-[11px] font-mono text-stone-400">
-            <Lock className="w-3 h-3 text-emerald-400" />
+        <div className="p-3 bg-surface-elevated/40 border-t border-surface-border flex items-center justify-between shrink-0 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground">
+            <Lock className="w-3 h-3 text-status-emerald" />
             <span>FIDO2 / WebAuthn Level 3 Assurance</span>
           </div>
 
@@ -432,7 +432,7 @@ export function WebAuthnModal({ isOpen, onClose }: WebAuthnModalProps) {
             size="sm"
             onClick={onClose}
             aria-label="Close Authenticator Panel"
-            className="h-7 text-xs text-stone-400 hover:text-stone-100 hover:bg-stone-800"
+            className="h-7 text-xs text-muted-foreground hover:text-foreground hover:bg-surface-elevated"
           >
             Close Panel
           </Button>

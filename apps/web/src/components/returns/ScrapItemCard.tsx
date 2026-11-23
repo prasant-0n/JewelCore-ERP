@@ -63,25 +63,19 @@ export function ScrapItemCard({
   return (
     <div
       onClick={() => onSelect?.(item)}
-      className={`relative rounded-xl p-3.5 cursor-pointer transition-all duration-200 select-none flex flex-col justify-between ${
+      className={`relative rounded-xl p-3.5 cursor-pointer transition-colors duration-150 select-none flex flex-col justify-between ${
         isSelected
-          ? "bg-surface-elevated border-2 border-gold shadow-[0_0_18px_rgba(212,175,55,0.22)]"
+          ? "bg-surface-elevated border-2 border-gold border-l-4 border-l-gold"
           : "bg-surface-card border border-surface-border hover:border-gold/50 hover:bg-surface-elevated/60"
       }`}
     >
-      {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-gold text-obsidian text-[8px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
-          Selected
-        </div>
-      )}
-
       {/* Top Header: Item Code & Status */}
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1 pr-1.5">
           <div className="flex items-center space-x-1.5 min-w-0">
             <Flame
               className={`w-3.5 h-3.5 shrink-0 ${
-                isSelected ? "text-gold" : "text-amber-700 dark:text-amber-400"
+                isSelected ? "text-gold" : "text-status-amber"
               }`}
             />
             <span
@@ -109,8 +103,8 @@ export function ScrapItemCard({
         <span
           className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-medium flex items-center gap-1 shrink-0 ${
             isPassed
-              ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
-              : "bg-cyan-500/10 text-cyan-500 border border-cyan-500/20"
+              ? "bg-status-emerald/10 text-status-emerald border border-status-emerald/30"
+              : "bg-status-indigo/10 text-status-indigo border border-status-indigo/30"
           }`}
         >
           {isPassed ? (
@@ -145,7 +139,7 @@ export function ScrapItemCard({
           <span className="text-muted-foreground text-[9px] block uppercase">
             Purity / SG
           </span>
-          <span className="text-emerald-500 font-semibold tabular-nums">
+          <span className="text-status-emerald font-semibold tabular-nums">
             {purity.toFixed(2)}% Au
           </span>
           <span className="text-muted-foreground text-[10px] block tabular-nums">
@@ -159,7 +153,7 @@ export function ScrapItemCard({
         <span className="text-muted-foreground text-[9px] uppercase">
           Assayed Payout:
         </span>
-        <span className="text-emerald-500 font-bold text-xs tabular-nums">
+        <span className="text-status-emerald font-bold text-xs tabular-nums">
           ₹ {val.toLocaleString("en-IN")}
         </span>
       </div>

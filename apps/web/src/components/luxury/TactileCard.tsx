@@ -32,12 +32,12 @@ export const TactileCard = React.forwardRef<HTMLDivElement, TactileCardProps>(
       <div
         ref={ref}
         className={cn(
-          "relative rounded-xl transition-all duration-200 select-none overflow-hidden",
+          "relative rounded-xl transition-[border-color,background-color] duration-150 select-none overflow-hidden",
           "bg-card text-card-foreground border border-surface-border",
           isInteractive &&
             "cursor-pointer hover:border-gold/45 active:scale-[0.995]",
           isSelected && [
-            "border-gold/70 shadow-[0_0_20px_rgba(212,175,55,0.18)] dark:bg-surface-elevated/90 bg-gold/5",
+            "border-gold dark:bg-surface-elevated bg-gold/5",
             accentVariant === "gold" && "border-l-4 border-l-gold",
             accentVariant === "emerald" && "border-l-4 border-l-status-emerald",
             accentVariant === "amber" && "border-l-4 border-l-status-amber",
@@ -45,7 +45,7 @@ export const TactileCard = React.forwardRef<HTMLDivElement, TactileCardProps>(
           ],
           !isSelected &&
             isInteractive &&
-            "hover:bg-surface-elevated/50 hover:shadow-sm",
+            "hover:bg-surface-elevated/50 hover:shadow-xs",
           className,
         )}
         {...props}

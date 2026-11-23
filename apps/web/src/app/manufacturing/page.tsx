@@ -546,17 +546,15 @@ export default function ManufacturingPage() {
     <AppShell>
       <div className="space-y-6 max-w-[1600px] mx-auto pb-16">
         {/* Luxury Atelier Header Banner */}
-        <div className="relative rounded-2xl bg-gradient-to-r from-surface-elevated/95 via-surface to-surface-card border border-gold/30 dark:border-gold/20 p-6 sm:p-7 shadow-sm overflow-hidden backdrop-blur-md">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gold/15 via-transparent to-transparent pointer-events-none" />
-
+        <div className="relative rounded-2xl border border-surface-border bg-surface-card p-6 sm:p-7 shadow-xs overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest font-semibold">
-                <Hammer className="w-4 h-4 text-gold animate-pulse" />
+              <div className="flex items-center space-x-2 text-xs font-mono text-gold font-medium">
+                <Hammer className="w-4 h-4 text-gold" />
                 <span>Precision Goldsmithing &amp; Multi-Stage Crafting Lifecycle</span>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-serif font-black tracking-tight text-foreground">
+                <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-foreground">
                   Atelier Manufacturing &amp; Karigar Work Orders
                 </h1>
                 <Badge variant="gold" className="text-xs font-mono font-bold">
@@ -575,7 +573,7 @@ export default function ManufacturingPage() {
               <Button
                 variant="gold"
                 onClick={() => setIsIssueModalOpen(true)}
-                className="font-semibold text-xs h-9 gap-1.5 shadow-md hover:shadow-lg transition-all"
+                className="font-semibold text-xs h-9 gap-1.5 transition-colors duration-150"
               >
                 <Plus className="h-4 w-4" />
                 <span>Issue Job Card</span>
@@ -588,7 +586,7 @@ export default function ManufacturingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Pure Bullion In Custody
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
@@ -607,7 +605,7 @@ export default function ManufacturingPage() {
 
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Active Artisan Job Cards
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
@@ -626,7 +624,7 @@ export default function ManufacturingPage() {
 
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Atelier Metal Wastage Rate
               </span>
               <div className="p-1.5 rounded-lg bg-status-rose/10 text-status-rose border border-status-rose/20">
@@ -645,7 +643,7 @@ export default function ManufacturingPage() {
 
           <Card className="p-4 bg-surface-card border-surface-border hover:border-gold/40 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground font-mono">
+              <span className="text-xs font-mono text-muted-foreground font-medium">
                 Making Charges Allocated
               </span>
               <div className="p-1.5 rounded-lg bg-gold/10 text-gold border border-gold/20">
@@ -870,7 +868,7 @@ export default function ManufacturingPage() {
                             key={s}
                             className={`rounded-lg p-2 text-center text-[10px] font-mono transition-all ${
                               isCurrent
-                                ? "bg-gradient-to-r from-gold to-gold-dark text-black font-bold shadow-md shadow-gold/20 border border-gold/40"
+                                ? "bg-gold text-black font-bold shadow-md shadow-gold/20 border border-gold/40"
                                 : isPast
                                   ? "bg-status-emerald/10 text-status-emerald border border-status-emerald/30 font-medium"
                                   : "bg-surface-elevated text-muted-foreground/60 border border-surface-border/60"
@@ -893,7 +891,7 @@ export default function ManufacturingPage() {
           <div className="space-y-4">
             <Card className="bg-surface-card border-surface-border p-6 rounded-2xl shadow-sm">
               <div className="mb-5 space-y-1">
-                <div className="flex items-center space-x-2 text-xs font-mono text-gold uppercase tracking-widest font-semibold">
+                <div className="flex items-center space-x-2 text-xs font-mono text-gold font-semibold">
                   <Scale className="w-4 h-4 text-gold" />
                   <span>Shrinkage SLA Governance</span>
                 </div>

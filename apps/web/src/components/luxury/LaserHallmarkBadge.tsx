@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { ShieldCheck, Sparkles } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 interface LaserHallmarkBadgeProps {
   huid?: string;
@@ -49,7 +49,7 @@ export function LaserHallmarkBadge({
         <svg
           viewBox="0 0 24 24"
           fill="currentColor"
-          className="w-3 h-3 text-gold shrink-0 drop-shadow-[0_0_4px_rgba(212,175,55,0.4)]"
+          className="w-3 h-3 text-gold shrink-0"
           aria-label="BIS Triangular Hallmark"
         >
           <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />

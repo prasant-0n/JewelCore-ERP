@@ -220,26 +220,23 @@ export default function QcPage() {
     <AppShell>
       <div className="max-w-[1600px] mx-auto space-y-6 pb-12">
         {/* Luxury Hero Analytical QC Banner */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-elevated/90 via-surface-card/60 to-surface-card/90 border border-gold/20 p-6 md:p-8 backdrop-blur-xl shadow-2xl">
-          <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
-
+        <div className="relative overflow-hidden rounded-2xl border border-surface-border bg-surface-card p-6 shadow-xs">
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
                 <span>Flagship Mumbai (INV-11)</span>
                 <span>/</span>
                 <span>Assay &amp; Hallmarking Lab</span>
                 <span>/</span>
-                <span className="text-gold font-semibold">
+                <span className="text-gold font-medium">
                   Analytical QC &amp; Assay Lab
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl md:text-3xl font-serif font-black tracking-tight text-foreground">
+                <h1 className="text-2xl md:text-3xl font-serif font-bold tracking-tight text-foreground">
                   Analytical QC &amp; Metallurgical Assay Directory
                 </h1>
-                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                <Badge variant="emerald" dot className="font-mono text-[11px] px-2.5 py-1 bg-status-emerald/10 text-status-emerald border border-status-emerald/30">
                   Thermo Niton XRF Spectrometer COM4 Live • Calibrated
                 </Badge>
                 <Badge variant="outline" className="border-gold/30 text-gold font-mono text-[11px] px-2.5 py-1">
@@ -275,7 +272,7 @@ export default function QcPage() {
                 variant="gold"
                 size="sm"
                 onClick={handleCalibrate}
-                className="font-mono text-xs font-semibold shadow-lg shadow-gold/20"
+                className="font-mono text-xs font-semibold transition-colors duration-150"
               >
                 <Microscope className="w-3.5 h-3.5 mr-1" />
                 <span>Calibrate Spectrometer</span>
@@ -289,17 +286,17 @@ export default function QcPage() {
           {QC_KPIS.map((kpi) => (
             <Card
               key={kpi.id}
-              className="relative overflow-hidden p-4 rounded-xl bg-surface-card/90 border border-surface-border/80 hover:border-gold/40 transition-all duration-300 shadow-sm"
+              className="relative overflow-hidden p-4 rounded-xl bg-surface-card border border-surface-border hover:border-gold/40 transition-colors duration-150 shadow-xs"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+                <span className="text-xs font-medium text-muted-foreground font-sans">
                   {kpi.title}
                 </span>
                 <div className="p-2 rounded-lg bg-surface-elevated border border-surface-border/50 text-gold">
                   {kpi.icon}
                 </div>
               </div>
-              <div className="text-2xl font-serif font-black tracking-tight text-foreground">
+              <div className="text-2xl font-mono font-bold tracking-tight text-foreground">
                 {kpi.value}
               </div>
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-surface-border/40 text-xs">
@@ -351,7 +348,7 @@ export default function QcPage() {
                   <button
                     key={id}
                     onClick={() => setActiveFilter(id as any)}
-                    className={`px-3 py-1.5 rounded-md font-mono text-xs font-medium transition-all duration-200 whitespace-nowrap ${
+                    className={`px-3 py-1.5 rounded-md font-mono text-xs font-medium transition-colors duration-150 whitespace-nowrap ${
                       activeFilter === id
                         ? "bg-gold text-obsidian font-bold shadow-xs"
                         : "text-muted-foreground hover:text-foreground hover:bg-surface-card/60"

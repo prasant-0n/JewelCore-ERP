@@ -349,7 +349,7 @@ export function EInvoiceRegistry() {
             <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
               E-Way Bills in Transit
             </span>
-            <div className="p-1.5 rounded-full bg-blue-500/15 text-blue-400">
+            <div className="p-1.5 rounded-full bg-status-indigo/15 text-status-indigo">
               <Truck className="w-4 h-4" />
             </div>
           </div>
@@ -364,10 +364,10 @@ export function EInvoiceRegistry() {
         {/* Card 3: High-Value Bullion Transits */}
         <Card className="p-4 bg-surface-elevated/70 border-surface-border">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+            <span className="text-xs font-mono text-muted-foreground font-medium">
               B2B Consignment Volume
             </span>
-            <div className="p-1.5 rounded-full bg-amber-500/15 text-amber-500">
+            <div className="p-1.5 rounded-full bg-status-amber/10 text-status-amber">
               <FileCheck className="w-4 h-4" />
             </div>
           </div>
@@ -382,7 +382,7 @@ export function EInvoiceRegistry() {
         {/* Card 4: NIC Gateway Sync Status */}
         <Card className="p-4 bg-surface-elevated/70 border-surface-border">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider font-semibold">
+            <span className="text-xs font-mono text-muted-foreground font-medium">
               NIC Gateway Sync
             </span>
             <div className="p-1.5 rounded-full bg-status-emerald/15 text-status-emerald">
@@ -390,7 +390,7 @@ export function EInvoiceRegistry() {
             </div>
           </div>
           <div className="text-sm font-bold text-status-emerald mt-2 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-status-emerald" />
             <span>NIC IRP CONNECTED</span>
           </div>
           <div className="text-xs text-muted-foreground font-mono mt-1">
@@ -540,7 +540,7 @@ export function EInvoiceRegistry() {
                     {/* E-Way Bill */}
                     <td className="py-3 px-3 text-center">
                       {inv.ewayBillNumber ? (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/30">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono bg-status-indigo/10 text-status-indigo border border-status-indigo/30">
                           <Truck className="w-3 h-3 shrink-0" />
                           <span>{inv.ewayBillNumber}</span>
                         </span>
@@ -561,7 +561,7 @@ export function EInvoiceRegistry() {
                           onClick={() => handleGenerateIrn(inv.id)}
                           className="h-7 text-[11px] font-semibold gap-1 px-2.5"
                         >
-                          <Sparkles className="w-3 h-3" />
+                          <Hash className="w-3 h-3" />
                           <span>{generatingIrnId === inv.id ? "Generating..." : "Generate IRN"}</span>
                         </Button>
                       )}
@@ -585,7 +585,7 @@ export function EInvoiceRegistry() {
                               size="sm"
                               onClick={() => setSelectedForEwb(inv)}
                               title="Generate Statutory E-Way Bill"
-                              className="h-7 text-[11px] gap-1 px-2 border-blue-500/30 text-blue-400 hover:bg-blue-500/10"
+                              className="h-7 text-[11px] gap-1 px-2 border-status-indigo/30 text-status-indigo hover:bg-status-indigo/10"
                             >
                               <Truck className="w-3 h-3" />
                               <span>E-Way Bill</span>
@@ -597,7 +597,7 @@ export function EInvoiceRegistry() {
                             size="sm"
                             onClick={() => setSelectedForCancel(inv)}
                             title="Cancel IRN"
-                            className="h-7 text-[11px] text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 px-2"
+                            className="h-7 text-xs text-status-rose hover:bg-status-rose/10 px-2"
                           >
                             <XCircle className="w-3 h-3" />
                           </Button>
@@ -606,7 +606,7 @@ export function EInvoiceRegistry() {
 
                       {inv.status === EInvoiceStatus.CANCELLED && (
                         <span
-                          className="text-[10px] text-rose-400 font-mono italic block truncate max-w-[140px]"
+                          className="text-[10px] text-status-rose font-mono italic block truncate max-w-[140px]"
                           title={inv.cancellationReason || "Cancelled"}
                         >
                           {inv.cancellationReason || "Cancelled"}

@@ -255,7 +255,7 @@ export function Itc04ChallanRegistry({
             Statutory Compliance
           </span>
           <div className="text-sm font-bold text-status-emerald mt-1.5 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-status-emerald animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-status-emerald" />
             <span>RULE 45 COMPLIANT</span>
           </div>
           <span className="text-[10px] text-muted-foreground block mt-0.5">
